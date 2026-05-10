@@ -2,6 +2,7 @@ from pydantic import BaseModel, EmailStr, ConfigDict, Field
 from datetime import date, datetime
 from typing import List, Optional, Union
 from uuid import UUID
+from app.models.entidades import TipoEnvio, RestriccionEnvio, EstadoEnvio
 
 class UsuarioBase(BaseModel):
     email: EmailStr
@@ -38,3 +39,24 @@ class UsuarioRespuesta(UsuarioBase):
     id: int
     supabase_id: Union[str, UUID]
     model_config = ConfigDict(from_attributes=True)
+
+class EnvioBase(BaseModel):
+    razon_social_destinatario: str
+    cuit_destinatario: str
+    descripcion: str
+    tipo_envio: TipoEnvio
+    restriccion: RestriccionEnvio
+
+class EnvioCrear(EnvioBase):
+    pass
+
+class EnvioRespuesta(EnvioBase):
+    id: int
+    tracking_id: str
+    estado: EstadoEnvio
+    fecha_creacion: date
+    creado_por_id: int
+    
+    model_config = ConfigDict(from_attributes=True)
+    
+    

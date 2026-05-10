@@ -81,13 +81,7 @@ class UsuarioService:
             tipo=TipoCliente.EMPLEADO,
             rol=empleado_data.rol or "visor",
             nombre=empleado_data.nombre,
-            apellido=empleado_data.apellido,
-            
-            razon_social=None,
-            provincia=None,
-            municipio=None,
-            cod_postal=None,
-            direccion_normalizada=None
+            apellido=empleado_data.apellido
         )
         
         self.db.add(nuevo_usuario)
@@ -116,8 +110,6 @@ class UsuarioService:
             tipo=TipoCliente.EMPRESA,
             rol=empresa_data.rol or "operario",
             
-            nombre=None,
-            apellido=None,
             razon_social=empresa_data.razon_social,
             provincia=empresa_data.provincia,
             municipio=empresa_data.municipio,
@@ -146,3 +138,22 @@ class UsuarioService:
         query = select(Usuario)
         result = await self.db.execute(query)
         return result.scalars().all()
+
+    async def login_usuario(self, email: str, password: str) -> dict:
+        async with httpx.AsyncClient() as client:
+            url = f"{settings.SUPABASE_URL}/auth/v1/token?grant_type=password"
+            headers = {
+                "apikey": settings.SUPABASE_ANON_KEY,
+                "Content-Type": "application/json"
+            }
+            payload = {"email": email, "password": password}
+    
+            response = await client.post(url, json=payload, headers=headers)
+   
+            if response.status_code != 200:
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Email o contraseña incorrectos"
+                )
+
+            return response.json()

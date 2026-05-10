@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, status, HTTPException, Path
+from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.session import obtener_db
 from app.services.servicio_usuarios import UsuarioService
@@ -42,3 +43,15 @@ async def registro_empresa(
     usuario_service: UsuarioService = Depends(get_usuario_service)
 ):
     return await usuario_service.crear_usuario_empresa(empresa_in)
+
+@router.post("/logintoken")
+async def login(
+    form_data: OAuth2PasswordRequestForm = Depends(),
+    usuario_service: UsuarioService = Depends(get_usuario_service) 
+):
+    res = await usuario_service.login_usuario(form_data.username, form_data.password)
+    return {
+        "access_token": res["access_token"],
+        "token_type": "bearer",
+    }
+             

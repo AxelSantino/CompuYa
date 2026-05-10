@@ -9,7 +9,7 @@ from app.db.session import obtener_db
 from app.models.entidades import Usuario
 from cachetools import TTLCache
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="usuarios/logintoken")
 jwks_cache = TTLCache(maxsize=1, ttl=3600)
 
 async def obtener_claves_publicas_supabase():
