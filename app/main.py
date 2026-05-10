@@ -3,6 +3,7 @@ from fastapi import FastAPI
 import logging
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
+from app.routers import usuarios_rutas
 
 logger = logging.getLogger("app")
 
@@ -20,6 +21,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(usuarios_rutas.router)
 
 @app.get("/")
 async def root():

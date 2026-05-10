@@ -19,7 +19,7 @@ class Settings(BaseSettings):
     @property
     def DATABASE_URL(self) -> str:
         if not all([self.DB_USER, self.DB_PASSWORD, self.DB_HOST, self.DB_PORT, self.DB_NAME]):
-            raise ValueError("Credenciales Faltantes para la Base de Datos. Asegúrate de configurar todas las variables de entorno necesarias.")
+            raise ValueError("Credenciales Faltantes para la Base de Datos")
         return f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
     
     # Lógica de Negocio

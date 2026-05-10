@@ -40,3 +40,8 @@ uvicorn==0.46.0
 uvloop==0.22.1
 watchfiles==1.1.1
 websockets==16.0
+SQLAlchemy==2.0.32
+asyncpg==0.29.0
+PyJWT==2.10.1
+cachetools==5.5.0
+cryptography==44.0.0
