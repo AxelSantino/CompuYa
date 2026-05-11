@@ -47,3 +47,16 @@ class EnvioService:
         
         return nuevo_envio
     
+    async def obtener_envio_por_id(self, tracking_id: str) -> Envio:
+        query = select(Envio).where(Envio.tracking_id == tracking_id)
+        result = await self.db.execute(query)
+        envio = result.scalar_one_or_none()
+        if not envio:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Envio no encontrado"
+            )
+        return envio
+    
+    
+    

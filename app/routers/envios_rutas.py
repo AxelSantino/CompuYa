@@ -20,4 +20,9 @@ async def crear_envio(
 ):
     return await envio_service.crear_envio(envio_in, usuario_actual.id)
 
-
+@router.get("/{tracking_id}", response_model=EnvioRespuesta)
+async def obtener_envio(
+    tracking_id: str,
+    envio_service: EnvioService = Depends(get_envio_service)
+):
+    return await envio_service.obtener_envio_por_id(tracking_id)
