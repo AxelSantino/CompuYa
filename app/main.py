@@ -10,7 +10,7 @@ logger = logging.getLogger("app")
 
 app = FastAPI(
     title="Sistema de Gestion Logistica CompuYa",
-    description="Que lo piense el Scrum Master",
+    description="API de backend para el sistema CompuYa, diseñada para la gestión integral de envíos, validación de clientes mediante CUIT y administración de personal logístico.",
     version="1.0.0"
 )
 

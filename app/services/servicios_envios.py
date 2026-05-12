@@ -1,10 +1,11 @@
+from ast import If
 import random
 import string
 from datetime import datetime
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from fastapi import HTTPException, status
-from app.models.entidades import Envio, Usuario, TipoCliente
+from app.models.entidades import Envio, Usuario, TipoCliente, EstadoEnvio
 from app.models.esquemas import EnvioCrear
 
 class EnvioService:
@@ -46,7 +47,7 @@ class EnvioService:
         await self.db.refresh(nuevo_envio)
         
         return nuevo_envio
-    
+
     async def obtener_envio_por_id(self, tracking_id: str) -> Envio:
         query = select(Envio).where(Envio.tracking_id == tracking_id)
         result = await self.db.execute(query)
@@ -57,6 +58,16 @@ class EnvioService:
                 detail="Envio no encontrado"
             )
         return envio
-    
-    
-    
+
+    async def cancelar_envio(self, tracking_id: str) -> Envio:
+        envio = await self.obtener_envio_por_id(tracking_id)
+        if envio.estado == EstadoEnvio.CANCELADO or envio.estado == EstadoEnvio.ENTREGADO:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"El envío no se puede cancelar ya que su estado esta {envio.estado}"
+            )
+        envio.estado = EstadoEnvio.CANCELADO
+        await self.db.commit()
+        await self.db.refresh(envio)
+        
+        return envio

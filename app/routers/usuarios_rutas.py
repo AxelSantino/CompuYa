@@ -54,4 +54,3 @@ async def login(
         "access_token": res["access_token"],
         "token_type": "bearer",
     }
-             
