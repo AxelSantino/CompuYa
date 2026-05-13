@@ -1,3 +1,5 @@
+from unittest import result
+
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update, delete
 from fastapi import HTTPException, status
@@ -157,3 +159,19 @@ class UsuarioService:
                 )
 
             return response.json()
+        
+
+    async def buscar_destinatario_por_razon_social_y_cuit(self, razon_social: str, cuit: str) -> Usuario:
+            query = select(Usuario).where(
+                Usuario.razon_social == razon_social,
+                Usuario.cuit == cuit,
+                Usuario.tipo == TipoCliente.EMPRESA
+            )
+            result = await self.db.execute(query)
+            empresa = result.scalar_one_or_none()
+            if not empresa:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="La empresa no existe en el sistema"
+                )
+            return empresa
