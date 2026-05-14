@@ -1,7 +1,7 @@
 from unittest import result
 
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, update, delete
+from sqlalchemy import select, update, delete, or_
 from fastapi import HTTPException, status
 import httpx
 from app.models.entidades import Usuario, TipoCliente
@@ -161,17 +161,25 @@ class UsuarioService:
             return response.json()
         
 
-    async def buscar_destinatario_por_razon_social_y_cuit(self, razon_social: str, cuit: str) -> Usuario:
-            query = select(Usuario).where(
-                Usuario.razon_social == razon_social,
-                Usuario.cuit == cuit,
-                Usuario.tipo == TipoCliente.EMPRESA
+    async def buscar_empresa_por_razon_social_o_cuit(self, razon_social: str | None = None, cuit: str | None = None) -> Usuario:
+        if not razon_social and not cuit:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Debe proporcionar al menos una razón social o un CUIT."
             )
-            result = await self.db.execute(query)
-            empresa = result.scalar_one_or_none()
-            if not empresa:
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,
-                    detail="La empresa no existe en el sistema"
-                )
-            return empresa
+
+        query = select(Usuario).where(
+            or_(
+                Usuario.razon_social == razon_social if razon_social else False,
+                Usuario.cuit == cuit if cuit else False
+            ),
+            Usuario.tipo == TipoCliente.EMPRESA
+        )
+        result = await self.db.execute(query)
+        empresa = result.scalar_one_or_none()
+        if not empresa:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="La empresa no existe en el sistema"
+            )
+        return empresa

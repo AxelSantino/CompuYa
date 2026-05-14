@@ -55,11 +55,11 @@ async def login(
         "token_type": "bearer",
     }
 
-@router.get("/buscar_destinatarios/{razon_social}/{cuit}", response_model=UsuarioRespuesta)
-async def buscar_destinatarios(
-    razon_social: str,
-    cuit: str,
+@router.get("/buscar_destinatario", response_model=UsuarioRespuesta,dependencies=[Depends(tiene_rol(["operador", "supervisor"]))])
+async def buscar_destinatario(
+    razon_social: str | None = None,
+    cuit: str | None = None,
     usuario_service: UsuarioService = Depends(get_usuario_service)
 ):
-    destinatarios = await usuario_service.buscar_destinatario_por_razon_social_y_cuit(razon_social, cuit)
-    return destinatarios
+    destinatario = await usuario_service.buscar_empresa_por_razon_social_o_cuit(razon_social, cuit)
+    return destinatario
