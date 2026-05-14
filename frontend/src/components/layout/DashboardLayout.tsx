@@ -1,0 +1,101 @@
+'use client';
+
+import React from 'react';
+import { useAuth } from '@/contexts/AuthContext';
+import { useRouter, usePathname } from 'next/navigation';
+import Link from 'next/link';
+
+type DashboardLayoutProps = {
+  children: React.ReactNode;
+};
+
+const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
+  const { user, logout, isLoading } = useAuth();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const handleLogout = () => {
+    logout();
+    router.push('/');
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-gray-100">
+        <div className="text-gray-500 animate-pulse">Cargando aplicación...</div>
+      </div>
+    );
+  }
+
+  const navItems = [
+    { name: 'Dashboard', href: '/dashboard', icon: 'bg-gray-500' },
+    { name: 'Envíos', href: '/dashboard', icon: 'bg-gray-400' }, // For now pointing both to /dashboard
+  ];
+
+  return (
+    <div className="flex h-screen bg-gray-100 overflow-hidden">
+      <aside className="w-64 flex flex-col bg-[#1a1a1a] text-white p-4 shrink-0 shadow-xl z-10">
+        <div className="flex items-center mb-10 px-2">
+          <div className="w-10 h-10 bg-orange-600 rounded-lg flex items-center justify-center font-bold text-xl mr-3 shadow-lg shadow-orange-900/20">
+            C
+          </div>
+          <h1 className="text-xl font-bold tracking-tight">CompuYa</h1>
+        </div>
+        
+        <nav className="flex-1">
+          <ul className="space-y-1">
+            {navItems.map((item) => {
+              const isActive = pathname === item.href;
+              return (
+                <li key={item.name}>
+                  <Link 
+                    href={item.href}
+                    className={`flex items-center p-3 rounded-lg transition-all duration-200 group ${
+                      isActive 
+                        ? 'bg-orange-600 text-white shadow-lg shadow-orange-900/20' 
+                        : 'text-gray-400 hover:bg-gray-800 hover:text-gray-200'
+                    }`}
+                  >
+                    <div className={`w-5 h-5 rounded mr-3 transition-colors ${
+                      isActive ? 'bg-white/30' : 'bg-gray-700 group-hover:bg-gray-600'
+                    }`}></div>
+                    <span className="font-medium">{item.name}</span>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
+
+        <div className="mt-auto border-t border-gray-800 pt-6">
+          {user && (
+            <div className="flex items-center p-2 mb-4">
+              <div className="w-10 h-10 bg-gradient-to-tr from-gray-700 to-gray-600 rounded-full mr-3 flex items-center justify-center font-bold border border-gray-700">
+                {user.nombre ? user.nombre[0].toUpperCase() : user.email[0].toUpperCase()}
+              </div>
+              <div className="overflow-hidden">
+                <p className="font-semibold truncate leading-none mb-1">{user.nombre || 'Usuario'}</p>
+                <p className="text-xs text-gray-500 capitalize">{user.rol}</p>
+              </div>
+            </div>
+          )}
+          <button 
+            onClick={handleLogout} 
+            className="flex items-center p-3 rounded-lg hover:bg-red-900/20 hover:text-red-400 text-gray-500 transition-all duration-200 w-full text-left group"
+          >
+            <div className="w-5 h-5 bg-gray-700 rounded mr-3 group-hover:bg-red-400/30 transition-colors"></div>
+            <span className="font-medium text-sm">Cerrar Sesión</span>
+          </button>
+        </div>
+      </aside>
+
+      <main className="flex-1 overflow-y-auto bg-gray-50 relative">
+        <div className="min-h-full">
+          {children}
+        </div>
+      </main>
+    </div>
+  );
+};
+
+export default DashboardLayout;

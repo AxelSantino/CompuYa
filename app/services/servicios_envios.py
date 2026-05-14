@@ -71,3 +71,8 @@ class EnvioService:
         await self.db.refresh(envio)
         
         return envio
+
+    async def listar_envios(self) -> list[Envio]:
+        query = select(Envio)
+        result = await self.db.execute(query)
+        return result.scalars().all()
