@@ -73,12 +73,17 @@ class EnvioService:
         return envio
     
 
-    async def actualizar_estado_envio(self, tracking_id: str, nuevo_estado: EstadoEnvio) -> Envio:
+    async def actualizar_estado_envio(self, tracking_id: str, nuevo_estado: EstadoEnvio, usuario: Usuario) -> Envio:
         envio = await self.obtener_envio_por_id(tracking_id)
         if envio.estado == EstadoEnvio.CANCELADO or envio.estado == EstadoEnvio.ENTREGADO:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=f"El estado del envío no se puede actualizar ya que su estado actual es {envio.estado}"
+            )
+        if nuevo_estado == EstadoEnvio.CANCELADO and usuario.rol not in ["admin", "supervisor"]:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="No tiene permisos para cancelar un envío. Solo los supervisores pueden realizar esta acción."
             )
         envio.estado = nuevo_estado
         await self.db.commit()

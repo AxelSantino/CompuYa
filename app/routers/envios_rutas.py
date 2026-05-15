@@ -35,11 +35,11 @@ async def cancelar_envio(
     return await envio_service.cancelar_envio(tracking_id)
 
 
-#sacar al operador despues, es para pruebas nomas, el operador no deberia poder actualizar el estado del envio.
-@router.post("/{tracking_id}/actualizar-estado", response_model=EnvioRespuesta, dependencies=[Depends(tiene_rol(["admin", "supervisor","operador"]))])
+@router.post("/{tracking_id}/actualizar-estado", response_model=EnvioRespuesta, dependencies=[Depends(tiene_rol(["admin", "supervisor", "operador"]))])
 async def actualizar_estado_envio(
     tracking_id: str,
     nuevo_estado: str,
+    usuario_actual: Usuario = Depends(obtener_usuario_actual),
     envio_service: EnvioService = Depends(get_envio_service)
 ):
-    return await envio_service.actualizar_estado_envio(tracking_id, nuevo_estado)
+    return await envio_service.actualizar_estado_envio(tracking_id, nuevo_estado, usuario_actual)
