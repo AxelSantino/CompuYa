@@ -60,5 +60,12 @@ class EnvioRespuesta(EnvioBase):
     creado_por_id: int
     
     model_config = ConfigDict(from_attributes=True)
+
+class HistorialBase(BaseModel):
+    envio_id: int
+    id_empleado: int
+    estado: EstadoEnvio
+    fecha_creacion: date
+
     
     
