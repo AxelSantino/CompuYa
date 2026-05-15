@@ -54,4 +54,12 @@ async def login(
         "access_token": res["access_token"],
         "token_type": "bearer",
     }
-             
+
+@router.get("/buscar_destinatario", response_model=UsuarioRespuesta,dependencies=[Depends(tiene_rol(["operador", "supervisor"]))])
+async def buscar_destinatario(
+    razon_social: str | None = None,
+    cuit: str | None = None,
+    usuario_service: UsuarioService = Depends(get_usuario_service)
+):
+    destinatario = await usuario_service.buscar_empresa_por_razon_social_o_cuit(razon_social, cuit)
+    return destinatario
