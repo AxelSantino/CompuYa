@@ -33,3 +33,13 @@ async def cancelar_envio(
     envio_service: EnvioService = Depends(get_envio_service)
 ):
     return await envio_service.cancelar_envio(tracking_id)
+
+
+@router.post("/{tracking_id}/actualizar-estado", response_model=EnvioRespuesta, dependencies=[Depends(tiene_rol(["admin", "supervisor", "operador"]))])
+async def actualizar_estado_envio(
+    tracking_id: str,
+    nuevo_estado: str,
+    usuario_actual: Usuario = Depends(obtener_usuario_actual),
+    envio_service: EnvioService = Depends(get_envio_service)
+):
+    return await envio_service.actualizar_estado_envio(tracking_id, nuevo_estado, usuario_actual)
