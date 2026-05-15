@@ -6,12 +6,16 @@ interface LoginResponse {
 }
 
 const authService = {
-  login: async (email, password): Promise<LoginResponse> => {
+  login: async (email: string, password: string): Promise<LoginResponse> => {
     const params = new URLSearchParams();
     params.append('username', email);
     params.append('password', password);
 
-    const response = await api.post<LoginResponse>('/usuarios/logintoken', params);
+    const response = await api.post<LoginResponse>('/usuarios/logintoken', params, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    });
 
     return response.data;
   },

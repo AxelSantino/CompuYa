@@ -25,8 +25,8 @@ export default function LoginPage() {
 
     try {
       await login(email, password);
-    } catch (err) {
-      setError('Email o contraseña incorrectos. Por favor, intenta de nuevo.');
+    } catch (err: any) {
+      setError(err.message || 'Ocurrió un error inesperado. Por favor, intenta de nuevo.');
     }
   };
 
