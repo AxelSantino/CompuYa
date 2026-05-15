@@ -71,3 +71,17 @@ class EnvioService:
         await self.db.refresh(envio)
         
         return envio
+    
+
+    async def actualizar_estado_envio(self, tracking_id: str, nuevo_estado: EstadoEnvio) -> Envio:
+        envio = await self.obtener_envio_por_id(tracking_id)
+        if envio.estado == EstadoEnvio.CANCELADO or envio.estado == EstadoEnvio.ENTREGADO:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"El estado del envío no se puede actualizar ya que su estado actual es {envio.estado}"
+            )
+        envio.estado = nuevo_estado
+        await self.db.commit()
+        await self.db.refresh(envio)
+        
+        return envio
