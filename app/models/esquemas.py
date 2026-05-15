@@ -38,6 +38,8 @@ class UsuarioCrearEmpresa(UsuarioBase):
 class UsuarioRespuesta(UsuarioBase):
     id: int
     supabase_id: Union[str, UUID]
+    nombre: Optional[str] = None
+    apellido: Optional[str] = None
     model_config = ConfigDict(from_attributes=True)
 
 class EnvioBase(BaseModel):

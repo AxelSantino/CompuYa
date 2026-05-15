@@ -71,8 +71,6 @@ class EnvioService:
         await self.db.refresh(envio)
         
         return envio
-    
-
     async def actualizar_estado_envio(self, tracking_id: str, nuevo_estado: EstadoEnvio, usuario: Usuario) -> Envio:
         envio = await self.obtener_envio_por_id(tracking_id)
         if envio.estado == EstadoEnvio.CANCELADO or envio.estado == EstadoEnvio.ENTREGADO:
@@ -90,3 +88,8 @@ class EnvioService:
         await self.db.refresh(envio)
         
         return envio
+
+    async def listar_envios(self) -> list[Envio]:
+        query = select(Envio)
+        result = await self.db.execute(query)
+        return result.scalars().all()
