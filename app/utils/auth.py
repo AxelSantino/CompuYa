@@ -90,15 +90,17 @@ async def obtener_usuario_actual(
         return usuario
         
     except jwt.ExpiredSignatureError:
+        print("DEBUG: Token expirado")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="La sesión ha expirado",
             headers={"WWW-Authenticate": "Bearer"},
         )
     except jwt.PyJWTError as e:
-        print(f"DEBUG: Error de PyJWT: {type(e).__name__} - {str(e)}")
+        print(f"DEBUG: Error de validación JWT: {str(e)}")
         raise credentials_exception
     except Exception as e:
+        print(f"DEBUG: Error inesperado validando token: {str(e)}")
         raise credentials_exception
 
 def tiene_rol(roles_permitidos: list):

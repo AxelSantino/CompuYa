@@ -38,6 +38,8 @@ class UsuarioCrearEmpresa(UsuarioBase):
 class UsuarioRespuesta(UsuarioBase):
     id: int
     supabase_id: Union[str, UUID]
+    nombre: Optional[str] = None
+    apellido: Optional[str] = None
     model_config = ConfigDict(from_attributes=True)
 
 class EnvioBase(BaseModel):
@@ -58,5 +60,12 @@ class EnvioRespuesta(EnvioBase):
     creado_por_id: int
     
     model_config = ConfigDict(from_attributes=True)
+
+class HistorialBase(BaseModel):
+    envio_id: int
+    id_empleado: int
+    estado: EstadoEnvio
+    fecha_creacion: date
+
     
     

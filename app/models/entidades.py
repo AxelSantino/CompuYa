@@ -59,4 +59,15 @@ class Envio(Base):
     estado = Column(Enum(EstadoEnvio, native_enum=False, values_callable=lambda x: [e.value for e in x]), default=EstadoEnvio.EN_SUCURSAL)
     creado_por_id = Column(BigInteger, ForeignKey("usuarios.id"), nullable=False)
     fecha_creacion = Column(Date, server_default=func.current_date())
+    
+class Historial(Base):
+    __tablename__ = "historial"
+    id = Column(BigInteger, primary_key=True)
+    envio_id = Column(BigInteger, ForeignKey("envios.id"), nullable=False)
+    id_empleado = Column(BigInteger, ForeignKey("usuarios.id"), nullable=False)
+    estado = Column(Enum(EstadoEnvio, native_enum=False, values_callable=lambda x: [e.value for e in x]), nullable=False)    
+    
+    fecha = Column(Date, server_default=func.current_date())
+    
+    
 

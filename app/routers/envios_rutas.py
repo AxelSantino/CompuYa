@@ -5,12 +5,18 @@ from app.services.servicios_envios import EnvioService
 from app.models.esquemas import EnvioCrear, EnvioRespuesta
 from app.models.entidades import Usuario
 from app.utils.auth import obtener_usuario_actual, tiene_rol
-
+from typing import List
 
 router = APIRouter(prefix="/envios", tags=["Envios"])
 
 async def get_envio_service(db: AsyncSession = Depends(obtener_db)) -> EnvioService:
     return EnvioService(db)
+
+@router.get("/", response_model=List[EnvioRespuesta], dependencies=[Depends(obtener_usuario_actual)])
+async def listar_envios(
+    envio_service: EnvioService = Depends(get_envio_service)
+):
+    return await envio_service.listar_envios()
 
 @router.post("/", response_model=EnvioRespuesta, status_code=status.HTTP_201_CREATED)
 async def crear_envio(
@@ -33,3 +39,13 @@ async def cancelar_envio(
     envio_service: EnvioService = Depends(get_envio_service)
 ):
     return await envio_service.cancelar_envio(tracking_id)
+
+
+@router.post("/{tracking_id}/actualizar-estado", response_model=EnvioRespuesta, dependencies=[Depends(tiene_rol(["admin", "supervisor", "operador"]))])
+async def actualizar_estado_envio(
+    tracking_id: str,
+    nuevo_estado: str,
+    usuario_actual: Usuario = Depends(obtener_usuario_actual),
+    envio_service: EnvioService = Depends(get_envio_service)
+):
+    return await envio_service.actualizar_estado_envio(tracking_id, nuevo_estado, usuario_actual)
