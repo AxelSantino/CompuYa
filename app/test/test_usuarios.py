@@ -1,10 +1,13 @@
+import pytest
 from fastapi.testclient import TestClient
+from httpx import AsyncClient
 from app.main import app
 
 client = TestClient(app)
 
 
-def test_login_exitoso():
+@pytest.mark.asyncio
+async def test_login_exitoso():
 
     payload = {
         "username": "prueba@gmail.com",
@@ -15,7 +18,8 @@ def test_login_exitoso():
     assert "access_token" in response.json()
 
 
-def test_login_fallido():
+@pytest.mark.asyncio
+async def test_login_fallido():
     payload = {
         "username": "prueba@gmail.com",
         "password": "password_error"
