@@ -58,9 +58,12 @@ class Envio(Base):
     restriccion = Column(Enum(RestriccionEnvio, native_enum=False, values_callable=lambda x: [e.value for e in x]), nullable=False)
     estado = Column(Enum(EstadoEnvio, native_enum=False, values_callable=lambda x: [e.value for e in x]), default=EstadoEnvio.EN_SUCURSAL)
     creado_por_id = Column(BigInteger, ForeignKey("usuarios.id"), nullable=False)
+    destinatario_id = Column(BigInteger, ForeignKey("usuarios.id"), nullable=True)
     fecha_creacion = Column(DateTime, server_default=func.current_date())
     
     historial = relationship("Historial", back_populates="envio", order_by="Historial.fecha.desc()")
+    creador = relationship("Usuario", foreign_keys=[creado_por_id])
+    destinatario = relationship("Usuario", foreign_keys=[destinatario_id])
     
 class Historial(Base):
     __tablename__ = "historial"

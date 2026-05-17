@@ -17,34 +17,29 @@ class EnvioService:
         anio = datetime.now().year
         caracteres = ''.join(random.choices(string.ascii_uppercase + string.digits, k=4))
         return f"CY-{anio}-{caracteres}"
-    
-    async def validar_destinatario(self, razon_social: str, cuit: str) -> bool:
+      
+    async def crear_envio(self, envio_data: EnvioCrear, usuario_id: int) -> Envio:
         query = select(Usuario).where(
-            Usuario.razon_social == razon_social,
-            Usuario.cuit == cuit,
+            Usuario.razon_social == envio_data.razon_social_destinatario,
+            Usuario.cuit == envio_data.cuit_destinatario,
             Usuario.tipo == TipoCliente.EMPRESA
         )
         result = await self.db.execute(query)
-        return result.scalar_one_or_none() is not None
-    
-    async def crear_envio(self, envio_data: EnvioCrear, usuario_id: int) -> Envio:
-        existe = await self.validar_destinatario(envio_data.razon_social_destinatario, envio_data.cuit_destinatario)
-        if not existe:
+        empresa = result.scalar_one_or_none()
+        if not empresa:
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"El destinatario {envio_data.razon_social_destinatario} con CUIT {envio_data.cuit_destinatario} no existe en el sistema."
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="La empresa no existe en el sistema"
             )
-        
         tracking_id = self.generar_tracking_id()
-
         nuevo_envio = Envio(
             **envio_data.model_dump(),
             tracking_id=tracking_id,
-            creado_por_id=usuario_id
+            creado_por_id=usuario_id,
+            destinatario_id=empresa.id
         )
-        
         self.db.add(nuevo_envio)
-        await self.db.flush() # Aseguramos que el id esté disponible
+        await self.db.flush()
         await self.registrar_historial(nuevo_envio.id, usuario_id, nuevo_envio.estado)
         await self.db.commit()
         await self.db.refresh(nuevo_envio)
@@ -52,7 +47,10 @@ class EnvioService:
         return nuevo_envio
 
     async def obtener_envio_por_id(self, tracking_id: str) -> Envio:
-        query = select(Envio).where(Envio.tracking_id == tracking_id)
+        query = select(Envio).where(Envio.tracking_id == tracking_id).options(
+            selectinload(Envio.creador),
+            selectinload(Envio.destinatario)
+        )
         result = await self.db.execute(query)
         envio = result.scalar_one_or_none()
         if not envio:

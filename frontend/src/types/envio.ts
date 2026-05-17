@@ -22,3 +22,12 @@ export interface EnvioCrear {
   tipo_envio: string;
   restriccion: string;
 }
+
+export interface HistorialEnvio {
+  id: number;
+  fecha: string;
+  estado: EnvioStatus;
+  nombre_usuario: string;
+  observaciones: string | null;
+}
+

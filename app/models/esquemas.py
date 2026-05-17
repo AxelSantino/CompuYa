@@ -52,15 +52,6 @@ class EnvioBase(BaseModel):
 class EnvioCrear(EnvioBase):
     pass
 
-class EnvioRespuesta(EnvioBase):
-    id: int
-    tracking_id: str
-    estado: EstadoEnvio
-    fecha_creacion: date
-    creado_por_id: int
-    
-    model_config = ConfigDict(from_attributes=True)
-
 class HistorialBase(BaseModel):
     envio_id: int
     id_empleado: int
@@ -81,6 +72,27 @@ class HistorialRespuesta(BaseModel):
     usuario: UsuarioSimple = Field(alias="empleado")
 
     model_config = ConfigDict(from_attributes=True, populate_by_name=True)
+
+class EmpresaRespuesta(BaseModel):
+    razon_social: str
+    cuit: str
+    direccion_normalizada: Optional[str]
+    provincia: Optional[str]
+    municipio: Optional[str]
+    cod_postal: Optional[str]
+    model_config = ConfigDict(from_attributes=True)
+    
+class EnvioRespuesta(EnvioBase):
+    id: int
+    tracking_id: str
+    estado: EstadoEnvio
+    fecha_creacion: datetime
+    creador: UsuarioSimple
+    destinatario: EmpresaRespuesta
+    model_config = ConfigDict(from_attributes=True)
+
+
+
 
     
 

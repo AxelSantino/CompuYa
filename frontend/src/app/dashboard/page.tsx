@@ -9,6 +9,8 @@ import withAuth from '@/components/auth/withAuth';
 import shipmentService from '@/services/shipmentService';
 import { Envio, EnvioStatus } from '@/types/envio';
 import { useRouter } from 'next/navigation';
+import LoadingOverlay from '@/components/LoadingOverlay';
+import Link from 'next/link';
 
 const StatusBadge = ({ status }: { status: EnvioStatus }) => {
   const statusClasses: Record<EnvioStatus, string> = {
@@ -27,10 +29,6 @@ const StatusBadge = ({ status }: { status: EnvioStatus }) => {
     </span>
   );
 };
-
-import LoadingOverlay from '@/components/LoadingOverlay';
-
-// ... (StatusBadge component remains the same)
 
 const ShipmentsPage = () => {
   const router = useRouter();
@@ -125,7 +123,11 @@ const ShipmentsPage = () => {
               <tbody className="bg-white divide-y divide-gray-200">
                 {filteredShipments.map((shipment) => (
                   <tr key={shipment.tracking_id}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-orange-600">{shipment.tracking_id}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-orange-600">
+                      <Link href={`/dashboard/shipments/${shipment.tracking_id}`} className="hover:underline">
+                        {shipment.tracking_id}
+                      </Link>
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-xs">{new Date(shipment.fecha_creacion).toLocaleDateString()}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       <div className="font-medium">{shipment.razon_social_destinatario}</div>
