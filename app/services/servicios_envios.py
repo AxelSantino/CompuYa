@@ -5,7 +5,7 @@ from datetime import datetime
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from fastapi import HTTPException, status
-from app.models.entidades import Envio, Usuario, TipoCliente, EstadoEnvio ,Historial
+from app.models.entidades import Envio, Usuario, TipoCliente, EstadoEnvio, Historial
 from app.models.esquemas import EnvioCrear
 
 class EnvioService:
@@ -43,16 +43,8 @@ class EnvioService:
         )
         
         self.db.add(nuevo_envio)
-        
-        await self.db.flush()
-
-        historial = Historial(
-            envio_id=nuevo_envio.id,
-            id_empleado=usuario_id,
-            estado=nuevo_envio.estado
-        )
-        self.db.add(historial)
-        
+        await self.db.flush() # Aseguramos que el id esté disponible
+        await self.registrar_historial(nuevo_envio.id, usuario_id, nuevo_envio.estado)
         await self.db.commit()
         await self.db.refresh(nuevo_envio)
         
@@ -69,7 +61,7 @@ class EnvioService:
             )
         return envio
 
-    async def cancelar_envio(self, tracking_id: str) -> Envio:
+    async def cancelar_envio(self, tracking_id: str, usuario_id:int) -> Envio:
         envio = await self.obtener_envio_por_id(tracking_id)
         if envio.estado == EstadoEnvio.CANCELADO or envio.estado == EstadoEnvio.ENTREGADO:
             raise HTTPException(
@@ -77,16 +69,12 @@ class EnvioService:
                 detail=f"El envío no se puede cancelar ya que su estado esta {envio.estado}"
             )
         envio.estado = EstadoEnvio.CANCELADO
-        historial = Historial(
-            envio_id=envio.id,
-            id_empleado=envio.creado_por_id,
-            estado=EstadoEnvio.CANCELADO
-        )
-        self.db.add(historial)
+        await self.registrar_historial(envio.id, usuario_id, EstadoEnvio.CANCELADO)
         await self.db.commit()
         await self.db.refresh(envio)
         
         return envio
+    
     async def actualizar_estado_envio(self, tracking_id: str, nuevo_estado: EstadoEnvio, usuario: Usuario) -> Envio:
         envio = await self.obtener_envio_por_id(tracking_id)
         if envio.estado == EstadoEnvio.CANCELADO or envio.estado == EstadoEnvio.ENTREGADO:
@@ -100,14 +88,7 @@ class EnvioService:
                 detail="No tiene permisos para cancelar un envío. Solo los supervisores pueden realizar esta acción."
             )
         envio.estado = nuevo_estado
-        
-        historial = Historial(
-            envio_id=envio.id,
-            id_empleado=usuario.id,
-            estado=nuevo_estado
-        )
-
-        self.db.add(historial)
+        await self.registrar_historial(envio.id, usuario.id, nuevo_estado)
         await self.db.commit()
         await self.db.refresh(envio)
         
@@ -117,3 +98,15 @@ class EnvioService:
         query = select(Envio)
         result = await self.db.execute(query)
         return result.scalars().all()
+
+    async def registrar_historial(self, envio_id: int, usuario_id: int, nuevo_estado: EstadoEnvio):
+        nuevo_historial = Historial(
+            envio_id=envio_id,
+            id_empleado=usuario_id,
+            estado=nuevo_estado
+        )
+        self.db.add(nuevo_historial)
+    
+    async def obtener_historial_envio(self, tracking_id: str):
+        envio = await self.obtener_envio_por_id(tracking_id)
+        return envio.historial
