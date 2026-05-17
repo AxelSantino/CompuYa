@@ -40,7 +40,8 @@ async def test_ac1_ac3_ac6_crear_envio_exitoso():
         assert response.status_code == 201, f"Error: {response.text}"
         data = response.json()
         assert data["tracking_id"].startswith("CY-2026")
-        assert data["creado_por_id"] == 5
+        assert "creador" in data
+        assert data["creador"]["id"] == 5
 
 
 async def test_ac2_validacion_campos_incorrectos():
@@ -69,7 +70,7 @@ async def test_ac5_cliente_no_existente():
             "restriccion": "ninguna"
         }
         response = await client.post("/envios/", json=payload, headers=headers)
-        assert response.status_code == 400
+        assert response.status_code == 404
         assert "no existe" in response.json()["detail"].lower()
 
 

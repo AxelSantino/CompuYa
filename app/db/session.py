@@ -6,10 +6,11 @@ engine = create_async_engine(
     settings.DATABASE_URL,
     pool_pre_ping=True,
     pool_recycle=1800,
+    pool_reset_on_return="rollback",
     connect_args={
         "ssl": "require",
-        "prepared_statement_cache_size": 0, 
-        "statement_cache_size": 0          
+        "prepared_statement_cache_size": 0,
+        "statement_cache_size": 0
     }
 )
 
@@ -20,6 +21,7 @@ SessionLocal = async_sessionmaker(
     autocommit=False,
     autoflush=False
 )
+
 
 async def obtener_db():
     async with SessionLocal() as session:
