@@ -50,7 +50,7 @@ async def actualizar_estado_envio(
 ):
     return await envio_service.actualizar_estado_envio(tracking_id, nuevo_estado, usuario_actual)
 
-@router.get("/{tracking_id}/historial", response_model=List[HistorialRespuesta])
+@router.get("/{tracking_id}/historial", response_model=List[HistorialRespuesta], dependencies=[Depends(tiene_rol(["supervisor"]))])
 async def obtener_historial(
     tracking_id: str,
     envio_service: EnvioService = Depends(get_envio_service)
