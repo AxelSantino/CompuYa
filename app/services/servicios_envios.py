@@ -44,7 +44,7 @@ class EnvioService:
         await self.db.commit()
         await self.db.refresh(nuevo_envio)
         
-        return nuevo_envio
+        return await self.obtener_envio_por_id(nuevo_envio.tracking_id)
 
     async def obtener_envio_por_id(self, tracking_id: str) -> Envio:
         query = select(Envio).where(Envio.tracking_id == tracking_id).options(
@@ -72,7 +72,7 @@ class EnvioService:
         await self.db.commit()
         await self.db.refresh(envio)
         
-        return envio
+        return await self.obtener_envio_por_id(envio.tracking_id)
     
     async def actualizar_estado_envio(self, tracking_id: str, nuevo_estado: EstadoEnvio, usuario: Usuario) -> Envio:
         envio = await self.obtener_envio_por_id(tracking_id)
@@ -91,10 +91,13 @@ class EnvioService:
         await self.db.commit()
         await self.db.refresh(envio)
         
-        return envio
+        return await self.obtener_envio_por_id(envio.tracking_id)
 
     async def listar_envios(self) -> list[Envio]:
-        query = select(Envio)
+        query = select(Envio).options(
+            selectinload(Envio.creador),
+            selectinload(Envio.destinatario)
+        )
         result = await self.db.execute(query)
         return result.scalars().all()
 
@@ -107,14 +110,19 @@ class EnvioService:
         self.db.add(nuevo_historial)
     
     async def obtener_historial_envio(self, tracking_id: str):
-        query = select(Envio).where(Envio.tracking_id == tracking_id).options(
-            selectinload(Envio.historial).selectinload(Historial.empleado)
-        )
-        result = await self.db.execute(query)
-        envio = result.scalar_one_or_none()
-        if not envio:
+        envio_query = select(Envio.id).where(Envio.tracking_id == tracking_id)
+        result = await self.db.execute(envio_query)
+        envio_id = result.scalar_one_or_none()
+
+        if not envio_id:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Envio no encontrado"
             )
-        return envio.historial
+        historial_query = select(Historial).where(Historial.envio_id == envio_id).options(
+            selectinload(Historial.empleado)
+        ).order_by(Historial.fecha.desc())
+        
+        result = await self.db.execute(historial_query)
+        historial = result.scalars().all()
+        return historial

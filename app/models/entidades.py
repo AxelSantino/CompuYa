@@ -59,7 +59,7 @@ class Envio(Base):
     estado = Column(Enum(EstadoEnvio, native_enum=False, values_callable=lambda x: [e.value for e in x]), default=EstadoEnvio.EN_SUCURSAL)
     creado_por_id = Column(BigInteger, ForeignKey("usuarios.id"), nullable=False)
     destinatario_id = Column(BigInteger, ForeignKey("usuarios.id"), nullable=True)
-    fecha_creacion = Column(DateTime, server_default=func.current_date())
+    fecha_creacion = Column(DateTime, server_default=func.now())
     
     historial = relationship("Historial", back_populates="envio", order_by="Historial.fecha.desc()")
     creador = relationship("Usuario", foreign_keys=[creado_por_id])

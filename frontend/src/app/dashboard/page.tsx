@@ -117,7 +117,6 @@ const ShipmentsPage = () => {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Descripción</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider text-right">Acciones</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
@@ -138,16 +137,11 @@ const ShipmentsPage = () => {
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       <StatusBadge status={shipment.estado} />
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-right">
-                      <button className="text-gray-400 hover:text-blue-600 transition-colors">
-                        <div className="w-5 h-5 bg-gray-200 rounded-full inline-block"></div>
-                      </button>
-                    </td>
                   </tr>
                 ))}
                 {filteredShipments.length === 0 && (
                   <tr>
-                    <td colSpan={7} className="px-6 py-8 text-center text-sm text-gray-500">
+                    <td colSpan={6} className="px-6 py-8 text-center text-sm text-gray-500">
                       No se encontraron envíos con los criterios seleccionados.
                     </td>
                   </tr>

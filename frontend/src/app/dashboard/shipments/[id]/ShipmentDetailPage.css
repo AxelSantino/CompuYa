@@ -72,25 +72,52 @@
 
 /* Audit Timeline */
 .audit-timeline {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
 }
+
 .audit-item {
+  position: relative;
   display: flex;
   gap: 1rem;
+  padding-left: 2.5rem; /* Space for the timeline line and icon */
 }
+
+.audit-item::before {
+  content: '';
+  position: absolute;
+  left: 20px; /* Center with the icon */
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background-color: #e2e8f0; /* cool-gray-200 */
+}
+
+.audit-item:last-child::before {
+  display: none; /* Don't draw a line after the last item */
+}
+
 .audit-icon {
+  position: absolute;
+  left: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background-color: #e2e8f0;
-  color: #4a5568;
-  flex-shrink: 0;
+  z-index: 1;
+  border: 4px solid white; /* To make it sit "on top" of the line */
+  font-size: 1.25rem;
 }
+.status-icon-blue { background-color: #bee3f8; color: #2a4365; }
+.status-icon-orange { background-color: #fbd38d; color: #9c4221; }
+.status-icon-green { background-color: #9ae6b4; color: #22543d; }
+.status-icon-red { background-color: #feb2b2; color: #822727; }
+.status-icon-gray { background-color: #e2e8f0; color: #4a5568; }
+
 .audit-content {
   display: flex;
   flex-direction: column;

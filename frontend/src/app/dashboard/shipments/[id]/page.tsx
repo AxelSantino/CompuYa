@@ -5,15 +5,25 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import shipmentService from '@/services/shipmentService';
-import { Envio, HistorialEnvio } from '@/types/envio';
+import { Envio, HistorialEnvio, EnvioStatus } from '@/types/envio';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import LoadingOverlay from '@/components/LoadingOverlay';
-import { FaArrowLeft, FaBox, FaCalendar, FaUser, FaBuilding, FaFileAlt, FaShippingFast, FaExclamationCircle } from 'react-icons/fa';
+import { FaArrowLeft, FaBox, FaCalendar, FaUser, FaBuilding, FaFileAlt, FaShippingFast, FaExclamationCircle, FaMapMarkerAlt, FaWarehouse, FaHome, FaTimesCircle, FaCheckCircle } from 'react-icons/fa';
 import './ShipmentDetailPage.css';
 
-const DetailItem = ({ icon, label, value }: { icon: React.ReactNode, label: string, value: React.ReactNode }) => (
+const statusConfig: Record<EnvioStatus, { icon: JSX.Element; colorClass: string }> = {
+  'en sucursal': { icon: <FaWarehouse />, colorClass: 'status-icon-blue' },
+  'en transito': { icon: <FaShippingFast />, colorClass: 'status-icon-orange' },
+  'entregado': { icon: <FaCheckCircle />, colorClass: 'status-icon-green' },
+  'cancelado': { icon: <FaTimesCircle />, colorClass: 'status-icon-red' },
+};
+
+const DetailItem = ({ icon, label, value }: { icon?: React.ReactNode, label: string, value: React.ReactNode }) => (
   <div>
-    <h3 className="text-xs text-gray-500 flex items-center gap-2"><span className="text-gray-400">{icon}</span>{label}</h3>
+    <h3 className="text-xs text-gray-500 flex items-center gap-2">
+      {icon && <span className="text-gray-400">{icon}</span>}
+      {label}
+    </h3>
     <p className="font-medium text-gray-800">{value}</p>
   </div>
 );
@@ -36,11 +46,9 @@ export default function ShipmentDetailPage() {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        // Fetch shipment details
         const shipmentData = await shipmentService.getShipmentById(id as string);
         setShipment(shipmentData);
 
-        // If user is supervisor, fetch history
         if (user?.rol === 'supervisor') {
           const historyData = await shipmentService.getShipmentHistory(id as string);
           setHistory(historyData);
@@ -84,8 +92,8 @@ export default function ShipmentDetailPage() {
                 <div className="card">
                   <h2 className="card-header"><FaBox /> Información del Envío</h2>
                   <div className="card-body grid grid-cols-2 gap-6">
-                    <DetailItem icon={<FaCalendar />} label="Fecha de Creación" value={new Date(shipment.fecha_creacion).toLocaleDateString()} />
-                    <DetailItem icon={<FaUser />} label="Creado por ID" value={`#${shipment.creado_por_id}`} />
+                    <DetailItem icon={<FaCalendar />} label="Fecha de Creación" value={new Date(shipment.fecha_creacion).toLocaleString()} />
+                    <DetailItem icon={<FaUser />} label="Creado por" value={`${shipment.creador.nombre} ${shipment.creador.apellido || ''}`} />
                     <DetailItem icon={<FaShippingFast />} label="Tipo de Envío" value={shipment.tipo_envio} />
                     <DetailItem icon={<FaExclamationCircle />} label="Manejo Especial" value={shipment.restriccion} />
                     <div className="col-span-2">
@@ -98,8 +106,11 @@ export default function ShipmentDetailPage() {
                 <div className="card">
                   <h2 className="card-header"><FaBuilding /> Información del Destinatario</h2>
                   <div className="card-body grid grid-cols-2 gap-6">
-                    <DetailItem label="Razón Social / Nombre" value={shipment.razon_social_destinatario} icon={undefined} />
-                    <DetailItem label="CUIT/CUIL" value={shipment.cuit_destinatario} icon={undefined} />
+                    <DetailItem label="Razón Social / Nombre" value={shipment.destinatario.razon_social} />
+                    <DetailItem label="CUIT/CUIL" value={shipment.destinatario.cuit} />
+                    <div className="col-span-2">
+                       <DetailItem icon={<FaMapMarkerAlt/>} label="Dirección" value={`${shipment.destinatario.direccion_normalizada}, ${shipment.destinatario.municipio}, ${shipment.destinatario.provincia} (${shipment.destinatario.cod_postal})`} />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -109,17 +120,19 @@ export default function ShipmentDetailPage() {
                 <div className="card">
                   <h2 className="card-header">Auditoría de Estados</h2>
                   <div className="card-body audit-timeline">
-                    {history.map(item => (
-                      <div key={item.id} className="audit-item">
-                        <div className="audit-icon">📦</div>
-                        <div className="audit-content">
-                          <p className="font-bold capitalize">{item.estado}</p>
-                          <p className="text-xs text-gray-500">{new Date(item.fecha).toLocaleString()}</p>
-                          <p className="text-xs text-gray-500">Operador: {item.nombre_usuario}</p>
-                          {item.observaciones && <div className="audit-comment">{item.observaciones}</div>}
+                    {history.map(item => {
+                      const config = statusConfig[item.estado] || { icon: <FaBox />, colorClass: 'status-icon-gray' };
+                      return (
+                        <div key={item.id} className="audit-item">
+                          <div className={`audit-icon ${config.colorClass}`}>{config.icon}</div>
+                          <div className="audit-content">
+                            <p className="font-bold capitalize">{item.estado}</p>
+                            <p className="text-xs text-gray-500">{new Date(item.fecha).toLocaleString()}</p>
+                            <p className="text-xs text-gray-500">Operador: {`${item.empleado.nombre} ${item.empleado.apellido || ''}`}</p>
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
               )}
