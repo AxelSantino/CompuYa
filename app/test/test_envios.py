@@ -113,3 +113,14 @@ async def test_ac1_ac2_buscar_envio_por_tracking_id_existente():
         data = response_busqueda.json()
         assert data["tracking_id"] == tracking_id_real
         assert data["razon_social_destinatario"] == "ni_idea"
+
+
+@pytest.mark.asyncio
+async def test_ac3_buscar_envio_por_tracking_id_inexistente():
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        headers = await obtener_headers_autenticados(client)
+        tracking_id_inexistente = "CY-2026-00000000"
+        response = await client.get(f"/envios/{tracking_id_inexistente}", headers=headers)
+        assert response.status_code == 404
+        data = response.json()
+        assert "no encontrado" in data["detail"].lower()
