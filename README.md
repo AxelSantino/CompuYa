@@ -21,4 +21,3 @@ Utilizamos Conventional Commits para tener un historial de cambios legible y tra
 * `fix:` Para solucionar un error en el código.
 * `docs:` Para cambios exclusivos en la documentación.
 * `refactor:` Para reestructurar el código sin cambiar su comportamiento.
-

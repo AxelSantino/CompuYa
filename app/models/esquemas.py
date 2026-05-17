@@ -67,5 +67,22 @@ class HistorialBase(BaseModel):
     estado: EstadoEnvio
     fecha_creacion: date
 
+class UsuarioSimple(BaseModel):
+    id: int
+    nombre: Optional[str]
+    apellido: Optional[str]
+    email: EmailStr
+    model_config = ConfigDict(from_attributes=True)
+    
+class HistorialRespuesta(BaseModel):
+    id: int
+    estado: EstadoEnvio
+    fecha: datetime
+    usuario: UsuarioSimple = Field(alias="empleado")
+
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
+
+    
+
     
     

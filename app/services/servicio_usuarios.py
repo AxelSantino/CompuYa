@@ -151,7 +151,7 @@ class UsuarioService:
             payload = {"email": email, "password": password}
     
             response = await client.post(url, json=payload, headers=headers)
-   
+            
             if response.status_code != 200:
                 raise HTTPException(
                     status_code=status.HTTP_401_UNAUTHORIZED,

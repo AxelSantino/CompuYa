@@ -1,7 +1,7 @@
 from enum import Enum as PyEnum
-from sqlalchemy import Column, Enum, BigInteger, ForeignKey, String, Date, Text, func
+from sqlalchemy import Column, Enum, BigInteger, ForeignKey, String, Date, Text, DateTime, func
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy.orm import DeclarativeBase, relationship
 
 class Base(DeclarativeBase):
     pass
@@ -58,7 +58,9 @@ class Envio(Base):
     restriccion = Column(Enum(RestriccionEnvio, native_enum=False, values_callable=lambda x: [e.value for e in x]), nullable=False)
     estado = Column(Enum(EstadoEnvio, native_enum=False, values_callable=lambda x: [e.value for e in x]), default=EstadoEnvio.EN_SUCURSAL)
     creado_por_id = Column(BigInteger, ForeignKey("usuarios.id"), nullable=False)
-    fecha_creacion = Column(Date, server_default=func.current_date())
+    fecha_creacion = Column(DateTime, server_default=func.current_date())
+    
+    historial = relationship("Historial", back_populates="envio", order_by="Historial.fecha.desc()")
     
 class Historial(Base):
     __tablename__ = "historial"
@@ -67,7 +69,6 @@ class Historial(Base):
     id_empleado = Column(BigInteger, ForeignKey("usuarios.id"), nullable=False)
     estado = Column(Enum(EstadoEnvio, native_enum=False, values_callable=lambda x: [e.value for e in x]), nullable=False)    
     
-    fecha = Column(Date, server_default=func.current_date())
-    
-    
-
+    fecha = Column(DateTime(timezone=True), server_default=func.now())
+    envio = relationship("Envio", back_populates="historial")
+    empleado = relationship("Usuario")
