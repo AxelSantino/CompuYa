@@ -3,6 +3,8 @@ import asyncio
 from httpx import AsyncClient, ASGITransport
 from app.main import app
 
+pytestmark = pytest.mark.asyncio(loop_scope="module")
+
 
 @pytest.fixture(scope="session")
 def event_loop():
@@ -10,9 +12,6 @@ def event_loop():
     loop = policy.new_event_loop()
     yield loop
     loop.close()
-
-
-pytestmark = pytest.mark.asyncio(scope="session")
 
 
 async def obtener_headers_autenticados(client: AsyncClient):
@@ -115,7 +114,6 @@ async def test_ac1_ac2_buscar_envio_por_tracking_id_existente():
         assert data["razon_social_destinatario"] == "ni_idea"
 
 
-@pytest.mark.asyncio
 async def test_ac3_buscar_envio_por_tracking_id_inexistente():
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
         headers = await obtener_headers_autenticados(client)
