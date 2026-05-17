@@ -3,6 +3,7 @@ import random
 import string
 from datetime import datetime
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 from sqlalchemy import select
 from fastapi import HTTPException, status
 from app.models.entidades import Envio, Usuario, TipoCliente, EstadoEnvio, Historial
@@ -108,5 +109,14 @@ class EnvioService:
         self.db.add(nuevo_historial)
     
     async def obtener_historial_envio(self, tracking_id: str):
-        envio = await self.obtener_envio_por_id(tracking_id)
+        query = select(Envio).where(Envio.tracking_id == tracking_id).options(
+            selectinload(Envio.historial).selectinload(Historial.empleado)
+        )
+        result = await self.db.execute(query)
+        envio = result.scalar_one_or_none()
+        if not envio:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Envio no encontrado"
+            )
         return envio.historial
