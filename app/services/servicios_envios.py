@@ -9,22 +9,24 @@ from fastapi import HTTPException, status
 from app.models.entidades import Envio, Usuario, TipoCliente, EstadoEnvio, Historial
 from app.models.esquemas import EnvioCrear
 
+
 class EnvioService:
     def __init__(self, db: AsyncSession):
         self.db = db
-    
+
     def generar_tracking_id(self) -> str:
         anio = datetime.now().year
-        caracteres = ''.join(random.choices(string.ascii_uppercase + string.digits, k=4))
+        caracteres = ''.join(random.choices(
+            string.ascii_uppercase + string.digits, k=4))
         return f"CY-{anio}-{caracteres}"
-      
+
     async def crear_envio(self, envio_data: EnvioCrear, usuario_id: int) -> Envio:
         query = select(Usuario).where(
             Usuario.razon_social == envio_data.razon_social_destinatario,
             Usuario.cuit == envio_data.cuit_destinatario,
             Usuario.tipo == TipoCliente.EMPRESA
         )
-        result = await self.db.execute(query)
+        result = await self.db.execute(query.execution_options(prepared_statement_cache_size=0))
         empresa = result.scalar_one_or_none()
         if not empresa:
             raise HTTPException(
@@ -43,7 +45,7 @@ class EnvioService:
         await self.registrar_historial(nuevo_envio.id, usuario_id, nuevo_envio.estado)
         await self.db.commit()
         await self.db.refresh(nuevo_envio)
-        
+
         return await self.obtener_envio_por_id(nuevo_envio.tracking_id)
 
     async def obtener_envio_por_id(self, tracking_id: str) -> Envio:
@@ -60,7 +62,7 @@ class EnvioService:
             )
         return envio
 
-    async def cancelar_envio(self, tracking_id: str, usuario_id:int) -> Envio:
+    async def cancelar_envio(self, tracking_id: str, usuario_id: int) -> Envio:
         envio = await self.obtener_envio_por_id(tracking_id)
         if envio.estado == EstadoEnvio.CANCELADO or envio.estado == EstadoEnvio.ENTREGADO:
             raise HTTPException(
@@ -71,9 +73,9 @@ class EnvioService:
         await self.registrar_historial(envio.id, usuario_id, EstadoEnvio.CANCELADO)
         await self.db.commit()
         await self.db.refresh(envio)
-        
+
         return await self.obtener_envio_por_id(envio.tracking_id)
-    
+
     async def actualizar_estado_envio(self, tracking_id: str, nuevo_estado: EstadoEnvio, usuario: Usuario) -> Envio:
         envio = await self.obtener_envio_por_id(tracking_id)
         if envio.estado == EstadoEnvio.CANCELADO or envio.estado == EstadoEnvio.ENTREGADO:
@@ -90,7 +92,7 @@ class EnvioService:
         await self.registrar_historial(envio.id, usuario.id, nuevo_estado)
         await self.db.commit()
         await self.db.refresh(envio)
-        
+
         return await self.obtener_envio_por_id(envio.tracking_id)
 
     async def listar_envios(self) -> list[Envio]:
@@ -108,7 +110,7 @@ class EnvioService:
             estado=nuevo_estado
         )
         self.db.add(nuevo_historial)
-    
+
     async def obtener_historial_envio(self, tracking_id: str):
         envio_query = select(Envio.id).where(Envio.tracking_id == tracking_id)
         result = await self.db.execute(envio_query)
@@ -122,7 +124,7 @@ class EnvioService:
         historial_query = select(Historial).where(Historial.envio_id == envio_id).options(
             selectinload(Historial.empleado)
         ).order_by(Historial.fecha.desc())
-        
+
         result = await self.db.execute(historial_query)
         historial = result.scalars().all()
         return historial

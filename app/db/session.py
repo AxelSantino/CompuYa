@@ -11,7 +11,8 @@ engine = create_async_engine(
         "ssl": "require",
         "prepared_statement_cache_size": 0,
         "statement_cache_size": 0
-    }
+    },
+    execution_options={"embed_connections": True}
 )
 
 SessionLocal = async_sessionmaker(
