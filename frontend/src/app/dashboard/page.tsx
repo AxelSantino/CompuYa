@@ -28,6 +28,10 @@ const StatusBadge = ({ status }: { status: EnvioStatus }) => {
   );
 };
 
+import LoadingOverlay from '@/components/LoadingOverlay';
+
+// ... (StatusBadge component remains the same)
+
 const ShipmentsPage = () => {
   const router = useRouter();
   const [shipments, setShipments] = useState<Envio[]>([]);
@@ -60,7 +64,8 @@ const ShipmentsPage = () => {
 
   return (
     <DashboardLayout>
-      <div className="bg-white p-4 md:p-6 rounded-lg shadow-md">
+      <div className="relative bg-white p-4 md:p-6 rounded-lg shadow-md">
+        <LoadingOverlay isLoading={isLoading} text="Cargando envíos..." />
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
           <div>
             <h2 className="text-2xl font-bold mb-1">Gestión de Envíos</h2>
@@ -101,8 +106,8 @@ const ShipmentsPage = () => {
           </div>
         </div>
 
-        {isLoading && <div className="py-8 text-center text-gray-500">Cargando envíos...</div>}
         {error && <div className="py-8 text-center text-red-500">{error}</div>}
+        
         {!isLoading && !error && (
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">

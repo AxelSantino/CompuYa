@@ -2,7 +2,8 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import authService from '@/services/authService';
-import api from '@/services/api';
+import LoadingTruck from '@/components/LoadingTruck';
+import './LoadingScreen.css';
 
 interface User {
   id: number;
@@ -20,6 +21,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
   isLoading: boolean;
+  isLoginLoading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -27,6 +29,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoginLoading, setIsLoginLoading] = useState(false);
 
   useEffect(() => {
     const initializeAuth = async () => {
@@ -45,6 +48,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const login = async (email: string, password: string) => {
+    setIsLoginLoading(true);
     try {
       const data = await authService.login(email, password);
       localStorage.setItem('token', data.access_token);
@@ -65,6 +69,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         throw new Error('Email o contraseña incorrectos.');
       }
       throw error;
+    } finally {
+      setIsLoginLoading(false);
     }
   };
 
@@ -75,8 +81,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const isAuthenticated = !!user;
 
+  if (isLoading) {
+    return (
+      <div className="loading-screen">
+        <LoadingTruck />
+        <p>Cargando aplicación...</p>
+      </div>
+    );
+  }
+
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user, login, logout, isLoading }}>
+    <AuthContext.Provider value={{ isAuthenticated, user, login, logout, isLoading, isLoginLoading }}>
       {children}
     </AuthContext.Provider>
   );
