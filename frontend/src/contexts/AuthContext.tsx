@@ -50,7 +50,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       localStorage.setItem('token', data.access_token);
       
       try {
-        const profile = await authService.getProfile();
+        const profile = await authService.getProfile(data.access_token);
         setUser(profile);
       } catch (profileError: any) {
         console.error('Error fetching profile after login:', profileError);

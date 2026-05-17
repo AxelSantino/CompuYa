@@ -20,8 +20,12 @@ const authService = {
     return response.data;
   },
 
-  getProfile: async () => {
-    const response = await api.get('/usuarios/yo');
+  getProfile: async (token: string | null = null) => {
+    const headers: { [key: string]: string } = {};
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+    const response = await api.get('/usuarios/yo', { headers });
     return response.data;
   }
 };
