@@ -9,6 +9,8 @@ import withAuth from '@/components/auth/withAuth';
 import shipmentService from '@/services/shipmentService';
 import { Envio, EnvioStatus } from '@/types/envio';
 import { useRouter } from 'next/navigation';
+import LoadingOverlay from '@/components/LoadingOverlay';
+import Link from 'next/link';
 
 const StatusBadge = ({ status }: { status: EnvioStatus }) => {
   const statusClasses: Record<EnvioStatus, string> = {
@@ -60,7 +62,8 @@ const ShipmentsPage = () => {
 
   return (
     <DashboardLayout>
-      <div className="bg-white p-4 md:p-6 rounded-lg shadow-md">
+      <div className="relative bg-white p-4 md:p-6 rounded-lg shadow-md">
+        <LoadingOverlay isLoading={isLoading} text="Cargando envíos..." />
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
           <div>
             <h2 className="text-2xl font-bold mb-1">Gestión de Envíos</h2>
@@ -101,8 +104,8 @@ const ShipmentsPage = () => {
           </div>
         </div>
 
-        {isLoading && <div className="py-8 text-center text-gray-500">Cargando envíos...</div>}
         {error && <div className="py-8 text-center text-red-500">{error}</div>}
+        
         {!isLoading && !error && (
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
@@ -114,13 +117,16 @@ const ShipmentsPage = () => {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Descripción</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider text-right">Acciones</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {filteredShipments.map((shipment) => (
                   <tr key={shipment.tracking_id}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-orange-600">{shipment.tracking_id}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-orange-600">
+                      <Link href={`/dashboard/shipments/${shipment.tracking_id}`} className="hover:underline">
+                        {shipment.tracking_id}
+                      </Link>
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-xs">{new Date(shipment.fecha_creacion).toLocaleDateString()}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       <div className="font-medium">{shipment.razon_social_destinatario}</div>
@@ -131,16 +137,11 @@ const ShipmentsPage = () => {
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       <StatusBadge status={shipment.estado} />
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-right">
-                      <button className="text-gray-400 hover:text-blue-600 transition-colors">
-                        <div className="w-5 h-5 bg-gray-200 rounded-full inline-block"></div>
-                      </button>
-                    </td>
                   </tr>
                 ))}
                 {filteredShipments.length === 0 && (
                   <tr>
-                    <td colSpan={7} className="px-6 py-8 text-center text-sm text-gray-500">
+                    <td colSpan={6} className="px-6 py-8 text-center text-sm text-gray-500">
                       No se encontraron envíos con los criterios seleccionados.
                     </td>
                   </tr>

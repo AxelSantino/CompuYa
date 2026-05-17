@@ -1,0 +1,17 @@
+/* CompuYa/frontend/src/contexts/LoadingScreen.css */
+.loading-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100vw;
+  background-color: #f7f7f7;
+  color: #17252a;
+}
+
+.loading-screen p {
+  margin-top: 20px;
+  font-size: 1.2rem;
+  font-family: sans-serif;
+}

@@ -5,10 +5,12 @@ import { Input } from '@/components/ui/Input';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import LoadingTruck from '@/components/LoadingTruck';
+import './LoginPage.css';
 
 export default function LoginPage() {
   const router = useRouter();
-  const { login, isAuthenticated, isLoading } = useAuth();
+  const { login, isAuthenticated, isLoginLoading } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -32,7 +34,13 @@ export default function LoginPage() {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-gray-100 p-24">
-      <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
+      <div className="relative w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
+        {isLoginLoading && (
+          <div className="login-overlay">
+            <LoadingTruck />
+            <p className="mt-4 text-lg">Iniciando sesión...</p>
+          </div>
+        )}
         <div className="text-center">
           <h1 className="text-3xl font-bold">CompuYa</h1>
           <p className="text-gray-500">Inicia sesión para continuar</p>
@@ -51,7 +59,7 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="tu@email.com"
-              disabled={isLoading}
+              disabled={isLoginLoading}
             />
           </div>
           <div>
@@ -70,15 +78,15 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              disabled={isLoading}
+              disabled={isLoginLoading}
             />
           </div>
 
           {error && <p className="text-sm text-red-500">{error}</p>}
 
           <div>
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
+            <Button type="submit" className="w-full" disabled={isLoginLoading}>
+              {isLoginLoading ? 'Verificando...' : 'Iniciar Sesión'}
             </Button>
           </div>
         </form>

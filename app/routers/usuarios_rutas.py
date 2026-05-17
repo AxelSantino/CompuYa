@@ -49,19 +49,15 @@ async def login(
     form_data: OAuth2PasswordRequestForm = Depends(),
     usuario_service: UsuarioService = Depends(get_usuario_service) 
 ):
-    print(f"DEBUG: Intento de login para usuario: {form_data.username}")
     try:
         res = await usuario_service.login_usuario(form_data.username, form_data.password)
-        print(f"DEBUG: Login exitoso en Supabase para: {form_data.username}")
         return {
             "access_token": res["access_token"],
             "token_type": "bearer",
         }
     except HTTPException as e:
-        print(f"DEBUG: Error en login para {form_data.username}: {e.detail}")
         raise e
     except Exception as e:
-        print(f"DEBUG: Error inesperado en login: {str(e)}")
         raise HTTPException(status_code=500, detail="Error interno del servidor")
 
 @router.get("/buscar_destinatario", response_model=UsuarioRespuesta,dependencies=[Depends(tiene_rol(["operador", "supervisor"]))])

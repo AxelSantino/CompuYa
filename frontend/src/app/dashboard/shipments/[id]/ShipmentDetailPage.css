@@ -1,0 +1,134 @@
+/* CompuYa/frontend/src/app/dashboard/shipments/[id]/ShipmentDetailPage.css */
+
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: #4a5568;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+.back-button:hover {
+  color: #2b6cb0;
+}
+
+.shipment-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+@media (min-width: 768px) {
+  .shipment-header {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+.status-badge-lg {
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  background-color: #fefcbf; /* yellow-100 */
+  color: #92400e; /* yellow-800 */
+}
+
+.priority-badge-lg {
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  background-color: #fecaca; /* red-200 */
+  color: #991b1b; /* red-800 */
+}
+
+.card {
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+.card-header {
+  padding: 1rem 1.5rem;
+  background-color: #f7fafc;
+  border-bottom: 1px solid #e2e8f0;
+  font-weight: 600;
+  color: #4a5568;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+}
+
+.card-body {
+  padding: 1.5rem;
+}
+
+/* Audit Timeline */
+.audit-timeline {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.audit-item {
+  position: relative;
+  display: flex;
+  gap: 1rem;
+  padding-left: 2.5rem; /* Space for the timeline line and icon */
+}
+
+.audit-item::before {
+  content: '';
+  position: absolute;
+  left: 20px; /* Center with the icon */
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background-color: #e2e8f0; /* cool-gray-200 */
+}
+
+.audit-item:last-child::before {
+  display: none; /* Don't draw a line after the last item */
+}
+
+.audit-icon {
+  position: absolute;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  z-index: 1;
+  border: 4px solid white; /* To make it sit "on top" of the line */
+  font-size: 1.25rem;
+}
+.status-icon-blue { background-color: #bee3f8; color: #2a4365; }
+.status-icon-orange { background-color: #fbd38d; color: #9c4221; }
+.status-icon-green { background-color: #9ae6b4; color: #22543d; }
+.status-icon-red { background-color: #feb2b2; color: #822727; }
+.status-icon-gray { background-color: #e2e8f0; color: #4a5568; }
+
+.audit-content {
+  display: flex;
+  flex-direction: column;
+}
+.audit-comment {
+  margin-top: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background-color: #f7fafc;
+  border-radius: 0.375rem;
+  border: 1px solid #e2e8f0;
+  font-size: 0.875rem;
+  color: #4a5568;
+  font-style: italic;
+}
