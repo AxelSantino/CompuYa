@@ -122,3 +122,67 @@ async def test_ac3_buscar_envio_por_tracking_id_inexistente():
         assert response.status_code == 404
         data = response.json()
         assert "no encontrado" in data["detail"].lower()
+
+
+async def test_ac1_ac2_cambio_estado_valido():
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        header = await obtener_headers_autenticados(client)
+        payload = {
+            "razon_social_destinatario": "ni_idea",
+            "cuit_destinatario": "12345",
+            "descripcion": "Envío para probar transicion de estado",
+            "tipo_envio": "normal",
+            "restriccion": "ninguna"
+        }
+
+        res_creacion = await client.post("/envios/", json=payload, headers=header)
+        tracking_id = res_creacion.json()["tracking_id"]
+
+        payload_cambio_estado = {"nuevo_estado": "en_transito"}
+        response = await client.patch(f"/envios/{tracking_id}/estado", json=payload_cambio_estado, headers=header)
+
+        assert response.status_code == 200
+        assert response.json()["estado"] == "en_transito"
+
+
+async def test_ac3_no_permitir_entregado_directo_desde_pendiente():
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        headers = await obtener_headers_autenticados(client)
+        payload = {
+            "razon_social_destinatario": "ni_idea",
+            "cuit_destinatario": "12345",
+            "descripcion": "Envío salto prohibido",
+            "tipo_envio": "normal",
+            "restriccion": "ninguna"
+        }
+
+        res_creacion = await client.post("/envios/", json=payload, headers=headers)
+        tracking_id = res_creacion.json()["tracking_id"]
+
+        payload_estado = {"nuevo_estado": "entregado"}
+        response = await client.patch(f"/envios/{tracking_id}/estado", json=payload_estado, headers=headers)
+
+        assert response.status_code == 400
+        assert "en transito" in response.json()["detail"].lower()
+
+
+async def test_ac4_no_permitir_cambios_si_ya_fue_entregado():
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        headers = await obtener_headers_autenticados(client)
+        payload = {
+            "razon_social_destinatario": "ni_idea",
+            "cuit_destinatario": "12345",
+            "descripcion": "Envío ciclo finalizado",
+            "tipo_envio": "normal",
+            "restriccion": "ninguna"
+        }
+
+        res_creacion = await client.post("/envios/", json=payload, headers=headers)
+        tracking_id = res_creacion.json()["tracking_id"]
+
+        await client.patch(f"/envios/{tracking_id}/estado", json={"nuevo_estado": "en_transito"}, headers=headers)
+        await client.patch(f"/envios/{tracking_id}/estado", json={"nuevo_estado": "entregado"}, headers=headers)
+        payload_invalido = {"nuevo_estado": "en_sucursal"}
+        response = await client.patch(f"/envios/{tracking_id}/estado", json=payload_invalido, headers=headers)
+        assert response.status_code == 400
+        assert "entregado" in response.json()["detail"].lower()
