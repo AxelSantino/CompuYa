@@ -3,35 +3,12 @@
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { Select } from '@/components/ui/Select';
+import { Checkbox } from '@/components/ui/Checkbox';
 import React, { useState, ChangeEvent, FormEvent } from 'react';
 import withAuth from '@/components/auth/withAuth';
 import shipmentService from '@/services/shipmentService';
 import { useRouter } from 'next/navigation';
-
-interface CheckboxProps extends React.InputHTMLAttributes<HTMLInputElement> {
-    label: string;
-}
-
-const Checkbox = ({ label, ...props }: CheckboxProps) => (
-    <label className="flex items-center space-x-2 cursor-pointer group">
-      <input 
-        type="checkbox" 
-        className="rounded text-orange-600 focus:ring-orange-500 w-4 h-4 transition-colors" 
-        {...props} 
-      />
-      <span className="text-sm text-gray-700 group-hover:text-gray-900 transition-colors">{label}</span>
-    </label>
-);
-
-interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
-    children: React.ReactNode;
-}
-
-const Select = ({ children, ...props }: SelectProps) => (
-    <select className="flex h-10 w-full rounded-md border border-gray-300 bg-white py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow disabled:bg-gray-50 disabled:text-gray-500" {...props}>
-        {children}
-    </select>
-);
 
 const NewShipmentPage = () => {
     const router = useRouter();

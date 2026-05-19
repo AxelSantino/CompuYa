@@ -8,7 +8,7 @@ interface LoadingOverlayProps {
   text?: string;
 }
 
-const LoadingOverlay: React.FC<LoadingOverlayProps> = ({ isLoading, text = 'Cargando...' }) => {
+const LoadingOverlay: React.FC<LoadingOverlayProps> = React.memo(({ isLoading, text = 'Cargando...' }) => {
   if (!isLoading) {
     return null;
   }
@@ -19,6 +19,8 @@ const LoadingOverlay: React.FC<LoadingOverlayProps> = ({ isLoading, text = 'Carg
       <p className="loading-text">{text}</p>
     </div>
   );
-};
+});
+
+LoadingOverlay.displayName = 'LoadingOverlay';
 
 export default LoadingOverlay;

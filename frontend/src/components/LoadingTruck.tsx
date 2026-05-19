@@ -2,7 +2,7 @@
 import React from 'react';
 import './LoadingTruck.css';
 
-const LoadingTruck = () => {
+const LoadingTruck = React.memo(() => {
   return (
     <div className="truck-loader">
       <div className="truck-container">
@@ -18,6 +18,8 @@ const LoadingTruck = () => {
       <div className="road"></div>
     </div>
   );
-};
+});
+
+LoadingTruck.displayName = 'LoadingTruck';
 
 export default LoadingTruck;

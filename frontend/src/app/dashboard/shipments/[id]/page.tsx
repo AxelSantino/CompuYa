@@ -18,7 +18,7 @@ const statusConfig: Record<EnvioStatus, { icon: JSX.Element; colorClass: string 
   'cancelado': { icon: <FaTimesCircle />, colorClass: 'status-icon-red' },
 };
 
-const DetailItem = ({ icon, label, value }: { icon?: React.ReactNode, label: string, value: React.ReactNode }) => (
+const DetailItem = React.memo(({ icon, label, value }: { icon?: React.ReactNode, label: string, value: React.ReactNode }) => (
   <div>
     <h3 className="text-xs text-gray-500 flex items-center gap-2">
       {icon && <span className="text-gray-400">{icon}</span>}
@@ -26,7 +26,9 @@ const DetailItem = ({ icon, label, value }: { icon?: React.ReactNode, label: str
     </h3>
     <p className="font-medium text-gray-800">{value}</p>
   </div>
-);
+));
+
+DetailItem.displayName = 'DetailItem';
 
 export default function ShipmentDetailPage() {
   const router = useRouter();
@@ -46,11 +48,15 @@ export default function ShipmentDetailPage() {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        const shipmentData = await shipmentService.getShipmentById(id as string);
-        setShipment(shipmentData);
+        const promises: [Promise<Envio>, Promise<HistorialEnvio[]> | null] = [
+          shipmentService.getShipmentById(id as string),
+          user?.rol === 'supervisor' ? shipmentService.getShipmentHistory(id as string) : null
+        ];
 
-        if (user?.rol === 'supervisor') {
-          const historyData = await shipmentService.getShipmentHistory(id as string);
+        const [shipmentData, historyData] = await Promise.all(promises);
+        
+        setShipment(shipmentData);
+        if (historyData) {
           setHistory(historyData);
         }
       } catch (err) {

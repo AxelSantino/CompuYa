@@ -9,6 +9,11 @@ type DashboardLayoutProps = {
   children: React.ReactNode;
 };
 
+const NAV_ITEMS = [
+  { name: 'Dashboard', href: '/dashboard', icon: 'bg-gray-500' },
+  { name: 'Envíos', href: '/dashboard', icon: 'bg-gray-400' }, // For now pointing both to /dashboard
+];
+
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const { user, logout, isLoading } = useAuth();
   const router = useRouter();
@@ -27,11 +32,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     );
   }
 
-  const navItems = [
-    { name: 'Dashboard', href: '/dashboard', icon: 'bg-gray-500' },
-    { name: 'Envíos', href: '/dashboard', icon: 'bg-gray-400' }, // For now pointing both to /dashboard
-  ];
-
   return (
     <div className="flex h-screen bg-gray-100 overflow-hidden">
       <aside className="w-64 flex flex-col bg-[#1a1a1a] text-white p-4 shrink-0 shadow-xl z-10">
@@ -44,7 +44,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         
         <nav className="flex-1">
           <ul className="space-y-1">
-            {navItems.map((item) => {
+            {NAV_ITEMS.map((item) => {
               const isActive = pathname === item.href;
               return (
                 <li key={item.name}>
