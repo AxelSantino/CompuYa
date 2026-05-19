@@ -88,6 +88,12 @@ class EnvioService:
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="No tiene permisos para cancelar un envío. Solo los supervisores pueden realizar esta acción."
             )
+
+        if nuevo_estado == EstadoEnvio.ENTREGADO and envio.estado == EstadoEnvio.EN_SUCURSAL:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="No se puede pasar al estado Entregado ya que debe pasar primero por En Transito"
+            )
         envio.estado = nuevo_estado
         await self.registrar_historial(envio.id, usuario.id, nuevo_estado)
         await self.db.commit()

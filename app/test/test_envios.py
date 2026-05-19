@@ -138,11 +138,11 @@ async def test_ac1_ac2_cambio_estado_valido():
         res_creacion = await client.post("/envios/", json=payload, headers=header)
         tracking_id = res_creacion.json()["tracking_id"]
 
-        payload_cambio_estado = {"nuevo_estado": "en_transito"}
-        response = await client.patch(f"/envios/{tracking_id}/actualizar-estado", params=payload_cambio_estado, headers=header)
+        payload_cambio_estado = {"nuevo_estado": "en transito"}
+        response = await client.post(f"/envios/{tracking_id}/actualizar-estado", params=payload_cambio_estado, headers=header)
 
         assert response.status_code == 200
-        assert response.json()["estado"] == "en_transito"
+        assert response.json()["estado"] == "en transito"
 
 
 async def test_ac3_no_permitir_entregado_directo_desde_pendiente():
@@ -160,7 +160,7 @@ async def test_ac3_no_permitir_entregado_directo_desde_pendiente():
         tracking_id = res_creacion.json()["tracking_id"]
 
         payload_estado = {"nuevo_estado": "entregado"}
-        response = await client.patch(f"/envios/{tracking_id}/actualizar-estado", params=payload_estado, headers=headers)
+        response = await client.post(f"/envios/{tracking_id}/actualizar-estado", params=payload_estado, headers=headers)
 
         assert response.status_code == 400
         assert "en transito" in response.json()["detail"].lower()
@@ -180,9 +180,9 @@ async def test_ac4_no_permitir_cambios_si_ya_fue_entregado():
         res_creacion = await client.post("/envios/", json=payload, headers=headers)
         tracking_id = res_creacion.json()["tracking_id"]
 
-        await client.patch(f"/envios/{tracking_id}/actualizar-estado", params={"nuevo_estado": "en_transito"}, headers=headers)
-        await client.patch(f"/envios/{tracking_id}/actualizar-estado", params={"nuevo_estado": "entregado"}, headers=headers)
-        payload_invalido = {"nuevo_estado": "en_sucursal"}
-        response = await client.patch(f"/envios/{tracking_id}/estado", params=payload_invalido, headers=headers)
+        await client.post(f"/envios/{tracking_id}/actualizar-estado", params={"nuevo_estado": "en transito"}, headers=headers)
+        await client.post(f"/envios/{tracking_id}/actualizar-estado", params={"nuevo_estado": "entregado"}, headers=headers)
+        payload_invalido = {"nuevo_estado": "en sucursal"}
+        response = await client.post(f"/envios/{tracking_id}/actualizar-estado", params=payload_invalido, headers=headers)
         assert response.status_code == 400
         assert "entregado" in response.json()["detail"].lower()
