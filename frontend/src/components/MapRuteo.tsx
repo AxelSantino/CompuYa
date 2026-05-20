@@ -23,8 +23,8 @@ interface MapRuteoProps {
 }
 
 export default function MapRuteo({ origen, destino }: MapRuteoProps) {
-  const mapRef = useRef<L.Map | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<L.Map | null>(null);
   const routingControlRef = useRef<any>(null);
 
   useEffect(() => {
@@ -32,66 +32,89 @@ export default function MapRuteo({ origen, destino }: MapRuteoProps) {
 
     fixLeafletIcons();
 
-    // Inicializar el mapa si no existe
-    if (!mapRef.current) {
-      mapRef.current = L.map(containerRef.current).setView([origen.lat, origen.lng], 13);
+    // Crear el mapa
+    const map = L.map(containerRef.current).setView([origen.lat, origen.lng], 13);
+    mapRef.current = map;
 
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      }).addTo(mapRef.current);
-    }
-
-    const map = mapRef.current;
-
-    // Limpiar control de ruteo anterior si existe
-    if (routingControlRef.current) {
-      map.removeControl(routingControlRef.current);
-    }
-
-    // Configurar el nuevo ruteo
-    routingControlRef.current = L.Routing.control({
-      waypoints: [
-        L.latLng(origen.lat, origen.lng),
-        L.latLng(destino.lat, destino.lng)
-      ],
-      routeWhileDragging: false,
-      addWaypoints: false,
-      fitSelectedRoutes: true,
-      showAlternatives: false,
-      lineOptions: {
-        styles: [{ color: '#3b82f6', weight: 5, opacity: 0.7 }],
-        extendToWaypoints: true,
-        missingRouteTolerance: 10
-      },
-      // Personalizar el marcador para que se vea mejor
-      createMarker: (i, waypoint, n) => {
-        const icon = L.icon({
-          iconUrl: i === 0 ? 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png' : 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
-          shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-          iconSize: [25, 41],
-          iconAnchor: [12, 41],
-          popupAnchor: [1, -34],
-          shadowSize: [41, 41]
-        });
-        
-        return L.marker(waypoint.latLng, {
-          icon: icon,
-          draggable: false
-        }).bindPopup(i === 0 ? `Origen: ${origen.nombre}` : `Destino: ${destino.nombre}`);
-      }
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     }).addTo(map);
+
+    // Intentar configurar el ruteo
+    let routingControl: any = null;
+    
+    try {
+      if (L.Routing && L.Routing.control) {
+        routingControl = L.Routing.control({
+          waypoints: [
+            L.latLng(origen.lat, origen.lng),
+            L.latLng(destino.lat, destino.lng)
+          ],
+          routeWhileDragging: false,
+          addWaypoints: false,
+          fitSelectedRoutes: true,
+          showAlternatives: false,
+          lineOptions: {
+            styles: [{ color: '#3b82f6', weight: 5, opacity: 0.7 }],
+            extendToWaypoints: true,
+            missingRouteTolerance: 10
+          },
+          createMarker: (i: number, waypoint: any) => {
+            const icon = L.icon({
+              iconUrl: i === 0 ? 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png' : 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+              shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+              iconSize: [25, 41],
+              iconAnchor: [12, 41],
+              popupAnchor: [1, -34],
+              shadowSize: [41, 41]
+            });
+            
+            return L.marker(waypoint.latLng, {
+              icon: icon,
+              draggable: false
+            }).bindPopup(i === 0 ? `Origen: ${origen.nombre}` : `Destino: ${destino.nombre}`);
+          }
+        }).addTo(map);
+        routingControlRef.current = routingControl;
+      }
+    } catch (err) {
+      console.error("Error al inicializar el ruteo:", err);
+    }
 
     // Limpieza al desmontar
     return () => {
-      if (routingControlRef.current && map) {
-        map.removeControl(routingControlRef.current);
-        routingControlRef.current = null;
+      // 1. Primero limpiar el ruteo de forma segura
+      if (routingControl) {
+        try {
+          // Limpiar los puntos ayuda a que leaflet-routing-machine no intente
+          // actualizar capas mientras se destruye
+          if (routingControl.setWaypoints) {
+            routingControl.setWaypoints([]);
+          }
+          if (map) {
+            map.removeControl(routingControl);
+          }
+        } catch (e) {
+          // Ignorar errores en la remoción del control
+        }
       }
+
+      // 2. Luego destruir el mapa
+      if (map) {
+        try {
+          map.remove();
+        } catch (e) {
+          // Ignorar errores en la destrucción del mapa
+        }
+      }
+      
+      mapRef.current = null;
+      routingControlRef.current = null;
     };
-  }, [origen, destino]);
+  }, [origen.lat, origen.lng, destino.lat, destino.lng, origen.nombre, destino.nombre]);
 
   return (
-    <div className="w-full h-[400px] rounded-lg overflow-hidden border border-gray-200 shadow-sm mt-4">
+    <div className="w-full h-[400px] rounded-lg overflow-hidden border border-gray-200 shadow-sm mt-4 relative z-0">
       <div ref={containerRef} className="w-full h-full" />
     </div>
   );

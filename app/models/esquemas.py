@@ -13,6 +13,8 @@ class PerfilEmpleadoSchema(BaseModel):
 
 class PerfilEmpresaSchema(BaseModel):
     razon_social: Optional[str] = None
+    cuit: Optional[str] = None
+    direccion_normalizada: Optional[str] = None
     latitud: float
     longitud: float
     provincia: Optional[str] = None
@@ -38,6 +40,8 @@ class UsuarioRegistroEmpresa(UsuarioBase):
     razon_social: str
     latitud: float
     longitud: float
+    cuit: str
+    direccion_normalizada: str
     provincia: Optional[str] = None
     municipio: Optional[str] = None
     cod_postal: Optional[str] = None
@@ -52,6 +56,8 @@ class UsuarioCrearEmpresa(UsuarioBase):
     razon_social: str
     latitud: float
     longitud: float
+    cuit: str
+    direccion_normalizada: str
     provincia: Optional[str] = None
     municipio: Optional[str] = None
     cod_postal: Optional[str] = None
@@ -104,6 +110,8 @@ class HistorialRespuesta(BaseModel):
 
 class EmpresaRespuesta(BaseModel):
     razon_social: str
+    cuit: Optional[str] = None
+    direccion_normalizada: Optional[str] = None
     latitud: float
     longitud: float
     provincia: Optional[str] = None
@@ -118,5 +126,8 @@ class EnvioRespuesta(EnvioBase):
     estado: EstadoEnvio
     fecha_creacion: datetime
     creador: UsuarioSimple
-    destinatario: UsuarioRespuesta # Usamos UsuarioRespuesta para coherencia
+    destinatario: UsuarioRespuesta 
+    sucursal: Optional[SucursalRespuesta] = None
+    latitud_destino: Optional[float] = None
+    longitud_destino: Optional[float] = None
     model_config = ConfigDict(from_attributes=True)

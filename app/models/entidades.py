@@ -36,13 +36,6 @@ class Usuario(Base):
     perfil_empleado = relationship("PerfilEmpleado", back_populates="usuario", uselist=False)
     perfil_empresa = relationship("PerfilEmpresa", back_populates="usuario", uselist=False)
   
-    direccion_normalizada = Column(Text, nullable=True)
-    razon_social = Column(Text, nullable=True)
-    cuit = Column(String(20), unique=True, nullable=True)
-    provincia = Column(Text, nullable=True)
-    municipio = Column(Text, nullable=True)
-    cod_postal = Column(String(20), nullable=True)
-    
     fecha = Column(Date, server_default=func.current_date())
 
 class PerfilEmpleado(Base):

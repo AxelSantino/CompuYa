@@ -122,6 +122,8 @@ class UsuarioService:
         nuevo_perfil = PerfilEmpresa(
             usuario_id=nuevo_usuario.id,
             razon_social=empresa_data.razon_social,
+            cuit=empresa_data.cuit,
+            direccion_normalizada=empresa_data.direccion_normalizada,
             latitud=empresa_data.latitud,
             longitud=empresa_data.longitud,
             provincia=empresa_data.provincia,
@@ -132,7 +134,6 @@ class UsuarioService:
         
         await self.db.commit()
         
-        # CARGA COMPLETA: Cargamos ambos perfiles para evitar errores de validación de respuesta
         query = select(Usuario).where(Usuario.id == nuevo_usuario.id).options(
             selectinload(Usuario.perfil_empleado),
             selectinload(Usuario.perfil_empresa)

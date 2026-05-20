@@ -128,7 +128,8 @@ export default function ShipmentDetailPage() {
                 </div>
 
                 {/* Map Card */}
-                {shipment.sucursal && shipment.latitud_destino && shipment.longitud_destino && (
+                {user && ['admin', 'supervisor', 'repartidor'].includes(user.rol) && 
+                 shipment.sucursal && shipment.latitud_destino && shipment.longitud_destino && (
                   <div className="card">
                     <h2 className="card-header"><FaMap /> Ruta Sugerida</h2>
                     <div className="card-body">
