@@ -10,16 +10,20 @@ import './LoginPage.css';
 
 export default function LoginPage() {
   const router = useRouter();
-  const { login, isAuthenticated, isLoginLoading } = useAuth();
+  const { login, isAuthenticated, isLoginLoading, user } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (isAuthenticated) {
-      router.push('/dashboard');
+    if (isAuthenticated && user) {
+      if (user.rol === 'repartidor') {
+        router.push('/dashboard/routes');
+      } else {
+        router.push('/dashboard');
+      }
     }
-  }, [isAuthenticated, router]);
+  }, [isAuthenticated, user, router]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();

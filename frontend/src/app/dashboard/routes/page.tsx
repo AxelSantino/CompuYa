@@ -1,0 +1,270 @@
+'use client';
+
+import React, { useEffect, useState, useCallback } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
+import shipmentService from '@/services/shipmentService';
+import api from '@/services/api';
+import { Envio } from '@/types/envio';
+import DashboardLayout from '@/components/layout/DashboardLayout';
+import LoadingOverlay from '@/components/LoadingOverlay';
+import dynamic from 'next/dynamic';
+import { FaRoute, FaMagic, FaTruck, FaMapMarkerAlt, FaWarehouse, FaSync, FaUserTie } from 'react-icons/fa';
+import './RoutesPage.css';
+
+const MapHojaRuta = dynamic(() => import('@/components/MapHojaRuta'), { 
+  ssr: false,
+  loading: () => <div className="w-full h-[500px] bg-gray-100 animate-pulse rounded-lg flex items-center justify-center text-gray-400">Cargando mapa de ruta...</div>
+});
+
+export default function RoutesPage() {
+  const { user } = useAuth();
+  const [shipments, setShipments] = useState<Envio[]>([]);
+  const [route, setRoute] = useState<Envio[]>([]);
+  const [repartidores, setRepartidores] = useState<any[]>([]);
+  const [selectedDriverId, setSelectedDriverId] = useState<number | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  const isSupervisor = user?.rol === 'admin' || user?.rol === 'supervisor';
+  const isDriver = user?.rol === 'repartidor' || user?.rol === 'operador';
+
+  const fetchData = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      if (isSupervisor) {
+        const [allShipments, driversList] = await Promise.all([
+          shipmentService.getShipments(),
+          api.get('/usuarios/repartidores').then(res => res.data)
+        ]);
+        setShipments(allShipments.filter(s => s.estado === 'en sucursal'));
+        setRepartidores(driversList);
+      }
+      
+      if (isDriver) {
+        const myRoute = await shipmentService.getDriverRoute();
+        setRoute(myRoute);
+      }
+    } catch (err) {
+      console.error("Error cargando datos de rutas:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [isSupervisor, isDriver]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  // Efecto para cargar la ruta de un repartidor específico (para supervisores)
+  useEffect(() => {
+    if (isSupervisor && selectedDriverId) {
+      const loadDriverRoute = async () => {
+        setIsLoading(true);
+        try {
+          const driverRoute = await shipmentService.getRouteByDriverId(selectedDriverId);
+          setRoute(driverRoute);
+        } catch (err) {
+          console.error("Error cargando ruta del repartidor:", err);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+      loadDriverRoute();
+    } else if (isSupervisor && !selectedDriverId) {
+      setRoute([]); // Limpiar mapa si no hay repartidor seleccionado
+    }
+  }, [selectedDriverId, isSupervisor]);
+
+  const handleAutoAssign = async (trackingId: string) => {
+    setIsProcessing(true);
+    try {
+      await shipmentService.assignShipmentAutomatically(trackingId);
+      await fetchData();
+    } catch (err) {
+      alert("Error al asignar.");
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const handleAssignAll = async () => {
+    if (!confirm("¿Deseas asignar todos los envíos pendientes de forma automática?")) return;
+    setIsProcessing(true);
+    try {
+      const res = await shipmentService.assignAllShipments();
+      alert(res.message);
+      await fetchData();
+    } catch (err) {
+      alert("Error en la asignación masiva.");
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const mapPoints = route.length > 0 ? [
+    { 
+      lat: route[0].sucursal?.latitud || -34.6037, 
+      lng: route[0].sucursal?.longitud || -58.3816, 
+      nombre: route[0].sucursal?.nombre || 'Sucursal Origen',
+      isSucursal: true
+    },
+    ...route.map(e => ({
+      lat: e.latitud_destino || 0,
+      lng: e.longitud_destino || 0,
+      nombre: e.destinatario.perfil_empresa?.razon_social || e.tracking_id
+    }))
+  ] : [];
+
+  return (
+    <DashboardLayout>
+      <div className="routes-container p-4 md:p-6">
+        <LoadingOverlay isLoading={isLoading || isProcessing} text="Actualizando logística..." />
+        
+        <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+          <div>
+            <h1 className="text-3xl font-extrabold text-gray-900 flex items-center gap-3">
+              <FaRoute className="text-blue-600" /> Centro de Control Logístico
+            </h1>
+            <p className="text-gray-500 mt-1">Gestión de asignaciones masivas y monitoreo de rutas en tiempo real.</p>
+          </div>
+          {isSupervisor && shipments.length > 0 && (
+            <button 
+              onClick={handleAssignAll}
+              className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-indigo-200 transition-all active:scale-95"
+            >
+              <FaSync className={isProcessing ? "animate-spin" : ""} /> Asignar Todo ({shipments.length})
+            </button>
+          )}
+        </header>
+
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+          
+          {/* SECCIÓN SUPERVISOR: ASIGNACIÓN */}
+          {isSupervisor && (
+            <div className="xl:col-span-1 space-y-6">
+              {/* Filtro de Repartidor */}
+              <div className="card bg-gradient-to-br from-gray-900 to-gray-800 text-white border-none shadow-xl">
+                <div className="card-header border-gray-700 bg-transparent">
+                  <h2 className="text-white flex items-center gap-2"><FaUserTie className="text-blue-400" /> Monitoreo por Repartidor</h2>
+                </div>
+                <div className="card-body">
+                  <select 
+                    className="w-full bg-gray-700 text-white border-gray-600 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                    value={selectedDriverId || ''}
+                    onChange={(e) => setSelectedDriverId(e.target.value ? Number(e.target.value) : null)}
+                  >
+                    <option value="">Seleccionar Repartidor para ver su Ruta...</option>
+                    {repartidores.map(r => (
+                      <option key={r.id} value={r.id}>
+                        {r.perfil_empleado?.nombre} {r.perfil_empleado?.apellido} ({r.email})
+                      </option>
+                    ))}
+                  </select>
+                  {selectedDriverId && (
+                    <button 
+                      onClick={() => setSelectedDriverId(null)}
+                      className="mt-3 text-sm text-blue-400 hover:text-blue-300 font-medium transition-colors"
+                    >
+                      × Limpiar filtro / Ver pendientes
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              <div className="card h-full">
+                <div className="card-header flex items-center justify-between">
+                  <h2 className="flex items-center gap-2"><FaMagic /> Envíos en Sucursal</h2>
+                  <span className="bg-blue-100 text-blue-700 text-xs font-bold px-2 py-1 rounded-full">
+                    {shipments.length} pendientes
+                  </span>
+                </div>
+                <div className="card-body overflow-y-auto max-h-[400px] p-0">
+                  {shipments.length === 0 ? (
+                    <div className="p-10 text-center text-gray-400">
+                      <FaWarehouse className="text-4xl mx-auto mb-3 opacity-20" />
+                      <p>No hay envíos pendientes.</p>
+                    </div>
+                  ) : (
+                    <ul className="divide-y divide-gray-100">
+                      {shipments.map(s => (
+                        <li key={s.id} className="p-4 hover:bg-gray-50 transition-colors group">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="font-bold text-gray-800">{s.tracking_id}</p>
+                              <p className="text-xs text-gray-500 truncate max-w-[150px]">{s.destinatario.perfil_empresa?.razon_social}</p>
+                            </div>
+                            <button 
+                              onClick={() => handleAutoAssign(s.tracking_id)}
+                              className="btn-assign group-hover:scale-105 transition-transform"
+                            >
+                              <FaMagic /> Asignar
+                            </button>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* SECCIÓN REPARTIDOR: MAPA Y HOJA DE RUTA */}
+          <div className={isSupervisor ? "xl:col-span-2" : "xl:col-span-3"}>
+            <div className="space-y-6">
+              {route.length > 0 ? (
+                <>
+                  <div className="card">
+                    <div className="card-header flex items-center justify-between bg-green-50 text-green-800 border-b border-green-100">
+                      <h2 className="flex items-center gap-2">
+                        <FaTruck /> {selectedDriverId ? 'Visualizando Recorrido del Repartidor' : 'Mi Hoja de Ruta Optimizada'}
+                      </h2>
+                      <span className="text-xs font-medium">Orden eficiente sugerido</span>
+                    </div>
+                    <div className="card-body p-0">
+                      <MapHojaRuta puntos={mapPoints} />
+                    </div>
+                  </div>
+
+                  <div className="card">
+                    <div className="card-header bg-gray-50">
+                      <h2 className="text-gray-700">Orden de Entrega</h2>
+                    </div>
+                    <div className="card-body p-0">
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0 divide-x divide-y divide-gray-100">
+                        {route.map((e, index) => (
+                          <div key={e.id} className="p-4 flex items-start gap-4">
+                            <div className="flex-shrink-0 w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center font-bold shadow-sm">
+                              {index + 1}
+                            </div>
+                            <div>
+                              <p className="font-bold text-gray-800 text-sm">{e.tracking_id}</p>
+                              <p className="text-xs text-gray-500 flex items-center gap-1">
+                                <FaMapMarkerAlt /> {e.destinatario.perfil_empresa?.razon_social}
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div className="card p-20 text-center text-gray-400 bg-gray-50 border-dashed border-2 border-gray-200">
+                  <FaRoute className="text-6xl mx-auto mb-4 opacity-10" />
+                  <h3 className="text-xl font-medium text-gray-500">
+                    {selectedDriverId ? 'Este repartidor no tiene entregas activas' : 'Sin recorrido asignado'}
+                  </h3>
+                  <p className="mt-2 text-sm">
+                    {isSupervisor && !selectedDriverId ? 'Selecciona un repartidor para monitorear su ruta.' : 'Las entregas aparecerán aquí una vez asignadas.'}
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </DashboardLayout>
+  );
+}

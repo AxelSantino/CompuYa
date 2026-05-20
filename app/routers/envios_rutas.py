@@ -18,7 +18,7 @@ async def listar_envios(
 ):
     return await envio_service.listar_envios()
 
-@router.post("/", response_model=EnvioRespuesta, status_code=status.HTTP_201_CREATED)
+@router.post("/", response_model=EnvioRespuesta, status_code=status.HTTP_201_CREATED, dependencies=[Depends(tiene_rol(["operador", "supervisor", "admin"]))])
 async def crear_envio(
     envio_in: EnvioCrear,
     usuario_actual: Usuario = Depends(obtener_usuario_actual),
@@ -57,3 +57,29 @@ async def obtener_historial(
 ):
     return await envio_service.obtener_historial_envio(tracking_id)
 
+@router.post("/{tracking_id}/asignar-automatico", dependencies=[Depends(tiene_rol(["supervisor"]))])
+async def asignar_envio_automatico(
+    tracking_id: str,
+    envio_service: EnvioService = Depends(get_envio_service)
+):
+    return await envio_service.asignar_envio_automatico(tracking_id)
+
+@router.post("/asignar-todos", dependencies=[Depends(tiene_rol(["supervisor"]))])
+async def asignar_todos_pendientes(
+    envio_service: EnvioService = Depends(get_envio_service)
+):
+    return await envio_service.asignar_todos_pendientes()
+
+@router.get("/hoja-ruta/repartidor/{id_empleado}", response_model=List[EnvioRespuesta], dependencies=[Depends(tiene_rol(["supervisor"]))])
+async def obtener_hoja_ruta_repartidor(
+    id_empleado: int,
+    envio_service: EnvioService = Depends(get_envio_service)
+):
+    return await envio_service.obtener_hoja_ruta(id_empleado)
+
+@router.get("/hoja-ruta/mi-recorrido", response_model=List[EnvioRespuesta])
+async def obtener_hoja_ruta(
+    usuario_actual: Usuario = Depends(obtener_usuario_actual),
+    envio_service: EnvioService = Depends(get_envio_service)
+):
+    return await envio_service.obtener_hoja_ruta(usuario_actual.id)

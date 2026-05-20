@@ -23,6 +23,25 @@ async def get_usuario_service(db: AsyncSession = Depends(obtener_db)) -> Usuario
 async def obtener_perfil(usuario: Usuario = Depends(obtener_usuario_actual)):
     return usuario
 
+@router.get("/repartidores", response_model=List[UsuarioRespuesta], dependencies=[Depends(tiene_rol(["admin", "supervisor"]))])
+async def listar_repartidores(
+    usuario_service: UsuarioService = Depends(get_usuario_service)
+):
+    from sqlalchemy import select
+    from app.models.entidades import TipoCliente
+    from sqlalchemy.orm import selectinload
+    
+    query = select(Usuario).where(
+        Usuario.tipo == TipoCliente.EMPLEADO,
+        Usuario.rol == "repartidor"
+    ).options(
+        selectinload(Usuario.perfil_empleado),
+        selectinload(Usuario.perfil_empresa)
+    )
+    
+    result = await usuario_service.db.execute(query)
+    return result.scalars().all()
+
 @router.get("/", response_model=List[UsuarioRespuesta], dependencies=[Depends(tiene_rol(["admin"]))])
 async def listar_usuarios(
     usuario_service: UsuarioService = Depends(get_usuario_service)

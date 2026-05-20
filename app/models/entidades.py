@@ -50,7 +50,7 @@ class PerfilEmpresa(Base):
     __tablename__= "perfiles_empresa"
     id = Column(BigInteger, primary_key=True)
     usuario_id = Column(BigInteger, ForeignKey("usuarios.id"),unique=True)
-    razon_social = Column(Text)
+    razon_social = Column(Text, unique=True)
     cuit = Column(String(20), unique=True)
     direccion_normalizada = Column(Text)
     latitud = Column(Float, nullable=False)
@@ -106,3 +106,12 @@ class Sucursal(Base):
     direccion = Column(Text, nullable=False)
     latitud = Column(Float, nullable=False)
     longitud = Column(Float, nullable=False)
+
+class AsignacionEnvio(Base):
+    __tablename__ = "asignaciones_envio"
+    id = Column(BigInteger, primary_key=True)
+    envio_id = Column(BigInteger, ForeignKey("envios.id"), unique=True, nullable=False)
+    id_empleado = Column(BigInteger, ForeignKey("usuarios.id"), nullable=False)
+
+    envio = relationship("Envio")
+    empleado = relationship("Usuario")

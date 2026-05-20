@@ -10,8 +10,8 @@ type DashboardLayoutProps = {
 };
 
 const NAV_ITEMS = [
-  { name: 'Dashboard', href: '/dashboard', icon: 'bg-gray-500' },
-  { name: 'Envíos', href: '/dashboard', icon: 'bg-gray-400' }, // For now pointing both to /dashboard
+  { name: 'Lista de envíos', href: '/dashboard', icon: 'bg-blue-500', roles: ['admin', 'supervisor', 'operador', 'visor'] },
+  { name: 'Control Logístico', href: '/dashboard/routes', icon: 'bg-indigo-500', roles: ['admin', 'supervisor', 'repartidor'] },
 ];
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
@@ -23,6 +23,10 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     logout();
     router.push('/');
   };
+
+  const filteredNavItems = NAV_ITEMS.filter(item => 
+    !item.roles || (user && item.roles.includes(user.rol))
+  );
 
   const getUserName = () => {
     if (!user) return 'Usuario';
@@ -57,7 +61,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         
         <nav className="flex-1">
           <ul className="space-y-1">
-            {NAV_ITEMS.map((item) => {
+            {filteredNavItems.map((item) => {
               const isActive = pathname === item.href;
               return (
                 <li key={item.name}>
@@ -70,7 +74,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                     }`}
                   >
                     <div className={`w-5 h-5 rounded mr-3 transition-colors ${
-                      isActive ? 'bg-white/30' : 'bg-gray-700 group-hover:bg-gray-600'
+                      isActive ? 'bg-white/30' : item.icon + ' opacity-50 group-hover:opacity-100'
                     }`}></div>
                     <span className="font-medium">{item.name}</span>
                   </Link>

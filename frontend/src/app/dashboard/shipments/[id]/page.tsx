@@ -8,15 +8,8 @@ import shipmentService from '@/services/shipmentService';
 import { Envio, HistorialEnvio, EnvioStatus } from '@/types/envio';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import LoadingOverlay from '@/components/LoadingOverlay';
-import dynamic from 'next/dynamic';
-import { FaArrowLeft, FaBox, FaCalendar, FaUser, FaBuilding, FaFileAlt, FaShippingFast, FaExclamationCircle, FaMapMarkerAlt, FaWarehouse, FaHome, FaTimesCircle, FaCheckCircle, FaMap } from 'react-icons/fa';
+import { FaArrowLeft, FaBox, FaCalendar, FaUser, FaBuilding, FaFileAlt, FaShippingFast, FaExclamationCircle, FaMapMarkerAlt, FaWarehouse, FaTimesCircle, FaCheckCircle } from 'react-icons/fa';
 import './ShipmentDetailPage.css';
-
-// Importación dinámica para evitar errores de SSR con Leaflet
-const MapRuteo = dynamic(() => import('@/components/MapRuteo'), { 
-  ssr: false,
-  loading: () => <div className="w-full h-[400px] bg-gray-100 animate-pulse rounded-lg flex items-center justify-center text-gray-400 font-medium">Cargando mapa interactivo...</div>
-});
 
 const statusConfig: Record<EnvioStatus, { icon: JSX.Element; colorClass: string }> = {
   'en sucursal': { icon: <FaWarehouse />, colorClass: 'status-icon-blue' },
@@ -68,7 +61,6 @@ export default function ShipmentDetailPage() {
         }
       } catch (err) {
         setError('No se pudo cargar la información del envío.');
-        console.error(err);
       } finally {
         setIsLoading(false);
       }
@@ -126,31 +118,6 @@ export default function ShipmentDetailPage() {
                     </div>
                   </div>
                 </div>
-
-                {/* Map Card */}
-                {user && ['admin', 'supervisor', 'repartidor'].includes(user.rol) && 
-                 shipment.sucursal && shipment.latitud_destino && shipment.longitud_destino && (
-                  <div className="card">
-                    <h2 className="card-header"><FaMap /> Ruta Sugerida</h2>
-                    <div className="card-body">
-                      <MapRuteo 
-                        origen={{ 
-                          lat: shipment.sucursal.latitud, 
-                          lng: shipment.sucursal.longitud, 
-                          nombre: shipment.sucursal.nombre 
-                        }} 
-                        destino={{ 
-                          lat: shipment.latitud_destino, 
-                          lng: shipment.longitud_destino, 
-                          nombre: shipment.destinatario.perfil_empresa?.razon_social || 'Destino'
-                        }} 
-                      />
-                      <div className="mt-4 text-xs text-gray-500 bg-blue-50 p-3 rounded border border-blue-100">
-                        <strong>Nota:</strong> Esta ruta es una sugerencia basada en el camino más corto por carretera desde la sucursal de origen hasta el destino.
-                      </div>
-                    </div>
-                  </div>
-                )}
               </div>
 
               {/* Audit Card (Supervisor only) */}

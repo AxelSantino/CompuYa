@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 import React, { useState, useEffect, useMemo } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 import withAuth from '@/components/auth/withAuth';
 import shipmentService from '@/services/shipmentService';
 import { Envio, EnvioStatus } from '@/types/envio';
@@ -35,25 +36,41 @@ StatusBadge.displayName = 'StatusBadge';
 
 const ShipmentsPage = () => {
   const router = useRouter();
+  const { user } = useAuth();
   const [shipments, setShipments] = useState<Envio[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<EnvioStatus | ''>('');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Route guard for 'repartidor'
   useEffect(() => {
-    const fetchShipments = async () => {
-      try {
-        const data = await shipmentService.getShipments();
-        setShipments(data);
-      } catch (err) {
-        setError('Error al cargar los envíos. Por favor, intenta de nuevo más tarde.');
-      } finally {
+    if (user && user.rol === 'repartidor') {
+      router.replace('/dashboard/routes');
+    }
+  }, [user, router]);
+
+  useEffect(() => {
+    // Don't fetch data if the user is a repartidor, as they will be redirected
+    if (user && user.rol !== 'repartidor') {
+      const fetchShipments = async () => {
+        try {
+          const data = await shipmentService.getShipments();
+          setShipments(data);
+        } catch (err) {
+          setError('Error al cargar los envíos. Por favor, intenta de nuevo más tarde.');
+        } finally {
+          setIsLoading(false);
+        }
+      };
+      fetchShipments();
+    } else if (!user) {
+        // Still loading user, do nothing yet
+    } else {
+        // Is a repartidor, will be redirected.
         setIsLoading(false);
-      }
-    };
-    fetchShipments();
-  }, []);
+    }
+  }, [user]);
 
   const filteredShipments = useMemo(() => {
     return shipments.filter((shipment) => {
@@ -62,6 +79,15 @@ const ShipmentsPage = () => {
       return matchesSearch && matchesStatus;
     });
   }, [shipments, searchTerm, statusFilter]);
+
+  // Render a loading state or nothing while redirecting
+  if (!user || user.rol === 'repartidor') {
+    return (
+      <DashboardLayout>
+        <LoadingOverlay isLoading={true} text="Verificando permisos..." />
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout>
