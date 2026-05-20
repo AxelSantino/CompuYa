@@ -10,9 +10,19 @@ interface User {
   supabase_id: string;
   email: string;
   rol: string;
-  nombre: string | null;
-  apellido: string | null;
-  razon_social?: string | null;
+  tipo: 'empleado' | 'empresa';
+  perfil_empleado?: {
+    nombre: string | null;
+    apellido: string | null;
+  } | null;
+  perfil_empresa?: {
+    razon_social: string | null;
+    latitud: number;
+    longitud: number;
+    provincia?: string | null;
+    municipio?: string | null;
+    cod_postal?: string | null;
+  } | null;
 }
 
 interface AuthContextType {

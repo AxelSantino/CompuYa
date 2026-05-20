@@ -24,6 +24,19 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     router.push('/');
   };
 
+  const getUserName = () => {
+    if (!user) return 'Usuario';
+    if (user.tipo === 'empleado' && user.perfil_empleado) {
+      return user.perfil_empleado.nombre || 'Empleado';
+    }
+    if (user.tipo === 'empresa' && user.perfil_empresa) {
+      return user.perfil_empresa.razon_social || 'Empresa';
+    }
+    return user.email.split('@')[0];
+  };
+
+  const userName = getUserName();
+
   if (isLoading) {
     return (
       <div className="flex h-screen items-center justify-center bg-gray-100">
@@ -71,10 +84,10 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
           {user && (
             <div className="flex items-center p-2 mb-4">
               <div className="w-10 h-10 bg-gradient-to-tr from-gray-700 to-gray-600 rounded-full mr-3 flex items-center justify-center font-bold border border-gray-700">
-                {user.nombre ? user.nombre[0].toUpperCase() : user.email[0].toUpperCase()}
+                {userName[0].toUpperCase()}
               </div>
               <div className="overflow-hidden">
-                <p className="font-semibold truncate leading-none mb-1">{user.nombre || 'Usuario'}</p>
+                <p className="font-semibold truncate leading-none mb-1">{userName}</p>
                 <p className="text-xs text-gray-500 capitalize">{user.rol}</p>
               </div>
             </div>

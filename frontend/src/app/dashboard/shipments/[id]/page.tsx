@@ -8,8 +8,15 @@ import shipmentService from '@/services/shipmentService';
 import { Envio, HistorialEnvio, EnvioStatus } from '@/types/envio';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import LoadingOverlay from '@/components/LoadingOverlay';
-import { FaArrowLeft, FaBox, FaCalendar, FaUser, FaBuilding, FaFileAlt, FaShippingFast, FaExclamationCircle, FaMapMarkerAlt, FaWarehouse, FaHome, FaTimesCircle, FaCheckCircle } from 'react-icons/fa';
+import dynamic from 'next/dynamic';
+import { FaArrowLeft, FaBox, FaCalendar, FaUser, FaBuilding, FaFileAlt, FaShippingFast, FaExclamationCircle, FaMapMarkerAlt, FaWarehouse, FaHome, FaTimesCircle, FaCheckCircle, FaMap } from 'react-icons/fa';
 import './ShipmentDetailPage.css';
+
+// Importación dinámica para evitar errores de SSR con Leaflet
+const MapRuteo = dynamic(() => import('@/components/MapRuteo'), { 
+  ssr: false,
+  loading: () => <div className="w-full h-[400px] bg-gray-100 animate-pulse rounded-lg flex items-center justify-center text-gray-400 font-medium">Cargando mapa interactivo...</div>
+});
 
 const statusConfig: Record<EnvioStatus, { icon: JSX.Element; colorClass: string }> = {
   'en sucursal': { icon: <FaWarehouse />, colorClass: 'status-icon-blue' },
@@ -99,7 +106,7 @@ export default function ShipmentDetailPage() {
                   <h2 className="card-header"><FaBox /> Información del Envío</h2>
                   <div className="card-body grid grid-cols-2 gap-6">
                     <DetailItem icon={<FaCalendar />} label="Fecha de Creación" value={new Date(shipment.fecha_creacion).toLocaleString()} />
-                    <DetailItem icon={<FaUser />} label="Creado por" value={`${shipment.creador.nombre} ${shipment.creador.apellido || ''}`} />
+                    <DetailItem icon={<FaUser />} label="Creado por" value={shipment.creador.perfil_empleado?.nombre ? `${shipment.creador.perfil_empleado.nombre} ${shipment.creador.perfil_empleado.apellido || ''}` : shipment.creador.email} />
                     <DetailItem icon={<FaShippingFast />} label="Tipo de Envío" value={shipment.tipo_envio} />
                     <DetailItem icon={<FaExclamationCircle />} label="Manejo Especial" value={shipment.restriccion} />
                     <div className="col-span-2">
@@ -112,13 +119,37 @@ export default function ShipmentDetailPage() {
                 <div className="card">
                   <h2 className="card-header"><FaBuilding /> Información del Destinatario</h2>
                   <div className="card-body grid grid-cols-2 gap-6">
-                    <DetailItem label="Razón Social / Nombre" value={shipment.destinatario.razon_social} />
-                    <DetailItem label="CUIT/CUIL" value={shipment.destinatario.cuit} />
+                    <DetailItem label="Razón Social / Nombre" value={shipment.razon_social_destinatario || shipment.destinatario.perfil_empresa?.razon_social || shipment.destinatario.email} />
+                    <DetailItem label="CUIT/CUIL" value={shipment.cuit_destinatario || shipment.destinatario.perfil_empresa?.cuit || 'N/A'} />
                     <div className="col-span-2">
-                       <DetailItem icon={<FaMapMarkerAlt/>} label="Dirección" value={`${shipment.destinatario.direccion_normalizada}, ${shipment.destinatario.municipio}, ${shipment.destinatario.provincia} (${shipment.destinatario.cod_postal})`} />
+                       <DetailItem icon={<FaMapMarkerAlt/>} label="Dirección" value={`${shipment.destinatario.perfil_empresa?.direccion_normalizada || ''}, ${shipment.destinatario.perfil_empresa?.municipio || ''}, ${shipment.destinatario.perfil_empresa?.provincia || ''} (${shipment.destinatario.perfil_empresa?.cod_postal || ''})`.replace(/^, , \(\)$/, 'Dirección no especificada en el perfil')} />
                     </div>
                   </div>
                 </div>
+
+                {/* Map Card */}
+                {shipment.sucursal && shipment.latitud_destino && shipment.longitud_destino && (
+                  <div className="card">
+                    <h2 className="card-header"><FaMap /> Ruta Sugerida</h2>
+                    <div className="card-body">
+                      <MapRuteo 
+                        origen={{ 
+                          lat: shipment.sucursal.latitud, 
+                          lng: shipment.sucursal.longitud, 
+                          nombre: shipment.sucursal.nombre 
+                        }} 
+                        destino={{ 
+                          lat: shipment.latitud_destino, 
+                          lng: shipment.longitud_destino, 
+                          nombre: shipment.destinatario.perfil_empresa?.razon_social || 'Destino'
+                        }} 
+                      />
+                      <div className="mt-4 text-xs text-gray-500 bg-blue-50 p-3 rounded border border-blue-100">
+                        <strong>Nota:</strong> Esta ruta es una sugerencia basada en el camino más corto por carretera desde la sucursal de origen hasta el destino.
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Audit Card (Supervisor only) */}
@@ -134,7 +165,7 @@ export default function ShipmentDetailPage() {
                           <div className="audit-content">
                             <p className="font-bold capitalize">{item.estado}</p>
                             <p className="text-xs text-gray-500">{new Date(item.fecha).toLocaleString()}</p>
-                            <p className="text-xs text-gray-500">Operador: {`${item.empleado.nombre} ${item.empleado.apellido || ''}`}</p>
+                            <p className="text-xs text-gray-500">Operador: {item.empleado.perfil_empleado?.nombre ? `${item.empleado.perfil_empleado.nombre} ${item.empleado.perfil_empleado.apellido || ''}` : item.empleado.email}</p>
                           </div>
                         </div>
                       );
