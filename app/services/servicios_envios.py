@@ -6,7 +6,7 @@ from sqlalchemy.orm import selectinload
 from sqlalchemy import select, func
 from fastapi import HTTPException, status
 from app.models.entidades import AsignacionEnvio, Envio, Usuario, TipoCliente, EstadoEnvio, Historial, PerfilEmpresa
-from app.models.esquemas import EnvioCrear
+from app.models.esquemas import EnvioCrear, EditarEnvio
 from app.services.servicio_ruteo import ServicioRuteo
 
 class EnvioService:
@@ -86,7 +86,68 @@ class EnvioService:
                 detail="Envio no encontrado"
             )
         return envio
+    
+    async def editar_envio(self, tracking_id: str, datos_actualizados: EditarEnvio, usuario_id: int) -> Envio:
+        envio= await self.obtener_envio_por_id(tracking_id)
+        if not envio:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Envio no encontrado"
+            )
+        if envio.estado in [EstadoEnvio.EN_TRANSITO, EstadoEnvio.ENTREGADO, EstadoEnvio.CANCELADO]:
+            raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"El envÃo no se puede editar ya que su estado es {envio.estado.value}"
+            )
+        cuit_nuevo = datos_actualizados.cuit_destinatario
+        razon_nueva = datos_actualizados.razon_social_destinatario
 
+        if cuit_nuevo is not None or razon_nueva is not None:
+
+            query = select(PerfilEmpresa)
+            
+            if cuit_nuevo is not None and razon_nueva is not None:
+                query = query.where(
+                    (PerfilEmpresa.cuit == cuit_nuevo) & 
+                    (PerfilEmpresa.razon_social == razon_nueva)
+                )
+            elif cuit_nuevo is not None:
+                query = query.where(PerfilEmpresa.cuit == cuit_nuevo)
+            elif razon_nueva is not None:
+                query = query.where(PerfilEmpresa.razon_social == razon_nueva)
+
+            resultado = await self.db.execute(query)
+            empresa_validada = resultado.scalars().first()
+
+            if not empresa_validada:
+                raise HTTPException(
+                    status_code=404, 
+                    detail="La empresa destino ingresada no existe en el sistema."
+                )
+            
+            envio.cuit_destinatario = empresa_validada.cuit
+            envio.razon_social_destinatario = empresa_validada.razon_social
+            envio.destinatario_id = empresa_validada.usuario_id
+
+            if datos_actualizados.latitud_destino is None:
+                envio.latitud_destino = empresa_validada.latitud
+            if datos_actualizados.longitud_destino is None:
+                envio.longitud_destino = empresa_validada.longitud  
+            
+        if datos_actualizados.descripcion is not None:
+            envio.descripcion = datos_actualizados.descripcion
+            
+        if datos_actualizados.tipo_envio is not None:
+            envio.tipo_envio = datos_actualizados.tipo_envio
+            
+        if datos_actualizados.restriccion is not None:
+            envio.restriccion = datos_actualizados.restriccion
+
+        await self.db.commit()
+        await self.db.refresh(envio)
+
+        return envio
+    
     async def cancelar_envio(self, tracking_id: str, usuario_id: int) -> Envio:
         envio = await self.obtener_envio_por_id(tracking_id)
         if envio.estado == EstadoEnvio.CANCELADO or envio.estado == EstadoEnvio.ENTREGADO:

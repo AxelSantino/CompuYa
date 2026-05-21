@@ -89,6 +89,18 @@ class EnvioBase(BaseModel):
 class EnvioCrear(EnvioBase):
     pass
 
+class EditarEnvio(BaseModel):
+    razon_social_destinatario: Optional[str] = None
+    cuit_destinatario: Optional[str] = None
+    descripcion: Optional[str] = None
+    tipo_envio: Optional[TipoEnvio] = None
+    restriccion: Optional[RestriccionEnvio] = None  
+    cuit_destinatario: Optional[str] = None
+    latitud_destino: Optional[float] = None
+    longitud_destino: Optional[float] = None
+    sucursal_id: Optional[int] = None
+    cuit_destinatario: Optional[str] = None
+    
 class HistorialBase(BaseModel):
     envio_id: int
     id_empleado: int
