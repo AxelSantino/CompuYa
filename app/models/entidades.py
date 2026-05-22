@@ -35,7 +35,7 @@ class Usuario(Base):
     
     perfil_empleado = relationship("PerfilEmpleado", back_populates="usuario", uselist=False)
     perfil_empresa = relationship("PerfilEmpresa", back_populates="usuario", uselist=False)
-  
+    
     fecha = Column(Date, server_default=func.current_date())
 
 class PerfilEmpleado(Base):
@@ -76,7 +76,6 @@ class Envio(Base):
     creado_por_id = Column(BigInteger, ForeignKey("usuarios.id"), nullable=False)
     destinatario_id = Column(BigInteger, ForeignKey("usuarios.id"), nullable=True)
     
-  
     sucursal_id = Column(BigInteger, ForeignKey("sucursales.id"), nullable=True)
     latitud_destino = Column(Float, nullable=True)
     longitud_destino = Column(Float, nullable=True)
@@ -95,6 +94,8 @@ class Historial(Base):
     id_empleado = Column(BigInteger, ForeignKey("usuarios.id"), nullable=False)
     estado = Column(Enum(EstadoEnvio, native_enum=False, values_callable=lambda x: [e.value for e in x]), nullable=False)    
     
+    motivo = Column(Text, nullable=True)
+
     fecha = Column(DateTime(timezone=True), server_default=func.now())
     envio = relationship("Envio", back_populates="historial")
     empleado = relationship("Usuario")

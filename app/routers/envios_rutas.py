@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.session import obtener_db
 from app.services.servicios_envios import EnvioService
-from app.models.esquemas import EnvioCrear, EnvioRespuesta, HistorialRespuesta
+from app.models.esquemas import CancelarEnvio, EnvioCrear, EnvioRespuesta, HistorialRespuesta
 from app.models.entidades import Usuario, EstadoEnvio
 from app.utils.auth import obtener_usuario_actual, tiene_rol
 from typing import List
@@ -36,10 +36,12 @@ async def obtener_envio(
 @router.post("/{tracking_id}/cancelar", response_model=EnvioRespuesta,dependencies=[Depends(tiene_rol(["admin", "supervisor"]))] ) 
 async def cancelar_envio(
     tracking_id: str,
+
+    datos: CancelarEnvio,
     usuario_actual: Usuario = Depends(obtener_usuario_actual),
     envio_service: EnvioService = Depends(get_envio_service)
 ):
-    return await envio_service.cancelar_envio(tracking_id, usuario_actual.id)
+    return await envio_service.cancelar_envio(tracking_id, datos,usuario_actual.id)
 
 @router.post("/{tracking_id}/actualizar-estado", response_model=EnvioRespuesta, dependencies=[Depends(tiene_rol(["admin", "supervisor", "operador"]))])
 async def actualizar_estado_envio(

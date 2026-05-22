@@ -6,7 +6,7 @@ from sqlalchemy.orm import selectinload
 from sqlalchemy import select, func
 from fastapi import HTTPException, status
 from app.models.entidades import AsignacionEnvio, Envio, Usuario, TipoCliente, EstadoEnvio, Historial, PerfilEmpresa
-from app.models.esquemas import EnvioCrear
+from app.models.esquemas import CancelarEnvio, EnvioCrear
 from app.services.servicio_ruteo import ServicioRuteo
 
 class EnvioService:
@@ -87,7 +87,7 @@ class EnvioService:
             )
         return envio
 
-    async def cancelar_envio(self, tracking_id: str, usuario_id: int) -> Envio:
+    async def cancelar_envio(self, tracking_id: str,datos_cancelacion: CancelarEnvio, usuario_id: int) -> Envio:
         envio = await self.obtener_envio_por_id(tracking_id)
         if envio.estado == EstadoEnvio.CANCELADO or envio.estado == EstadoEnvio.ENTREGADO:
             raise HTTPException(
@@ -95,7 +95,14 @@ class EnvioService:
                 detail=f"El envío no se puede cancelar ya que su estado esta {envio.estado}"
             )
         envio.estado = EstadoEnvio.CANCELADO
-        await self.registrar_historial(envio.id, usuario_id, EstadoEnvio.CANCELADO)
+        nuevo_historial = Historial(
+        envio_id=envio.id,
+        id_empleado=usuario_id,
+        estado=EstadoEnvio.CANCELADO,
+        motivo=datos_cancelacion.motivo
+    )
+        self.db.add(nuevo_historial)
+
         await self.db.commit()
         await self.db.refresh(envio)
 
