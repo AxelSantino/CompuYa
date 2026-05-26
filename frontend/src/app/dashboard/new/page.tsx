@@ -47,8 +47,9 @@ const NewShipmentPage = () => {
             }
             await shipmentService.createShipment(shipmentData);
             router.push('/dashboard');
-        } catch (err: any) {
-            const errorMessage = err.response?.data?.detail || 'Error al crear el envío. Por favor, revisa los datos e intenta de nuevo.';
+        } catch (err: unknown) {
+            const errorResponse = err as { response?: { data?: { detail?: string } } };
+            const errorMessage = errorResponse.response?.data?.detail || 'Error al crear el envío. Por favor, revisa los datos e intenta de nuevo.';
             setError(errorMessage);
         } finally {
             setIsLoading(false);

@@ -8,7 +8,7 @@ import 'leaflet-routing-machine/dist/leaflet-routing-machine.css';
 
 // Corregir problema de iconos de Leaflet en Next.js
 const fixLeafletIcons = () => {
-  // @ts-ignore
+  // @ts-expect-error - Leaflet icons internal cleanup
   delete L.Icon.Default.prototype._getIconUrl;
   L.Icon.Default.mergeOptions({
     iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
@@ -16,6 +16,14 @@ const fixLeafletIcons = () => {
     shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
   });
 };
+
+interface LeafletWaypoint {
+  latLng: L.LatLng;
+}
+
+interface RoutingControl extends L.Control {
+  setWaypoints(waypoints: L.LatLng[]): this;
+}
 
 interface MapRuteoProps {
   origen: { lat: number; lng: number; nombre: string };
@@ -25,7 +33,7 @@ interface MapRuteoProps {
 export default function MapRuteo({ origen, destino }: MapRuteoProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
-  const routingControlRef = useRef<any>(null);
+  const routingControlRef = useRef<RoutingControl | null>(null);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -41,11 +49,12 @@ export default function MapRuteo({ origen, destino }: MapRuteoProps) {
     }).addTo(map);
 
     // Intentar configurar el ruteo
-    let routingControl: any = null;
+    let routingControl: RoutingControl | null = null;
     
     try {
-      if (L.Routing && (L.Routing as any).control) {
-        routingControl = (L.Routing as any).control({
+      const routingControlFactory = (L.Routing as unknown as { control: (options: object) => RoutingControl })?.control;
+      if (routingControlFactory) {
+        routingControl = routingControlFactory({
           waypoints: [
             L.latLng(origen.lat, origen.lng),
             L.latLng(destino.lat, destino.lng)
@@ -59,7 +68,7 @@ export default function MapRuteo({ origen, destino }: MapRuteoProps) {
             extendToWaypoints: true,
             missingRouteTolerance: 10
           },
-          createMarker: (i: number, waypoint: any) => {
+          createMarker: (i: number, waypoint: LeafletWaypoint) => {
             const icon = L.icon({
               iconUrl: i === 0 ? 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png' : 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
               shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
@@ -77,8 +86,8 @@ export default function MapRuteo({ origen, destino }: MapRuteoProps) {
         }).addTo(map);
         routingControlRef.current = routingControl;
       }
-    } catch (err) {
-      console.error("Error al inicializar el ruteo:", err);
+    } catch {
+      console.error("Error al inicializar el ruteo");
     }
 
     // Limpieza al desmontar
@@ -94,7 +103,7 @@ export default function MapRuteo({ origen, destino }: MapRuteoProps) {
           if (map) {
             map.removeControl(routingControl);
           }
-        } catch (e) {
+        } catch {
           // Ignorar errores en la remoción del control
         }
       }
@@ -103,7 +112,7 @@ export default function MapRuteo({ origen, destino }: MapRuteoProps) {
       if (map) {
         try {
           map.remove();
-        } catch (e) {
+        } catch {
           // Ignorar errores en la destrucción del mapa
         }
       }

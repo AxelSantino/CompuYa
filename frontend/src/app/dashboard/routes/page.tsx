@@ -16,11 +16,20 @@ const MapHojaRuta = dynamic(() => import('@/components/MapHojaRuta'), {
   loading: () => <div className="w-full h-[500px] bg-gray-100 animate-pulse rounded-lg flex items-center justify-center text-gray-400">Cargando mapa de ruta...</div>
 });
 
+interface Repartidor {
+  id: number;
+  email: string;
+  perfil_empleado: {
+    nombre: string;
+    apellido: string;
+  } | null;
+}
+
 export default function RoutesPage() {
   const { user } = useAuth();
   const [shipments, setShipments] = useState<Envio[]>([]);
   const [route, setRoute] = useState<Envio[]>([]);
-  const [repartidores, setRepartidores] = useState<any[]>([]);
+  const [repartidores, setRepartidores] = useState<Repartidor[]>([]);
   const [selectedDriverId, setSelectedDriverId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -32,55 +41,80 @@ export default function RoutesPage() {
     setIsLoading(true);
     try {
       if (isSupervisor) {
-        const [allShipments, driversList] = await Promise.all([
+        const [allShipments, driversListResponse] = await Promise.all([
           shipmentService.getShipments(),
-          api.get('/usuarios/repartidores').then(res => res.data)
+          api.get<Repartidor[]>('/usuarios/repartidores')
         ]);
         setShipments(allShipments.filter(s => s.estado === 'en sucursal'));
-        setRepartidores(driversList);
+        setRepartidores(driversListResponse.data);
       }
       
       if (isDriver) {
         const myRoute = await shipmentService.getDriverRoute();
         setRoute(myRoute);
       }
-    } catch (err) {
-      console.error("Error cargando datos de rutas:", err);
+    } catch {
+      // Error manejado silenciosamente para no interrumpir el flujo
     } finally {
       setIsLoading(false);
     }
   }, [isSupervisor, isDriver]);
 
   useEffect(() => {
-    fetchData();
+    let isMounted = true;
+    
+    const loadData = async () => {
+      if (isMounted) {
+        await fetchData();
+      }
+    };
+
+    loadData();
+    
+    return () => {
+      isMounted = false;
+    };
   }, [fetchData]);
+
+  const loadDriverRoute = useCallback(async (driverId: number) => {
+    setIsLoading(true);
+    try {
+      const driverRoute = await shipmentService.getRouteByDriverId(driverId);
+      setRoute(driverRoute);
+    } catch {
+      // Error manejado
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
   // Efecto para cargar la ruta de un repartidor específico (para supervisores)
   useEffect(() => {
-    if (isSupervisor && selectedDriverId) {
-      const loadDriverRoute = async () => {
-        setIsLoading(true);
-        try {
-          const driverRoute = await shipmentService.getRouteByDriverId(selectedDriverId);
-          setRoute(driverRoute);
-        } catch (err) {
-          console.error("Error cargando ruta del repartidor:", err);
-        } finally {
-          setIsLoading(false);
+    let isMounted = true;
+
+    const updateRoute = async () => {
+      if (isSupervisor && selectedDriverId) {
+        if (isMounted) {
+          await loadDriverRoute(selectedDriverId);
         }
-      };
-      loadDriverRoute();
-    } else if (isSupervisor && !selectedDriverId) {
-      setRoute([]); // Limpiar mapa si no hay repartidor seleccionado
-    }
-  }, [selectedDriverId, isSupervisor]);
+      } else if (isSupervisor && !selectedDriverId) {
+        setRoute([]); // Limpiar mapa si no hay repartidor seleccionado
+      }
+    };
+
+    updateRoute();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [selectedDriverId, isSupervisor, loadDriverRoute]);
 
   const handleAutoAssign = async (trackingId: string) => {
     setIsProcessing(true);
     try {
       await shipmentService.assignShipmentAutomatically(trackingId);
       await fetchData();
-    } catch (err) {
+    } catch {
       alert("Error al asignar.");
     } finally {
       setIsProcessing(false);
@@ -94,8 +128,21 @@ export default function RoutesPage() {
       const res = await shipmentService.assignAllShipments();
       alert(res.message);
       await fetchData();
-    } catch (err) {
+    } catch {
       alert("Error en la asignación masiva.");
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const handleDeliver = async (trackingId: string) => {
+    if (!confirm(`¿Confirmas que el envío ${trackingId} ha sido entregado?`)) return;
+    setIsProcessing(true);
+    try {
+      await shipmentService.markAsDelivered(trackingId);
+      await fetchData();
+    } catch {
+      alert("Error al marcar como entregado.");
     } finally {
       setIsProcessing(false);
     }
@@ -233,16 +280,30 @@ export default function RoutesPage() {
                     <div className="card-body p-0">
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0 divide-x divide-y divide-gray-100">
                         {route.map((e, index) => (
-                          <div key={e.id} className="p-4 flex items-start gap-4">
-                            <div className="flex-shrink-0 w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center font-bold shadow-sm">
-                              {index + 1}
+                          <div key={e.id} className="p-4 flex items-start justify-between gap-4 group">
+                            <div className="flex items-start gap-4">
+                              <div className="flex-shrink-0 w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center font-bold shadow-sm">
+                                {index + 1}
+                              </div>
+                              <div>
+                                <p className="font-bold text-gray-800 text-sm">{e.tracking_id}</p>
+                                <p className="text-xs text-gray-500 flex items-center gap-1">
+                                  <FaMapMarkerAlt /> {e.destinatario.perfil_empresa?.razon_social}
+                                </p>
+                              </div>
                             </div>
-                            <div>
-                              <p className="font-bold text-gray-800 text-sm">{e.tracking_id}</p>
-                              <p className="text-xs text-gray-500 flex items-center gap-1">
-                                <FaMapMarkerAlt /> {e.destinatario.perfil_empresa?.razon_social}
-                              </p>
-                            </div>
+                            
+                            {/* Botón entregado solo si es el propio repartidor */}
+                            {!selectedDriverId && (user?.rol === 'repartidor' || user?.rol === 'operador') && (
+                              <button 
+                                onClick={() => handleDeliver(e.tracking_id)}
+                                className="btn-deliver self-center"
+                                disabled={isProcessing}
+                                title="Marcar como entregado"
+                              >
+                                <FaTruck /> Entregado
+                              </button>
+                            )}
                           </div>
                         ))}
                       </div>

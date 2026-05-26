@@ -51,25 +51,40 @@ const ShipmentsPage = () => {
   }, [user, router]);
 
   useEffect(() => {
-    // Don't fetch data if the user is a repartidor, as they will be redirected
-    if (user && user.rol !== 'repartidor') {
-      const fetchShipments = async () => {
+    let isMounted = true;
+
+    const initialize = async () => {
+      // Don't fetch data if the user is a repartidor, as they will be redirected
+      if (user && user.rol !== 'repartidor') {
         try {
           const data = await shipmentService.getShipments();
-          setShipments(data);
-        } catch (err) {
-          setError('Error al cargar los envíos. Por favor, intenta de nuevo más tarde.');
+          if (isMounted) {
+            setShipments(data);
+          }
+        } catch {
+          if (isMounted) {
+            setError('Error al cargar los envíos. Por favor, intenta de nuevo más tarde.');
+          }
         } finally {
-          setIsLoading(false);
+          if (isMounted) {
+            setIsLoading(false);
+          }
         }
-      };
-      fetchShipments();
-    } else if (!user) {
-        // Still loading user, do nothing yet
-    } else {
-        // Is a repartidor, will be redirected.
-        setIsLoading(false);
-    }
+      } else if (!user) {
+          // Still loading user, do nothing yet
+      } else {
+          // Is a repartidor, will be redirected.
+          if (isMounted) {
+            setIsLoading(false);
+          }
+      }
+    };
+
+    initialize();
+
+    return () => {
+      isMounted = false;
+    };
   }, [user]);
 
   const filteredShipments = useMemo(() => {

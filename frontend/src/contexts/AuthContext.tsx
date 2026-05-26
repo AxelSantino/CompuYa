@@ -48,7 +48,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         try {
           const profile = await authService.getProfile();
           setUser(profile);
-        } catch (error) {
+        } catch {
           localStorage.removeItem('token');
         }
       }
@@ -66,16 +66,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       try {
         const profile = await authService.getProfile(data.access_token);
         setUser(profile);
-      } catch (profileError: any) {
+      } catch (profileError) {
+        const errorData = profileError as { response?: { status?: number } };
         console.error('Error fetching profile after login:', profileError);
         localStorage.removeItem('token');
-        if (profileError.response?.status === 403) {
+        if (errorData.response?.status === 403) {
           throw new Error('Tu cuenta está autenticada pero no tiene permisos para este sistema.');
         }
         throw new Error('Error al obtener el perfil de usuario. Contacte al administrador.');
       }
-    } catch (error: any) {
-      if (error.response?.status === 401) {
+    } catch (error) {
+      const errorData = error as { response?: { status?: number } };
+      if (errorData.response?.status === 401) {
         throw new Error('Email o contraseña incorrectos.');
       }
       throw error;

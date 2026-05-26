@@ -58,7 +58,7 @@ export interface EnvioRespuestaDestinatario {
   email: string;
   tipo: string;
   perfil_empresa?: EmpresaRespuesta;
-  perfil_empleado?: any;
+  perfil_empleado?: PerfilEmpleado | null;
 }
 
 export interface EnvioCrear {

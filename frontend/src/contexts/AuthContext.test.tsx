@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { AuthProvider, useAuth } from './AuthContext';
 import authService from '@/services/authService';
@@ -26,8 +26,8 @@ describe('AuthContext', () => {
     const mockToken = 'fake-token';
     const mockProfile = { id: 1, email: 'test@example.com', rol: 'admin' };
     
-    (authService.login as any).mockResolvedValue({ access_token: mockToken });
-    (authService.getProfile as any).mockResolvedValue(mockProfile);
+    (authService.login as Mock).mockResolvedValue({ access_token: mockToken });
+    (authService.getProfile as Mock).mockResolvedValue(mockProfile);
 
     const { result } = renderHook(() => useAuth(), { wrapper });
 

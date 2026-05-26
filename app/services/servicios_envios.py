@@ -87,6 +87,20 @@ class EnvioService:
             )
         return envio
 
+    async def entregar_envio(self, tracking_id: str, usuario_id: int) -> Envio:
+        envio = await self.obtener_envio_por_id(tracking_id)
+        if envio.estado != EstadoEnvio.EN_TRANSITO:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"El envío no se puede entregar ya que su estado esta {envio.estado}"
+            )
+        envio.estado = EstadoEnvio.ENTREGADO
+        await self.registrar_historial(envio.id, usuario_id, EstadoEnvio.ENTREGADO)
+        await self.db.commit()
+        await self.db.refresh(envio)
+
+        return await self.obtener_envio_por_id(envio.tracking_id)
+       
     async def cancelar_envio(self, tracking_id: str, usuario_id: int) -> Envio:
         envio = await self.obtener_envio_por_id(tracking_id)
         if envio.estado == EstadoEnvio.CANCELADO or envio.estado == EstadoEnvio.ENTREGADO:

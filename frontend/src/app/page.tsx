@@ -31,8 +31,9 @@ export default function LoginPage() {
 
     try {
       await login(email, password);
-    } catch (err: any) {
-      setError(err.message || 'Ocurrió un error inesperado. Por favor, intenta de nuevo.');
+    } catch (err: unknown) {
+      const error = err as Error;
+      setError(error.message || 'Ocurrió un error inesperado. Por favor, intenta de nuevo.');
     }
   };
 
