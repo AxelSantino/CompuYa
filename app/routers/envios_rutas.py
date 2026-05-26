@@ -12,11 +12,12 @@ router = APIRouter(prefix="/envios", tags=["Envios"])
 async def get_envio_service(db: AsyncSession = Depends(obtener_db)) -> EnvioService:
     return EnvioService(db)
 
-@router.get("/", response_model=List[EnvioRespuesta], dependencies=[Depends(obtener_usuario_actual)])
+@router.get("/", response_model=List[EnvioRespuesta])
 async def listar_envios(
+    usuario_actual: Usuario = Depends(obtener_usuario_actual),
     envio_service: EnvioService = Depends(get_envio_service)
 ):
-    return await envio_service.listar_envios()
+    return await envio_service.listar_envios(usuario_actual)
 
 @router.post("/", response_model=EnvioRespuesta, status_code=status.HTTP_201_CREATED, dependencies=[Depends(tiene_rol(["operador", "supervisor", "admin"]))])
 async def crear_envio(

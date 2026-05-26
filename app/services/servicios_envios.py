@@ -134,13 +134,16 @@ class EnvioService:
 
         return await self.obtener_envio_por_id(envio.tracking_id)
 
-    async def listar_envios(self) -> list[Envio]:
+    async def listar_envios(self, usuario: Usuario) -> list[Envio]:
         query = select(Envio).options(
             selectinload(Envio.creador).selectinload(Usuario.perfil_empleado),
             selectinload(Envio.destinatario).selectinload(Usuario.perfil_empresa),
             selectinload(Envio.destinatario).selectinload(Usuario.perfil_empleado),
             selectinload(Envio.sucursal)
         )
+        if usuario.rol == "cliente":
+            query = query.where(Envio.destinatario_id == usuario.id)
+            
         result = await self.db.execute(query)
         return result.scalars().all()
 
