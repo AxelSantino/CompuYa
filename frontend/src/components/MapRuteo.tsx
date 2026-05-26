@@ -8,8 +8,7 @@ import 'leaflet-routing-machine/dist/leaflet-routing-machine.css';
 
 // Corregir problema de iconos de Leaflet en Next.js
 const fixLeafletIcons = () => {
-  // @ts-expect-error - Leaflet icons internal cleanup
-  delete L.Icon.Default.prototype._getIconUrl;
+  delete (L.Icon.Default.prototype as unknown as Record<string, unknown>)._getIconUrl;
   L.Icon.Default.mergeOptions({
     iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
     iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',

@@ -9,8 +9,7 @@ import 'leaflet-routing-machine/dist/leaflet-routing-machine.css';
 // --- Helper Functions ---
 const fixLeafletIcons = () => {
   if (L.Icon.Default.prototype.options.iconUrl?.includes('marker-icon.png')) return;
-  // @ts-expect-error - Internal Leaflet property
-  delete L.Icon.Default.prototype._getIconUrl;
+  delete (L.Icon.Default.prototype as unknown as Record<string, unknown>)._getIconUrl;
   L.Icon.Default.mergeOptions({
     iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
     iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
@@ -97,8 +96,7 @@ export default function MapHojaRuta({ puntos }: MapHojaRutaProps) {
       routingControlRef.current.setWaypoints(waypoints);
     } else {
       // Otherwise, create a new routing control
-      // @ts-expect-error - Leaflet Routing Machine extends L
-      const routingControl = L.Routing.control({
+      const routingControl = (L.Routing as unknown as { control: (options: object) => RoutingControl }).control({
         waypoints,
         routeWhileDragging: false,
         addWaypoints: false,
