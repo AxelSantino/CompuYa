@@ -89,7 +89,7 @@ export default function MapHojaRuta({ puntos }: MapHojaRutaProps) {
       routingControlRef.current.setWaypoints(waypoints);
     } else {
       // Otherwise, create a new routing control
-      const routingControl = L.Routing.control({
+      const routingControl = (L.Routing as any).control({
         waypoints,
         routeWhileDragging: false,
         addWaypoints: false,
@@ -97,8 +97,10 @@ export default function MapHojaRuta({ puntos }: MapHojaRutaProps) {
         show: false, // Hide the default ugly itinerary
         lineOptions: {
           styles: [{ color: '#10b981', weight: 6, opacity: 0.8 }],
+          extendToWaypoints: true,
+          missingRouteTolerance: 10,
         },
-        createMarker: (i, wp) => createWaypointMarker(i, wp, puntos),
+        createMarker: (i: number, wp: any) => createWaypointMarker(i, wp, puntos),
       }).addTo(map);
       routingControlRef.current = routingControl;
     }

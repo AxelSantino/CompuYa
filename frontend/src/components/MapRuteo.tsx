@@ -44,8 +44,8 @@ export default function MapRuteo({ origen, destino }: MapRuteoProps) {
     let routingControl: any = null;
     
     try {
-      if (L.Routing && L.Routing.control) {
-        routingControl = L.Routing.control({
+      if (L.Routing && (L.Routing as any).control) {
+        routingControl = (L.Routing as any).control({
           waypoints: [
             L.latLng(origen.lat, origen.lng),
             L.latLng(destino.lat, destino.lng)

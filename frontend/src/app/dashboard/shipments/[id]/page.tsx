@@ -11,7 +11,7 @@ import LoadingOverlay from '@/components/LoadingOverlay';
 import { FaArrowLeft, FaBox, FaCalendar, FaUser, FaBuilding, FaFileAlt, FaShippingFast, FaExclamationCircle, FaMapMarkerAlt, FaWarehouse, FaTimesCircle, FaCheckCircle } from 'react-icons/fa';
 import './ShipmentDetailPage.css';
 
-const statusConfig: Record<EnvioStatus, { icon: JSX.Element; colorClass: string }> = {
+const statusConfig: Record<EnvioStatus, { icon: React.ReactNode; colorClass: string }> = {
   'en sucursal': { icon: <FaWarehouse />, colorClass: 'status-icon-blue' },
   'en transito': { icon: <FaShippingFast />, colorClass: 'status-icon-orange' },
   'entregado': { icon: <FaCheckCircle />, colorClass: 'status-icon-green' },

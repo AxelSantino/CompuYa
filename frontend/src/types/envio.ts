@@ -48,6 +48,8 @@ export interface Envio {
   sucursal?: Sucursal;
   latitud_destino?: number;
   longitud_destino?: number;
+  razon_social_destinatario?: string;
+  cuit_destinatario?: string;
 }
 
 // Interfaz para el destinatario dentro de EnvioRespuesta
