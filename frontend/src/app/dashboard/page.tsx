@@ -115,13 +115,15 @@ const ShipmentsPage = () => {
               Lista y administración de componentes de computadora en tránsito.
             </p>
           </div>
-          <Button 
-            variant="primary" 
-            className="w-full md:w-auto"
-            onClick={() => router.push('/dashboard/new')}
-          >
-            + Nuevo Envío
-          </Button>
+          {user && user.rol !== 'cliente' && (
+            <Button
+              variant="primary"
+              className="w-full md:w-auto"
+              onClick={() => router.push('/dashboard/new')}
+            >
+              + Nuevo Envío
+            </Button>
+          )}
         </div>
 
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
