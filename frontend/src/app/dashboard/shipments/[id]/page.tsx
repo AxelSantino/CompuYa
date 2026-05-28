@@ -11,7 +11,7 @@ import LoadingOverlay from '@/components/LoadingOverlay';
 import { FaArrowLeft, FaBox, FaCalendar, FaUser, FaBuilding, FaFileAlt, FaShippingFast, FaExclamationCircle, FaMapMarkerAlt, FaWarehouse, FaTimesCircle, FaCheckCircle } from 'react-icons/fa';
 import './ShipmentDetailPage.css';
 
-const statusConfig: Record<EnvioStatus, { icon: JSX.Element; colorClass: string }> = {
+const statusConfig: Record<EnvioStatus, { icon: React.ReactNode; colorClass: string }> = {
   'en sucursal': { icon: <FaWarehouse />, colorClass: 'status-icon-blue' },
   'en transito': { icon: <FaShippingFast />, colorClass: 'status-icon-orange' },
   'entregado': { icon: <FaCheckCircle />, colorClass: 'status-icon-green' },
@@ -38,45 +38,85 @@ export default function ShipmentDetailPage() {
   const [shipment, setShipment] = useState<Envio | null>(null);
   const [history, setHistory] = useState<HistorialEnvio[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const id = Array.isArray(params.id) ? params.id[0] : params.id;
 
-  useEffect(() => {
+  const fetchData = React.useCallback(async () => {
     if (!id) return;
+    setIsLoading(true);
+    try {
+      const promises: [Promise<Envio>, Promise<HistorialEnvio[]> | null] = [
+        shipmentService.getShipmentById(id as string),
+        user?.rol === 'supervisor' ? shipmentService.getShipmentHistory(id as string) : null
+      ];
 
-    const fetchData = async () => {
-      setIsLoading(true);
-      try {
-        const promises: [Promise<Envio>, Promise<HistorialEnvio[]> | null] = [
-          shipmentService.getShipmentById(id as string),
-          user?.rol === 'supervisor' ? shipmentService.getShipmentHistory(id as string) : null
-        ];
+      const [shipmentData, historyData] = await Promise.all(promises);
+      
+      setShipment(shipmentData);
+      if (historyData) {
+        setHistory(historyData);
+      }
+    } catch {
+      setError('No se pudo cargar la información del envío.');
+    } finally {
+      setIsLoading(false);
+    }
+  }, [id, user]);
 
-        const [shipmentData, historyData] = await Promise.all(promises);
-        
-        setShipment(shipmentData);
-        if (historyData) {
-          setHistory(historyData);
-        }
-      } catch (err) {
-        setError('No se pudo cargar la información del envío.');
-      } finally {
-        setIsLoading(false);
+  useEffect(() => {
+    let isMounted = true;
+    
+    const load = async () => {
+      if (isMounted) {
+        await fetchData();
       }
     };
 
-    fetchData();
-  }, [id, user]);
+    load();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [fetchData]);
+
+  const handleCancel = async () => {
+    if (!id || !window.confirm('¿Estás seguro de que deseas cancelar este envío?')) return;
+    
+    setIsProcessing(true);
+    try {
+      await shipmentService.cancelShipment(id as string);
+      await fetchData(); // Refresh data
+      alert('Envío cancelado con éxito.');
+    } catch (err) {
+      const errorData = err as { response?: { data?: { detail?: string } } };
+      alert(errorData.response?.data?.detail || 'Error al cancelar el envío.');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
 
   return (
     <DashboardLayout>
       <div className="relative p-4 md:p-6">
-        <LoadingOverlay isLoading={isLoading} text="Cargando envío..." />
+        <LoadingOverlay isLoading={isLoading || isProcessing} text={isProcessing ? "Cancelando envío..." : "Cargando envío..."} />
         
-        <button onClick={() => router.back()} className="back-button mb-4">
-          <FaArrowLeft /> Volver al listado
-        </button>
+        <div className="flex justify-between items-center mb-4">
+          <button onClick={() => router.back()} className="back-button">
+            <FaArrowLeft /> Volver al listado
+          </button>
+          
+          {user?.rol === 'supervisor' && shipment && shipment.estado !== 'cancelado' && shipment.estado !== 'entregado' && (
+            <button 
+              onClick={handleCancel} 
+              className="cancel-button"
+              disabled={isProcessing}
+            >
+              <FaTimesCircle /> Cancelar Envío
+            </button>
+          )}
+        </div>
 
         {shipment && (
           <>

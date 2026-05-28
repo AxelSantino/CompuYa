@@ -12,11 +12,12 @@ router = APIRouter(prefix="/envios", tags=["Envios"])
 async def get_envio_service(db: AsyncSession = Depends(obtener_db)) -> EnvioService:
     return EnvioService(db)
 
-@router.get("/", response_model=List[EnvioRespuesta], dependencies=[Depends(obtener_usuario_actual)])
+@router.get("/", response_model=List[EnvioRespuesta])
 async def listar_envios(
+    usuario_actual: Usuario = Depends(obtener_usuario_actual),
     envio_service: EnvioService = Depends(get_envio_service)
 ):
-    return await envio_service.listar_envios()
+    return await envio_service.listar_envios(usuario_actual)
 
 @router.post("/", response_model=EnvioRespuesta, status_code=status.HTTP_201_CREATED, dependencies=[Depends(tiene_rol(["operador", "supervisor", "admin"]))])
 async def crear_envio(
@@ -43,13 +44,21 @@ async def obtener_envio(
 ):
     return await envio_service.obtener_envio_por_id(tracking_id)
 
-@router.post("/{tracking_id}/cancelar", response_model=EnvioRespuesta,dependencies=[Depends(tiene_rol(["admin", "supervisor"]))] ) 
+@router.post("/{tracking_id}/cancelar", response_model=EnvioRespuesta,dependencies=[Depends(tiene_rol(["supervisor"]))] ) 
 async def cancelar_envio(
     tracking_id: str,
     usuario_actual: Usuario = Depends(obtener_usuario_actual),
     envio_service: EnvioService = Depends(get_envio_service)
 ):
     return await envio_service.cancelar_envio(tracking_id, usuario_actual.id)
+
+@router.post("/{tracking_id}/entregar", response_model=EnvioRespuesta, dependencies=[Depends(tiene_rol(["supervisor","repartidor","admin"]))])
+async def entregar_envio(
+    tracking_id: str,
+    usuario_actual: Usuario = Depends(obtener_usuario_actual),
+    envio_service: EnvioService = Depends(get_envio_service)
+):
+    return await envio_service.entregar_envio(tracking_id, usuario_actual.id)
 
 @router.post("/{tracking_id}/actualizar-estado", response_model=EnvioRespuesta, dependencies=[Depends(tiene_rol(["admin", "supervisor", "operador"]))])
 async def actualizar_estado_envio(

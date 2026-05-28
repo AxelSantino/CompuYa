@@ -9,8 +9,7 @@ import 'leaflet-routing-machine/dist/leaflet-routing-machine.css';
 // --- Helper Functions ---
 const fixLeafletIcons = () => {
   if (L.Icon.Default.prototype.options.iconUrl?.includes('marker-icon.png')) return;
-  // @ts-ignore
-  delete L.Icon.Default.prototype._getIconUrl;
+  delete (L.Icon.Default.prototype as unknown as Record<string, unknown>)._getIconUrl;
   L.Icon.Default.mergeOptions({
     iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
     iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
@@ -18,7 +17,11 @@ const fixLeafletIcons = () => {
   });
 };
 
-const createWaypointMarker = (i: number, waypoint: any, puntos: Waypoint[]) => {
+interface LeafletWaypoint {
+  latLng: L.LatLng;
+}
+
+const createWaypointMarker = (i: number, waypoint: LeafletWaypoint, puntos: Waypoint[]) => {
   const punto = puntos[i];
   const isFirst = i === 0;
   
@@ -51,10 +54,14 @@ interface MapHojaRutaProps {
   puntos: Waypoint[];
 }
 
+interface RoutingControl extends L.Control {
+  setWaypoints(waypoints: L.LatLng[]): this;
+}
+
 export default function MapHojaRuta({ puntos }: MapHojaRutaProps) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
-  const routingControlRef = useRef<any>(null);
+  const routingControlRef = useRef<RoutingControl | null>(null);
 
   // 1. Initialize map only once
   useEffect(() => {
@@ -89,7 +96,7 @@ export default function MapHojaRuta({ puntos }: MapHojaRutaProps) {
       routingControlRef.current.setWaypoints(waypoints);
     } else {
       // Otherwise, create a new routing control
-      const routingControl = L.Routing.control({
+      const routingControl = (L.Routing as unknown as { control: (options: object) => RoutingControl }).control({
         waypoints,
         routeWhileDragging: false,
         addWaypoints: false,
@@ -97,10 +104,12 @@ export default function MapHojaRuta({ puntos }: MapHojaRutaProps) {
         show: false, // Hide the default ugly itinerary
         lineOptions: {
           styles: [{ color: '#10b981', weight: 6, opacity: 0.8 }],
+          extendToWaypoints: true,
+          missingRouteTolerance: 10,
         },
-        createMarker: (i, wp) => createWaypointMarker(i, wp, puntos),
+        createMarker: (i: number, wp: LeafletWaypoint) => createWaypointMarker(i, wp, puntos),
       }).addTo(map);
-      routingControlRef.current = routingControl;
+      routingControlRef.current = routingControl as unknown as RoutingControl;
     }
     
     // Adjust map view to fit the new route

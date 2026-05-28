@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
 import authService from './authService';
 import api from './api';
 
@@ -17,7 +17,7 @@ describe('authService', () => {
 
   it('debería llamar a login con los parámetros correctos', async () => {
     const mockResponse = { data: { access_token: 'fake-token', token_type: 'bearer' } };
-    (api.post as any).mockResolvedValue(mockResponse);
+    (api.post as Mock).mockResolvedValue(mockResponse);
 
     const email = 'test@example.com';
     const password = 'password123';
@@ -34,14 +34,14 @@ describe('authService', () => {
       })
     );
 
-    const callArgs = (api.post as any).mock.calls[0][1] as URLSearchParams;
+    const callArgs = (api.post as Mock).mock.calls[0][1] as URLSearchParams;
     expect(callArgs.get('username')).toBe(email);
     expect(callArgs.get('password')).toBe(password);
   });
 
   it('debería obtener el perfil correctamente', async () => {
     const mockProfile = { id: 1, email: 'test@example.com' };
-    (api.get as any).mockResolvedValue({ data: mockProfile });
+    (api.get as Mock).mockResolvedValue({ data: mockProfile });
 
     const profile = await authService.getProfile();
 

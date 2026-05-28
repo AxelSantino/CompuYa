@@ -99,7 +99,7 @@ class EnvioService:
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=f"El envío no se puede editar ya que su estado es {envio.estado.value}"
             )
-        
+    
         cuit_nuevo = datos_actualizados.cuit_destinatario
         razon_nueva = datos_actualizados.razon_social_destinatario
 
@@ -145,7 +145,21 @@ class EnvioService:
         await self.db.refresh(envio)
 
         return await self.obtener_envio_por_id(envio.tracking_id)
-    
+
+    async def entregar_envio(self, tracking_id: str, usuario_id: int) -> Envio:
+        envio = await self.obtener_envio_por_id(tracking_id)
+        if envio.estado != EstadoEnvio.EN_TRANSITO:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"El envío no se puede entregar ya que su estado esta {envio.estado}"
+            )
+        envio.estado = EstadoEnvio.ENTREGADO
+        await self.registrar_historial(envio.id, usuario_id, EstadoEnvio.ENTREGADO)
+        await self.db.commit()
+        await self.db.refresh(envio)
+
+        return await self.obtener_envio_por_id(envio.tracking_id)
+       
     async def cancelar_envio(self, tracking_id: str, usuario_id: int) -> Envio:
         envio = await self.obtener_envio_por_id(tracking_id)
         if envio.estado == EstadoEnvio.CANCELADO or envio.estado == EstadoEnvio.ENTREGADO:
@@ -179,13 +193,16 @@ class EnvioService:
 
         return await self.obtener_envio_por_id(envio.tracking_id)
 
-    async def listar_envios(self) -> list[Envio]:
+    async def listar_envios(self, usuario: Usuario) -> list[Envio]:
         query = select(Envio).options(
             selectinload(Envio.creador).selectinload(Usuario.perfil_empleado),
             selectinload(Envio.destinatario).selectinload(Usuario.perfil_empresa),
             selectinload(Envio.destinatario).selectinload(Usuario.perfil_empleado),
             selectinload(Envio.sucursal)
         )
+        if usuario.rol == "cliente":
+            query = query.where(Envio.destinatario_id == usuario.id)
+            
         result = await self.db.execute(query)
         return result.scalars().all()
 

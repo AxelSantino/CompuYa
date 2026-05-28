@@ -41,6 +41,16 @@ const shipmentService = {
     const response = await api.get(`/envios/hoja-ruta/repartidor/${driverId}`);
     return response.data;
   },
+
+  cancelShipment: async (id: string): Promise<Envio> => {
+    const response = await api.post(`/envios/${id}/cancelar`);
+    return response.data;
+  },
+
+  markAsDelivered: async (id: string): Promise<Envio> => {
+    const response = await api.post(`/envios/${id}/entregar`);
+    return response.data;
+  },
 };
 
 export default shipmentService;
