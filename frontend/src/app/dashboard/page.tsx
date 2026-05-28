@@ -43,7 +43,6 @@ const ShipmentsPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Route guard for 'repartidor'
   useEffect(() => {
     if (user && user.rol === 'repartidor') {
       router.replace('/dashboard/routes');
@@ -54,7 +53,6 @@ const ShipmentsPage = () => {
     let isMounted = true;
 
     const initialize = async () => {
-      // Don't fetch data if the user is a repartidor, as they will be redirected
       if (user && user.rol !== 'repartidor') {
         try {
           const data = await shipmentService.getShipments();
@@ -71,9 +69,7 @@ const ShipmentsPage = () => {
           }
         }
       } else if (!user) {
-          // Still loading user, do nothing yet
       } else {
-          // Is a repartidor, will be redirected.
           if (isMounted) {
             setIsLoading(false);
           }
@@ -150,36 +146,36 @@ const ShipmentsPage = () => {
           </div>
         </div>
 
-        {error && <div className="py-8 text-center text-red-500">{error}</div>}
+        {error ? <div className="py-8 text-center text-red-500">{error}</div> : null}
         
-        {!isLoading && !error && (
+        {(!isLoading && !error) ? (
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+              <thead className="bg-gray-100">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tracking ID</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Destinatario</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Descripción</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
+                  <th className="px-6 py-3 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">Tracking ID</th>
+                  <th className="px-6 py-3 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">Fecha</th>
+                  <th className="px-6 py-3 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">Destinatario</th>
+                  <th className="px-6 py-3 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">Descripción</th>
+                  <th className="px-6 py-3 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">Tipo</th>
+                  <th className="px-6 py-3 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">Estado</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {filteredShipments.map((shipment) => (
-                  <tr key={shipment.tracking_id}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-orange-600">
+                  <tr key={shipment.tracking_id} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-orange-700">
                       <Link href={`/dashboard/shipments/${shipment.tracking_id}`} className="hover:underline">
                         {shipment.tracking_id}
                       </Link>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-xs">{new Date(shipment.fecha_creacion).toLocaleDateString()}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-medium">{new Date(shipment.fecha_creacion).toLocaleDateString()}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      <div className="font-medium">{shipment.razon_social_destinatario}</div>
-                      <div className="text-xs text-gray-500">CUIT: {shipment.cuit_destinatario}</div>
+                      <div className="font-bold">{shipment.razon_social_destinatario}</div>
+                      <div className="text-xs text-gray-600 font-semibold">CUIT: {shipment.cuit_destinatario}</div>
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">{shipment.descripcion}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 capitalize">{shipment.tipo_envio}</td>
+                    <td className="px-6 py-4 text-sm text-gray-700 max-w-xs truncate">{shipment.descripcion}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 capitalize font-medium">{shipment.tipo_envio}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       <StatusBadge status={shipment.estado} />
                     </td>
@@ -195,7 +191,7 @@ const ShipmentsPage = () => {
               </tbody>
             </table>
           </div>
-        )}
+        ) : null}
       </div>
     </DashboardLayout>
   );

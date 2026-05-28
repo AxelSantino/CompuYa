@@ -88,7 +88,6 @@ export default function RoutesPage() {
     }
   }, []);
 
-  // Efecto para cargar la ruta de un repartidor específico (para supervisores)
   useEffect(() => {
     let isMounted = true;
 
@@ -98,7 +97,7 @@ export default function RoutesPage() {
           await loadDriverRoute(selectedDriverId);
         }
       } else if (isSupervisor && !selectedDriverId) {
-        setRoute([]); // Limpiar mapa si no hay repartidor seleccionado
+        setRoute([]);
       }
     };
 
@@ -148,19 +147,23 @@ export default function RoutesPage() {
     }
   };
 
-  const mapPoints = route.length > 0 ? [
-    { 
-      lat: route[0].sucursal?.latitud || -34.6037, 
-      lng: route[0].sucursal?.longitud || -58.3816, 
-      nombre: route[0].sucursal?.nombre || 'Sucursal Origen',
-      isSucursal: true
-    },
-    ...route.map(e => ({
-      lat: e.latitud_destino || 0,
-      lng: e.longitud_destino || 0,
-      nombre: e.destinatario.perfil_empresa?.razon_social || e.tracking_id
-    }))
-  ] : [];
+  const mapPoints = React.useMemo(() => {
+    if (route.length === 0) return [];
+    
+    return [
+      { 
+        lat: route[0].sucursal?.latitud || -34.6037, 
+        lng: route[0].sucursal?.longitud || -58.3816, 
+        nombre: route[0].sucursal?.nombre || 'Sucursal Origen',
+        isSucursal: true
+      },
+      ...route.map(e => ({
+        lat: e.latitud_destino || 0,
+        lng: e.longitud_destino || 0,
+        nombre: e.destinatario.perfil_empresa?.razon_social || e.tracking_id
+      }))
+    ];
+  }, [route]);
 
   return (
     <DashboardLayout>
@@ -174,20 +177,20 @@ export default function RoutesPage() {
             </h1>
             <p className="text-gray-500 mt-1">Gestión de asignaciones masivas y monitoreo de rutas en tiempo real.</p>
           </div>
-          {isSupervisor && shipments.length > 0 && (
+          {(isSupervisor && shipments.length > 0) ? (
             <button 
               onClick={handleAssignAll}
               className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-indigo-200 transition-all active:scale-95"
             >
               <FaSync className={isProcessing ? "animate-spin" : ""} /> Asignar Todo ({shipments.length})
             </button>
-          )}
+          ) : null}
         </header>
 
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
           
           {/* SECCIÓN SUPERVISOR: ASIGNACIÓN */}
-          {isSupervisor && (
+          {isSupervisor ? (
             <div className="xl:col-span-1 space-y-6">
               {/* Filtro de Repartidor */}
               <div className="card bg-gradient-to-br from-gray-900 to-gray-800 text-white border-none shadow-xl">
@@ -207,14 +210,14 @@ export default function RoutesPage() {
                       </option>
                     ))}
                   </select>
-                  {selectedDriverId && (
+                  {selectedDriverId ? (
                     <button 
                       onClick={() => setSelectedDriverId(null)}
                       className="mt-3 text-sm text-blue-400 hover:text-blue-300 font-medium transition-colors"
                     >
                       × Limpiar filtro / Ver pendientes
                     </button>
-                  )}
+                  ) : null}
                 </div>
               </div>
 
@@ -254,7 +257,7 @@ export default function RoutesPage() {
                 </div>
               </div>
             </div>
-          )}
+          ) : null}
 
           {/* SECCIÓN REPARTIDOR: MAPA Y HOJA DE RUTA */}
           <div className={isSupervisor ? "xl:col-span-2" : "xl:col-span-3"}>
@@ -294,7 +297,7 @@ export default function RoutesPage() {
                             </div>
                             
                             {/* Botón entregado solo si es el propio repartidor */}
-                            {!selectedDriverId && (user?.rol === 'repartidor' || user?.rol === 'operador') && (
+                            {(!selectedDriverId && (user?.rol === 'repartidor' || user?.rol === 'operador')) ? (
                               <button 
                                 onClick={() => handleDeliver(e.tracking_id)}
                                 className="btn-deliver self-center"
@@ -303,7 +306,7 @@ export default function RoutesPage() {
                               >
                                 <FaTruck /> Entregado
                               </button>
-                            )}
+                            ) : null}
                           </div>
                         ))}
                       </div>

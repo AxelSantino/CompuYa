@@ -6,7 +6,6 @@ import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import LoadingTruck from '@/components/LoadingTruck';
-import './LoginPage.css';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -40,19 +39,19 @@ export default function LoginPage() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-gray-100 p-24">
       <div className="relative w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
-        {isLoginLoading && (
+        {isLoginLoading ? (
           <div className="login-overlay">
             <LoadingTruck />
             <p className="mt-4 text-lg">Iniciando sesión...</p>
           </div>
-        )}
+        ) : null}
         <div className="text-center">
-          <h1 className="text-3xl font-bold">CompuYa</h1>
-          <p className="text-gray-500">Inicia sesión para continuar</p>
+          <h1 className="text-3xl font-bold text-gray-900">CompuYa</h1>
+          <p className="text-gray-600 font-medium">Inicia sesión para continuar</p>
         </div>
         <form className="space-y-6" onSubmit={handleLogin}>
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="email" className="block text-sm font-semibold text-gray-800">
               Email
             </label>
             <Input
@@ -70,7 +69,7 @@ export default function LoginPage() {
           <div>
             <label
               htmlFor="password"
-              className="block text-sm font-medium text-gray-700"
+              className="block text-sm font-semibold text-gray-800"
             >
               Contraseña
             </label>
@@ -87,7 +86,7 @@ export default function LoginPage() {
             />
           </div>
 
-          {error && <p className="text-sm text-red-500">{error}</p>}
+          {error ? <p className="text-sm text-red-500">{error}</p> : null}
 
           <div>
             <Button type="submit" className="w-full" disabled={isLoginLoading}>

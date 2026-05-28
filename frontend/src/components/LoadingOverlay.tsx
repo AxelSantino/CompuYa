@@ -1,4 +1,3 @@
-// CompuYa/frontend/src/components/LoadingOverlay.tsx
 import React from 'react';
 import LoadingTruck from './LoadingTruck';
 import './LoadingOverlay.css';

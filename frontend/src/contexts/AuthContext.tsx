@@ -68,7 +68,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setUser(profile);
       } catch (profileError) {
         const errorData = profileError as { response?: { status?: number } };
-        console.error('Error fetching profile after login:', profileError);
         localStorage.removeItem('token');
         if (errorData.response?.status === 403) {
           throw new Error('Tu cuenta está autenticada pero no tiene permisos para este sistema.');

@@ -1,5 +1,3 @@
-/* CompuYa/frontend/src/app/dashboard/routes/RoutesPage.css */
-
 .routes-container {
     animation: fadeIn 0.5s ease-out;
 }
@@ -54,7 +52,6 @@
     transform: scale(0.95);
 }
 
-/* Scrollbar personalizado para la lista de envíos */
 .card-body::-webkit-scrollbar {
     width: 6px;
 }

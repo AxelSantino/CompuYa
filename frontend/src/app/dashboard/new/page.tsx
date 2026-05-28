@@ -175,11 +175,11 @@ const NewShipmentPage = () => {
             </div>
           </div>
           
-          {error && (
+          {error ? (
             <div className="p-4 bg-red-50 border border-red-100 rounded-lg text-red-700 text-sm animate-pulse">
               {error}
             </div>
-          )}
+          ) : null}
 
           <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-4">
             <Button 

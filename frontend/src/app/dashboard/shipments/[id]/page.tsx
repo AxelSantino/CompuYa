@@ -1,4 +1,3 @@
-// CompuYa/frontend/src/app/dashboard/shipments/[id]/page.tsx
 'use client';
 
 import React, { useEffect, useState } from 'react';

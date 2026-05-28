@@ -7,14 +7,12 @@ export interface PerfilEmpleado {
   apellido: string | null;
 }
 
-// Represents the simple user object returned by the API
 export interface UsuarioSimple {
   id: number;
   email: string;
   perfil_empleado?: PerfilEmpleado | null;
 }
 
-// Represents the recipient company object
 export interface EmpresaRespuesta {
   razon_social: string;
   cuit: string;
@@ -34,7 +32,6 @@ export interface Sucursal {
   longitud: number;
 }
 
-// Main Shipment object, updated with nested creator and recipient
 export interface Envio {
   id: number;
   tracking_id: string;
@@ -52,7 +49,6 @@ export interface Envio {
   cuit_destinatario?: string;
 }
 
-// Interfaz para el destinatario dentro de EnvioRespuesta
 export interface EnvioRespuestaDestinatario {
   id: number;
   email: string;
@@ -69,7 +65,6 @@ export interface EnvioCrear {
   restriccion: string;
 }
 
-// Shipment history object, updated with nested user
 export interface HistorialEnvio {
   id: number;
   fecha: string;

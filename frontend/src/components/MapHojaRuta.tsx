@@ -6,7 +6,6 @@ import 'leaflet-routing-machine';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-routing-machine/dist/leaflet-routing-machine.css';
 
-// --- Helper Functions ---
 const fixLeafletIcons = () => {
   if (L.Icon.Default.prototype.options.iconUrl?.includes('marker-icon.png')) return;
   delete (L.Icon.Default.prototype as unknown as Record<string, unknown>)._getIconUrl;
@@ -42,7 +41,6 @@ const createWaypointMarker = (i: number, waypoint: LeafletWaypoint, puntos: Wayp
   }).bindPopup(`<b>${isFirst ? 'INICIO: ' : `PARADA ${i}: `}</b> ${punto.nombre}`);
 };
 
-// --- Component ---
 interface Waypoint {
   lat: number;
   lng: number;
@@ -63,11 +61,10 @@ export default function MapHojaRuta({ puntos }: MapHojaRutaProps) {
   const mapRef = useRef<L.Map | null>(null);
   const routingControlRef = useRef<RoutingControl | null>(null);
 
-  // 1. Initialize map only once
   useEffect(() => {
     if (mapContainerRef.current && !mapRef.current) {
       fixLeafletIcons();
-      const map = L.map(mapContainerRef.current).setView([-34.6037, -58.3816], 12); // Default view
+      const map = L.map(mapContainerRef.current).setView([-34.6037, -58.3816], 12);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       }).addTo(map);
@@ -75,13 +72,11 @@ export default function MapHojaRuta({ puntos }: MapHojaRutaProps) {
     }
   }, []);
 
-  // 2. Update route when 'puntos' prop changes
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
 
     if (puntos.length < 2) {
-      // If there are not enough points, remove existing route control
       if (routingControlRef.current) {
         map.removeControl(routingControlRef.current);
         routingControlRef.current = null;
@@ -92,16 +87,14 @@ export default function MapHojaRuta({ puntos }: MapHojaRutaProps) {
     const waypoints = puntos.map(p => L.latLng(p.lat, p.lng));
 
     if (routingControlRef.current) {
-      // If control exists, just update waypoints
       routingControlRef.current.setWaypoints(waypoints);
     } else {
-      // Otherwise, create a new routing control
       const routingControl = (L.Routing as unknown as { control: (options: object) => RoutingControl }).control({
         waypoints,
         routeWhileDragging: false,
         addWaypoints: false,
         fitSelectedRoutes: true,
-        show: false, // Hide the default ugly itinerary
+        show: false,
         lineOptions: {
           styles: [{ color: '#10b981', weight: 6, opacity: 0.8 }],
           extendToWaypoints: true,
@@ -112,7 +105,6 @@ export default function MapHojaRuta({ puntos }: MapHojaRutaProps) {
       routingControlRef.current = routingControl as unknown as RoutingControl;
     }
     
-    // Adjust map view to fit the new route
     map.fitBounds(L.latLngBounds(waypoints), { padding: [50, 50] });
 
   }, [puntos]);
