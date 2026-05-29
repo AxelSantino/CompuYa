@@ -97,42 +97,37 @@ class EnvioService:
         if envio.estado in [EstadoEnvio.EN_TRANSITO, EstadoEnvio.ENTREGADO, EstadoEnvio.CANCELADO]:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"El envío no se puede editar ya que su estado es {envio.estado.value}"
+                detail=f"El envÃ­o no se puede editar ya que su estado es {envio.estado.value}"
             )
     
         cuit_nuevo = datos_actualizados.cuit_destinatario
         razon_nueva = datos_actualizados.razon_social_destinatario
 
         if cuit_nuevo is not None or razon_nueva is not None:
-            query = select(PerfilEmpresa).where(
-                (PerfilEmpresa.cuit == cuit_nuevo) if cuit_nuevo else True,
-                (PerfilEmpresa.razon_social == razon_nueva) if razon_nueva else True
-            )
-            
+            query = select(PerfilEmpresa)
+
+            if cuit_nuevo is not None and razon_nueva is not None:
+                query = query.where(
+                    (PerfilEmpresa.cuit == cuit_nuevo) & 
+                    (PerfilEmpresa.razon_social == razon_nueva)
+                )
+            elif cuit_nuevo is not None:
+                query = query.where(PerfilEmpresa.cuit == cuit_nuevo)
+            elif razon_nueva is not None:
+                query = query.where(PerfilEmpresa.razon_social == razon_nueva)
             resultado = await self.db.execute(query)
             empresa_validada = resultado.scalars().first()
-
             if not empresa_validada:
                 raise HTTPException(
                     status_code=404, 
                     detail="La empresa destino ingresada no existe en el sistema."
                 )
-            
             envio.cuit_destinatario = empresa_validada.cuit
             envio.razon_social_destinatario = empresa_validada.razon_social
             envio.destinatario_id = empresa_validada.usuario_id
+            envio.latitud_destino = empresa_validada.latitud
+            envio.longitud_destino = empresa_validada.longitud
 
-            if datos_actualizados.latitud_destino is None:
-                envio.latitud_destino = empresa_validada.latitud
-            if datos_actualizados.longitud_destino is None:
-                envio.longitud_destino = empresa_validada.longitud
-
-        if datos_actualizados.latitud_destino is not None:
-            envio.latitud_destino = datos_actualizados.latitud_destino
-        if datos_actualizados.longitud_destino is not None:
-            envio.longitud_destino = datos_actualizados.longitud_destino
-        if datos_actualizados.sucursal_id is not None:
-            envio.sucursal_id = datos_actualizados.sucursal_id
         if datos_actualizados.descripcion is not None:
             envio.descripcion = datos_actualizados.descripcion
         if datos_actualizados.tipo_envio is not None:
@@ -140,7 +135,6 @@ class EnvioService:
         if datos_actualizados.restriccion is not None:
             envio.restriccion = datos_actualizados.restriccion
 
-        await self.registrar_historial(envio.id, usuario_id, envio.estado)
         await self.db.commit()
         await self.db.refresh(envio)
 
@@ -159,7 +153,7 @@ class EnvioService:
         await self.db.refresh(envio)
 
         return await self.obtener_envio_por_id(envio.tracking_id)
-       
+
     async def cancelar_envio(self, tracking_id: str, usuario_id: int) -> Envio:
         envio = await self.obtener_envio_por_id(tracking_id)
         if envio.estado == EstadoEnvio.CANCELADO or envio.estado == EstadoEnvio.ENTREGADO:

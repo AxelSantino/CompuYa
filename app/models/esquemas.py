@@ -95,9 +95,6 @@ class EditarEnvio(BaseModel):
     descripcion: Optional[str] = None
     tipo_envio: Optional[TipoEnvio] = None
     restriccion: Optional[RestriccionEnvio] = None
-    latitud_destino: Optional[float] = None
-    longitud_destino: Optional[float] = None
-    sucursal_id: Optional[int] = None
     
 class HistorialBase(BaseModel):
     envio_id: int

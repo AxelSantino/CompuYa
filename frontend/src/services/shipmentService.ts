@@ -41,6 +41,11 @@ const shipmentService = {
     const response = await api.get(`/envios/hoja-ruta/repartidor/${driverId}`);
     return response.data;
   },
+  
+  updateShipment: async (tracking_id: string, shipmentData: any): Promise<Envio> => {
+    const response = await api.put(`/envios/${tracking_id}`, shipmentData);
+    return response.data;
+  },
 
   cancelShipment: async (id: string): Promise<Envio> => {
     const response = await api.post(`/envios/${id}/cancelar`);
