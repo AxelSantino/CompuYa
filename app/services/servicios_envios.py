@@ -1,6 +1,7 @@
 import random
 import string
 from datetime import datetime
+from fastapi_cloud_cli.cli import app
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 from sqlalchemy import select, func
@@ -8,7 +9,7 @@ from fastapi import HTTPException, status
 from app.models.entidades import AsignacionEnvio, Envio, Usuario, TipoCliente, EstadoEnvio, Historial, PerfilEmpresa
 from app.models.esquemas import EnvioCrear, EditarEnvio
 from app.services.servicio_ruteo import ServicioRuteo
-
+from app.services.servicio_notificacion import NotificacionService
 class EnvioService:
     def __init__(self, db: AsyncSession):
         self.db = db
@@ -69,7 +70,12 @@ class EnvioService:
         await self.db.refresh(nuevo_envio)
 
         return await self.obtener_envio_por_id(nuevo_envio.tracking_id)
-
+    
+    async def obtenerMailDestinatario(self, envio: Envio) -> str:
+        query = select(Usuario.email).where(Usuario.id == envio.destinatario_id)
+        result = await self.db.execute(query)
+        email_destinatario = result.scalar_one_or_none()
+        return email_destinatario  
 
     async def obtener_envio_por_id(self, tracking_id: str) -> Envio:
         query = select(Envio).where(Envio.tracking_id == tracking_id).options(
@@ -162,9 +168,15 @@ class EnvioService:
                 detail=f"El envío no se puede cancelar ya que su estado esta {envio.estado}"
             )
         envio.estado = EstadoEnvio.CANCELADO
+        
+
         await self.registrar_historial(envio.id, usuario_id, EstadoEnvio.CANCELADO)
         await self.db.commit()
         await self.db.refresh(envio)
+
+        servicio = NotificacionService(db=self.db) 
+        email = await self.obtenerMailDestinatario(envio)
+        await servicio.procesar_notificacion_estado(envio, email, envio.razon_social_destinatario)
 
         return await self.obtener_envio_por_id(envio.tracking_id)
 
@@ -184,6 +196,10 @@ class EnvioService:
         await self.registrar_historial(envio.id, usuario.id, nuevo_estado)
         await self.db.commit()
         await self.db.refresh(envio)
+
+        servicio = NotificacionService(db=self.db) 
+        email = await self.obtenerMailDestinatario(envio)
+        await servicio.procesar_notificacion_estado(envio, email, envio.razon_social_destinatario)
 
         return await self.obtener_envio_por_id(envio.tracking_id)
 
@@ -272,7 +288,6 @@ class EnvioService:
         envio.estado = EstadoEnvio.EN_TRANSITO
         
         await self.registrar_historial(envio.id, mejor_repartidor_id, EstadoEnvio.EN_TRANSITO)
-
         await self.db.commit()
         return {"message": f"Envío {tracking_id} asignado automáticamente al repartidor ID {mejor_repartidor_id} (Estado: EN_TRANSITO)"}
 
