@@ -121,3 +121,172 @@ async def test_asignar_todos_pendientes_avisa_si_la_sucursal_esta_vacia():
 
     assert respuesta["asignados"] == 0
     assert "No hay envíos pendientes" in respuesta["message"]
+    
+    
+    
+
+@pytest.mark.asyncio
+async def test_crear_envio_falla_si_empresa_no_existe():
+    
+    db_mock = AsyncMock()
+    resultado_mock = MagicMock()
+    resultado_mock.scalar_one_or_none.return_value = None  
+    db_mock.execute.return_value = resultado_mock
+
+    servicio = EnvioService(db=db_mock)
+    
+    
+    from app.models.esquemas import EnvioCrear
+    envio_data = MagicMock(spec=EnvioCrear)
+    envio_data.razon_social_destinatario = "Empresa Fantasma S.A."
+    envio_data.cuit_destinatario = "30-99999999-9"
+
+    with pytest.raises(HTTPException) as info_error:
+        await servicio.crear_envio(envio_data, usuario_id=1)
+
+    assert info_error.value.status_code == 404
+    assert "La empresa destinataria no existe" in info_error.value.detail
+
+
+@pytest.mark.asyncio
+async def test_crear_envio_falla_si_no_hay_sucursales_disponibles():
+    
+    empresa_mock = MagicMock()
+    empresa_mock.perfil_empresa.latitud = -34.6
+    empresa_mock.perfil_empresa.longitud = -58.6
+    
+    db_mock = AsyncMock()
+    resultado_mock = MagicMock()
+    resultado_mock.scalar_one_or_none.return_value = empresa_mock
+    db_mock.execute.return_value = resultado_mock
+
+    servicio = EnvioService(db=db_mock)
+    
+    
+    servicio.ruteo_service.obtener_sucursal_mas_cercana = AsyncMock(return_value=None)
+
+    from app.models.esquemas import EnvioCrear
+    
+    envio_data = MagicMock(spec=EnvioCrear)
+    envio_data.razon_social_destinatario = "Empresa Test S.A."
+    envio_data.cuit_destinatario = "30-12345678-9"
+
+    with pytest.raises(HTTPException) as info_error:
+        await servicio.crear_envio(envio_data, usuario_id=1)
+
+    assert info_error.value.status_code == 400
+    assert "No hay sucursales disponibles" in info_error.value.detail
+
+@pytest.mark.asyncio
+async def test_obtener_envio_por_id_falla_si_tracking_id_no_existe():
+    
+    db_mock = AsyncMock()
+    resultado_mock = MagicMock()
+    resultado_mock.scalar_one_or_none.return_value = None
+    db_mock.execute.return_value = resultado_mock
+
+    servicio = EnvioService(db=db_mock)
+
+    with pytest.raises(HTTPException) as info_error:
+        await servicio.obtener_envio_por_id("CY-INVALID-ID")
+
+    assert info_error.value.status_code == 404
+    assert "Envio no encontrado" in info_error.value.detail
+
+
+@pytest.mark.asyncio
+async def test_editar_envio_falla_si_el_estado_no_lo_permite():
+    
+    envio_mock = Envio()
+    envio_mock.tracking_id = "CY-2026-EDIT"
+    envio_mock.estado = EstadoEnvio.EN_TRANSITO
+
+    servicio = EnvioService(db=AsyncMock())
+    
+    servicio.obtener_envio_por_id = AsyncMock(return_value=envio_mock)
+
+    from app.models.esquemas import EditarEnvio
+    datos_nuevos = MagicMock(spec=EditarEnvio)
+
+    with pytest.raises(HTTPException) as info_error:
+        await servicio.editar_envio("CY-2026-EDIT", datos_nuevos, usuario_id=1)
+
+    assert info_error.value.status_code == 400
+    assert "no se puede editar" in info_error.value.detail
+
+
+@pytest.mark.asyncio
+async def test_actualizar_estado_falla_si_ya_esta_finalizado():
+    
+    envio_mock = Envio()
+    envio_mock.estado = EstadoEnvio.ENTREGADO
+
+    servicio = EnvioService(db=AsyncMock())
+    servicio.obtener_envio_por_id = AsyncMock(return_value=envio_mock)
+
+    usuario_mock = Usuario(id=1, rol="admin")
+
+    with pytest.raises(HTTPException) as info_error:
+        await servicio.actualizar_estado_envio("CY-TEST", EstadoEnvio.EN_SUCURSAL, usuario_mock)
+
+    assert info_error.value.status_code == 400
+
+
+@pytest.mark.asyncio
+async def test_listar_envios_aplica_filtro_estricto_si_es_cliente():
+    db_mock = AsyncMock()
+    
+    
+    resultado_mock = MagicMock()
+    scalars_mock = MagicMock()
+    scalars_mock.all.return_value = [] 
+    resultado_mock.scalars.return_value = scalars_mock
+    db_mock.execute.return_value = resultado_mock
+
+    servicio = EnvioService(db=db_mock)
+    usuario_cliente = Usuario(id=42, rol="cliente")
+
+    with patch('app.services.servicios_envios.select') as mock_select:
+        mock_query = MagicMock()
+        mock_select.return_value = mock_query
+        mock_query.options.return_value = mock_query
+        mock_query.where.return_value = mock_query
+        
+        resultado = await servicio.listar_envios(usuario_cliente)
+        
+        
+        assert resultado == []
+        mock_query.where.assert_called_once()
+
+
+@pytest.mark.asyncio
+async def test_asignar_envio_automatico_falla_si_no_hay_repartidores():
+    envio_mock = Envio()
+    envio_mock.estado = EstadoEnvio.EN_SUCURSAL 
+
+    db_mock = AsyncMock()
+    resultado_mock = MagicMock()
+    resultado_mock.scalar_one_or_none.return_value = None 
+    db_mock.execute.return_value = resultado_mock
+
+    servicio = EnvioService(db=db_mock)
+    servicio.obtener_envio_por_id = AsyncMock(return_value=envio_mock)
+
+    with pytest.raises(HTTPException) as info_error:
+        await servicio.asignar_envio_automatico("CY-TEST")
+
+    assert info_error.value.status_code == 404
+    assert "No hay repartidores disponibles" in info_error.value.detail
+
+
+@pytest.mark.asyncio
+async def test_obtener_hoja_ruta_devuelve_lista_vacia_si_no_hay_viajes():
+    db_mock = AsyncMock()
+    resultado_mock = MagicMock()
+    resultado_mock.scalars().all.return_value = [] 
+    db_mock.execute.return_value = resultado_mock
+
+    servicio = EnvioService(db=db_mock)
+    resultado = await servicio.obtener_hoja_ruta(id_empleado=99)
+
+    assert resultado == []
