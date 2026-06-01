@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, ConfigDict, Field
+from pydantic import BaseModel, EmailStr, ConfigDict, Field,field_validator
 from datetime import date, datetime
 from typing import List, Optional, Union
 from uuid import UUID
@@ -85,6 +85,7 @@ class EnvioBase(BaseModel):
     descripcion: str
     tipo_envio: TipoEnvio
     restriccion: RestriccionEnvio
+    fecha_entrega: date
 
 class EnvioCrear(EnvioBase):
     pass
@@ -95,6 +96,7 @@ class EditarEnvio(BaseModel):
     descripcion: Optional[str] = None
     tipo_envio: Optional[TipoEnvio] = None
     restriccion: Optional[RestriccionEnvio] = None
+    fecha_entrega: Optional[date] = None
     
 class HistorialBase(BaseModel):
     envio_id: int

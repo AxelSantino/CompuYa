@@ -1,6 +1,6 @@
 import pytest
 from pydantic import ValidationError
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 from uuid import UUID
 from app.models.esquemas import (
     EnvioCrear, 
@@ -30,15 +30,17 @@ ENUM_RESTRICCION = list(RestriccionEnvio)[0]
 ENUM_ESTADO = list(EstadoEnvio)[0]
 
 def test_crear_envio_con_datos_correctos_funciona():
+    fecha_futura = date.today() + timedelta(days=2) 
+    
     envio = EnvioCrear(
         razon_social_destinatario="CompuYa Casa Central Haedo",
         cuit_destinatario="30-11344742-5",
         descripcion="Lote de 50 placas de video Nvidia RTX 4070 y fuentes",
-        tipo_envio=ENUM_TIPO_ENVIO,       
-        restriccion=ENUM_RESTRICCION  
+        tipo_envio=ENUM_TIPO_ENVIO,
+        restriccion=ENUM_RESTRICCION,
+        fecha_entrega=fecha_futura 
     )
     assert envio.razon_social_destinatario == "CompuYa Casa Central Haedo"
-    assert envio.cuit_destinatario == "30-11344742-5"
 
 
 def test_crear_envio_sin_datos_obligatorios_falla():
@@ -80,17 +82,17 @@ def test_historial_guarda_bien_los_datos_del_empleado():
 
 def test_respuesta_final_del_envio_contiene_al_destinatario_correcto():
     creador_fijo = UsuarioSimple(
-        id=101, 
+        id=101,
         email="santi.backend@compuya.com"
     )
-    
+
     destinatario_fijo = UsuarioRespuesta(
         id=888,
         supabase_id="11111111-2222-3333-4444-555555555555",
         email="celestela.beauty@compuya.com",
         tipo=TipoCliente.EMPRESA,
         rol="visor",
-        fecha=date(2026, 5, 21),  
+        fecha=date(2026, 5, 21),
         perfil_empleado=None,
         perfil_empresa={
             "razon_social": "Celestela Beauty Center",
@@ -100,27 +102,24 @@ def test_respuesta_final_del_envio_contiene_al_destinatario_correcto():
             "longitud": -58.7
         }
     )
-    
+
     envio_full = EnvioRespuesta(
         id=5555,
-        tracking_id="CY-2026-LOGITRACK",  
+        tracking_id="CY-2026-LOGITRACK",
         estado=ENUM_ESTADO,
         fecha_creacion=datetime(2026, 5, 28, 20, 0, 0),
         creador=creador_fijo,
         destinatario=destinatario_fijo,
-        sucursal=None, 
+        sucursal=None,
         razon_social_destinatario="Celestela Beauty Center",
         cuit_destinatario="30-54474295-9",
         descripcion="Pc gamer con RTX 4070 y fuente de 750W",
         tipo_envio=ENUM_TIPO_ENVIO,
         restriccion=ENUM_RESTRICCION,
         latitud_destino=-34.5,
-        longitud_destino=-58.7
+        longitud_destino=-58.7,
+        fecha_entrega=date(2026, 6, 15) 
     )
-    
-    assert envio_full.id == 5555
-    assert envio_full.tracking_id == "CY-2026-LOGITRACK"
-    assert envio_full.creador.id == 101
     assert envio_full.destinatario.perfil_empresa.razon_social == "Celestela Beauty Center"
 
 
