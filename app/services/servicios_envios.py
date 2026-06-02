@@ -1,13 +1,14 @@
 import random
 import string
-from datetime import date,datetime
+from datetime import date, datetime
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 from sqlalchemy import select, func
 from fastapi import HTTPException, status
 from app.models.entidades import AsignacionEnvio, Envio, Usuario, TipoCliente, EstadoEnvio, Historial, PerfilEmpresa
-from app.models.esquemas import EnvioCrear, EditarEnvio
+from app.models.esquemas import CancelarEnvio, EnvioCrear, EditarEnvio
 from app.services.servicio_ruteo import ServicioRuteo
+
 
 class EnvioService:
     def __init__(self, db: AsyncSession):
@@ -16,18 +17,19 @@ class EnvioService:
 
     def generar_tracking_id(self) -> str:
         anio = datetime.now().year
-        caracteres = ''.join(random.choices(string.ascii_uppercase + string.digits, k=4))
+        caracteres = ''.join(random.choices(
+            string.ascii_uppercase + string.digits, k=4))
         return f"CY-{anio}-{caracteres}"
 
     async def crear_envio(self, envio_data: EnvioCrear, usuario_id: int) -> Envio:
-        
+
         hoy = date.today()
         if envio_data.fecha_entrega <= hoy:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="La fecha de entrega debe ser al menos a partir de mañana o una fecha futura"
             )
-        
+
         query = (
             select(Usuario)
             .join(Usuario.perfil_empresa)
@@ -40,24 +42,24 @@ class EnvioService:
         )
         result = await self.db.execute(query)
         empresa = result.scalar_one_or_none()
-        
+
         if not empresa or not empresa.perfil_empresa:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="La empresa destinataria no existe o no tiene perfil configurado"
             )
-        
+
         lat_dest = empresa.perfil_empresa.latitud
         lon_dest = empresa.perfil_empresa.longitud
-        
+
         sucursal_optima = await self.ruteo_service.obtener_sucursal_mas_cercana(lat_dest, lon_dest)
-        
+
         if not sucursal_optima:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="No hay sucursales disponibles para asignar este envío"
             )
-        
+
         tracking_id = self.generar_tracking_id()
         nuevo_envio = Envio(
             **envio_data.model_dump(),
@@ -68,22 +70,23 @@ class EnvioService:
             latitud_destino=lat_dest,
             longitud_destino=lon_dest,
         )
-        
+
         self.db.add(nuevo_envio)
         await self.db.flush()
-        
+
         await self.registrar_historial(nuevo_envio.id, usuario_id, nuevo_envio.estado)
         await self.db.commit()
         await self.db.refresh(nuevo_envio)
 
         return await self.obtener_envio_por_id(nuevo_envio.tracking_id)
 
-
     async def obtener_envio_por_id(self, tracking_id: str) -> Envio:
         query = select(Envio).where(Envio.tracking_id == tracking_id).options(
             selectinload(Envio.creador).selectinload(Usuario.perfil_empleado),
-            selectinload(Envio.destinatario).selectinload(Usuario.perfil_empresa),
-            selectinload(Envio.destinatario).selectinload(Usuario.perfil_empleado),
+            selectinload(Envio.destinatario).selectinload(
+                Usuario.perfil_empresa),
+            selectinload(Envio.destinatario).selectinload(
+                Usuario.perfil_empleado),
             selectinload(Envio.sucursal)
         )
         result = await self.db.execute(query)
@@ -94,7 +97,7 @@ class EnvioService:
                 detail="Envio no encontrado"
             )
         return envio
-    
+
     async def editar_envio(self, tracking_id: str, datos_actualizados: EditarEnvio, usuario_id: int) -> Envio:
         envio = await self.obtener_envio_por_id(tracking_id)
         if not envio:
@@ -107,7 +110,7 @@ class EnvioService:
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=f"El envÃ­o no se puede editar ya que su estado es {envio.estado.value}"
             )
-    
+
         cuit_nuevo = datos_actualizados.cuit_destinatario
         razon_nueva = datos_actualizados.razon_social_destinatario
 
@@ -116,7 +119,7 @@ class EnvioService:
 
             if cuit_nuevo is not None and razon_nueva is not None:
                 query = query.where(
-                    (PerfilEmpresa.cuit == cuit_nuevo) & 
+                    (PerfilEmpresa.cuit == cuit_nuevo) &
                     (PerfilEmpresa.razon_social == razon_nueva)
                 )
             elif cuit_nuevo is not None:
@@ -127,7 +130,7 @@ class EnvioService:
             empresa_validada = resultado.scalars().first()
             if not empresa_validada:
                 raise HTTPException(
-                    status_code=404, 
+                    status_code=404,
                     detail="La empresa destino ingresada no existe en el sistema."
                 )
             envio.cuit_destinatario = empresa_validada.cuit
@@ -162,7 +165,7 @@ class EnvioService:
 
         return await self.obtener_envio_por_id(envio.tracking_id)
 
-    async def cancelar_envio(self, tracking_id: str, usuario_id: int) -> Envio:
+    async def cancelar_envio(self, tracking_id: str, datos_cancelacion: CancelarEnvio, usuario_id: int) -> Envio:
         envio = await self.obtener_envio_por_id(tracking_id)
         if envio.estado == EstadoEnvio.CANCELADO or envio.estado == EstadoEnvio.ENTREGADO:
             raise HTTPException(
@@ -170,7 +173,14 @@ class EnvioService:
                 detail=f"El envío no se puede cancelar ya que su estado esta {envio.estado}"
             )
         envio.estado = EstadoEnvio.CANCELADO
-        await self.registrar_historial(envio.id, usuario_id, EstadoEnvio.CANCELADO)
+        nuevo_historial = Historial(
+            envio_id=envio.id,
+            id_empleado=usuario_id,
+            estado=EstadoEnvio.CANCELADO,
+            motivo=datos_cancelacion.motivo
+        )
+        self.db.add(nuevo_historial)
+
         await self.db.commit()
         await self.db.refresh(envio)
 
@@ -198,13 +208,15 @@ class EnvioService:
     async def listar_envios(self, usuario: Usuario) -> list[Envio]:
         query = select(Envio).options(
             selectinload(Envio.creador).selectinload(Usuario.perfil_empleado),
-            selectinload(Envio.destinatario).selectinload(Usuario.perfil_empresa),
-            selectinload(Envio.destinatario).selectinload(Usuario.perfil_empleado),
+            selectinload(Envio.destinatario).selectinload(
+                Usuario.perfil_empresa),
+            selectinload(Envio.destinatario).selectinload(
+                Usuario.perfil_empleado),
             selectinload(Envio.sucursal)
         )
         if usuario.rol == "cliente":
             query = query.where(Envio.destinatario_id == usuario.id)
-            
+
         result = await self.db.execute(query)
         return result.scalars().all()
 
@@ -227,7 +239,8 @@ class EnvioService:
                 detail="Envio no encontrado"
             )
         historial_query = select(Historial).where(Historial.envio_id == envio_id).options(
-            selectinload(Historial.empleado).selectinload(Usuario.perfil_empleado)
+            selectinload(Historial.empleado).selectinload(
+                Usuario.perfil_empleado)
         ).order_by(Historial.fecha.desc())
 
         result = await self.db.execute(historial_query)
@@ -252,8 +265,9 @@ class EnvioService:
             .outerjoin(AsignacionEnvio, Usuario.id == AsignacionEnvio.id_empleado)
             .outerjoin(
                 Envio,
-                (AsignacionEnvio.envio_id == Envio.id) & 
-                (Envio.estado.in_([EstadoEnvio.EN_TRANSITO, EstadoEnvio.EN_SUCURSAL]))
+                (AsignacionEnvio.envio_id == Envio.id) &
+                (Envio.estado.in_(
+                    [EstadoEnvio.EN_TRANSITO, EstadoEnvio.EN_SUCURSAL]))
             )
             .group_by(Usuario.id)
             .order_by(func.count(Envio.id).asc())
@@ -265,27 +279,30 @@ class EnvioService:
 
         if mejor_repartidor_id is None:
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, 
+                status_code=status.HTTP_404_NOT_FOUND,
                 detail="No hay repartidores disponibles en el sistema"
             )
 
-        query_existente = select(AsignacionEnvio).where(AsignacionEnvio.envio_id == envio.id)
+        query_existente = select(AsignacionEnvio).where(
+            AsignacionEnvio.envio_id == envio.id)
         asignacion_existente = (await self.db.execute(query_existente)).scalar_one_or_none()
 
         if asignacion_existente:
             asignacion_existente.id_empleado = mejor_repartidor_id
         else:
-            self.db.add(AsignacionEnvio(envio_id=envio.id, id_empleado=mejor_repartidor_id))
+            self.db.add(AsignacionEnvio(envio_id=envio.id,
+                        id_empleado=mejor_repartidor_id))
 
         envio.estado = EstadoEnvio.EN_TRANSITO
-        
+
         await self.registrar_historial(envio.id, mejor_repartidor_id, EstadoEnvio.EN_TRANSITO)
 
         await self.db.commit()
         return {"message": f"Envío {tracking_id} asignado automáticamente al repartidor ID {mejor_repartidor_id} (Estado: EN_TRANSITO)"}
 
     async def asignar_todos_pendientes(self):
-        query_pendientes = select(Envio).where(Envio.estado == EstadoEnvio.EN_SUCURSAL)
+        query_pendientes = select(Envio).where(
+            Envio.estado == EstadoEnvio.EN_SUCURSAL)
         result_pendientes = await self.db.execute(query_pendientes)
         envios_pendientes = result_pendientes.scalars().all()
 
@@ -299,33 +316,37 @@ class EnvioService:
             .group_by(Usuario.id)
         )
         result_carga = await self.db.execute(query_carga)
-        
+
         carga_repartidores = {row.id: row.carga for row in result_carga.all()}
 
         if not carga_repartidores:
-            raise HTTPException(status_code=404, detail="No se encontraron repartidores en el sistema.")
+            raise HTTPException(
+                status_code=404, detail="No se encontraron repartidores en el sistema.")
 
         nuevas_asignaciones = []
         historial_a_registrar = []
         count = 0
 
         for envio in envios_pendientes:
-            mejor_repartidor_id = min(carga_repartidores, key=carga_repartidores.get)
-            
+            mejor_repartidor_id = min(
+                carga_repartidores, key=carga_repartidores.get)
+
             envio.estado = EstadoEnvio.EN_TRANSITO
-            nuevas_asignaciones.append(AsignacionEnvio(envio_id=envio.id, id_empleado=mejor_repartidor_id))
-            historial_a_registrar.append(Historial(envio_id=envio.id, id_empleado=mejor_repartidor_id, estado=EstadoEnvio.EN_TRANSITO))
-            
+            nuevas_asignaciones.append(AsignacionEnvio(
+                envio_id=envio.id, id_empleado=mejor_repartidor_id))
+            historial_a_registrar.append(Historial(
+                envio_id=envio.id, id_empleado=mejor_repartidor_id, estado=EstadoEnvio.EN_TRANSITO))
+
             carga_repartidores[mejor_repartidor_id] += 1
             count += 1
-        
+
         if nuevas_asignaciones:
             self.db.add_all(nuevas_asignaciones)
         if historial_a_registrar:
             self.db.add_all(historial_a_registrar)
-            
+
         await self.db.commit()
-        
+
         return {"message": f"Se han asignado {count} envíos exitosamente de forma masiva", "asignados": count}
 
     async def obtener_hoja_ruta(self, id_empleado: int):
@@ -335,9 +356,12 @@ class EnvioService:
             .where(AsignacionEnvio.id_empleado == id_empleado)
             .where(Envio.estado == EstadoEnvio.EN_TRANSITO)
             .options(
-                selectinload(Envio.creador).selectinload(Usuario.perfil_empleado),
-                selectinload(Envio.destinatario).selectinload(Usuario.perfil_empresa),
-                selectinload(Envio.destinatario).selectinload(Usuario.perfil_empleado),
+                selectinload(Envio.creador).selectinload(
+                    Usuario.perfil_empleado),
+                selectinload(Envio.destinatario).selectinload(
+                    Usuario.perfil_empresa),
+                selectinload(Envio.destinatario).selectinload(
+                    Usuario.perfil_empleado),
                 selectinload(Envio.sucursal)
             )
         )
