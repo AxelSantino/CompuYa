@@ -97,7 +97,7 @@ class EnvioBase(BaseModel):
     descripcion: str
     tipo_envio: TipoEnvio
     restriccion: RestriccionEnvio
-    fecha_entrega: date
+    fecha_entrega: Optional[date] = None
 
 
 class EnvioCrear(EnvioBase):
@@ -172,3 +172,4 @@ class ReporteVolumenResponse(BaseModel):
     por_estado: Dict[str, int]
     por_tipo: Dict[str, int]
     historico_lineal: List[ElementoHistorico]
+    model_config = ConfigDict(from_attributes=True)
