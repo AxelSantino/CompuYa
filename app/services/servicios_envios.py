@@ -1,6 +1,6 @@
 import random
 import string
-from datetime import datetime
+from datetime import date,datetime
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 from sqlalchemy import select, func
@@ -20,6 +20,14 @@ class EnvioService:
         return f"CY-{anio}-{caracteres}"
 
     async def crear_envio(self, envio_data: EnvioCrear, usuario_id: int) -> Envio:
+        
+        hoy = date.today()
+        if envio_data.fecha_entrega <= hoy:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="La fecha de entrega debe ser al menos a partir de mañana o una fecha futura"
+            )
+        
         query = (
             select(Usuario)
             .join(Usuario.perfil_empresa)
