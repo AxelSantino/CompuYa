@@ -132,7 +132,7 @@ const NewShipmentPage = () => {
                   Motor IA
                 </Button>
             </div>
-            <div className="space-y-6">
+            <div className="space-y-6 text-gray-800">
               <div>
                 <label htmlFor="descripcion" className="block text-sm font-medium text-gray-700 mb-2">
                   Descripción del Componente <span className="text-red-500">*</span>

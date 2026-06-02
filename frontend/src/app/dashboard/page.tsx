@@ -104,7 +104,7 @@ const ShipmentsPage = () => {
     <DashboardLayout>
       <div className="relative bg-white p-4 md:p-6 rounded-lg shadow-md">
         <LoadingOverlay isLoading={isLoading} text="Cargando envíos..." />
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 text-orange-700">
           <div>
             <h2 className="text-2xl font-bold mb-1">Gestión de Envíos</h2>
             <p className="text-gray-600">
@@ -122,8 +122,8 @@ const ShipmentsPage = () => {
           )}
         </div>
 
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
-          <div className="w-full md:w-1/3">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4 text-gray-800">
+          <div className="w-full md:w-1/3 text-gray-800">
             <Input
               placeholder="Buscar por Tracking ID..."
               value={searchTerm}
@@ -151,14 +151,14 @@ const ShipmentsPage = () => {
         {(!isLoading && !error) ? (
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-100">
+              <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
-                  <th className="px-6 py-3 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">Tracking ID</th>
-                  <th className="px-6 py-3 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">Fecha</th>
-                  <th className="px-6 py-3 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">Destinatario</th>
-                  <th className="px-6 py-3 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">Descripción</th>
-                  <th className="px-6 py-3 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">Tipo</th>
-                  <th className="px-6 py-3 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">Estado</th>
+                  <th className="px-6 py-3 text-left text-sm font-bold text-gray-500 uppercase tracking-wider">Tracking ID</th>
+                  <th className="px-6 py-3 text-left text-sm font-bold text-gray-500 uppercase tracking-wider">Fecha</th>
+                  <th className="px-6 py-3 text-left text-sm font-bold text-gray-500 uppercase tracking-wider">Destinatario</th>
+                  <th className="px-6 py-3 text-left text-sm font-bold text-gray-500 uppercase tracking-wider">Descripción</th>
+                  <th className="px-6 py-3 text-left text-sm font-bold text-gray-500 uppercase tracking-wider">Tipo</th>
+                  <th className="px-6 py-3 text-left text-sm font-bold text-gray-500 uppercase tracking-wider">Estado</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
