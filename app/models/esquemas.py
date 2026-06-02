@@ -132,7 +132,11 @@ class HistorialRespuesta(BaseModel):
     estado: EstadoEnvio
     fecha: datetime
     empleado: UsuarioSimple
+    motivo: Optional[str] = None
     model_config = ConfigDict(from_attributes=True)
+
+class CancelarEnvio(BaseModel):
+    motivo: str
 
 
 class EmpresaRespuesta(BaseModel):
