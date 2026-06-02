@@ -52,3 +52,7 @@ watchfiles==1.1.1
 websockets==16.0
 sqlalchemy-utils==0.41.2
 gunicorn
+pandas
+scikit-learn
+alembic
+psycopg2-binary

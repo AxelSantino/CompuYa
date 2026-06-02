@@ -16,6 +16,12 @@ const MapHojaRuta = dynamic(() => import('@/components/MapHojaRuta'), {
   loading: () => <div className="w-full h-[500px] bg-gray-100 animate-pulse rounded-lg flex items-center justify-center text-gray-400">Cargando mapa de ruta...</div>
 });
 
+const PRIORITY_TAG_CLASSES: Record<string, string> = {
+  'alta': 'bg-orange-100 text-orange-700 border-orange-200',
+  'media': 'bg-blue-100 text-blue-700 border-blue-200',
+  'baja': 'bg-green-100 text-green-700 border-green-200',
+};
+
 interface Repartidor {
   id: number;
   email: string;
@@ -240,7 +246,12 @@ export default function RoutesPage() {
                         <li key={s.id} className="p-4 hover:bg-gray-50 transition-colors group">
                           <div className="flex items-center justify-between">
                             <div>
-                              <p className="font-bold text-gray-800">{s.tracking_id}</p>
+                              <div className="flex items-center gap-2">
+                                <p className="font-bold text-gray-800">{s.tracking_id}</p>
+                                <span className={`text-[10px] uppercase px-1.5 py-0.5 rounded border font-bold ${PRIORITY_TAG_CLASSES[s.prioridad] || 'bg-gray-100 text-gray-600'}`}>
+                                  {s.prioridad}
+                                </span>
+                              </div>
                               <p className="text-xs text-gray-500 truncate max-w-[150px]">{s.destinatario.perfil_empresa?.razon_social}</p>
                             </div>
                             <button 
@@ -289,7 +300,12 @@ export default function RoutesPage() {
                                 {index + 1}
                               </div>
                               <div>
-                                <p className="font-bold text-gray-800 text-sm">{e.tracking_id}</p>
+                                <div className="flex items-center gap-2">
+                                  <p className="font-bold text-gray-800 text-sm">{e.tracking_id}</p>
+                                  <span className={`text-[10px] uppercase px-1.5 py-0.5 rounded border font-bold ${PRIORITY_TAG_CLASSES[e.prioridad] || 'bg-gray-100 text-gray-600'}`}>
+                                    {e.prioridad}
+                                  </span>
+                                </div>
                                 <p className="text-xs text-gray-500 flex items-center gap-1">
                                   <FaMapMarkerAlt /> {e.destinatario.perfil_empresa?.razon_social}
                                 </p>

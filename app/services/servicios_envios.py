@@ -8,6 +8,7 @@ from fastapi import HTTPException, status
 from app.models.entidades import AsignacionEnvio, Envio, Usuario, TipoCliente, EstadoEnvio, Historial, PerfilEmpresa
 from app.models.esquemas import EnvioCrear, EditarEnvio
 from app.services.servicio_ruteo import ServicioRuteo
+from app.ml.modelo_prioridad import predecir_prioridad
 
 class EnvioService:
     def __init__(self, db: AsyncSession):
@@ -50,6 +51,17 @@ class EnvioService:
                 detail="No hay sucursales disponibles para asignar este envío"
             )
         
+        distancia = self.ruteo_service.calcular_distancia_haversine(sucursal_optima.latitud, sucursal_optima.longitud, lat_dest, lon_dest)
+        
+        datos_para_modelo = {
+            "distancia": distancia,
+            "tipo_envio": envio_data.tipo_envio.value,
+            "restriccion": envio_data.restriccion.value,
+            "antiguedad_dias": 0
+        }
+        
+        prioridad_predicha = predecir_prioridad(datos_para_modelo)
+        
         tracking_id = self.generar_tracking_id()
         nuevo_envio = Envio(
             **envio_data.model_dump(),
@@ -59,6 +71,7 @@ class EnvioService:
             sucursal_id=sucursal_optima.id,
             latitud_destino=lat_dest,
             longitud_destino=lon_dest,
+            prioridad=prioridad_predicha
         )
         
         self.db.add(nuevo_envio)
@@ -69,7 +82,6 @@ class EnvioService:
         await self.db.refresh(nuevo_envio)
 
         return await self.obtener_envio_por_id(nuevo_envio.tracking_id)
-
 
     async def obtener_envio_por_id(self, tracking_id: str) -> Envio:
         query = select(Envio).where(Envio.tracking_id == tracking_id).options(
@@ -320,6 +332,37 @@ class EnvioService:
         
         return {"message": f"Se han asignado {count} envíos exitosamente de forma masiva", "asignados": count}
 
+    async def actualizar_prioridades_pendientes(self):
+        envios_en_sucursal = await self.db.execute(select(Envio).where(Envio.estado == EstadoEnvio.EN_SUCURSAL).options(
+                selectinload(Envio.sucursal)
+            ))
+        envios = envios_en_sucursal.scalars().all()
+        if not envios:
+            return {"message": "No hay envíos pendientes en sucursal para actualizar prioridades", "actualizados": 0}
+        
+        update_count = 0
+        now = datetime.now()
+        for envio in envios:
+            if not envio.sucursal:
+                continue
+            antiguedad = now - envio.fecha_creacion
+            distancia = self.ruteo_service.calcular_distancia_haversine(envio.sucursal.latitud, envio.sucursal.longitud, envio.latitud_destino, envio.longitud_destino)
+            datos_para_modelo = {
+                "distancia": distancia,
+                "tipo_envio": envio.tipo_envio.value,
+                "restriccion": envio.restriccion.value,
+                "antiguedad_dias": antiguedad.days + antiguedad.seconds / 86400
+            }
+            prioridad_actual = envio.prioridad.value
+            nueva_prioridad = predecir_prioridad(datos_para_modelo)
+            
+            if nueva_prioridad != prioridad_actual:
+                envio.prioridad = nueva_prioridad
+                update_count += 1
+        if update_count > 0:
+            await self.db.commit()
+        return {"message": f"Se han actualizado las prioridades de {update_count} envíos pendientes en sucursal", "actualizados": update_count}
+           
     async def obtener_hoja_ruta(self, id_empleado: int):
         query = (
             select(Envio)

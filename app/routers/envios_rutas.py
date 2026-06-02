@@ -102,3 +102,9 @@ async def obtener_hoja_ruta(
     envio_service: EnvioService = Depends(get_envio_service)
 ):
     return await envio_service.obtener_hoja_ruta(usuario_actual.id)
+
+@router.post("/actualizar-prioridad", response_model=dict, tags=["Prioridad"])
+async def actualizar_prioridad(db: AsyncSession = Depends(obtener_db)):
+    envio_service = EnvioService(db)
+    resultado = await envio_service.actualizar_prioridad_pendientes()
+    return resultado

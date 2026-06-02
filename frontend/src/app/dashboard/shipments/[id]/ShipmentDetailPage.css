@@ -43,8 +43,21 @@
   font-weight: 600;
   font-size: 0.75rem;
   text-transform: uppercase;
-  background-color: #fecaca; /* red-200 */
-  color: #991b1b; /* red-800 */
+}
+
+.priority-alta {
+  background-color: #fbd38d; /* orange-200 */
+  color: #7b341e; /* orange-900 */
+}
+
+.priority-media {
+  background-color: #bee3f8; /* blue-200 */
+  color: #2a4365; /* blue-900 */
+}
+
+.priority-baja {
+  background-color: #c6f6d5; /* green-200 */
+  color: #22543d; /* green-900 */
 }
 
 .card {

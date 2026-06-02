@@ -170,7 +170,9 @@ export default function ShipmentDetailPage() {
               </div>
               <div className="flex items-center gap-2">
                 <span className="status-badge-lg">{shipment.estado}</span>
-                {shipment.restriccion !== 'ninguna' && <span className="priority-badge-lg">Prioridad Alta</span>}
+                <span className={`priority-badge-lg priority-${shipment.prioridad}`}>
+                  Prioridad {shipment.prioridad}
+                </span>
               </div>
             </header>
 
@@ -218,6 +220,7 @@ export default function ShipmentDetailPage() {
                       <DetailItem icon={<FaUser />} label="Creado por" value={shipment.creador.perfil_empleado?.nombre ? `${shipment.creador.perfil_empleado.nombre} ${shipment.creador.perfil_empleado.apellido || ''}` : shipment.creador.email} />
                       <DetailItem icon={<FaShippingFast />} label="Tipo de Envío" value={shipment.tipo_envio} />
                       <DetailItem icon={<FaExclamationCircle />} label="Manejo Especial" value={shipment.restriccion} />
+                      <DetailItem icon={<FaCheckCircle />} label="Prioridad Asignada" value={<span className="capitalize">{shipment.prioridad}</span>} />
                       <div className="col-span-2">
                         <DetailItem icon={<FaFileAlt />} label="Descripción" value={shipment.descripcion} />
                       </div>

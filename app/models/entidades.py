@@ -6,6 +6,11 @@ from sqlalchemy.orm import DeclarativeBase, relationship
 class Base(DeclarativeBase):
     pass
 
+class PrioridadEnvio(PyEnum):
+    BAJA = "baja"
+    MEDIA = "media"
+    ALTA = "alta"
+
 class TipoCliente(PyEnum):
     EMPLEADO = "empleado"
     EMPRESA = "empresa"
@@ -72,6 +77,7 @@ class Envio(Base):
 
     tipo_envio = Column(Enum(TipoEnvio, native_enum=False, values_callable=lambda x: [e.value for e in x]), nullable=False)
     restriccion = Column(Enum(RestriccionEnvio, native_enum=False, values_callable=lambda x: [e.value for e in x]), nullable=False)
+    prioridad = Column(Enum(PrioridadEnvio, native_enum=False, values_callable=lambda x: [e.value for e in x]), default=PrioridadEnvio.BAJA, nullable=False)
     estado = Column(Enum(EstadoEnvio, native_enum=False, values_callable=lambda x: [e.value for e in x]), default=EstadoEnvio.EN_SUCURSAL)
     creado_por_id = Column(BigInteger, ForeignKey("usuarios.id"), nullable=False)
     destinatario_id = Column(BigInteger, ForeignKey("usuarios.id"), nullable=True)

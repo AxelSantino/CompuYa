@@ -2,7 +2,7 @@ from pydantic import BaseModel, EmailStr, ConfigDict, Field
 from datetime import date, datetime
 from typing import List, Optional, Union
 from uuid import UUID
-from app.models.entidades import TipoEnvio, RestriccionEnvio, EstadoEnvio, TipoCliente
+from app.models.entidades import TipoEnvio, RestriccionEnvio, EstadoEnvio, TipoCliente, PrioridadEnvio
 
 # --- ESQUEMAS DE PERFIL ---
 
@@ -85,7 +85,7 @@ class EnvioBase(BaseModel):
     descripcion: str
     tipo_envio: TipoEnvio
     restriccion: RestriccionEnvio
-
+    
 class EnvioCrear(EnvioBase):
     pass
 
@@ -131,6 +131,7 @@ class EnvioRespuesta(EnvioBase):
     id: int
     tracking_id: str
     estado: EstadoEnvio
+    prioridad: PrioridadEnvio
     fecha_creacion: datetime
     creador: UsuarioSimple
     destinatario: UsuarioRespuesta 
