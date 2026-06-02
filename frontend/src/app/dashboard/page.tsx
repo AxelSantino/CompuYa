@@ -20,6 +20,12 @@ const STATUS_CLASSES: Record<EnvioStatus, string> = {
   'cancelado': 'bg-gray-100 text-gray-800',
 };
 
+const PRIORITY_CLASSES: Record<string, string> = {
+  'alta': 'bg-orange-600 text-white',
+  'media': 'bg-blue-100 text-blue-800',
+  'baja': 'bg-green-100 text-green-800',
+};
+
 const StatusBadge = React.memo(({ status }: { status: EnvioStatus }) => {
   return (
     <span
@@ -32,7 +38,20 @@ const StatusBadge = React.memo(({ status }: { status: EnvioStatus }) => {
   );
 });
 
+const PriorityBadge = React.memo(({ priority }: { priority: string }) => {
+  return (
+    <span
+      className={`px-2 inline-flex text-xs leading-5 font-bold rounded-full uppercase ${
+        PRIORITY_CLASSES[priority] || 'bg-gray-100 text-gray-800'
+      }`}
+    >
+      {priority}
+    </span>
+  );
+});
+
 StatusBadge.displayName = 'StatusBadge';
+PriorityBadge.displayName = 'PriorityBadge';
 
 const ShipmentsPage = () => {
   const router = useRouter();
@@ -153,12 +172,13 @@ const ShipmentsPage = () => {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
-                  <th className="px-6 py-3 text-left text-sm font-bold text-gray-500 uppercase tracking-wider">Tracking ID</th>
-                  <th className="px-6 py-3 text-left text-sm font-bold text-gray-500 uppercase tracking-wider">Fecha</th>
-                  <th className="px-6 py-3 text-left text-sm font-bold text-gray-500 uppercase tracking-wider">Destinatario</th>
-                  <th className="px-6 py-3 text-left text-sm font-bold text-gray-500 uppercase tracking-wider">Descripción</th>
-                  <th className="px-6 py-3 text-left text-sm font-bold text-gray-500 uppercase tracking-wider">Tipo</th>
-                  <th className="px-6 py-3 text-left text-sm font-bold text-gray-500 uppercase tracking-wider">Estado</th>
+                  <th className="px-6 py-3 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">Tracking ID</th>
+                  <th className="px-6 py-3 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">Prioridad</th>
+                  <th className="px-6 py-3 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">Fecha</th>
+                  <th className="px-6 py-3 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">Destinatario</th>
+                  <th className="px-6 py-3 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">Descripción</th>
+                  <th className="px-6 py-3 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">Tipo</th>
+                  <th className="px-6 py-3 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">Estado</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
@@ -168,6 +188,9 @@ const ShipmentsPage = () => {
                       <Link href={`/dashboard/shipments/${shipment.tracking_id}`} className="hover:underline">
                         {shipment.tracking_id}
                       </Link>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      <PriorityBadge priority={shipment.prioridad} />
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-medium">{new Date(shipment.fecha_creacion).toLocaleDateString()}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -183,7 +206,7 @@ const ShipmentsPage = () => {
                 ))}
                 {filteredShipments.length === 0 && (
                   <tr>
-                    <td colSpan={6} className="px-6 py-8 text-center text-sm text-gray-500">
+                    <td colSpan={7} className="px-6 py-8 text-center text-sm text-gray-500">
                       No se encontraron envíos con los criterios seleccionados.
                     </td>
                   </tr>
