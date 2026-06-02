@@ -1,15 +1,17 @@
-from pydantic import BaseModel, EmailStr, ConfigDict, Field,field_validator
+from pydantic import BaseModel, EmailStr, ConfigDict, Field, field_validator
 from datetime import date, datetime
-from typing import List, Optional, Union
+from typing import List, Optional, Union, Dict
 from uuid import UUID
 from app.models.entidades import TipoEnvio, RestriccionEnvio, EstadoEnvio, TipoCliente
 
 # --- ESQUEMAS DE PERFIL ---
 
+
 class PerfilEmpleadoSchema(BaseModel):
     nombre: Optional[str] = None
     apellido: Optional[str] = None
     model_config = ConfigDict(from_attributes=True)
+
 
 class PerfilEmpresaSchema(BaseModel):
     razon_social: Optional[str] = None
@@ -22,7 +24,9 @@ class PerfilEmpresaSchema(BaseModel):
     cod_postal: Optional[str] = None
     model_config = ConfigDict(from_attributes=True)
 
+
 # --- ESQUEMAS DE USUARIO ---
+
 
 class UsuarioBase(BaseModel):
     email: EmailStr
@@ -30,10 +34,12 @@ class UsuarioBase(BaseModel):
     rol: str = "visor"
     fecha: Optional[date] = Field(default_factory=date.today)
 
+
 class UsuarioRegistroEmpleado(UsuarioBase):
     password: str = Field(min_length=6)
     nombre: str
     apellido: str
+
 
 class UsuarioRegistroEmpresa(UsuarioBase):
     password: str = Field(min_length=6)
@@ -46,10 +52,12 @@ class UsuarioRegistroEmpresa(UsuarioBase):
     municipio: Optional[str] = None
     cod_postal: Optional[str] = None
 
+
 class UsuarioCrearEmpleado(UsuarioBase):
     supabase_id: Union[str, UUID]
     nombre: str
     apellido: str
+
 
 class UsuarioCrearEmpresa(UsuarioBase):
     supabase_id: Union[str, UUID]
@@ -62,6 +70,7 @@ class UsuarioCrearEmpresa(UsuarioBase):
     municipio: Optional[str] = None
     cod_postal: Optional[str] = None
 
+
 class UsuarioRespuesta(UsuarioBase):
     id: int
     supabase_id: Union[str, UUID]
@@ -69,7 +78,9 @@ class UsuarioRespuesta(UsuarioBase):
     perfil_empresa: Optional[PerfilEmpresaSchema] = None
     model_config = ConfigDict(from_attributes=True)
 
+
 # --- ESQUEMAS DE ENVÍO Y RUTEO ---
+
 
 class SucursalRespuesta(BaseModel):
     id: int
@@ -79,6 +90,7 @@ class SucursalRespuesta(BaseModel):
     longitud: float
     model_config = ConfigDict(from_attributes=True)
 
+
 class EnvioBase(BaseModel):
     razon_social_destinatario: str
     cuit_destinatario: str
@@ -87,8 +99,10 @@ class EnvioBase(BaseModel):
     restriccion: RestriccionEnvio
     fecha_entrega: date
 
+
 class EnvioCrear(EnvioBase):
     pass
+
 
 class EditarEnvio(BaseModel):
     razon_social_destinatario: Optional[str] = None
@@ -97,25 +111,29 @@ class EditarEnvio(BaseModel):
     tipo_envio: Optional[TipoEnvio] = None
     restriccion: Optional[RestriccionEnvio] = None
     fecha_entrega: Optional[date] = None
-    
+
+
 class HistorialBase(BaseModel):
     envio_id: int
     id_empleado: int
     estado: EstadoEnvio
     fecha: datetime
 
+
 class UsuarioSimple(BaseModel):
     id: int
     email: EmailStr
     perfil_empleado: Optional[PerfilEmpleadoSchema] = None
     model_config = ConfigDict(from_attributes=True)
-    
+
+
 class HistorialRespuesta(BaseModel):
     id: int
     estado: EstadoEnvio
     fecha: datetime
     empleado: UsuarioSimple
     model_config = ConfigDict(from_attributes=True)
+
 
 class EmpresaRespuesta(BaseModel):
     razon_social: str
@@ -128,15 +146,29 @@ class EmpresaRespuesta(BaseModel):
     cod_postal: Optional[str] = None
     fecha: Optional[date] = None
     model_config = ConfigDict(from_attributes=True)
-    
+
+
 class EnvioRespuesta(EnvioBase):
     id: int
     tracking_id: str
     estado: EstadoEnvio
     fecha_creacion: datetime
     creador: UsuarioSimple
-    destinatario: UsuarioRespuesta 
+    destinatario: UsuarioRespuesta
     sucursal: Optional[SucursalRespuesta] = None
     latitud_destino: Optional[float] = None
     longitud_destino: Optional[float] = None
     model_config = ConfigDict(from_attributes=True)
+
+
+class ElementoHistorico(BaseModel):
+    fecha: date
+    cantidad: int
+
+
+class ReporteVolumenResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    total_envios: int
+    por_estado: Dict[str, int]
+    por_tipo: Dict[str, int]
+    historico_lineal: List[ElementoHistorico]
