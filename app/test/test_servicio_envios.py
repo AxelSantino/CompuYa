@@ -4,7 +4,7 @@ from fastapi import HTTPException
 from app.models.entidades import Envio, EstadoEnvio, Usuario
 from app.services.servicios_envios import EnvioService
 from datetime import date, timedelta
-
+from app.models.esquemas import EnvioCrear, TipoEnvio, RestriccionEnvio
 
 def test_generar_tracking_id_devuelve_formato_correcto():
     servicio = EnvioService(db=AsyncMock())
@@ -296,7 +296,7 @@ async def test_obtener_hoja_ruta_devuelve_lista_vacia_si_no_hay_viajes():
 
 @pytest.mark.asyncio
 async def test_crear_envio_exitoso_con_fecha_entrega_futura():
-    from app.models.esquemas import EnvioCrear, TipoEnvio, RestriccionEnvio
+    
     fecha_manana = date.today() + timedelta(days=1)
 
     # Configuración de mocks

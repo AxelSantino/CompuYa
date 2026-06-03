@@ -87,7 +87,7 @@ class EnvioBase(BaseModel):
     restriccion: RestriccionEnvio
 
 class EnvioCrear(EnvioBase):
-    pass
+    fecha_limite: Optional[date] = None
 
 class EditarEnvio(BaseModel):
     razon_social_destinatario: Optional[str] = None
