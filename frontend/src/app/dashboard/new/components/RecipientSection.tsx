@@ -1,0 +1,53 @@
+import React, { ChangeEvent } from 'react';
+import { Input } from '@/components/ui/Input';
+import { EnvioCrear } from '@/types/envio';
+
+// El contrato de lo que recibe este componente
+export interface ShipmentSectionProps {
+    formData: EnvioCrear;
+    handleChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
+    isLoading: boolean;
+}
+
+export const RecipientSection = ({ formData, handleChange, isLoading }: ShipmentSectionProps) => {
+    return (
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+            <h3 className="text-lg font-semibold text-gray-800 mb-6 flex items-center">
+                <span className="w-1.5 h-6 bg-blue-600 rounded-full mr-3"></span>
+                Datos del Destinatario
+            </h3>
+            <div className="grid grid-cols-1 gap-6">
+                <div>
+                    <label htmlFor="razon_social_destinatario" className="block text-sm font-medium text-gray-700 mb-2">
+                        Razón Social / Nombre Completo <span className="text-red-500">*</span>
+                    </label>
+                    <Input
+                        id="razon_social_destinatario"
+                        name="razon_social_destinatario"
+                        value={formData.razon_social_destinatario}
+                        onChange={handleChange}
+                        placeholder="Ej. TechStore Argentina S.A. o Juan Pérez"
+                        required
+                        disabled={isLoading}
+                        className="w-full"
+                    />
+                </div>
+                <div>
+                    <label htmlFor="cuit_destinatario" className="block text-sm font-medium text-gray-700 mb-2">
+                        CUIT/CUIL del Destinatario <span className="text-red-500">*</span>
+                    </label>
+                    <Input
+                        id="cuit_destinatario"
+                        name="cuit_destinatario"
+                        value={formData.cuit_destinatario}
+                        onChange={handleChange}
+                        placeholder="Ej. 30123456789 (CUIT) o 20123456789 (CUIL)"
+                        required
+                        disabled={isLoading}
+                        className="w-full"
+                    />
+                </div>
+            </div>
+        </div>
+    );
+};
