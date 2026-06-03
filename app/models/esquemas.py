@@ -118,8 +118,9 @@ class HistorialRespuesta(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 class CancelarEnvio(BaseModel):
-    motivo: str
-
+    #motivo: str
+    motivo: Optional[str] = "Sin motivo especificado"
+    
 class EmpresaRespuesta(BaseModel):
     razon_social: str
     cuit: Optional[str] = None
