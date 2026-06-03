@@ -3,22 +3,22 @@ from pydantic import ValidationError
 from datetime import datetime, date, timedelta
 from uuid import UUID
 from app.models.esquemas import (
-    EnvioCrear, 
-    EnvioRespuesta, 
-    UsuarioSimple, 
-    SucursalRespuesta, 
+    EnvioCrear,
+    EnvioRespuesta,
+    UsuarioSimple,
+    SucursalRespuesta,
     HistorialRespuesta,
     UsuarioRespuesta,
     EmpresaRespuesta
 )
 from app.models.entidades import (
-    TipoEnvio, 
-    RestriccionEnvio, 
-    EstadoEnvio, 
+    TipoEnvio,
+    RestriccionEnvio,
+    EstadoEnvio,
     TipoCliente
 )
 
-# Saca el primer elemento de cada lista para completar 
+# Saca el primer elemento de cada lista para completar
 # los campos obligatorios del test de forma automática.
 
 ENUM_TIPO_ENVIO = list(TipoEnvio)[0]
@@ -29,16 +29,17 @@ ENUM_TIPO_ENVIO = list(TipoEnvio)[0]
 ENUM_RESTRICCION = list(RestriccionEnvio)[0]
 ENUM_ESTADO = list(EstadoEnvio)[0]
 
+
 def test_crear_envio_con_datos_correctos_funciona():
-    fecha_futura = date.today() + timedelta(days=2) 
-    
+    fecha_futura = date.today() + timedelta(days=2)
+
     envio = EnvioCrear(
         razon_social_destinatario="CompuYa Casa Central Haedo",
         cuit_destinatario="30-11344742-5",
         descripcion="Lote de 50 placas de video Nvidia RTX 4070 y fuentes",
         tipo_envio=ENUM_TIPO_ENVIO,
         restriccion=ENUM_RESTRICCION,
-        fecha_entrega=fecha_futura 
+        fecha_entrega=fecha_futura
     )
     assert envio.razon_social_destinatario == "CompuYa Casa Central Haedo"
 
@@ -52,11 +53,11 @@ def test_crear_envio_sin_datos_obligatorios_falla():
 
 def test_sucursal_guarda_coordenadas_como_numeros():
     sucursal = SucursalRespuesta(
-        id=999,  
+        id=999,
         nombre="Deposito Principal Logitrack",
         direccion="Av. General Paz 4500",
-        latitud=-34.6432,   
-        longitud=-58.5985   
+        latitud=-34.6432,
+        longitud=-58.5985
     )
     assert sucursal.id == 999
     assert isinstance(sucursal.latitud, float)
@@ -64,17 +65,17 @@ def test_sucursal_guarda_coordenadas_como_numeros():
 
 def test_historial_guarda_bien_los_datos_del_empleado():
     empleado_fijo = UsuarioSimple(
-        id=777,  
+        id=777,
         email="marcelo.gallardo@compuya.com"
     )
-    
+
     historial = HistorialRespuesta(
-        id=444,  
+        id=444,
         estado=ENUM_ESTADO,
-        fecha=datetime(2026, 5, 28, 12, 0, 0),  
+        fecha=datetime(2026, 5, 28, 12, 0, 0),
         empleado=empleado_fijo
     )
-    
+
     assert historial.id == 444
     assert historial.empleado.id == 777
     assert historial.empleado.email == "marcelo.gallardo@compuya.com"
@@ -118,7 +119,8 @@ def test_respuesta_final_del_envio_contiene_al_destinatario_correcto():
         restriccion=ENUM_RESTRICCION,
         latitud_destino=-34.5,
         longitud_destino=-58.7,
-        fecha_entrega=date(2026, 6, 15) 
+        fecha_entrega=date(2026, 6, 15),
+        prioridad="alta"
     )
     assert envio_full.destinatario.perfil_empresa.razon_social == "Celestela Beauty Center"
 
