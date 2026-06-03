@@ -2,7 +2,7 @@ from pydantic import BaseModel, EmailStr, ConfigDict, Field
 from datetime import date, datetime
 from typing import List, Optional, Union, Dict
 from uuid import UUID
-from app.models.entidades import TipoEnvio, RestriccionEnvio, EstadoEnvio, TipoCliente
+from app.models.entidades import TipoEnvio, RestriccionEnvio, EstadoEnvio, TipoCliente, PrioridadEnvio
 
 # --- ESQUEMAS DE PERFIL ---
 
@@ -97,7 +97,6 @@ class EnvioBase(BaseModel):
     descripcion: str
     tipo_envio: TipoEnvio
     restriccion: RestriccionEnvio
-    fecha_limite: Optional[date] = None
 
 
 class EnvioCrear(EnvioBase):
@@ -135,6 +134,7 @@ class HistorialRespuesta(BaseModel):
     motivo: Optional[str] = None
     model_config = ConfigDict(from_attributes=True)
 
+
 class CancelarEnvio(BaseModel):
     motivo: str
 
@@ -156,24 +156,11 @@ class EnvioRespuesta(EnvioBase):
     id: int
     tracking_id: str
     estado: EstadoEnvio
+    prioridad: PrioridadEnvio
     fecha_creacion: datetime
     creador: UsuarioSimple
     destinatario: UsuarioRespuesta
     sucursal: Optional[SucursalRespuesta] = None
     latitud_destino: Optional[float] = None
     longitud_destino: Optional[float] = None
-    model_config = ConfigDict(from_attributes=True)
-
-
-class ElementoHistorico(BaseModel):
-    fecha: datetime
-    cantidad: int
-
-
-class ReporteVolumenResponse(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-    total_envios: int
-    por_estado: Dict[str, int]
-    por_tipo: Dict[str, int]
-    historico_lineal: List[ElementoHistorico]
     model_config = ConfigDict(from_attributes=True)

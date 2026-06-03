@@ -47,9 +47,18 @@ const NewShipmentPage = () => {
             }
             await shipmentService.createShipment(shipmentData);
             router.push('/dashboard');
-        } catch (err: unknown) {
-            const errorResponse = err as { response?: { data?: { detail?: string } } };
-            const errorMessage = errorResponse.response?.data?.detail || 'Error al crear el envío. Por favor, revisa los datos e intenta de nuevo.';
+        } catch (err: any) {
+            let errorMessage = 'Error al crear el envío. Por favor, revisa los datos e intenta de nuevo.';
+            
+            if (err.response?.data?.detail) {
+                if (typeof err.response.data.detail === 'string') {
+                    errorMessage = err.response.data.detail;
+                } else if (Array.isArray(err.response.data.detail)) {
+                    // Si es una lista de errores de Pydantic, tomamos el mensaje del primero
+                    errorMessage = err.response.data.detail[0]?.msg || errorMessage;
+                }
+            }
+            
             setError(errorMessage);
         } finally {
             setIsLoading(false);
@@ -123,14 +132,11 @@ const NewShipmentPage = () => {
           </div>
 
           <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <div className="mb-6">
                 <h3 className="text-lg font-semibold text-gray-800 flex items-center">
                   <span className="w-1.5 h-6 bg-orange-500 rounded-full mr-3"></span>
                   Detalles del Componente y Envío
                 </h3>
-                <Button variant="secondary" type="button" disabled={isLoading} className="text-xs uppercase tracking-wider font-bold bg-gray-50 border-none hover:bg-gray-100">
-                  Motor IA
-                </Button>
             </div>
             <div className="space-y-6 text-gray-800">
               <div>

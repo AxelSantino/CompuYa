@@ -296,9 +296,10 @@ async def test_obtener_hoja_ruta_devuelve_lista_vacia_si_no_hay_viajes():
 
 @pytest.mark.asyncio
 async def test_crear_envio_exitoso_con_fecha_entrega_futura():
-
+    from app.models.esquemas import EnvioCrear, TipoEnvio, RestriccionEnvio
     fecha_manana = date.today() + timedelta(days=1)
 
+    # Configuración de mocks
     empresa_mock = MagicMock()
     empresa_mock.id = 10
     empresa_mock.perfil_empresa.latitud = -34.6037
@@ -314,22 +315,31 @@ async def test_crear_envio_exitoso_con_fecha_entrega_futura():
     db_mock.execute.return_value = resultado_mock
 
     servicio = EnvioService(db=db_mock)
-
     servicio.ruteo_service.obtener_sucursal_mas_cercana = AsyncMock(
         return_value=sucursal_mock)
     servicio.obtener_envio_por_id = AsyncMock(
         return_value=Envio(tracking_id="CY-2026-OK"))
 
-    from app.models.esquemas import EnvioCrear
+    # CONFIGURACIÓN DEL MOCK PARA EL ESQUEMA
     envio_data = MagicMock(spec=EnvioCrear)
     envio_data.razon_social_destinatario = "Empresa Valida S.A."
     envio_data.cuit_destinatario = "30-12345678-9"
-    envio_data.fecha_limite = fecha_manana
+    envio_data.fecha_entrega = fecha_manana
+
+    # Configuramos los atributos que faltaban para que el servicio no falle
+    envio_data.tipo_envio = MagicMock()
+    envio_data.tipo_envio.value = "normal"
+    envio_data.restriccion = MagicMock()
+    envio_data.restriccion.value = "ninguna"
+
+    # Ajustamos el model_dump para que coincida con lo que espera tu servicio
     envio_data.model_dump.return_value = {
         "razon_social_destinatario": "Empresa Valida S.A.",
         "cuit_destinatario": "30-12345678-9",
         "descripcion": "Test",
-        "fecha_limite": fecha_manana
+        "fecha_entrega": fecha_manana,
+        "tipo_envio": "normal",
+        "restriccion": "ninguna"
     }
 
     with patch.object(servicio, 'registrar_historial', new_callable=AsyncMock):

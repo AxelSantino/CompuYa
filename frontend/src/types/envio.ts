@@ -1,6 +1,7 @@
 export type EnvioStatus = 'en sucursal' | 'en transito' | 'cancelado' | 'entregado';
 export type EnvioType = 'normal' | 'express';
 export type EnvioRestriction = 'fragil' | 'valioso' | 'ninguna';
+export type EnvioPrioridad = 'baja' | 'media' | 'alta';
 
 export interface PerfilEmpleado {
   nombre: string | null;
@@ -36,6 +37,7 @@ export interface Envio {
   id: number;
   tracking_id: string;
   estado: EnvioStatus;
+  prioridad: EnvioPrioridad;
   fecha_creacion: string;
   descripcion: string;
   tipo_envio: EnvioType;
