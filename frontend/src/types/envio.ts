@@ -63,8 +63,8 @@ export interface EnvioCrear {
   razon_social_destinatario: string;
   cuit_destinatario: string;
   descripcion: string;
-  tipo_envio: string;
-  restriccion: string;
+  tipo_envio: EnvioType;
+  restriccion: EnvioRestriction;
 }
 
 export interface HistorialEnvio {

@@ -9,13 +9,13 @@ import React, { useState, ChangeEvent, FormEvent } from 'react';
 import withAuth from '@/components/auth/withAuth';
 import shipmentService from '@/services/shipmentService';
 import { useRouter } from 'next/navigation';
+import { EnvioCrear } from '@/types/envio';
 
 const NewShipmentPage = () => {
     const router = useRouter();
-    const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState<EnvioCrear>({
         razon_social_destinatario: '',
         cuit_destinatario: '',
-        consent: false,
         descripcion: '',
         tipo_envio: 'normal',
         restriccion: 'ninguna',
@@ -39,13 +39,13 @@ const NewShipmentPage = () => {
         setIsLoading(true);
 
         try {
-            const { consent, ...shipmentData } = formData;
-            if (!consent) {
-                setError("Debes aceptar el consentimiento para el tratamiento de datos.");
-                setIsLoading(false);
-                return;
-            }
-            await shipmentService.createShipment(shipmentData);
+//            const { consent, ...shipmentData } = formData;
+//            if (!consent) {
+//                setError("Debes aceptar el consentimiento para el tratamiento de datos.");
+//                setIsLoading(false);
+//                return;
+//            }
+            await shipmentService.createShipment(formData);
             router.push('/dashboard');
         } catch (err: any) {
             let errorMessage = 'Error al crear el envío. Por favor, revisa los datos e intenta de nuevo.';
@@ -115,17 +115,6 @@ const NewShipmentPage = () => {
                   required
                   disabled={isLoading}
                   className="w-full"
-                />
-              </div>
-              <div className="bg-blue-50 border border-blue-100 p-4 rounded-lg">
-                <Checkbox
-                  id="consent"
-                  name="consent"
-                  checked={formData.consent}
-                  onChange={handleChange}
-                  label="Se cuenta con el consentimiento para el tratamiento de datos personales (Ley 25.326)."
-                  required
-                  disabled={isLoading}
                 />
               </div>
             </div>
