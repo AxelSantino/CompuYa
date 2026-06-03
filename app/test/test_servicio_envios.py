@@ -324,7 +324,7 @@ async def test_crear_envio_exitoso_con_fecha_entrega_futura():
     envio_data = MagicMock(spec=EnvioCrear)
     envio_data.razon_social_destinatario = "Empresa Valida S.A."
     envio_data.cuit_destinatario = "30-12345678-9"
-    envio_data.fecha_entrega = fecha_manana
+    envio_data.fecha_limite = fecha_manana
 
     # Configuramos los atributos que faltaban para que el servicio no falle
     envio_data.tipo_envio = MagicMock()
@@ -337,7 +337,7 @@ async def test_crear_envio_exitoso_con_fecha_entrega_futura():
         "razon_social_destinatario": "Empresa Valida S.A.",
         "cuit_destinatario": "30-12345678-9",
         "descripcion": "Test",
-        "fecha_entrega": fecha_manana,
+        "fecha_limite": fecha_manana,
         "tipo_envio": "normal",
         "restriccion": "ninguna"
     }

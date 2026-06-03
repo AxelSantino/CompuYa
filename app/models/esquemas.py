@@ -109,7 +109,7 @@ class EditarEnvio(BaseModel):
     descripcion: Optional[str] = None
     tipo_envio: Optional[TipoEnvio] = None
     restriccion: Optional[RestriccionEnvio] = None
-    fecha_entrega: Optional[date] = None
+    fecha_limite: Optional[date] = None
 
 
 class HistorialBase(BaseModel):
