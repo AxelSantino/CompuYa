@@ -4,6 +4,7 @@ import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 
 type DashboardLayoutProps = {
   children: React.ReactNode;
@@ -53,10 +54,21 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     <div className="flex h-screen bg-gray-100 overflow-hidden">
       <aside className="w-64 flex flex-col bg-[#1a1a1a] text-white p-4 shrink-0 shadow-xl z-10">
         <div className="flex items-center mb-10 px-2">
-          <div className="w-10 h-10 bg-orange-600 rounded-lg flex items-center justify-center font-bold text-xl mr-3 shadow-lg shadow-orange-900/20">
-            C
+
+          <div className="mr-3 flex items-center justify-center">
+            <Image 
+              src="/LogoCompuYaBlanco.svg" 
+              alt="Logo CompuYa" 
+              width={72} 
+              height={72} 
+              className="object-contain drop-shadow-lg" 
+            />
           </div>
-          <h1 className="text-xl font-bold tracking-tight">CompuYa</h1>
+      
+          <h1 className="text-2xl font-bold tracking-tight mt-2">  
+            <span className="text-orange-500">Compu</span>
+            <span className="text-white">Ya</span>
+          </h1>
         </div>
         
         <nav className="flex-1">
