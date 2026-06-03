@@ -13,7 +13,7 @@ type DashboardLayoutProps = {
 };
 
 const NAV_ITEMS = [
-  { name: 'Lista de envíos', href: '/dashboard', icon: BiCube, roles: ['admin', 'supervisor', 'operador', 'visor'] },
+  { name: 'Gestión de envíos', href: '/dashboard', icon: BiCube, roles: ['admin', 'supervisor', 'operador', 'visor'] },
   { name: 'Control Logístico', href: '/dashboard/routes', icon: FaRoute, roles: ['admin', 'supervisor', 'repartidor'] },
 ];
 

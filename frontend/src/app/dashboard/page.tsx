@@ -14,10 +14,10 @@ import LoadingOverlay from '@/components/LoadingOverlay';
 import Link from 'next/link';
 
 const STATUS_CLASSES: Record<EnvioStatus, string> = {
-  'en sucursal': 'bg-red-100 text-red-800',
+  'en sucursal': 'bg-gray-100 text-gray-800',
   'en transito': 'bg-yellow-100 text-yellow-800',
   'entregado': 'bg-green-100 text-green-800',
-  'cancelado': 'bg-gray-100 text-gray-800',
+  'cancelado': 'bg-red-100 text-red-800',
 };
 
 const PRIORITY_CLASSES: Record<string, string> = {
@@ -127,7 +127,7 @@ const ShipmentsPage = () => {
           <div>
             <h2 className="text-2xl font-bold mb-1">Gestión de Envíos</h2>
             <p className="text-gray-600">
-              Lista y administración de componentes de computadora en tránsito.
+              Listado y administración de los envíos de productos informáticos registrados en el sistema.
             </p>
           </div>
           {user && user.rol !== 'cliente' && (
@@ -174,7 +174,7 @@ const ShipmentsPage = () => {
                 <tr>
                   <th className="px-6 py-3 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">Tracking ID</th>
                   <th className="px-6 py-3 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">Prioridad</th>
-                  <th className="px-6 py-3 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">Fecha</th>
+                  <th className="px-6 py-3 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">Fecha de creación</th>
                   <th className="px-6 py-3 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">Destinatario</th>
                   <th className="px-6 py-3 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">Descripción</th>
                   <th className="px-6 py-3 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">Tipo</th>
