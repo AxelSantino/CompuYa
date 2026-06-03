@@ -142,7 +142,7 @@ async def test_crear_envio_falla_si_empresa_no_existe():
     envio_data.razon_social_destinatario = "Empresa Fantasma S.A."
     envio_data.cuit_destinatario = "30-99999999-9"
 
-    envio_data.fecha_entrega = date.today() + timedelta(days=2)
+    envio_data.fecha_limite = date.today() + timedelta(days=2)
 
     with pytest.raises(HTTPException) as info_error:
         await servicio.crear_envio(envio_data, usuario_id=1)
@@ -172,7 +172,7 @@ async def test_crear_envio_falla_si_no_hay_sucursales_disponibles():
     envio_data.razon_social_destinatario = "Empresa Test S.A."
     envio_data.cuit_destinatario = "30-12345678-9"
 
-    envio_data.fecha_entrega = date.today() + timedelta(days=2)
+    envio_data.fecha_limite = date.today() + timedelta(days=2)
 
     with pytest.raises(HTTPException) as info_error:
         await servicio.crear_envio(envio_data, usuario_id=1)
@@ -324,12 +324,12 @@ async def test_crear_envio_exitoso_con_fecha_entrega_futura():
     envio_data = MagicMock(spec=EnvioCrear)
     envio_data.razon_social_destinatario = "Empresa Valida S.A."
     envio_data.cuit_destinatario = "30-12345678-9"
-    envio_data.fecha_entrega = fecha_manana
+    envio_data.fecha_limite = fecha_manana
     envio_data.model_dump.return_value = {
         "razon_social_destinatario": "Empresa Valida S.A.",
         "cuit_destinatario": "30-12345678-9",
         "descripcion": "Test",
-        "fecha_entrega": fecha_manana
+        "fecha_limite": fecha_manana
     }
 
     with patch.object(servicio, 'registrar_historial', new_callable=AsyncMock):
@@ -340,7 +340,7 @@ async def test_crear_envio_exitoso_con_fecha_entrega_futura():
 
 
 @pytest.mark.asyncio
-async def test_crear_envio_falla_si_fecha_entrega_es_hoy_o_anterior():
+async def test_crear_envio_falla_si_fecha_limite_es_hoy_o_anterior():
 
     fecha_hoy = date.today()
 
@@ -349,7 +349,7 @@ async def test_crear_envio_falla_si_fecha_entrega_es_hoy_o_anterior():
 
     from app.models.esquemas import EnvioCrear
     envio_data = MagicMock(spec=EnvioCrear)
-    envio_data.fecha_entrega = fecha_hoy
+    envio_data.fecha_limite = fecha_hoy
 
     with pytest.raises(HTTPException) as info_error:
         await servicio.crear_envio(envio_data, usuario_id=5)

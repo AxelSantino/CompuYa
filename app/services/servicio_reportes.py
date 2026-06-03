@@ -1,49 +1,52 @@
-from sqlalchemy.orm import Session
-from sqlalchemy import func
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import func, select
 from datetime import date, timedelta
-from app.models.entidades import Envio  
+from app.models.entidades import Envio 
 
 class ServicioReportes:
     
     @staticmethod
-    def obtener_reporte_volumen(db: Session, fecha_desde: date = None, fecha_hasta: date = None):
-        # por defecto se calculan los últimos 30 días
+    async def obtener_reporte_volumen(db: AsyncSession, fecha_desde: date = None, fecha_hasta: date = None):
         if not fecha_hasta:
             fecha_hasta = date.today()
         if not fecha_desde:
             fecha_desde = fecha_hasta - timedelta(days=30)
             
-       
-        consulta_base = db.query(Envio).filter(Envio.fecha_creacion >= fecha_desde, Envio.fecha_creacion <= fecha_hasta)
+        # 1. Total General (Truncando a fecha pura para que incluya hoy)
+        stmt_total = select(func.count(Envio.id)).where(
+            func.date(Envio.fecha_creacion) >= fecha_desde, 
+            func.date(Envio.fecha_creacion) <= fecha_hasta
+        )
+        resultado_total = await db.execute(stmt_total)
+        total_envios = resultado_total.scalar() or 0
         
-        
-        total_envios = consulta_base.count()
-        
-        resumen_estados = (
-            db.query(Envio.estado, func.count(Envio.id))
-            .filter(Envio.fecha_creacion >= fecha_desde, Envio.fecha_creacion <= fecha_hasta)
+        # 2. Agrupación por Estado
+        stmt_estados = (
+            select(Envio.estado, func.count(Envio.id))
+            .where(func.date(Envio.fecha_creacion) >= fecha_desde, func.date(Envio.fecha_creacion) <= fecha_hasta)
             .group_by(Envio.estado)
-            .all()
         )
-        por_estado = {estado: cantidad for estado, cantidad in resumen_estados}
+        resultado_estados = await db.execute(stmt_estados)
+        por_estado = {estado.value if hasattr(estado, 'value') else str(estado): cantidad for estado, cantidad in resultado_estados.all()}
         
-        resumen_tipos = (
-            db.query(Envio.tipo_envio, func.count(Envio.id))
-            .filter(Envio.fecha_creacion >= fecha_desde, Envio.fecha_creacion <= fecha_hasta)
+        # 3. Agrupación por Tipo de Envío
+        stmt_tipos = (
+            select(Envio.tipo_envio, func.count(Envio.id))
+            .where(func.date(Envio.fecha_creacion) >= fecha_desde, func.date(Envio.fecha_creacion) <= fecha_hasta)
             .group_by(Envio.tipo_envio)
-            .all()
         )
-        por_tipo = {str(tipo): cantidad for tipo, cantidad in resumen_tipos}
+        resultado_tipos = await db.execute(stmt_tipos)
+        por_tipo = {tipo.value if hasattr(tipo, 'value') else str(tipo): cantidad for tipo, cantidad in resultado_tipos.all()}
         
-        resumen_historico = (
-            db.query(Envio.fecha_creacion, func.count(Envio.id))
-            .filter(Envio.fecha_creacion >= fecha_desde, Envio.fecha_creacion <= fecha_hasta)
-            .group_by(Envio.fecha_creacion)
-            .order_by(Envio.fecha_creacion.asc())
-            .all()
+        # 4. Histórico Cronológico por Día
+        stmt_historico = (
+            select(func.date(Envio.fecha_creacion).label("fecha_dia"), func.count(Envio.id))
+            .where(func.date(Envio.fecha_creacion) >= fecha_desde, func.date(Envio.fecha_creacion) <= fecha_hasta)
+            .group_by(func.date(Envio.fecha_creacion))
+            .order_by(func.date(Envio.fecha_creacion).asc())
         )
-        historico_lineal = [{"fecha": fecha, "cantidad": cantidad} for fecha, cantidad in resumen_historico]
-        
+        resultado_historico = await db.execute(stmt_historico)
+        historico_lineal = [{"fecha": fila[0], "cantidad": fila[1]} for fila in resultado_historico.all()]
         
         return {
             "total_envios": total_envios,

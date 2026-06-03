@@ -11,9 +11,9 @@ router = APIRouter(
 )
 
 @router.get("/volumen", response_model=ReporteVolumenResponse, status_code=status.HTTP_200_OK)
-def get_reporte_volumen(
+async def get_reporte_volumen(
     fecha_desde: date = Query(None, description="Fecha de inicio del reporte (YYYY-MM-DD)"),
     fecha_hasta: date = Query(None, description="Fecha de fin del reporte (YYYY-MM-DD)"),
     db: Session = Depends(obtener_db)
 ):
-    return ServicioReportes.obtener_reporte_volumen(db, fecha_desde, fecha_hasta)
+    return await ServicioReportes.obtener_reporte_volumen(db, fecha_desde, fecha_hasta)
