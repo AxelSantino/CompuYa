@@ -55,63 +55,6 @@ class UsuarioCrearEmpresa(UsuarioBase):
     supabase_id: Union[str, UUID]
     razon_social: str
     latitud: float
-    longitudfrom pydantic import BaseModel, EmailStr, ConfigDict, Field
-from datetime import date, datetime
-from typing import List, Optional, Union, Dict
-from uuid import UUID
-from app.models.entidades import TipoEnvio, RestriccionEnvio, EstadoEnvio, TipoCliente, PrioridadEnvio
-
-# --- ESQUEMAS DE PERFIL ---
-
-class PerfilEmpleadoSchema(BaseModel):
-    nombre: Optional[str] = None
-    apellido: Optional[str] = None
-    model_config = ConfigDict(from_attributes=True)
-
-class PerfilEmpresaSchema(BaseModel):
-    razon_social: Optional[str] = None
-    cuit: Optional[str] = None
-    direccion_normalizada: Optional[str] = None
-    latitud: float
-    longitud: float
-    provincia: Optional[str] = None
-    municipio: Optional[str] = None
-    cod_postal: Optional[str] = None
-    model_config = ConfigDict(from_attributes=True)
-
-# --- ESQUEMAS DE USUARIO ---
-
-class UsuarioBase(BaseModel):
-    email: EmailStr
-    tipo: TipoCliente
-    rol: str = "visor"
-    fecha: Optional[date] = Field(default_factory=date.today)
-
-class UsuarioRegistroEmpleado(UsuarioBase):
-    password: str = Field(min_length=6)
-    nombre: str
-    apellido: str
-
-class UsuarioRegistroEmpresa(UsuarioBase):
-    password: str = Field(min_length=6)
-    razon_social: str
-    latitud: float
-    longitud: float
-    cuit: str
-    direccion_normalizada: str
-    provincia: Optional[str] = None
-    municipio: Optional[str] = None
-    cod_postal: Optional[str] = None
-
-class UsuarioCrearEmpleado(UsuarioBase):
-    supabase_id: Union[str, UUID]
-    nombre: str
-    apellido: str
-
-class UsuarioCrearEmpresa(UsuarioBase):
-    supabase_id: Union[str, UUID]
-    razon_social: str
-    latitud: float
     longitud: float
     cuit: str
     direccion_normalizada: str
