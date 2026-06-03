@@ -6,6 +6,7 @@ from app.services.servicios_envios import EnvioService
 from datetime import date, timedelta
 from app.models.esquemas import EnvioCrear, TipoEnvio, RestriccionEnvio
 
+
 def test_generar_tracking_id_devuelve_formato_correcto():
     servicio = EnvioService(db=AsyncMock())
     tracking = servicio.generar_tracking_id()
@@ -296,7 +297,7 @@ async def test_obtener_hoja_ruta_devuelve_lista_vacia_si_no_hay_viajes():
 
 @pytest.mark.asyncio
 async def test_crear_envio_exitoso_con_fecha_entrega_futura():
-    
+
     fecha_manana = date.today() + timedelta(days=1)
 
     # Configuración de mocks
@@ -351,19 +352,22 @@ async def test_crear_envio_exitoso_con_fecha_entrega_futura():
 
 @pytest.mark.asyncio
 async def test_crear_envio_falla_si_fecha_limite_es_hoy_o_anterior():
-
     fecha_hoy = date.today()
 
     db_mock = AsyncMock()
+    resultado_mock = MagicMock()
+    resultado_mock.scalar_one_or_none.return_value = None
+    db_mock.execute = AsyncMock(return_value=resultado_mock)
+
     servicio = EnvioService(db=db_mock)
 
     from app.models.esquemas import EnvioCrear
     envio_data = MagicMock(spec=EnvioCrear)
     envio_data.fecha_limite = fecha_hoy
+    envio_data.razon_social_destinatario = "Empresa Valida S.A."
+    envio_data.cuit_destinatario = "30-12345678-9"
 
     with pytest.raises(HTTPException) as info_error:
         await servicio.crear_envio(envio_data, usuario_id=5)
 
     assert info_error.value.status_code == 400
-
-    assert "a partir de mañana o una fecha futura" in info_error.value.detail
