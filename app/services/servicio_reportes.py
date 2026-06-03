@@ -12,7 +12,7 @@ class ServicioReportes:
         if not fecha_desde:
             fecha_desde = fecha_hasta - timedelta(days=30)
             
-        # 1. Total General (Truncando a fecha pura para que incluya hoy)
+        
         stmt_total = select(func.count(Envio.id)).where(
             func.date(Envio.fecha_creacion) >= fecha_desde, 
             func.date(Envio.fecha_creacion) <= fecha_hasta
@@ -20,7 +20,7 @@ class ServicioReportes:
         resultado_total = await db.execute(stmt_total)
         total_envios = resultado_total.scalar() or 0
         
-        # 2. Agrupación por Estado
+        
         stmt_estados = (
             select(Envio.estado, func.count(Envio.id))
             .where(func.date(Envio.fecha_creacion) >= fecha_desde, func.date(Envio.fecha_creacion) <= fecha_hasta)
@@ -29,7 +29,7 @@ class ServicioReportes:
         resultado_estados = await db.execute(stmt_estados)
         por_estado = {estado.value if hasattr(estado, 'value') else str(estado): cantidad for estado, cantidad in resultado_estados.all()}
         
-        # 3. Agrupación por Tipo de Envío
+        
         stmt_tipos = (
             select(Envio.tipo_envio, func.count(Envio.id))
             .where(func.date(Envio.fecha_creacion) >= fecha_desde, func.date(Envio.fecha_creacion) <= fecha_hasta)
@@ -38,7 +38,7 @@ class ServicioReportes:
         resultado_tipos = await db.execute(stmt_tipos)
         por_tipo = {tipo.value if hasattr(tipo, 'value') else str(tipo): cantidad for tipo, cantidad in resultado_tipos.all()}
         
-        # 4. Histórico Cronológico por Día
+        
         stmt_historico = (
             select(func.date(Envio.fecha_creacion).label("fecha_dia"), func.count(Envio.id))
             .where(func.date(Envio.fecha_creacion) >= fecha_desde, func.date(Envio.fecha_creacion) <= fecha_hasta)
