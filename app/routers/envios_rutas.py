@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, BackgroundTasks, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.session import obtener_db
 from app.services.servicios_envios import EnvioService
@@ -98,9 +98,10 @@ async def asignar_envio_automatico(
 
 @router.post("/asignar-todos", dependencies=[Depends(tiene_rol(["supervisor"]))])
 async def asignar_todos_pendientes(
+    background_tasks: BackgroundTasks,
     envio_service: EnvioService = Depends(get_envio_service)
 ):
-    return await envio_service.asignar_todos_pendientes()
+    return await envio_service.asignar_todos_pendientes(background_tasks)
 
 
 @router.get("/hoja-ruta/repartidor/{id_empleado}", response_model=List[EnvioRespuesta], dependencies=[Depends(tiene_rol(["supervisor"]))])

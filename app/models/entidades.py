@@ -1,8 +1,7 @@
 from enum import Enum as PyEnum
-from sqlalchemy import Column, Enum, BigInteger, ForeignKey, String, Date, Text, DateTime, Float, func
+from sqlalchemy import Column, Enum, BigInteger, ForeignKey, String, Date, Text, DateTime, Float, func, Boolean
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import DeclarativeBase, relationship
-
 
 class Base(DeclarativeBase):
     pass
@@ -148,3 +147,25 @@ class AsignacionEnvio(Base):
 
     envio = relationship("Envio")
     empleado = relationship("Usuario")
+
+class PlantillaNotificacion(Base):
+    __tablename__ = "plantillas_notificacion"
+    
+    id = Column(BigInteger, primary_key=True)
+    estado_disparador = Column(Enum(EstadoEnvio, native_enum=False, values_callable=lambda x: [e.value for e in x]), unique=True, nullable=False)
+    asunto = Column(Text, nullable=False)
+    cuerpo = Column(Text, nullable=False) 
+    activa = Column(Boolean, default=True)
+
+class HistorialNotificacion(Base):
+    __tablename__ = "historial_notificaciones"
+    
+    id = Column(BigInteger, primary_key=True)
+    envio_id = Column(BigInteger, ForeignKey("envios.id"), nullable=False)
+    destinatario_email = Column(Text, nullable=False)
+    asunto_enviado = Column(Text, nullable=False)
+    cuerpo_enviado = Column(Text, nullable=False)
+    fecha_envio = Column(DateTime(timezone=True), server_default=func.now())
+    resultado = Column(Text, nullable=False) 
+
+    envio = relationship("Envio")

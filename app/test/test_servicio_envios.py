@@ -122,7 +122,7 @@ async def test_asignar_todos_pendientes_avisa_si_la_sucursal_esta_vacia():
     db_mock.execute.return_value = resultado_mock
 
     servicio = EnvioService(db=db_mock)
-    respuesta = await servicio.asignar_todos_pendientes()
+    respuesta = await servicio.asignar_todos_pendientes(MagicMock())
 
     assert respuesta["asignados"] == 0
     assert "No hay envíos pendientes" in respuesta["message"]

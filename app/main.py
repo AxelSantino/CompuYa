@@ -3,7 +3,7 @@ from fastapi import FastAPI
 import logging
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
-from app.routers import usuarios_rutas, envios_rutas,reportes_rutas
+from app.routers import usuarios_rutas, envios_rutas, reportes_rutas, notificaciones_rutas
 
 
 logger = logging.getLogger("app")
@@ -25,6 +25,7 @@ app.add_middleware(
 
 app.include_router(usuarios_rutas.router)
 app.include_router(envios_rutas.router)
+app.include_router(notificaciones_rutas.router)
 app.include_router(reportes_rutas.router)
 
 @app.get("/")

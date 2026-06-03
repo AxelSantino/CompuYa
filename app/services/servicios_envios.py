@@ -1,15 +1,16 @@
 import random
 import string
 from datetime import date, datetime
+from fastapi_cloud_cli.cli import app
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 from sqlalchemy import select, func
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status, BackgroundTasks
 from app.models.entidades import AsignacionEnvio, Envio, Usuario, TipoCliente, EstadoEnvio, Historial, PerfilEmpresa
 from app.models.esquemas import CancelarEnvio, EnvioCrear, EditarEnvio
 from app.services.servicio_ruteo import ServicioRuteo
+from app.services.servicio_notificacion import NotificacionService
 from app.ml.modelo_prioridad import predecir_prioridad
-
 
 class EnvioService:
     def __init__(self, db: AsyncSession):
@@ -93,6 +94,12 @@ class EnvioService:
         await self.db.refresh(nuevo_envio)
 
         return await self.obtener_envio_por_id(nuevo_envio.tracking_id)
+    
+    async def obtenerMailDestinatario(self, envio: Envio) -> str:
+        query = select(Usuario.email).where(Usuario.id == envio.destinatario_id)
+        result = await self.db.execute(query)
+        email_destinatario = result.scalar_one_or_none()
+        return email_destinatario  
 
     async def obtener_envio_por_id(self, tracking_id: str) -> Envio:
         query = select(Envio).where(Envio.tracking_id == tracking_id).options(
@@ -122,7 +129,7 @@ class EnvioService:
         if envio.estado in [EstadoEnvio.EN_TRANSITO, EstadoEnvio.ENTREGADO, EstadoEnvio.CANCELADO]:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"El envÃ­o no se puede editar ya que su estado es {envio.estado.value}"
+                detail=f"El envío no se puede editar ya que su estado es {envio.estado.value}"
             )
 
         cuit_nuevo = datos_actualizados.cuit_destinatario
@@ -187,6 +194,7 @@ class EnvioService:
                 detail=f"El envío no se puede cancelar ya que su estado esta {envio.estado}"
             )
         envio.estado = EstadoEnvio.CANCELADO
+
         nuevo_historial = Historial(
             envio_id=envio.id,
             id_empleado=usuario_id,
@@ -197,6 +205,10 @@ class EnvioService:
 
         await self.db.commit()
         await self.db.refresh(envio)
+
+        servicio = NotificacionService(db=self.db) 
+        email = await self.obtenerMailDestinatario(envio)
+        await servicio.procesar_notificacion_estado(envio, email, envio.razon_social_destinatario)
 
         return await self.obtener_envio_por_id(envio.tracking_id)
 
@@ -216,6 +228,10 @@ class EnvioService:
         await self.registrar_historial(envio.id, usuario.id, nuevo_estado)
         await self.db.commit()
         await self.db.refresh(envio)
+
+        notificacion_service = NotificacionService(db=self.db) 
+        email = await self.obtenerMailDestinatario(envio)
+        await notificacion_service.procesar_notificacion_estado(envio, email, envio.razon_social_destinatario)
 
         return await self.obtener_envio_por_id(envio.tracking_id)
 
@@ -309,14 +325,16 @@ class EnvioService:
 
         envio.estado = EstadoEnvio.EN_TRANSITO
 
-        await self.registrar_historial(envio.id, mejor_repartidor_id, EstadoEnvio.EN_TRANSITO)
+        notificacion_service = NotificacionService(db=self.db) 
+        email = await self.obtenerMailDestinatario(envio)
+        await notificacion_service.procesar_notificacion_estado(envio, email, envio.razon_social_destinatario)
 
+        await self.registrar_historial(envio.id, mejor_repartidor_id, EstadoEnvio.EN_TRANSITO)
         await self.db.commit()
         return {"message": f"Envío {tracking_id} asignado automáticamente al repartidor ID {mejor_repartidor_id} (Estado: EN_TRANSITO)"}
 
-    async def asignar_todos_pendientes(self):
-        query_pendientes = select(Envio).where(
-            Envio.estado == EstadoEnvio.EN_SUCURSAL)
+    async def asignar_todos_pendientes(self, background_tasks: BackgroundTasks):
+        query_pendientes = select(Envio).where(Envio.estado == EstadoEnvio.EN_SUCURSAL)
         result_pendientes = await self.db.execute(query_pendientes)
         envios_pendientes = result_pendientes.scalars().all()
 
@@ -337,20 +355,39 @@ class EnvioService:
             raise HTTPException(
                 status_code=404, detail="No se encontraron repartidores en el sistema.")
 
+        ids_pendientes = [e.id for e in envios_pendientes]
+        query_existentes = select(AsignacionEnvio).where(AsignacionEnvio.envio_id.in_(ids_pendientes))
+        result_existentes = await self.db.execute(query_existentes)
+        asignaciones_existentes = {a.envio_id: a for a in result_existentes.scalars().all()}
+
         nuevas_asignaciones = []
         historial_a_registrar = []
         count = 0
+
+        notificacion_service = NotificacionService(self.db)
 
         for envio in envios_pendientes:
             mejor_repartidor_id = min(
                 carga_repartidores, key=carga_repartidores.get)
 
             envio.estado = EstadoEnvio.EN_TRANSITO
-            nuevas_asignaciones.append(AsignacionEnvio(
-                envio_id=envio.id, id_empleado=mejor_repartidor_id))
-            historial_a_registrar.append(Historial(
-                envio_id=envio.id, id_empleado=mejor_repartidor_id, estado=EstadoEnvio.EN_TRANSITO))
 
+            email_destinatario = await self.obtenerMailDestinatario(envio)
+
+            background_tasks.add_task(
+                notificacion_service.procesar_notificacion_estado, 
+                envio, 
+                email_destinatario,  
+                envio.razon_social_destinatario
+            )
+            
+            if envio.id in asignaciones_existentes:
+                asignaciones_existentes[envio.id].id_empleado = mejor_repartidor_id
+            else:
+                nuevas_asignaciones.append(AsignacionEnvio(envio_id=envio.id, id_empleado=mejor_repartidor_id))
+                
+            historial_a_registrar.append(Historial(envio_id=envio.id, id_empleado=mejor_repartidor_id, estado=EstadoEnvio.EN_TRANSITO))
+            
             carga_repartidores[mejor_repartidor_id] += 1
             count += 1
 
