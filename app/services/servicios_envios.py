@@ -25,10 +25,10 @@ class EnvioService:
     async def crear_envio(self, envio_data: EnvioCrear, usuario_id: int) -> Envio:
 
         hoy = date.today()
-        if envio_data.fecha_entrega <= hoy:
+        if envio_data.fecha_limite <= hoy:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="La fecha de entrega debe ser al menos a partir de mañana o una fecha futura"
+                detail="La fecha limite de entrega debe ser al menos a partir de mañana o una fecha futura"
             )
 
         query = (

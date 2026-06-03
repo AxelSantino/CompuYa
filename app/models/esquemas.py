@@ -1,6 +1,6 @@
-from pydantic import BaseModel, EmailStr, ConfigDict, Field, field_validator
+from pydantic import BaseModel, EmailStr, ConfigDict, Field
 from datetime import date, datetime
-from typing import List, Optional, Union
+from typing import List, Optional, Union, Dict
 from uuid import UUID
 from app.models.entidades import TipoEnvio, RestriccionEnvio, EstadoEnvio, TipoCliente, PrioridadEnvio
 
@@ -23,6 +23,7 @@ class PerfilEmpresaSchema(BaseModel):
     municipio: Optional[str] = None
     cod_postal: Optional[str] = None
     model_config = ConfigDict(from_attributes=True)
+
 
 # --- ESQUEMAS DE USUARIO ---
 
@@ -77,6 +78,7 @@ class UsuarioRespuesta(UsuarioBase):
     perfil_empresa: Optional[PerfilEmpresaSchema] = None
     model_config = ConfigDict(from_attributes=True)
 
+
 # --- ESQUEMAS DE ENVÍO Y RUTEO ---
 
 
@@ -107,7 +109,7 @@ class EditarEnvio(BaseModel):
     descripcion: Optional[str] = None
     tipo_envio: Optional[TipoEnvio] = None
     restriccion: Optional[RestriccionEnvio] = None
-    fecha_entrega: Optional[date] = None
+    fecha_limite: Optional[date] = None
 
 
 class HistorialBase(BaseModel):
