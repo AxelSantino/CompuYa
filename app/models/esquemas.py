@@ -118,8 +118,9 @@ class HistorialRespuesta(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 class CancelarEnvio(BaseModel):
-    motivo: str
-
+    #motivo: str
+    motivo: Optional[str] = "Sin motivo especificado"
+    
 class EmpresaRespuesta(BaseModel):
     razon_social: str
     cuit: Optional[str] = None
@@ -144,6 +145,34 @@ class EnvioRespuesta(EnvioBase):
     latitud_destino: Optional[float] = None
     longitud_destino: Optional[float] = None
     model_config = ConfigDict(from_attributes=True)
+
+
+# --- ESQUEMAS PARA NOTIFICACIONES ---
+class PlantillaNotificacionBase(BaseModel):
+    estado_disparador: str
+    asunto: str
+    cuerpo: str
+    activa: Optional[bool] = True
+
+class PlantillaNotificacionResponse(PlantillaNotificacionBase):
+    id: int
+    
+    class Config:
+        from_attributes = True
+
+class HistorialNotificacionBase(BaseModel):
+    envio_id: int
+    destinatario_email: str
+    asunto_enviado: str
+    cuerpo_enviado: str
+    resultado: str
+
+class HistorialNotificacionResponse(HistorialNotificacionBase):
+    id: int
+    fecha_envio: datetime
+    
+    class Config:
+        from_attributes = True
 
 # --- ESQUEMAS DE NOTIFICACIONES (Auditoría) ---
 

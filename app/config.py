@@ -4,7 +4,13 @@ from typing import List, Optional
 class Settings(BaseSettings):
     CORS_ORIGINS: str = "http://localhost:5173,http://localhost:3000"
 
-    # Base de Datos (PostgreSQL - Supabase)
+    # SMTP
+    SMTP_HOST: Optional[str] = None
+    SMTP_PORT: Optional[int] = None
+    SMTP_USER: Optional[str] = None
+    SMTP_PASSWORD: Optional[str] = None
+
+    # Base de Datos
     DB_USER: Optional[str] = None
     DB_PASSWORD: Optional[str] = None
     DB_HOST: Optional[str] = None
@@ -22,7 +28,6 @@ class Settings(BaseSettings):
             raise ValueError("Credenciales Faltantes para la Base de Datos")
         return f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
     
-    # Lógica de Negocio
     TRIGGER_VARIATION: float = 0.10
 
     model_config = SettingsConfigDict(
@@ -31,4 +36,3 @@ class Settings(BaseSettings):
     )
 
 settings = Settings()
-
