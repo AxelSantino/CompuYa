@@ -65,6 +65,7 @@ export interface EnvioCrear {
   descripcion: string;
   tipo_envio: EnvioType;
   restriccion: EnvioRestriction;
+  fecha_limite: string;
 }
 
 export interface HistorialEnvio {
