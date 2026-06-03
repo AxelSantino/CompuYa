@@ -90,9 +90,9 @@ class Envio(Base):
     tipo_envio = Column(Enum(TipoEnvio, native_enum=False, values_callable=lambda x: [
                         e.value for e in x]), nullable=False)
     restriccion = Column(Enum(RestriccionEnvio, native_enum=False,
-                         values_callable=lambda x: [e.value for e in x]), nullable=False)
+                        values_callable=lambda x: [e.value for e in x]), nullable=False)
     prioridad = Column(Enum(PrioridadEnvio, native_enum=False, values_callable=lambda x: [
-                       e.value for e in x]), default=PrioridadEnvio.BAJA, nullable=False)
+                        e.value for e in x]), default=PrioridadEnvio.BAJA, nullable=False)
     estado = Column(Enum(EstadoEnvio, native_enum=False, values_callable=lambda x: [
                     e.value for e in x]), default=EstadoEnvio.EN_SUCURSAL)
     creado_por_id = Column(BigInteger, ForeignKey(

@@ -6,12 +6,10 @@ from app.models.entidades import TipoEnvio, RestriccionEnvio, EstadoEnvio, TipoC
 
 # --- ESQUEMAS DE PERFIL ---
 
-
 class PerfilEmpleadoSchema(BaseModel):
     nombre: Optional[str] = None
     apellido: Optional[str] = None
     model_config = ConfigDict(from_attributes=True)
-
 
 class PerfilEmpresaSchema(BaseModel):
     razon_social: Optional[str] = None
@@ -24,9 +22,7 @@ class PerfilEmpresaSchema(BaseModel):
     cod_postal: Optional[str] = None
     model_config = ConfigDict(from_attributes=True)
 
-
 # --- ESQUEMAS DE USUARIO ---
-
 
 class UsuarioBase(BaseModel):
     email: EmailStr
@@ -34,12 +30,10 @@ class UsuarioBase(BaseModel):
     rol: str = "visor"
     fecha: Optional[date] = Field(default_factory=date.today)
 
-
 class UsuarioRegistroEmpleado(UsuarioBase):
     password: str = Field(min_length=6)
     nombre: str
     apellido: str
-
 
 class UsuarioRegistroEmpresa(UsuarioBase):
     password: str = Field(min_length=6)
@@ -52,12 +46,10 @@ class UsuarioRegistroEmpresa(UsuarioBase):
     municipio: Optional[str] = None
     cod_postal: Optional[str] = None
 
-
 class UsuarioCrearEmpleado(UsuarioBase):
     supabase_id: Union[str, UUID]
     nombre: str
     apellido: str
-
 
 class UsuarioCrearEmpresa(UsuarioBase):
     supabase_id: Union[str, UUID]
@@ -70,7 +62,6 @@ class UsuarioCrearEmpresa(UsuarioBase):
     municipio: Optional[str] = None
     cod_postal: Optional[str] = None
 
-
 class UsuarioRespuesta(UsuarioBase):
     id: int
     supabase_id: Union[str, UUID]
@@ -78,9 +69,7 @@ class UsuarioRespuesta(UsuarioBase):
     perfil_empresa: Optional[PerfilEmpresaSchema] = None
     model_config = ConfigDict(from_attributes=True)
 
-
 # --- ESQUEMAS DE ENVÍO Y RUTEO ---
-
 
 class SucursalRespuesta(BaseModel):
     id: int
@@ -90,7 +79,6 @@ class SucursalRespuesta(BaseModel):
     longitud: float
     model_config = ConfigDict(from_attributes=True)
 
-
 class EnvioBase(BaseModel):
     razon_social_destinatario: str
     cuit_destinatario: str
@@ -98,10 +86,8 @@ class EnvioBase(BaseModel):
     tipo_envio: TipoEnvio
     restriccion: RestriccionEnvio
 
-
 class EnvioCrear(EnvioBase):
     pass
-
 
 class EditarEnvio(BaseModel):
     razon_social_destinatario: Optional[str] = None
@@ -111,20 +97,17 @@ class EditarEnvio(BaseModel):
     restriccion: Optional[RestriccionEnvio] = None
     fecha_limite: Optional[date] = None
 
-
 class HistorialBase(BaseModel):
     envio_id: int
     id_empleado: int
     estado: EstadoEnvio
     fecha: datetime
 
-
 class UsuarioSimple(BaseModel):
     id: int
     email: EmailStr
     perfil_empleado: Optional[PerfilEmpleadoSchema] = None
     model_config = ConfigDict(from_attributes=True)
-
 
 class HistorialRespuesta(BaseModel):
     id: int
@@ -134,10 +117,8 @@ class HistorialRespuesta(BaseModel):
     motivo: Optional[str] = None
     model_config = ConfigDict(from_attributes=True)
 
-
 class CancelarEnvio(BaseModel):
     motivo: str
-
 
 class EmpresaRespuesta(BaseModel):
     razon_social: str
@@ -151,7 +132,6 @@ class EmpresaRespuesta(BaseModel):
     fecha: Optional[date] = None
     model_config = ConfigDict(from_attributes=True)
 
-
 class EnvioRespuesta(EnvioBase):
     id: int
     tracking_id: str
@@ -164,3 +144,27 @@ class EnvioRespuesta(EnvioBase):
     latitud_destino: Optional[float] = None
     longitud_destino: Optional[float] = None
     model_config = ConfigDict(from_attributes=True)
+
+# --- ESQUEMAS DE NOTIFICACIONES (Auditoría) ---
+
+class RegistroNotificacionRespuesta(BaseModel):
+    id: int
+    envio_id: int
+    destinatario: str
+    canal: str
+    resultado: str
+    motivo_error: Optional[str] = None
+    fecha_hora: datetime
+    model_config = ConfigDict(from_attributes=True)
+
+# --- ESQUEMAS DE REPORTES ---
+
+class HistoricoLinealDia(BaseModel):
+    fecha: date
+    cantidad: int
+
+class ReporteVolumenResponse(BaseModel):
+    total_envios: int
+    por_estado: Dict[str, int]
+    por_tipo: Dict[str, int]
+    historico_lineal: List[HistoricoLinealDia]
