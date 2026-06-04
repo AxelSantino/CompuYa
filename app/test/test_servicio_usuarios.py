@@ -113,3 +113,100 @@ async def test_buscar_empresa_por_cuit_falla_si_la_empresa_no_existe():
 
     assert info_error.value.status_code == 404
     assert info_error.value.detail == "La empresa no existe en el sistema"
+    
+
+
+@pytest.mark.asyncio
+async def test_crear_supabase_auth_falla_si_servicio_devuelve_error():
+    
+    db_mock = AsyncMock()
+    servicio = UsuarioService(db=db_mock)
+
+    mock_response = MagicMock()
+    mock_response.status_code = 400
+    mock_response.json.return_value = {"msg": "Password should be at least 6 characters"}
+
+    
+    with patch('httpx.AsyncClient.post', new_callable=AsyncMock) as mock_post:
+        mock_post.return_value = mock_response
+
+        with pytest.raises(HTTPException) as info_error:
+            await servicio.crear_usuario_en_supabase_auth("test@compuya.com", "123", {})
+
+        assert info_error.value.status_code == 500
+        assert "Password should be at least 6 characters" in info_error.value.detail
+
+
+@pytest.mark.asyncio
+async def test_crear_supabase_auth_falla_si_formato_json_es_invalido():
+    db_mock = AsyncMock()
+    servicio = UsuarioService(db=db_mock)
+
+    mock_response = MagicMock()
+    mock_response.status_code = 200
+    mock_response.json.return_value = {"datos_raros": "sin_id_de_usuario"} 
+
+    with patch('httpx.AsyncClient.post', new_callable=AsyncMock) as mock_post:
+        mock_post.return_value = mock_response
+
+        with pytest.raises(HTTPException) as info_error:
+            await servicio.crear_usuario_en_supabase_auth("test@compuya.com", "password123", {})
+
+        assert info_error.value.status_code == 500
+        assert "no contiene un ID de usuario válido" in info_error.value.detail
+
+
+@pytest.mark.asyncio
+async def test_crear_usuario_empresa_falla_si_el_email_ya_existe():
+    db_mock = AsyncMock()
+    resultado_mock = MagicMock()
+    resultado_mock.scalar_one_or_none.return_value = Usuario() 
+    db_mock.execute.return_value = resultado_mock
+
+    from app.models.esquemas import UsuarioRegistroEmpresa
+    empresa_data = MagicMock(spec=UsuarioRegistroEmpresa)
+    empresa_data.email = "empresa_duplicada@test.com"
+
+    servicio = UsuarioService(db=db_mock)
+
+    with pytest.raises(HTTPException) as info_error:
+        await servicio.crear_usuario_empresa(empresa_data)
+
+    assert info_error.value.status_code == 400
+    assert "El email ya está registrado" in info_error.value.detail
+
+
+@pytest.mark.asyncio
+async def test_login_usuario_falla_con_credenciales_invalidas():
+    db_mock = AsyncMock()
+    servicio = UsuarioService(db=db_mock)
+
+    mock_response = MagicMock()
+    mock_response.status_code = 400 
+
+    with patch('httpx.AsyncClient.post', new_callable=AsyncMock) as mock_post:
+        mock_post.return_value = mock_response
+
+        with pytest.raises(HTTPException) as info_error:
+            await servicio.login_usuario("error@compuya.com", "clave_incorrecta")
+
+        assert info_error.value.status_code == 401
+        assert "Email o contraseña incorrectos" in info_error.value.detail
+
+
+@pytest.mark.asyncio
+async def test_listar_usuarios_devuelve_coleccion_correctamente():
+    db_mock = AsyncMock()
+    resultado_mock = MagicMock()
+    scalars_mock = MagicMock()
+    
+    usuarios_lista = [Usuario(id=1), Usuario(id=2)]
+    scalars_mock.all.return_value = usuarios_lista
+    resultado_mock.scalars.return_value = scalars_mock
+    db_mock.execute.return_value = resultado_mock
+
+    servicio = UsuarioService(db=db_mock)
+    resultado = await servicio.listar_usuarios()
+
+    assert len(resultado) == 2
+    assert resultado[0].id == 1

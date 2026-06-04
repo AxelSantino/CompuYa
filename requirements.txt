@@ -53,6 +53,7 @@ websockets==16.0
 sqlalchemy-utils==0.41.2
 gunicorn
 pandas
-scikit-learn
+scikit-learn==1.8.0
 alembic
 psycopg2-binary
+aiosmtplib

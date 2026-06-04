@@ -1,5 +1,5 @@
 import api from './api';
-import { Envio, EnvioCrear, HistorialEnvio } from '@/types/envio';
+import { Envio, EnvioCrear, HistorialEnvio, EnvioRespuestaDestinatario } from '@/types/envio';
 
 const shipmentService = {
   getShipments: async (): Promise<Envio[]> => {
@@ -56,6 +56,11 @@ const shipmentService = {
     const response = await api.post(`/envios/${id}/entregar`);
     return response.data;
   },
+
+  getRecipientByRazonSocial: async (razon_social: string): Promise<EnvioRespuestaDestinatario> => {
+    const response = await api.get(`/usuarios/buscar_destinatario?razon_social=${razon_social}`);
+    return response.data;
+  }
 };
 
 export default shipmentService;

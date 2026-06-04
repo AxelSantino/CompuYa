@@ -14,10 +14,10 @@ import LoadingOverlay from '@/components/LoadingOverlay';
 import Link from 'next/link';
 
 const STATUS_CLASSES: Record<EnvioStatus, string> = {
-  'en sucursal': 'bg-red-100 text-red-800',
+  'en sucursal': 'bg-gray-100 text-gray-800',
   'en transito': 'bg-yellow-100 text-yellow-800',
   'entregado': 'bg-green-100 text-green-800',
-  'cancelado': 'bg-gray-100 text-gray-800',
+  'cancelado': 'bg-red-100 text-red-800',
 };
 
 const PRIORITY_CLASSES: Record<string, string> = {
@@ -123,11 +123,11 @@ const ShipmentsPage = () => {
     <DashboardLayout>
       <div className="relative bg-white p-4 md:p-6 rounded-lg shadow-md">
         <LoadingOverlay isLoading={isLoading} text="Cargando envíos..." />
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 text-orange-700">
           <div>
             <h2 className="text-2xl font-bold mb-1">Gestión de Envíos</h2>
             <p className="text-gray-600">
-              Lista y administración de componentes de computadora en tránsito.
+              Listado y administración de los envíos de productos informáticos registrados en el sistema.
             </p>
           </div>
           {user && user.rol !== 'cliente' && (
@@ -141,8 +141,8 @@ const ShipmentsPage = () => {
           )}
         </div>
 
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
-          <div className="w-full md:w-1/3">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4 text-gray-800">
+          <div className="w-full md:w-1/3 text-gray-800">
             <Input
               placeholder="Buscar por Tracking ID..."
               value={searchTerm}
@@ -170,11 +170,11 @@ const ShipmentsPage = () => {
         {(!isLoading && !error) ? (
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-100">
+              <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
                   <th className="px-6 py-3 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">Tracking ID</th>
                   <th className="px-6 py-3 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">Prioridad</th>
-                  <th className="px-6 py-3 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">Fecha</th>
+                  <th className="px-6 py-3 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">Fecha de creación</th>
                   <th className="px-6 py-3 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">Destinatario</th>
                   <th className="px-6 py-3 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">Descripción</th>
                   <th className="px-6 py-3 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">Tipo</th>

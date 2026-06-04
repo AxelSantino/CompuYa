@@ -2,7 +2,8 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #111827; /* Darker than #171717 (Gray 900) */
+  --foreground: #111827;
+  /* Darker than #171717 (Gray 900) */
 }
 
 @theme inline {
@@ -10,14 +11,16 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-inter);
   --font-mono: var(--font-geist-mono);
-  
+
   /* High-contrast gray scale (Slate-based but darkened) */
   --color-gray-50: #f8fafc;
   --color-gray-100: #f1f5f9;
   --color-gray-200: #e2e8f0;
   --color-gray-300: #cbd5e1;
-  --color-gray-400: #64748b; /* Shifted from 500 to 400 */
-  --color-gray-500: #475569; /* Shifted from 600 to 500 */
+  --color-gray-400: #64748b;
+  /* Shifted from 500 to 400 */
+  --color-gray-500: #475569;
+  /* Shifted from 600 to 500 */
   --color-gray-600: #334155;
   --color-gray-700: #1e293b;
   --color-gray-800: #0f172a;
@@ -29,11 +32,17 @@
     --background: #030712;
     --foreground: #f9fafb;
   }
-  
+
   /* Reset or adjust grays for dark mode if necessary */
   @theme inline {
-    --color-gray-500: #9ca3af; /* Tailwind gray-400 */
-    --color-gray-400: #d1d5db; /* Tailwind gray-300 */
+
+  
+    --color-green-500: #22c55e;
+    /* Tailwind green-500 */
+    --color-gray-500: #9ca3af;
+    /* Tailwind gray-400 */
+    --color-gray-400: #d1d5db;
+    /* Tailwind gray-300 */
   }
 }
 
@@ -50,7 +59,7 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: #ffffff;
   display: flex;
   flex-direction: column;
   align-items: center;
