@@ -12,7 +12,7 @@ const NewShipmentPage = () => {
   const router = useRouter();
     
   // El hook personalizado maneja toda la lógica del formulario, incluyendo estado, cambios y envío
-  const { formData, handleChange, handleSubmit, isLoading, error } = useShipmentForm();
+  const { formData, handleChange, handleSubmit, isLoading, error, handleRazonSocialBlur, isSearchingRecipient, recipientNotFound } = useShipmentForm();
 
   return (
     <DashboardLayout>
@@ -33,7 +33,11 @@ const NewShipmentPage = () => {
           <RecipientSection 
             formData={formData} 
             handleChange={handleChange} 
-            isLoading={isLoading} />
+            handleRazonSocialBlur={handleRazonSocialBlur}
+            isSearchingRecipient={isSearchingRecipient}
+            isLoading={isLoading}
+            recipientNotFound={recipientNotFound}
+            />
           <ComponentDetailsSection 
             formData={formData} 
             handleChange={handleChange} 
@@ -64,7 +68,7 @@ const NewShipmentPage = () => {
               {isLoading ? 'Registrando...' : 'Generar Tracking ID y Registrar'}
             </Button>
           </div>
-          <p className="text-xs text-center text-black-400 pb-8">Los campos con (*) son obligatorios.</p>
+          <p className="text-xs text-center text-gray-400 pb-8">Los campos con (*) son obligatorios.</p>
         </form>
       </div>
     </DashboardLayout>
