@@ -31,6 +31,9 @@ async def test_notificacion_ignorada_si_no_hay_plantilla_activa():
     db_mock.execute.return_value = resultado_mock
     
     servicio = NotificacionService(db=db_mock)
+    servicio.smtp_host = "smtp.test.com"
+    servicio.smtp_user = "user@test.com"
+    servicio.smtp_password = "password123"
     
     envio_mock = MagicMock(spec=Envio)
     envio_mock.estado.value = "en_transito"
@@ -83,6 +86,9 @@ async def test_notificacion_flujo_exitoso_guarda_historial_ok():
     db_mock.execute.return_value = resultado_mock
     
     servicio = NotificacionService(db=db_mock)
+    servicio.smtp_host = "smtp.test.com"
+    servicio.smtp_user = "user@test.com"
+    servicio.smtp_password = "password123"
     
     envio_mock = MagicMock(spec=Envio)
     envio_mock.id = 1
@@ -117,6 +123,9 @@ async def test_notificacion_captura_excepcion_smtp_y_guarda_error_en_historial()
     db_mock.execute.return_value = resultado_mock
     
     servicio = NotificacionService(db=db_mock)
+    servicio.smtp_host = "smtp.test.com"
+    servicio.smtp_user = "user@test.com"
+    servicio.smtp_password = "password123"
     
     envio_mock = MagicMock(spec=Envio)
     envio_mock.id = 1
