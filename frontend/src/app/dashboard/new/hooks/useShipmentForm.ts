@@ -19,6 +19,8 @@ export const useShipmentForm = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
+    const [isSearchingRecipient, setIsSearchingRecipient] = useState(false);
+
     // Controlador de cambios (Memorizado con useCallback para mejor performance)
     const handleChange = useCallback((e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -57,12 +59,41 @@ export const useShipmentForm = () => {
         }
     };
 
+    const handleRazonSocialBlur = async () => {
+        const razonSocial = formData.razon_social_destinatario.trim();
+        
+        // Si el usuario se fue del input pero lo dejó vacío, no hacemos nada
+        if (!razonSocial) return;
+
+        setIsSearchingRecipient(true);
+        try {
+            // Obtener el destinatario por razón social desde el servicio
+            const destinatario = await shipmentService.getRecipientByRazonSocial(razonSocial);
+
+            const cuitEncontrado = destinatario?.perfil_empresa?.cuit;
+
+        // Verificamos que el objeto exista y tenga la propiedad
+            if (cuitEncontrado) { 
+                setFormData(prev => ({
+                    ...prev,
+                    cuit_destinatario: cuitEncontrado
+                }));
+            }
+        } catch (error) {
+            console.error("No se encontró el destinatario", error);
+        } finally {
+            setIsSearchingRecipient(false);
+        }
+    };
+
     return {
         formData,
         isLoading,
         error,
         handleChange,
         handleSubmit,
+        handleRazonSocialBlur,
+        isSearchingRecipient,
     };
 
 };

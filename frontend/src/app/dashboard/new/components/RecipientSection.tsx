@@ -6,10 +6,18 @@ import { EnvioCrear } from '@/types/envio';
 export interface ShipmentSectionProps {
     formData: EnvioCrear;
     handleChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
+    handleRazonSocialBlur?: (e: ChangeEvent<HTMLInputElement>) => void; // Opcional, solo si se implementa la búsqueda automática
     isLoading: boolean;
+    isSearchingRecipient?: boolean; // Para mostrar un indicador de búsqueda si se implementa la lógica
 }
 
-export const RecipientSection = ({ formData, handleChange, isLoading }: ShipmentSectionProps) => {
+export const RecipientSection = ({ 
+    formData, 
+    handleChange,
+    handleRazonSocialBlur, 
+    isLoading,
+    isSearchingRecipient
+ }: ShipmentSectionProps) => {
     return (
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
             <h3 className="text-lg font-semibold text-gray-800 mb-6 flex items-center">
@@ -20,12 +28,14 @@ export const RecipientSection = ({ formData, handleChange, isLoading }: Shipment
                 <div>
                     <label htmlFor="razon_social_destinatario" className="block text-sm font-medium text-gray-700 mb-2">
                         Razón Social / Nombre Completo <span className="text-red-500">*</span>
+                        {isSearchingRecipient && <span className="text-blue-500 ml-2 text-xs animate-pulse">Buscando...</span>}
                     </label>
                     <Input
                         id="razon_social_destinatario"
                         name="razon_social_destinatario"
                         value={formData.razon_social_destinatario}
                         onChange={handleChange}
+                        onBlur={handleRazonSocialBlur} // Se llama al salir del input
                         placeholder="Ej. TechStore Argentina S.A. o Juan Pérez"
                         required
                         disabled={isLoading}
@@ -43,7 +53,7 @@ export const RecipientSection = ({ formData, handleChange, isLoading }: Shipment
                         onChange={handleChange}
                         placeholder="Ej. 30123456789 (CUIT) o 20123456789 (CUIL)"
                         required
-                        disabled={isLoading}
+                        disabled={isLoading || isSearchingRecipient} // Se deshabilita mientras se busca el destinatario
                         className="w-full"
                     />
                 </div>
