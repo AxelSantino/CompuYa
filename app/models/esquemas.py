@@ -1,6 +1,6 @@
 from pydantic import BaseModel, EmailStr, ConfigDict, Field
 from datetime import date, datetime
-from typing import List, Optional, Union, Dict
+from typing import List, Optional, Union
 from uuid import UUID
 from app.models.entidades import TipoEnvio, RestriccionEnvio, EstadoEnvio, TipoCliente, PrioridadEnvio
 
@@ -85,10 +85,9 @@ class EnvioBase(BaseModel):
     descripcion: str
     tipo_envio: TipoEnvio
     restriccion: RestriccionEnvio
-
-class EnvioCrear(EnvioBase):
-    tipo_envio: TipoEnvio
     
+class EnvioCrear(EnvioBase):
+    pass
 
 class EditarEnvio(BaseModel):
     razon_social_destinatario: Optional[str] = None
@@ -97,7 +96,6 @@ class EditarEnvio(BaseModel):
     tipo_envio: Optional[TipoEnvio] = None
     restriccion: Optional[RestriccionEnvio] = None
     
-
 class HistorialBase(BaseModel):
     envio_id: int
     id_empleado: int
@@ -109,19 +107,14 @@ class UsuarioSimple(BaseModel):
     email: EmailStr
     perfil_empleado: Optional[PerfilEmpleadoSchema] = None
     model_config = ConfigDict(from_attributes=True)
-
+    
 class HistorialRespuesta(BaseModel):
     id: int
     estado: EstadoEnvio
     fecha: datetime
     empleado: UsuarioSimple
-    motivo: Optional[str] = None
     model_config = ConfigDict(from_attributes=True)
 
-class CancelarEnvio(BaseModel):
-    #motivo: str
-    motivo: Optional[str] = "Sin motivo especificado"
-    
 class EmpresaRespuesta(BaseModel):
     razon_social: str
     cuit: Optional[str] = None
@@ -133,67 +126,19 @@ class EmpresaRespuesta(BaseModel):
     cod_postal: Optional[str] = None
     fecha: Optional[date] = None
     model_config = ConfigDict(from_attributes=True)
-
+    
 class EnvioRespuesta(EnvioBase):
     id: int
     tracking_id: str
     estado: EstadoEnvio
     prioridad: PrioridadEnvio
     fecha_creacion: datetime
-    fecha_limite: Optional[datetime] = None
     creador: UsuarioSimple
-    destinatario: UsuarioRespuesta
+    destinatario: UsuarioRespuesta 
     sucursal: Optional[SucursalRespuesta] = None
     latitud_destino: Optional[float] = None
     longitud_destino: Optional[float] = None
     model_config = ConfigDict(from_attributes=True)
 
-
-# --- ESQUEMAS PARA NOTIFICACIONES ---
-class PlantillaNotificacionBase(BaseModel):
-    estado_disparador: str
-    asunto: str
-    cuerpo: str
-    activa: Optional[bool] = True
-
-class PlantillaNotificacionResponse(PlantillaNotificacionBase):
-    id: int
-    
-    model_config = ConfigDict(from_attributes=True)
-
-class HistorialNotificacionBase(BaseModel):
-    envio_id: int
-    destinatario_email: str
-    asunto_enviado: str
-    cuerpo_enviado: str
-    resultado: str
-
-class HistorialNotificacionResponse(HistorialNotificacionBase):
-    id: int
-    fecha_envio: datetime
-    
-    model_config = ConfigDict(from_attributes=True)
-
-# --- ESQUEMAS DE NOTIFICACIONES (Auditoría) ---
-
-class RegistroNotificacionRespuesta(BaseModel):
-    id: int
-    envio_id: int
-    destinatario: str
-    canal: str
-    resultado: str
-    motivo_error: Optional[str] = None
-    fecha_hora: datetime
-    model_config = ConfigDict(from_attributes=True)
-
-# --- ESQUEMAS DE REPORTES ---
-
-class HistoricoLinealDia(BaseModel):
-    fecha: date
-    cantidad: int
-
-class ReporteVolumenResponse(BaseModel):
-    total_envios: int
-    por_estado: Dict[str, int]
-    por_tipo: Dict[str, int]
-    historico_lineal: List[HistoricoLinealDia]
+class CancelarEnvio(BaseModel):
+    motivo: str
