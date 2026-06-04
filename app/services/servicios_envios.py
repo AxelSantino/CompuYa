@@ -1,6 +1,6 @@
 import random
 import string
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from fastapi_cloud_cli.cli import app
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
@@ -26,11 +26,17 @@ class EnvioService:
     async def crear_envio(self, envio_data: EnvioCrear, usuario_id: int) -> Envio:
 
         hoy = date.today()
-        if envio_data.fecha_limite <= hoy:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="La fecha limite de entrega debe ser al menos a partir de mañana o una fecha futura"
-            )
+        
+        
+        tipo = envio_data.tipo_envio.value if hasattr(envio_data.tipo_envio, 'value') else envio_data.tipo_envio
+        
+        if tipo == "express":
+            dias_limite = random.randint(1, 3)
+        else:
+            dias_limite = random.randint(4, 7)
+        
+        fecha_limite_calculada = hoy + timedelta(days=dias_limite)
+        
 
         query = (
             select(Usuario)
@@ -73,6 +79,9 @@ class EnvioService:
         }
 
         prioridad_predicha = predecir_prioridad(datos_para_modelo)
+        
+        if tipo == "express" and prioridad_predicha == "baja":
+            prioridad_predicha = "media"
 
         tracking_id = self.generar_tracking_id()
         nuevo_envio = Envio(
@@ -83,7 +92,8 @@ class EnvioService:
             sucursal_id=sucursal_optima.id,
             latitud_destino=lat_dest,
             longitud_destino=lon_dest,
-            prioridad=prioridad_predicha
+            prioridad=prioridad_predicha,
+            fecha_limite=fecha_limite_calculada
         )
 
         self.db.add(nuevo_envio)
