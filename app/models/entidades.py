@@ -167,5 +167,6 @@ class HistorialNotificacion(Base):
     cuerpo_enviado = Column(Text, nullable=False)
     fecha_envio = Column(DateTime(timezone=True), server_default=func.now())
     resultado = Column(Text, nullable=False) 
-
+    canal = Column(String, nullable=False, default="correo")
+    motivo_error = Column(String, nullable=True)
     envio = relationship("Envio")
