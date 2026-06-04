@@ -9,6 +9,7 @@ export interface ShipmentSectionProps {
     handleRazonSocialBlur?: (e: ChangeEvent<HTMLInputElement>) => void; // Opcional, solo si se implementa la búsqueda automática
     isLoading: boolean;
     isSearchingRecipient?: boolean; // Para mostrar un indicador de búsqueda si se implementa la lógica
+    recipientNotFound?: boolean; // Para indicar si no se encontró el destinatario
 }
 
 export const RecipientSection = ({ 
@@ -16,7 +17,8 @@ export const RecipientSection = ({
     handleChange,
     handleRazonSocialBlur, 
     isLoading,
-    isSearchingRecipient
+    isSearchingRecipient,
+    recipientNotFound
  }: ShipmentSectionProps) => {
     return (
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
@@ -28,7 +30,12 @@ export const RecipientSection = ({
                 <div>
                     <label htmlFor="razon_social_destinatario" className="block text-sm font-medium text-gray-700 mb-2">
                         Razón Social / Nombre Completo <span className="text-red-500">*</span>
-                        {isSearchingRecipient && <span className="text-blue-500 ml-2 text-xs animate-pulse">Buscando...</span>}
+                        {isSearchingRecipient && (
+                            <span className="text-blue-500 ml-2 text-xs animate-pulse">Buscando...</span>
+                        )}
+                        {!isSearchingRecipient && recipientNotFound && (
+                            <span className="text-red-500 ml-2 text-xs">Destinatario no encontrado</span>
+                        )}
                     </label>
                     <Input
                         id="razon_social_destinatario"

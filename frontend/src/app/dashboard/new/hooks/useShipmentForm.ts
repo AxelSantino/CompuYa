@@ -20,6 +20,7 @@ export const useShipmentForm = () => {
     const [error, setError] = useState<string | null>(null);
 
     const [isSearchingRecipient, setIsSearchingRecipient] = useState(false);
+    const [recipientNotFound, setRecipientNotFound] = useState(false);
 
     // Controlador de cambios (Memorizado con useCallback para mejor performance)
     const handleChange = useCallback((e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -66,6 +67,8 @@ export const useShipmentForm = () => {
         if (!razonSocial) return;
 
         setIsSearchingRecipient(true);
+        setRecipientNotFound(false);
+
         try {
             // Obtener el destinatario por razón social desde el servicio
             const destinatario = await shipmentService.getRecipientByRazonSocial(razonSocial);
@@ -80,7 +83,7 @@ export const useShipmentForm = () => {
                 }));
             }
         } catch (error) {
-            console.error("No se encontró el destinatario", error);
+            setRecipientNotFound(true);
         } finally {
             setIsSearchingRecipient(false);
         }
@@ -94,6 +97,7 @@ export const useShipmentForm = () => {
         handleSubmit,
         handleRazonSocialBlur,
         isSearchingRecipient,
+        recipientNotFound,
     };
 
 };
