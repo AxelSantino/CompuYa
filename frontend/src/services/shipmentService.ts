@@ -22,8 +22,8 @@ const shipmentService = {
     return response.data;
   },
 
-  assignShipmentAutomatically: async (id: string): Promise<{ message: string }> => {
-    const response = await api.post(`/envios/${id}/asignar-automatico`);
+  assignShipmentManually: async (id: string, id_repartidor: number): Promise<{ message: string }> => {
+    const response = await api.post(`/envios/${id}/asignar-manual?id_repartidor=${id_repartidor}`);
     return response.data;
   },
 

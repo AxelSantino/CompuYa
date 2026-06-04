@@ -60,7 +60,8 @@ class EnvioService:
             "antiguedad_dias": 0
         }
         
-        prioridad_predicha = predecir_prioridad(datos_para_modelo)
+        import asyncio
+        prioridad_predicha = await asyncio.to_thread(predecir_prioridad, datos_para_modelo)
         
         tracking_id = self.generar_tracking_id()
         nuevo_envio = Envio(
@@ -84,14 +85,15 @@ class EnvioService:
         return await self.obtener_envio_por_id(nuevo_envio.tracking_id)
 
     async def obtener_envio_por_id(self, tracking_id: str) -> Envio:
+        from sqlalchemy.orm import joinedload
         query = select(Envio).where(Envio.tracking_id == tracking_id).options(
-            selectinload(Envio.creador).selectinload(Usuario.perfil_empleado),
-            selectinload(Envio.destinatario).selectinload(Usuario.perfil_empresa),
-            selectinload(Envio.destinatario).selectinload(Usuario.perfil_empleado),
-            selectinload(Envio.sucursal)
+            joinedload(Envio.creador).joinedload(Usuario.perfil_empleado),
+            joinedload(Envio.destinatario).joinedload(Usuario.perfil_empresa),
+            joinedload(Envio.destinatario).joinedload(Usuario.perfil_empleado),
+            joinedload(Envio.sucursal)
         )
         result = await self.db.execute(query)
-        envio = result.scalar_one_or_none()
+        envio = result.unique().scalar_one_or_none()
         if not envio:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -208,7 +210,7 @@ class EnvioService:
         )
         if usuario.rol == "cliente":
             query = query.where(Envio.destinatario_id == usuario.id)
-            
+
         result = await self.db.execute(query)
         return result.scalars().all()
 
@@ -238,7 +240,7 @@ class EnvioService:
         historial = result.scalars().all()
         return historial
 
-    async def asignar_envio_automatico(self, tracking_id: str):
+    async def asignar_envio_manual(self, tracking_id: str, id_repartidor: int):
         envio = await self.obtener_envio_por_id(tracking_id)
 
         if envio.estado != EstadoEnvio.EN_SUCURSAL:
@@ -247,46 +249,34 @@ class EnvioService:
                 detail=f"Solo se pueden asignar envíos que estén en sucursal. Estado actual: {envio.estado.value}"
             )
 
-        query_carga = (
-            select(Usuario.id)
-            .where(
-                Usuario.tipo == TipoCliente.EMPLEADO,
-                Usuario.rol == "repartidor"
-            )
-            .outerjoin(AsignacionEnvio, Usuario.id == AsignacionEnvio.id_empleado)
-            .outerjoin(
-                Envio,
-                (AsignacionEnvio.envio_id == Envio.id) & 
-                (Envio.estado.in_([EstadoEnvio.EN_TRANSITO, EstadoEnvio.EN_SUCURSAL]))
-            )
-            .group_by(Usuario.id)
-            .order_by(func.count(Envio.id).asc())
-            .limit(1)
+        query_repartidor = select(Usuario).where(
+            Usuario.id == id_repartidor,
+            Usuario.rol == "repartidor"
         )
-
-        result_carga = await self.db.execute(query_carga)
-        mejor_repartidor_id = result_carga.scalar_one_or_none()
-
-        if mejor_repartidor_id is None:
+        repartidor = (await self.db.execute(query_repartidor)).scalar_one_or_none()
+        if not repartidor:
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, 
-                detail="No hay repartidores disponibles en el sistema"
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"No se encontró un repartidor con ID {id_repartidor}"
             )
+        
+        repatidor = id_repartidor
 
         query_existente = select(AsignacionEnvio).where(AsignacionEnvio.envio_id == envio.id)
         asignacion_existente = (await self.db.execute(query_existente)).scalar_one_or_none()
 
         if asignacion_existente:
-            asignacion_existente.id_empleado = mejor_repartidor_id
+            asignacion_existente.id_empleado = repatidor
         else:
-            self.db.add(AsignacionEnvio(envio_id=envio.id, id_empleado=mejor_repartidor_id))
+            self.db.add(AsignacionEnvio(envio_id=envio.id, id_empleado=repatidor))
 
         envio.estado = EstadoEnvio.EN_TRANSITO
         
-        await self.registrar_historial(envio.id, mejor_repartidor_id, EstadoEnvio.EN_TRANSITO)
+        await self.registrar_historial(envio.id, repatidor, EstadoEnvio.EN_TRANSITO)
 
         await self.db.commit()
-        return {"message": f"Envío {tracking_id} asignado automáticamente al repartidor ID {mejor_repartidor_id} (Estado: EN_TRANSITO)"}
+        
+        return {"message": f"Envío {tracking_id} asignado manualmente al repartidor ID {repatidor} (Estado: EN_TRANSITO)"}
 
     async def asignar_todos_pendientes(self):
         query_pendientes = select(Envio).where(Envio.estado == EstadoEnvio.EN_SUCURSAL)
@@ -333,6 +323,7 @@ class EnvioService:
         return {"message": f"Se han asignado {count} envíos exitosamente de forma masiva", "asignados": count}
 
     async def actualizar_prioridades_pendientes(self):
+        import asyncio
         envios_en_sucursal = await self.db.execute(select(Envio).where(Envio.estado == EstadoEnvio.EN_SUCURSAL).options(
                 selectinload(Envio.sucursal)
             ))
@@ -354,7 +345,7 @@ class EnvioService:
                 "antiguedad_dias": antiguedad.days + antiguedad.seconds / 86400
             }
             prioridad_actual = envio.prioridad.value
-            nueva_prioridad = predecir_prioridad(datos_para_modelo)
+            nueva_prioridad = await asyncio.to_thread(predecir_prioridad, datos_para_modelo)
             
             if nueva_prioridad != prioridad_actual:
                 envio.prioridad = nueva_prioridad

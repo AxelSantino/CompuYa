@@ -91,7 +91,7 @@ async def test_actualizar_estado_a_cancelado_da_error_si_usuario_es_repartidor()
 
 
 @pytest.mark.asyncio
-async def test_asignar_envio_automatico_falla_si_no_esta_en_sucursal():
+async def test_asignar_envio_manual_falla_si_no_esta_en_sucursal():
     envio_mock = Envio()
     envio_mock.tracking_id = "CY-2026-TEST"
     envio_mock.estado = EstadoEnvio.ENTREGADO
@@ -104,7 +104,7 @@ async def test_asignar_envio_automatico_falla_si_no_esta_en_sucursal():
     servicio = EnvioService(db=db_mock)
 
     with pytest.raises(HTTPException) as info_error:
-        await servicio.asignar_envio_automatico("CY-2026-TEST")
+        await servicio.asignar_envio_manual("CY-2026-TEST", 123)
 
     assert info_error.value.status_code == 400
 

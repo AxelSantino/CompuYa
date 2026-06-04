@@ -76,12 +76,13 @@ async def obtener_historial(
 ):
     return await envio_service.obtener_historial_envio(tracking_id)
 
-@router.post("/{tracking_id}/asignar-automatico", dependencies=[Depends(tiene_rol(["supervisor"]))])
-async def asignar_envio_automatico(
+@router.post("/{tracking_id}/asignar-manual", dependencies=[Depends(tiene_rol(["supervisor"]))])
+async def asignar_envio_manual(
     tracking_id: str,
+    id_repartidor: int,
     envio_service: EnvioService = Depends(get_envio_service)
 ):
-    return await envio_service.asignar_envio_automatico(tracking_id)
+    return await envio_service.asignar_envio_manual(tracking_id, id_repartidor)
 
 @router.post("/asignar-todos", dependencies=[Depends(tiene_rol(["supervisor"]))])
 async def asignar_todos_pendientes(
