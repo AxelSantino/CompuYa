@@ -114,13 +114,17 @@ export default function RoutesPage() {
     };
   }, [selectedDriverId, isSupervisor, loadDriverRoute]);
 
-  const handleAutoAssign = async (trackingId: string) => {
+  const handleManualAssign = async (trackingId: string) => {
+    if (!selectedDriverId) {
+      alert("Por favor, selecciona un repartidor primero en el menú superior.");
+      return;
+    }
     setIsProcessing(true);
     try {
-      await shipmentService.assignShipmentAutomatically(trackingId);
+      await shipmentService.assignShipmentManually(trackingId, selectedDriverId);
       await fetchData();
     } catch {
-      alert("Error al asignar.");
+      alert("Error al asignar manualmente.");
     } finally {
       setIsProcessing(false);
     }
@@ -255,7 +259,7 @@ export default function RoutesPage() {
                               <p className="text-xs text-gray-500 truncate max-w-[150px]">{s.destinatario.perfil_empresa?.razon_social}</p>
                             </div>
                             <button 
-                              onClick={() => handleAutoAssign(s.tracking_id)}
+                              onClick={() => handleManualAssign(s.tracking_id)}
                               className="btn-assign group-hover:scale-105 transition-transform"
                             >
                               <FaMagic /> Asignar
