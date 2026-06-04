@@ -3,7 +3,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 from fastapi import HTTPException
 from app.models.entidades import Envio, EstadoEnvio, Usuario
 from app.services.servicios_envios import EnvioService
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 from app.models.esquemas import EnvioCrear, TipoEnvio, RestriccionEnvio
 
 
@@ -142,6 +142,10 @@ async def test_crear_envio_falla_si_empresa_no_existe():
     envio_data = MagicMock(spec=EnvioCrear)
     envio_data.razon_social_destinatario = "Empresa Fantasma S.A."
     envio_data.cuit_destinatario = "30-99999999-9"
+    
+    
+    envio_data.tipo_envio = MagicMock()
+    envio_data.tipo_envio.value = "normal"  # O "express"
 
     envio_data.fecha_limite = date.today() + timedelta(days=2)
 
@@ -172,6 +176,9 @@ async def test_crear_envio_falla_si_no_hay_sucursales_disponibles():
     envio_data = MagicMock(spec=EnvioCrear)
     envio_data.razon_social_destinatario = "Empresa Test S.A."
     envio_data.cuit_destinatario = "30-12345678-9"
+    
+    envio_data.tipo_envio = MagicMock()
+    envio_data.tipo_envio.value = "normal"
 
     envio_data.fecha_limite = date.today() + timedelta(days=2)
 
@@ -300,7 +307,7 @@ async def test_crear_envio_exitoso_con_fecha_entrega_futura():
 
     fecha_manana = date.today() + timedelta(days=1)
 
-    # Configuración de mocks
+    
     empresa_mock = MagicMock()
     empresa_mock.id = 10
     empresa_mock.perfil_empresa.latitud = -34.6037
@@ -321,53 +328,139 @@ async def test_crear_envio_exitoso_con_fecha_entrega_futura():
     servicio.obtener_envio_por_id = AsyncMock(
         return_value=Envio(tracking_id="CY-2026-OK"))
 
-    # CONFIGURACIÓN DEL MOCK PARA EL ESQUEMA
+    
     envio_data = MagicMock(spec=EnvioCrear)
     envio_data.razon_social_destinatario = "Empresa Valida S.A."
     envio_data.cuit_destinatario = "30-12345678-9"
     envio_data.fecha_limite = fecha_manana
 
-    # Configuramos los atributos que faltaban para que el servicio no falle
+    
     envio_data.tipo_envio = MagicMock()
     envio_data.tipo_envio.value = "normal"
     envio_data.restriccion = MagicMock()
     envio_data.restriccion.value = "ninguna"
 
-    # Ajustamos el model_dump para que coincida con lo que espera tu servicio
+    
     envio_data.model_dump.return_value = {
         "razon_social_destinatario": "Empresa Valida S.A.",
         "cuit_destinatario": "30-12345678-9",
         "descripcion": "Test",
-        "fecha_limite": fecha_manana,
         "tipo_envio": "normal",
         "restriccion": "ninguna"
     }
 
-    with patch.object(servicio, 'registrar_historial', new_callable=AsyncMock):
-        resultado = await servicio.crear_envio(envio_data, usuario_id=5)
+    with patch("random.randint", return_value=5):
+        with patch.object(servicio, 'registrar_historial', new_callable=AsyncMock):
+            resultado = await servicio.crear_envio(envio_data, usuario_id=5)
 
     assert resultado is not None
+    assert resultado.tracking_id == "CY-2026-OK"
     db_mock.add.assert_called_once()
 
 
 @pytest.mark.asyncio
-async def test_crear_envio_falla_si_fecha_limite_es_hoy_o_anterior():
-    fecha_hoy = date.today()
-
+async def test_asignar_todos_pendientes_exitoso_con_repartidores():
+    
+    envio_mock1 = Envio(id=1, tracking_id="CY-01", estado=EstadoEnvio.EN_SUCURSAL, razon_social_destinatario="Dest1")
+    envio_mock2 = Envio(id=2, tracking_id="CY-02", estado=EstadoEnvio.EN_SUCURSAL, razon_social_destinatario="Dest2")
+    
+    db_mock = AsyncMock()
+    db_mock.add = MagicMock()
+    db_mock.add_all = MagicMock()
+    
+    
+    resultado_pendientes = MagicMock()
+    resultado_pendientes.scalars.return_value.all.return_value = [envio_mock1, envio_mock2]
+    
+    
+    repartidor_10 = MagicMock(id=10, carga=2)
+    repartidor_11 = MagicMock(id=11, carga=5)
+    resultado_carga = MagicMock()
+    resultado_carga.all.return_value = [repartidor_10, repartidor_11]
+    
+    
+    resultado_existentes = MagicMock()
+    resultado_existentes.scalars.return_value.all.return_value = []
+    
+    
+    db_mock.execute.side_effect = [resultado_pendientes, resultado_carga, resultado_existentes]
+    
+    servicio = EnvioService(db=db_mock)
+    servicio.obtenerMailDestinatario = AsyncMock(return_value="test@empresa.com")
+    
+    background_tasks_mock = MagicMock()
+    
+    
+    respuesta = await servicio.asignar_todos_pendientes(background_tasks_mock)
+    
+    
+    assert respuesta["asignados"] == 2
+    assert envio_mock1.estado == EstadoEnvio.EN_TRANSITO
+    assert background_tasks_mock.add_task.call_count == 2  
+    db_mock.commit.assert_called_once()
+    
+    
+@pytest.mark.asyncio
+async def test_obtener_hoja_ruta_calcula_orden_optimo_de_viaje():
+    sucursal_mock = MagicMock(latitud=-34.60, longitud=-58.38)
+    
+    
+    envio_lejos = Envio(id=1, latitud_destino=-35.00, longitud_destino=-59.00, sucursal=sucursal_mock, estado=EstadoEnvio.EN_TRANSITO)
+    
+    envio_cerca = Envio(id=2, latitud_destino=-34.61, longitud_destino=-58.39, sucursal=sucursal_mock, estado=EstadoEnvio.EN_TRANSITO)
+    
     db_mock = AsyncMock()
     resultado_mock = MagicMock()
-    resultado_mock.scalar_one_or_none.return_value = None
-    db_mock.execute = AsyncMock(return_value=resultado_mock)
-
+    resultado_mock.scalars.return_value.all.return_value = [envio_lejos, envio_cerca]
+    db_mock.execute.return_value = resultado_mock
+    
     servicio = EnvioService(db=db_mock)
-
-    from app.models.esquemas import EnvioCrear
-    envio_data = MagicMock(spec=EnvioCrear)
-    envio_data.fecha_limite = fecha_hoy
-    envio_data.razon_social_destinatario = "Empresa Valida S.A."
-    envio_data.cuit_destinatario = "30-12345678-9"
-
-    with pytest.raises(HTTPException) as info_error:
-        await servicio.crear_envio(envio_data, usuario_id=5)
-
-    assert info_error.value.status_code == 400
+    
+    
+    def haversine_simulado(lat1, lon1, lat2, lon2):
+        if lat2 == -34.61: return 5.0   
+        if lat2 == -35.00: return 80.0  
+        return 10.0
+        
+    servicio.ruteo_service.calcular_distancia_haversine = haversine_simulado
+    
+    
+    ruta_resultado = await servicio.obtener_hoja_ruta(id_empleado=10)
+    
+    # Verificaciones
+    assert len(ruta_resultado) == 2
+    assert ruta_resultado[0].id == 2  
+    assert ruta_resultado[1].id == 1  
+    
+    
+    
+@pytest.mark.asyncio
+async def test_actualizar_prioridades_pendientes_llama_modelo_ia():
+    sucursal_mock = MagicMock(latitud=-34.60, longitud=-58.38)
+    envio_mock = Envio(
+        id=5, 
+        estado=EstadoEnvio.EN_SUCURSAL, 
+        sucursal=sucursal_mock,
+        fecha_creacion=datetime.now() - timedelta(days=2), 
+        tipo_envio=MagicMock(value="normal"),
+        restriccion=MagicMock(value="ninguna"),
+        prioridad=MagicMock(value="baja"),
+        latitud_destino=-34.65,
+        longitud_destino=-58.40
+    )
+    
+    db_mock = AsyncMock()
+    resultado_mock = MagicMock()
+    resultado_mock.scalars.return_value.all.return_value = [envio_mock]
+    db_mock.execute.return_value = resultado_mock
+    
+    servicio = EnvioService(db=db_mock)
+    servicio.ruteo_service.calcular_distancia_haversine = MagicMock(return_value=12.5)
+    
+    
+    with patch("app.services.servicios_envios.predecir_prioridad", return_value="alta"):
+        respuesta = await servicio.actualizar_prioridades_pendientes()
+        
+    assert respuesta["actualizados"] == 1
+    assert envio_mock.prioridad == "alta"
+    db_mock.commit.assert_called_once()

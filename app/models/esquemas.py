@@ -87,7 +87,8 @@ class EnvioBase(BaseModel):
     restriccion: RestriccionEnvio
 
 class EnvioCrear(EnvioBase):
-    fecha_limite: Optional[date] = None
+    tipo_envio: TipoEnvio
+    
 
 class EditarEnvio(BaseModel):
     razon_social_destinatario: Optional[str] = None
@@ -95,7 +96,7 @@ class EditarEnvio(BaseModel):
     descripcion: Optional[str] = None
     tipo_envio: Optional[TipoEnvio] = None
     restriccion: Optional[RestriccionEnvio] = None
-    fecha_limite: Optional[date] = None
+    
 
 class HistorialBase(BaseModel):
     envio_id: int
@@ -139,6 +140,7 @@ class EnvioRespuesta(EnvioBase):
     estado: EstadoEnvio
     prioridad: PrioridadEnvio
     fecha_creacion: datetime
+    fecha_limite: Optional[datetime] = None
     creador: UsuarioSimple
     destinatario: UsuarioRespuesta
     sucursal: Optional[SucursalRespuesta] = None
@@ -157,8 +159,7 @@ class PlantillaNotificacionBase(BaseModel):
 class PlantillaNotificacionResponse(PlantillaNotificacionBase):
     id: int
     
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class HistorialNotificacionBase(BaseModel):
     envio_id: int
@@ -171,8 +172,7 @@ class HistorialNotificacionResponse(HistorialNotificacionBase):
     id: int
     fecha_envio: datetime
     
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 # --- ESQUEMAS DE NOTIFICACIONES (Auditoría) ---
 
