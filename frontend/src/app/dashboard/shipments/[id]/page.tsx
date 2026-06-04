@@ -1,10 +1,7 @@
 'use client';
 
-import React, { useEffect, useState, ChangeEvent, FormEvent } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import { useAuth } from '@/contexts/AuthContext';
-import shipmentService from '@/services/shipmentService';
-import { Envio, HistorialEnvio, EnvioStatus } from '@/types/envio';
+import React from 'react';
+import { EnvioStatus } from '@/types/envio';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import LoadingOverlay from '@/components/LoadingOverlay';
 import { Button } from '@/components/ui/Button';
@@ -12,6 +9,7 @@ import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 import { FaArrowLeft, FaBox, FaCalendar, FaUser, FaBuilding, FaFileAlt, FaShippingFast, FaExclamationCircle, FaMapMarkerAlt, FaWarehouse, FaTimesCircle, FaCheckCircle, FaEdit } from 'react-icons/fa';
 import './ShipmentDetailPage.css';
+import { useShipmentDetail } from './hooks/useShipmentDetail';
 
 const statusConfig: Record<EnvioStatus, { icon: React.ReactNode; colorClass: string }> = {
   'en sucursal': { icon: <FaWarehouse />, colorClass: 'status-icon-blue' },
@@ -33,109 +31,12 @@ const DetailItem = React.memo(({ icon, label, value }: { icon?: React.ReactNode,
 DetailItem.displayName = 'DetailItem';
 
 export default function ShipmentDetailPage() {
-  const router = useRouter();
-  const params = useParams();
-  const { user } = useAuth();
-
-  const [shipment, setShipment] = useState<Envio | null>(null);
-  const [history, setHistory] = useState<HistorialEnvio[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const [isEditing, setIsEditing] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
-  const [formData, setFormData] = useState({ descripcion: '', tipo_envio: '', restriccion: '', razon_social_destinatario: '', cuit_destinatario: '' });
-
-  const id = Array.isArray(params.id) ? params.id[0] : params.id;
-  const canEdit = (user?.rol === 'operador' || user?.rol === 'supervisor') && shipment?.estado === 'en sucursal';
-
-  const fetchData = React.useCallback(async () => {
-    if (!id) return;
-    setIsLoading(true);
-    try {
-      const promises: [Promise<Envio>, Promise<HistorialEnvio[]> | null] = [
-        shipmentService.getShipmentById(id as string),
-        user?.rol === 'supervisor' ? shipmentService.getShipmentHistory(id as string) : null
-      ];
-
-      const [shipmentData, historyData] = await Promise.all(promises);
-      
-      setShipment(shipmentData);
-      if (historyData) {
-        setHistory(historyData);
-      }
-    } catch {
-      setError('No se pudo cargar la información del envío.');
-    } finally {
-      setIsLoading(false);
-    }
-  }, [id, user]);
-
-  useEffect(() => {
-    let isMounted = true;
-    
-    const load = async () => {
-      if (isMounted) {
-        await fetchData();
-      }
-    };
-
-    load();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [fetchData]);
-
-  const handleCancel = async () => {
-    if (!id || !window.confirm('¿Estás seguro de que deseas cancelar este envío?')) return;
-    
-    setIsProcessing(true);
-    try {
-      await shipmentService.cancelShipment(id as string);
-      await fetchData(); // Refresh data
-      alert('Envío cancelado con éxito.');
-    } catch (err) {
-      const errorData = err as { response?: { data?: { detail?: string } } };
-      alert(errorData.response?.data?.detail || 'Error al cancelar el envío.');
-    } finally {
-      setIsProcessing(false);
-    }
-  };
-
-  const handleEditClick = () => {
-    if (shipment) {
-      setFormData({
-        descripcion: shipment.descripcion || '',
-        tipo_envio: shipment.tipo_envio || '',
-        restriccion: shipment.restriccion || '',
-        razon_social_destinatario: shipment.razon_social_destinatario || shipment.destinatario?.perfil_empresa?.razon_social || shipment.destinatario?.email || '',
-        cuit_destinatario: shipment.cuit_destinatario || shipment.destinatario?.perfil_empresa?.cuit || ''
-      });
-      setIsEditing(true);
-    }
-  };
-
-  const handleCancelEdit = () => { setIsEditing(false); setError(null); };
-
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    if (!shipment) return;
-    setIsSaving(true); setError(null);
-    try {
-      await shipmentService.updateShipment(shipment.tracking_id, formData);
-      await fetchData();
-      setIsEditing(false);
-    } catch (err: any) {
-      setError(err.response?.data?.detail || 'Error al actualizar el envío.');
-    } finally { setIsSaving(false); }
-  };
+  
+  const {
+    user, router, shipment, history, isLoading, isProcessing, error,
+    isEditing, isSaving, formData, canEdit, handleCancel, handleEditClick,
+    handleCancelEdit, handleChange, handleSubmit
+  } = useShipmentDetail();
 
   const isBusy = isLoading || isProcessing || isSaving;
   const loadingText = isProcessing ? "Cancelando envío..." : isSaving ? "Guardando cambios..." : "Cargando envío...";
