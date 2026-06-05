@@ -10,11 +10,9 @@ async def test_notificacion_falla_si_falta_configuracion_smtp():
     db_mock = AsyncMock()
     servicio = NotificacionService(db=db_mock)
     
-    
     servicio.smtp_host = None
     
     envio_mock = MagicMock(spec=Envio)
-    
     
     await servicio.procesar_notificacion_estado(envio_mock, "test@cliente.com", "Juan")
     
@@ -24,7 +22,6 @@ async def test_notificacion_falla_si_falta_configuracion_smtp():
 @pytest.mark.asyncio
 async def test_notificacion_ignorada_si_no_hay_plantilla_activa():
     db_mock = AsyncMock()
-    
     
     resultado_mock = MagicMock()
     resultado_mock.scalars().first.return_value = None
@@ -38,9 +35,7 @@ async def test_notificacion_ignorada_si_no_hay_plantilla_activa():
     envio_mock = MagicMock(spec=Envio)
     envio_mock.estado.value = "en_transito"
     
-    
     await servicio.procesar_notificacion_estado(envio_mock, "test@cliente.com", "Juan")
-    
     
     db_mock.execute.assert_called_once()
     db_mock.add.assert_not_called()
@@ -49,7 +44,6 @@ async def test_notificacion_ignorada_si_no_hay_plantilla_activa():
 @pytest.mark.asyncio
 async def test_notificacion_captura_error_de_formato_key_error():
     db_mock = AsyncMock()
-    
     
     plantilla_mock = MagicMock(spec=PlantillaNotificacion)
     plantilla_mock.asunto = "Tu envío"
@@ -65,9 +59,7 @@ async def test_notificacion_captura_error_de_formato_key_error():
     envio_mock.estado.value = "en_transito"
     envio_mock.tracking_id = "CY-1234"
     
-    
     await servicio.procesar_notificacion_estado(envio_mock, "test@cliente.com", "Juan")
-    
     
     db_mock.add.assert_not_called()
 
@@ -96,16 +88,16 @@ async def test_notificacion_flujo_exitoso_guarda_historial_ok():
     envio_mock.tracking_id = "CY-5555"
     envio_mock.descripcion = "Zapatillas"
     
-    
     with patch("aiosmtplib.send", new_callable=AsyncMock) as mock_send:
         await servicio.procesar_notificacion_estado(envio_mock, "test@cliente.com", "Juan")
-        
         mock_send.assert_called_once()
         
-    
     db_mock.add.assert_called_once()
     historial_guardado = db_mock.add.call_args[0][0]
-    assert historial_guardado.resultado == "Enviado OK"
+    
+    assert historial_guardado.resultado == "Exitoso"
+    assert historial_guardado.canal == "correo"
+    
     db_mock.commit.assert_called_once()
 
 
@@ -133,12 +125,13 @@ async def test_notificacion_captura_excepcion_smtp_y_guarda_error_en_historial()
     envio_mock.tracking_id = "CY-5555"
     envio_mock.descripcion = "Zapatillas"
     
-    
     with patch("aiosmtplib.send", new_callable=AsyncMock, side_effect=Exception("Auth Failure")):
         await servicio.procesar_notificacion_estado(envio_mock, "test@cliente.com", "Juan")
         
-    
     db_mock.add.assert_called_once()
     historial_guardado = db_mock.add.call_args[0][0]
-    assert "Error: Auth Failure" in historial_guardado.resultado
+
+    assert historial_guardado.resultado == "Fallido"
+    assert "Auth Failure" in historial_guardado.motivo_error
+    
     db_mock.commit.assert_called_once()

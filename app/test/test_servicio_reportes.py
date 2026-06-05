@@ -1,6 +1,7 @@
 import pytest
 from unittest.mock import AsyncMock, MagicMock
 from datetime import date
+from app.models.entidades import EstadoEnvio
 from app.services.servicio_reportes import ServicioReportes
 
 @pytest.mark.asyncio
@@ -37,3 +38,52 @@ async def test_reporte_volumen_con_filtros_fecha():
     resultado = await ServicioReportes.obtener_reporte_volumen(db_mock, date(2026, 5, 1), date(2026, 5, 31))
     assert resultado["total_envios"] == 2
     assert resultado["por_estado"]["en_transito"] == 1
+    
+    
+    
+@pytest.mark.asyncio
+async def test_obtener_reporte_incidencias_exitoso():
+    
+    db_mock = AsyncMock()
+    
+    
+    filas_mock = [
+        ("Domicilio cerrado", 5),
+        ("Dirección incorrecta", 2)
+    ]
+    
+    resultado_mock = MagicMock()
+    resultado_mock.all.return_value = filas_mock
+    db_mock.execute.return_value = resultado_mock
+    
+    fecha_ini = date(2026, 6, 1)
+    fecha_fin = date(2026, 6, 5)
+    
+    
+    reporte = await ServicioReportes.obtener_reporte_incidencias(db_mock, fecha_ini, fecha_fin)
+    
+    assert reporte.total_incidencias == 7
+    assert len(reporte.cancelaciones) == 2
+    assert reporte.cancelaciones[0].causa == "Domicilio cerrado"
+    assert reporte.cancelaciones[0].cantidad == 5
+    assert reporte.cancelaciones[1].causa == "Dirección incorrecta"
+    assert reporte.cancelaciones[1].cantidad == 2
+    
+
+
+@pytest.mark.asyncio
+async def test_obtener_reporte_incidencias_vacio():
+    db_mock = AsyncMock()
+    
+    resultado_mock = MagicMock()
+    resultado_mock.all.return_value = []
+    db_mock.execute.return_value = resultado_mock
+    
+    fecha_ini = date(2026, 6, 1)
+    fecha_fin = date(2026, 6, 5)
+    
+    
+    reporte = await ServicioReportes.obtener_reporte_incidencias(db_mock, fecha_ini, fecha_fin)
+    
+    assert reporte.total_incidencias == 0
+    assert len(reporte.cancelaciones) == 0

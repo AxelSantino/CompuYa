@@ -39,8 +39,7 @@ class EstadoEnvio(PyEnum):
 class Usuario(Base):
     __tablename__ = "usuarios"
     id = Column(BigInteger, primary_key=True)
-    tipo = Column(Enum(TipoCliente, native_enum=False, values_callable=lambda x: [
-                  e.value for e in x]), nullable=False)
+    tipo = Column(Enum(TipoCliente, native_enum=False, values_callable=lambda x: [e.value for e in x]), nullable=False)
     supabase_id = Column(UUID(as_uuid=True), unique=True, nullable=False)
     email = Column(Text, unique=True, nullable=False)
     rol = Column(String(20), default="visor")
@@ -167,5 +166,6 @@ class HistorialNotificacion(Base):
     cuerpo_enviado = Column(Text, nullable=False)
     fecha_envio = Column(DateTime(timezone=True), server_default=func.now())
     resultado = Column(Text, nullable=False) 
-
+    canal = Column(String, nullable=False, default="correo")
+    motivo_error = Column(String, nullable=True)
     envio = relationship("Envio")

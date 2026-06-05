@@ -32,6 +32,10 @@ def asignar_prioridad_segun_reglas(envio: dict) -> str:
     if envio["tipo_envio"] == TipoEnvio.EXPRESS.value and envio["restriccion"] == RestriccionEnvio.NINGUNA.value \
        and envio["distancia"] < 15:
         return Prioridad.MEDIA.value
+    
+    if envio["tipo_envio"] == TipoEnvio.EXPRESS.value and envio["restriccion"] == RestriccionEnvio.NINGUNA.value \
+       and envio["antiguedad_dias"] >= 3 and envio["antiguedad_dias"] <=5:
+        return Prioridad.MEDIA.value
 
     if envio["tipo_envio"] == TipoEnvio.NORMAL.value and envio["restriccion"] == RestriccionEnvio.NINGUNA.value \
        and envio["antiguedad_dias"] < 3:
