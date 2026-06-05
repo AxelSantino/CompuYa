@@ -17,6 +17,7 @@ export const useShipmentList = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
+
     // 1. Control de Acceso (Redirección de seguridad)
     useEffect(() => {
         if (user && user.rol === 'repartidor') {
