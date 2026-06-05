@@ -25,7 +25,7 @@ export const useClientManager = () => {
                 }
             } catch (err) {
                 if (isMounted) {
-                    setError('Error al cargar la lista de clients. Intente nuevamente.');
+                    setError('Error al cargar la lista de clientes. Intente nuevamente.');
                 }
             } finally {
                 if (isMounted) {

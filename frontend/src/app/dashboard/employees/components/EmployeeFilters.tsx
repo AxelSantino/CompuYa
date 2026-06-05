@@ -32,7 +32,7 @@ export const EmployeeFilters = ({
           className="w-full md:w-48 capitalize"
         >
           <option value="">Todos los roles</option>
-          <option value="administrador">Administrador</option>
+          <option value="admin">Administrador</option>
           <option value="supervisor">Supervisor</option>
           <option value="operador">Operador</option>
           <option value="repartidor">Repartidor</option>
