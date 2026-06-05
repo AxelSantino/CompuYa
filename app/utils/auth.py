@@ -55,13 +55,13 @@ async def obtener_usuario_actual(
         supabase_id: str = payload.get("sub")
         if supabase_id is None:
             raise credentials_exception
-        from sqlalchemy.orm import selectinload
+        from sqlalchemy.orm import selectinload, joinedload
         query = select(Usuario).where(Usuario.supabase_id == supabase_id).options(
-            selectinload(Usuario.perfil_empleado),
-            selectinload(Usuario.perfil_empresa)
+            joinedload(Usuario.perfil_empleado),
+            joinedload(Usuario.perfil_empresa)
         )
         result = await db.execute(query)
-        usuario = result.scalar_one_or_none()
+        usuario = result.unique().scalar_one_or_none()
         
         if not usuario:
             raise HTTPException(

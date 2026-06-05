@@ -85,10 +85,9 @@ class EnvioBase(BaseModel):
     descripcion: str
     tipo_envio: TipoEnvio
     restriccion: RestriccionEnvio
-
-class EnvioCrear(EnvioBase):
-    tipo_envio: TipoEnvio
     
+class EnvioCrear(EnvioBase):
+    pass
 
 class EditarEnvio(BaseModel):
     razon_social_destinatario: Optional[str] = None
@@ -97,7 +96,6 @@ class EditarEnvio(BaseModel):
     tipo_envio: Optional[TipoEnvio] = None
     restriccion: Optional[RestriccionEnvio] = None
     
-
 class HistorialBase(BaseModel):
     envio_id: int
     id_empleado: int
@@ -109,18 +107,17 @@ class UsuarioSimple(BaseModel):
     email: EmailStr
     perfil_empleado: Optional[PerfilEmpleadoSchema] = None
     model_config = ConfigDict(from_attributes=True)
-
+    
 class HistorialRespuesta(BaseModel):
     id: int
     estado: EstadoEnvio
     fecha: datetime
     empleado: UsuarioSimple
-    motivo: Optional[str] = None
     model_config = ConfigDict(from_attributes=True)
 
 class CancelarEnvio(BaseModel):
-    motivo: Optional[str] = "Sin motivo especificado"
-    
+    motivo: str
+
 class EmpresaRespuesta(BaseModel):
     razon_social: str
     cuit: Optional[str] = None
@@ -132,23 +129,22 @@ class EmpresaRespuesta(BaseModel):
     cod_postal: Optional[str] = None
     fecha: Optional[date] = None
     model_config = ConfigDict(from_attributes=True)
-
+    
 class EnvioRespuesta(EnvioBase):
     id: int
     tracking_id: str
     estado: EstadoEnvio
     prioridad: PrioridadEnvio
     fecha_creacion: datetime
-    fecha_limite: Optional[datetime] = None
     creador: UsuarioSimple
-    destinatario: UsuarioRespuesta
+    destinatario: UsuarioRespuesta 
     sucursal: Optional[SucursalRespuesta] = None
     latitud_destino: Optional[float] = None
     longitud_destino: Optional[float] = None
     model_config = ConfigDict(from_attributes=True)
 
-
 # --- ESQUEMAS PARA NOTIFICACIONES ---
+
 class PlantillaNotificacionBase(BaseModel):
     estado_disparador: str
     asunto: str
@@ -161,7 +157,7 @@ class PlantillaNotificacionResponse(PlantillaNotificacionBase):
 
 class HistorialNotificacionBase(BaseModel):
     envio_id: int
-    destinatario_email: str
+    destinatario_email: EmailStr
     asunto_enviado: str
     cuerpo_enviado: str
     resultado: str
