@@ -13,6 +13,9 @@ from app.models.esquemas import (
 )
 from app.models.entidades import Usuario, TipoCliente
 from typing import List, Union
+from sqlalchemy.orm import selectinload
+from sqlalchemy import select
+
 
 router = APIRouter(prefix="/usuarios", tags=["Usuarios"])
 
@@ -87,3 +90,56 @@ async def buscar_destinatario(
 ):
     destinatario = await usuario_service.buscar_empresa_por_razon_social_o_cuit(razon_social, cuit)
     return destinatario
+
+
+@router.get("/roles/empleados",response_model=List[UsuarioRespuesta], dependencies = [Depends(tiene_rol(["admin"]))])
+async def listar_solo_empleados(
+    usuario_service: UsuarioService = Depends(get_usuario_service)
+):
+    
+
+    query = select(Usuario).where(
+            Usuario.tipo == TipoCliente.EMPLEADO
+        ).options(
+            selectinload(Usuario.perfil_empleado),
+            selectinload(Usuario.perfil_empresa)
+        )
+    result = await usuario_service.db.execute(query)
+    return result.scalars().all()
+    
+
+
+@router.get("/roles/clientes",response_model=List[UsuarioRespuesta], dependencies = [Depends(tiene_rol(["admin"]))])
+async def listar_solo_clientes(
+    usuario_service: UsuarioService = Depends(get_usuario_service)
+):
+    query = select(Usuario).where(
+            Usuario.tipo == TipoCliente.EMPRESA
+        ).options(
+            selectinload(Usuario.perfil_empleado),
+            selectinload(Usuario.perfil_empresa)
+        )
+    result = await usuario_service.db.execute(query)
+    return result.scalars().all()
+
+
+
+@router.get("/{usuario_id}", response_model=UsuarioRespuesta, dependencies=[Depends(obtener_usuario_actual)])
+async def obtener_usuario_por_id(
+    usuario_id: int = Path(..., description="ID del usuario a buscar"),
+    usuario_service: UsuarioService = Depends(get_usuario_service)
+):
+    
+    query = select(Usuario).where(Usuario.id == usuario_id).options(
+        selectinload(Usuario.perfil_empleado),
+        selectinload(Usuario.perfil_empresa)
+    )
+    result = await usuario_service.db.execute(query)
+    usuario = result.scalar_one_or_none()
+    
+    if not usuario:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Usuario no encontrado."
+        )
+    return usuario
