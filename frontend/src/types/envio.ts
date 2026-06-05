@@ -1,29 +1,9 @@
+import { PerfilEmpleado, PerfilEmpresa, UsuarioSimple } from './usuario';
+
 export type EnvioStatus = 'en sucursal' | 'en transito' | 'cancelado' | 'entregado';
 export type EnvioType = 'normal' | 'express';
 export type EnvioRestriction = 'fragil' | 'valioso' | 'ninguna';
 export type EnvioPrioridad = 'baja' | 'media' | 'alta';
-
-export interface PerfilEmpleado {
-  nombre: string | null;
-  apellido: string | null;
-}
-
-export interface UsuarioSimple {
-  id: number;
-  email: string;
-  perfil_empleado?: PerfilEmpleado | null;
-}
-
-export interface EmpresaRespuesta {
-  razon_social: string;
-  cuit: string;
-  direccion_normalizada: string | null;
-  provincia: string | null;
-  municipio: string | null;
-  cod_postal: string | null;
-  latitud?: number;
-  longitud?: number;
-}
 
 export interface Sucursal {
   id: number;
@@ -55,7 +35,7 @@ export interface EnvioRespuestaDestinatario {
   id: number;
   email: string;
   tipo: string;
-  perfil_empresa?: EmpresaRespuesta;
+  perfil_empresa?: PerfilEmpresa;
   perfil_empleado?: PerfilEmpleado | null;
 }
 
