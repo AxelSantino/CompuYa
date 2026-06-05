@@ -57,6 +57,8 @@ class NotificacionService:
         msg.set_content(cuerpo_final, subtype='html')
 
         resultado_envio = "Pendiente"
+        motivo_del_error = None
+        
         try:
             await aiosmtplib.send(
                 msg, 
@@ -66,18 +68,27 @@ class NotificacionService:
                 username=self.smtp_user, 
                 password=self.smtp_password
             )
-            resultado_envio = "Enviado OK"
+            resultado_envio = "Exitoso"
             logger.info(f"Correo enviado correctamente a {email_original}")
+            
         except Exception as e:
             logger.error(f"Fallo envío SMTP: {str(e)}")
-            resultado_envio = f"Error: {str(e)}"
+            resultado_envio = "Fallido"
+            motivo_del_error = str(e)
 
         nuevo_historial = HistorialNotificacion(
             envio_id=envio.id,
             destinatario_email=email_original,
             asunto_enviado=asunto_final,
             cuerpo_enviado=cuerpo_final,
-            resultado=resultado_envio
+            resultado=resultado_envio,
+            canal="correo",
+            motivo_error=motivo_del_error
         )
         self.db.add(nuevo_historial)
         await self.db.commit()
+
+    async def obtener_historial_auditoria(self):
+        query = select(HistorialNotificacion).order_by(HistorialNotificacion.fecha_envio.desc())
+        resultado = await self.db.execute(query)
+        return resultado.scalars().all()

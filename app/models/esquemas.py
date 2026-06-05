@@ -1,6 +1,6 @@
 from pydantic import BaseModel, EmailStr, ConfigDict, Field
 from datetime import date, datetime
-from typing import List, Optional, Union
+from typing import List, Optional, Union, Dict
 from uuid import UUID
 from app.models.entidades import TipoEnvio, RestriccionEnvio, EstadoEnvio, TipoCliente, PrioridadEnvio
 
@@ -115,6 +115,9 @@ class HistorialRespuesta(BaseModel):
     empleado: UsuarioSimple
     model_config = ConfigDict(from_attributes=True)
 
+class CancelarEnvio(BaseModel):
+    motivo: str
+
 class EmpresaRespuesta(BaseModel):
     razon_social: str
     cuit: Optional[str] = None
@@ -140,5 +143,40 @@ class EnvioRespuesta(EnvioBase):
     longitud_destino: Optional[float] = None
     model_config = ConfigDict(from_attributes=True)
 
-class CancelarEnvio(BaseModel):
-    motivo: str
+# --- ESQUEMAS PARA NOTIFICACIONES ---
+
+class PlantillaNotificacionBase(BaseModel):
+    estado_disparador: str
+    asunto: str
+    cuerpo: str
+    activa: Optional[bool] = True
+
+class PlantillaNotificacionResponse(PlantillaNotificacionBase):
+    id: int
+    model_config = ConfigDict(from_attributes=True)
+
+class HistorialNotificacionBase(BaseModel):
+    envio_id: int
+    destinatario_email: EmailStr
+    asunto_enviado: str
+    cuerpo_enviado: str
+    resultado: str
+    canal: str = "correo"
+    motivo_error: Optional[str] = None
+
+class HistorialNotificacionResponse(HistorialNotificacionBase):
+    id: int
+    fecha_envio: datetime
+    model_config = ConfigDict(from_attributes=True)
+
+# --- ESQUEMAS DE REPORTES ---
+
+class HistoricoLinealDia(BaseModel):
+    fecha: date
+    cantidad: int
+
+class ReporteVolumenResponse(BaseModel):
+    total_envios: int
+    por_estado: Dict[str, int]
+    por_tipo: Dict[str, int]
+    historico_lineal: List[HistoricoLinealDia]
