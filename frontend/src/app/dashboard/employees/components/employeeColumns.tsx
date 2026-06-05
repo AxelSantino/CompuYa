@@ -22,7 +22,12 @@ export const getEmployeeColumns = (): Column<Usuario>[] => [
   },
   { 
     header: 'Fecha Alta', 
-    accessor: (row) => new Date(row.fecha).toLocaleDateString() 
+    accessor: (row) => {
+      if (!row.fecha) return '-';
+      const [year, month, day] = row.fecha.split('T')[0].split('-');
+      
+      return `${day}/${month}/${year}`;
+    }
   },
   { 
     header: 'Acciones', 
