@@ -1,5 +1,5 @@
 import api from './api';
-import { Usuario } from '@/types/usuario';
+import { Usuario, RegistroEmpleado, RegistroEmpresa } from '@/types/usuario';
 
 const userService = {
 
@@ -12,7 +12,17 @@ const userService = {
     getUsers: async() : Promise<Usuario[]> => {
         const response = await api.get<Usuario[]>('/usuarios/');
         return response.data;
-    }
+    },
+
+    createEmployee: async (data: RegistroEmpleado): Promise<Usuario> => {
+        const response = await api.post<Usuario>('/usuarios/registro-empleado', data);
+        return response.data;
+    },
+
+    createClient: async (data: RegistroEmpresa): Promise<Usuario> => {
+        const response = await api.post<Usuario>('/usuarios/registro-empresa', data);
+        return response.data;
+  }
 
 }
 

@@ -15,7 +15,7 @@ export const EmployeeHeader = () => {
             <Button
                 variant="primary"
                 className="w-full md:w-auto"
-                // onClick={() => router.push('/dashboard/employees/new')}
+                onClick={() => router.push('/dashboard/employees/new')}
             >
                 + Nuevo Empleado
             </Button>

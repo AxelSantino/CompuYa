@@ -30,3 +30,29 @@ export interface UsuarioSimple {
   email: string;
   perfil_empleado?: PerfilEmpleado | null;
 }
+
+export interface RegistroEmpleado {
+  email: string;
+  tipo: 'empleado';
+  rol: string;
+  fecha: string;
+  password?: string;
+  nombre: string;
+  apellido: string;
+}
+
+export interface RegistroEmpresa {
+  email: string;
+  tipo: 'empresa';
+  rol: 'cliente';
+  fecha: string;
+  password?: string;
+  razon_social: string;
+  latitud?: number;
+  longitud?: number;
+  cuit: string;
+  direccion_normalizada: string;
+  provincia: string;
+  municipio: string;
+  cod_postal: string;
+}
