@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status, BackgroundTasks
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.session import obtener_db
 from app.services.servicios_envios import EnvioService
@@ -48,27 +48,30 @@ async def obtener_envio(
 async def cancelar_envio(
     tracking_id: str,
     datos_cancelacion: CancelarEnvio,
+    background_tasks: BackgroundTasks,
     usuario_actual: Usuario = Depends(obtener_usuario_actual),
     envio_service: EnvioService = Depends(get_envio_service)
 ):
-    return await envio_service.cancelar_envio(tracking_id, usuario_actual.id, datos_cancelacion)
+    return await envio_service.cancelar_envio(tracking_id, usuario_actual.id, datos_cancelacion, background_tasks)
 
 @router.post("/{tracking_id}/entregar", response_model=EnvioRespuesta, dependencies=[Depends(tiene_rol(["supervisor","repartidor","admin"]))])
 async def entregar_envio(
     tracking_id: str,
+    background_tasks: BackgroundTasks,
     usuario_actual: Usuario = Depends(obtener_usuario_actual),
     envio_service: EnvioService = Depends(get_envio_service)
 ):
-    return await envio_service.entregar_envio(tracking_id, usuario_actual.id)
+    return await envio_service.entregar_envio(tracking_id, usuario_actual.id, background_tasks)
 
 @router.post("/{tracking_id}/actualizar-estado", response_model=EnvioRespuesta, dependencies=[Depends(tiene_rol(["admin", "supervisor", "operador"]))])
 async def actualizar_estado_envio(
     tracking_id: str,
     nuevo_estado: EstadoEnvio,
+    background_tasks: BackgroundTasks,
     usuario_actual: Usuario = Depends(obtener_usuario_actual),
     envio_service: EnvioService = Depends(get_envio_service)
 ):
-    return await envio_service.actualizar_estado_envio(tracking_id, nuevo_estado, usuario_actual)
+    return await envio_service.actualizar_estado_envio(tracking_id, nuevo_estado, usuario_actual, background_tasks)
 
 @router.get("/{tracking_id}/historial", response_model=List[HistorialRespuesta], dependencies=[Depends(tiene_rol(["supervisor"]))])
 async def obtener_historial(
@@ -81,15 +84,17 @@ async def obtener_historial(
 async def asignar_envio_manual(
     tracking_id: str,
     id_repartidor: int,
+    background_tasks: BackgroundTasks,
     envio_service: EnvioService = Depends(get_envio_service)
 ):
-    return await envio_service.asignar_envio_manual(tracking_id, id_repartidor)
+    return await envio_service.asignar_envio_manual(tracking_id, id_repartidor, background_tasks)
 
 @router.post("/asignar-todos", dependencies=[Depends(tiene_rol(["supervisor"]))])
 async def asignar_todos_pendientes(
+    background_tasks: BackgroundTasks,
     envio_service: EnvioService = Depends(get_envio_service)
 ):
-    return await envio_service.asignar_todos_pendientes()
+    return await envio_service.asignar_todos_pendientes(background_tasks)
 
 @router.get("/hoja-ruta/repartidor/{id_empleado}", response_model=List[EnvioRespuesta], dependencies=[Depends(tiene_rol(["supervisor"]))])
 async def obtener_hoja_ruta_repartidor(

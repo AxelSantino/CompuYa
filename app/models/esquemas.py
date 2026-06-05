@@ -146,7 +146,7 @@ class EnvioRespuesta(EnvioBase):
 # --- ESQUEMAS PARA NOTIFICACIONES ---
 
 class PlantillaNotificacionBase(BaseModel):
-    estado_disparador: str
+    estado_disparador: EstadoEnvio 
     asunto: str
     cuerpo: str
     activa: Optional[bool] = True
