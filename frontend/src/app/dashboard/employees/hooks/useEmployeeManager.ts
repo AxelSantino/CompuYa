@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import userService from '@/services/userService';
 import { Usuario } from '@/types/usuario';
+import { useAuth } from '@/contexts/AuthContext';
 
 export const useEmployeeManager = () => {
     const [employees, setEmployees] = useState<Usuario[]>([]);
@@ -63,7 +64,10 @@ export const useEmployeeManager = () => {
         });
     }, [employees, searchTerm, roleFilter]);
 
+    const { user } = useAuth();
+
     return {
+        user,
         searchTerm,
         setSearchTerm,
         roleFilter,

@@ -7,6 +7,7 @@ import { EmployeeHeader } from './components/EmployeeHeader';
 import { useEmployeeManager } from './hooks/useEmployeeManager';
 import { Usuario } from '@/types/usuario';
 import LoadingOverlay from '@/components/LoadingOverlay';
+import { AccessDenied } from '@/components/ui/AccessDenied';
 
 // Configuración visual de la tabla
 const employeeColumns: Column<Usuario>[] = [
@@ -45,8 +46,11 @@ const employeeColumns: Column<Usuario>[] = [
   }
 ];
 
+// Funcion principal 
+
 export default function EmployeesPage() {
   const {
+    user,
     searchTerm,
     setSearchTerm,
     roleFilter,
@@ -55,6 +59,15 @@ export default function EmployeesPage() {
     error,
     filteredEmployees
   } = useEmployeeManager();
+
+    // 2. Control de seguridad visual (mientras el Hook redirige si hace falta)
+if (!user || user.rol !== 'admin') {
+  return (
+    <DashboardLayout>
+      <AccessDenied />
+    </DashboardLayout>
+  );
+}
 
 return (
     <DashboardLayout>
@@ -70,7 +83,6 @@ return (
           setRoleFilter={setRoleFilter} 
         />
 
-        {/* Manejo de Estados y Tabla */}
         {error && (
           <div className="py-8 text-center text-red-500 font-medium bg-red-50 rounded-md">
             {error}
