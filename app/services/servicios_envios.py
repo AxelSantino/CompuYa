@@ -4,16 +4,25 @@ from datetime import datetime
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload, joinedload
 from sqlalchemy import select, func
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status, BackgroundTasks
 from app.models.entidades import AsignacionEnvio, Envio, Usuario, TipoCliente, EstadoEnvio, Historial, PerfilEmpresa
 from app.models.esquemas import EnvioCrear, EditarEnvio, CancelarEnvio
 from app.services.servicio_ruteo import ServicioRuteo
 from app.ml.modelo_prioridad import predecir_prioridad
+from app.services.servicio_notificacion import NotificacionService
 
 class EnvioService:
     def __init__(self, db: AsyncSession):
         self.db = db
         self.ruteo_service = ServicioRuteo(db)
+
+    async def obtenerMailDestinatario(self, envio: Envio):
+        if envio.destinatario:
+            return envio.destinatario.email
+        # Por si el destinatario no vino cargado en la consulta principal
+        usuario_db = await self.db.execute(select(Usuario).where(Usuario.id == envio.destinatario_id))
+        user_obj = usuario_db.scalar_one_or_none()
+        return user_obj.email if user_obj else None
 
     def generar_tracking_id(self) -> str:
         anio = datetime.now().year
@@ -109,7 +118,7 @@ class EnvioService:
         if envio.estado in [EstadoEnvio.EN_TRANSITO, EstadoEnvio.ENTREGADO, EstadoEnvio.CANCELADO]:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"El envÃ­o no se puede editar ya que su estado es {envio.estado.value}"
+                detail=f"El envío no se puede editar ya que su estado es {envio.estado.value}"
             )
     
         cuit_nuevo = datos_actualizados.cuit_destinatario
@@ -152,7 +161,7 @@ class EnvioService:
 
         return await self.obtener_envio_por_id(envio.tracking_id)
 
-    async def entregar_envio(self, tracking_id: str, usuario_id: int) -> Envio:
+    async def entregar_envio(self, tracking_id: str, usuario_id: int, background_tasks: BackgroundTasks) -> Envio:
         envio = await self.obtener_envio_por_id(tracking_id)
         if envio.estado != EstadoEnvio.EN_TRANSITO:
             raise HTTPException(
@@ -164,9 +173,14 @@ class EnvioService:
         await self.db.commit()
         await self.db.refresh(envio)
 
+        servicio = NotificacionService(db=self.db)
+        email = await self.obtenerMailDestinatario(envio)
+        if email:
+            background_tasks.add_task(servicio.procesar_notificacion_estado, envio, email, envio.razon_social_destinatario)
+
         return await self.obtener_envio_por_id(envio.tracking_id)
 
-    async def cancelar_envio(self, tracking_id: str, usuario_id: int, datos_cancelacion: CancelarEnvio) -> Envio:
+    async def cancelar_envio(self, tracking_id: str, usuario_id: int, datos_cancelacion: CancelarEnvio, background_tasks: BackgroundTasks) -> Envio:
         envio = await self.obtener_envio_por_id(tracking_id)
         if envio.estado == EstadoEnvio.CANCELADO or envio.estado == EstadoEnvio.ENTREGADO:
             raise HTTPException(
@@ -178,9 +192,14 @@ class EnvioService:
         await self.db.commit()
         await self.db.refresh(envio)
 
+        servicio = NotificacionService(db=self.db)
+        email = await self.obtenerMailDestinatario(envio)
+        if email:
+            background_tasks.add_task(servicio.procesar_notificacion_estado, envio, email, envio.razon_social_destinatario)
+
         return await self.obtener_envio_por_id(envio.tracking_id)
 
-    async def actualizar_estado_envio(self, tracking_id: str, nuevo_estado: EstadoEnvio, usuario: Usuario) -> Envio:
+    async def actualizar_estado_envio(self, tracking_id: str, nuevo_estado: EstadoEnvio, usuario: Usuario, background_tasks: BackgroundTasks) -> Envio:
         envio = await self.obtener_envio_por_id(tracking_id)
         if envio.estado == EstadoEnvio.CANCELADO or envio.estado == EstadoEnvio.ENTREGADO:
             raise HTTPException(
@@ -196,6 +215,11 @@ class EnvioService:
         await self.registrar_historial(envio.id, usuario.id, nuevo_estado)
         await self.db.commit()
         await self.db.refresh(envio)
+
+        servicio = NotificacionService(db=self.db)
+        email = await self.obtenerMailDestinatario(envio)
+        if email:
+            background_tasks.add_task(servicio.procesar_notificacion_estado, envio, email, envio.razon_social_destinatario)
 
         return await self.obtener_envio_por_id(envio.tracking_id)
 
@@ -238,7 +262,7 @@ class EnvioService:
         historial = result.scalars().all()
         return historial
 
-    async def asignar_envio_manual(self, tracking_id: str, id_repartidor: int):
+    async def asignar_envio_manual(self, tracking_id: str, id_repartidor: int, background_tasks: BackgroundTasks):
         envio = await self.obtener_envio_por_id(tracking_id)
 
         if envio.estado != EstadoEnvio.EN_SUCURSAL:
@@ -271,10 +295,18 @@ class EnvioService:
         await self.registrar_historial(envio.id, repatidor, EstadoEnvio.EN_TRANSITO)
 
         await self.db.commit()
+
+        servicio = NotificacionService(db=self.db)
+        email = await self.obtenerMailDestinatario(envio)
+        if email:
+            background_tasks.add_task(servicio.procesar_notificacion_estado, envio, email, envio.razon_social_destinatario)
+
         return {"message": f"Envío {tracking_id} asignado manualmente al repartidor ID {repatidor} (Estado: EN_TRANSITO)"}
 
-    async def asignar_todos_pendientes(self):
-        query_pendientes = select(Envio).where(Envio.estado == EstadoEnvio.EN_SUCURSAL)
+    async def asignar_todos_pendientes(self, background_tasks: BackgroundTasks):
+        query_pendientes = select(Envio).where(Envio.estado == EstadoEnvio.EN_SUCURSAL).options(
+            selectinload(Envio.destinatario)
+        )
         result_pendientes = await self.db.execute(query_pendientes)
         envios_pendientes = result_pendientes.scalars().all()
 
@@ -315,6 +347,12 @@ class EnvioService:
             
         await self.db.commit()
         
+        servicio = NotificacionService(db=self.db)
+        for envio in envios_pendientes:
+            email = await self.obtenerMailDestinatario(envio)
+            if email:
+                background_tasks.add_task(servicio.procesar_notificacion_estado, envio, email, envio.razon_social_destinatario)
+
         return {"message": f"Se han asignado {count} envíos exitosamente de forma masiva", "asignados": count}
 
     async def actualizar_prioridades_pendientes(self):
@@ -347,7 +385,7 @@ class EnvioService:
         if update_count > 0:
             await self.db.commit()
         return {"message": f"Se han actualizado las prioridades de {update_count} envíos pendientes en sucursal", "actualizados": update_count}
-           
+            
     async def obtener_hoja_ruta(self, id_empleado: int):
         query = (
             select(Envio)
