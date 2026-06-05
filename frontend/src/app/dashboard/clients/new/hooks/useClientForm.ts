@@ -54,10 +54,8 @@ export const useClientForm = () => {
       direccion_normalizada: location.direccion,
       latitud: parseFloat(location.coordenadas!.y),
       longitud: parseFloat(location.coordenadas!.x),
-      // Se mapean los datos de USIG a lo que espera FastAPI
       municipio: location.nombre_partido || location.nombre_localidad || 'Ciudad Autónoma de Buenos Aires',
       provincia: isCABA ? 'CABA' : 'Buenos Aires',
-      cod_postal: '0000', // Valor por defecto si no tenemos una API de Códigos Postales
     }));
     
     if (error) setError(null);

@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import dynamic from 'next/dynamic';
 import { AddressAutocomplete } from './AddressAutocomplete';
 import { DireccionNormalizada } from '@/services/usigService';
+import { Input } from '@/components/ui/Input';
 
 // Esto apaga el Server-Side Rendering (SSR) estrictamente para el mapa,
 // evitando el colapso por la falta del objeto 'window' de Leaflet.
@@ -18,9 +19,18 @@ const DynamicMapViewer = dynamic(() => import('./MapViewer'), {
 
 interface LocationManagerProps {
   onLocationComplete?: (location: DireccionNormalizada) => void;
+  codPostal: string
+  onCodPostalChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  isLoading?: boolean;
 }
 
-export const LocationManager = ({ onLocationComplete }: LocationManagerProps) => {
+export const LocationManager = ({ 
+  onLocationComplete,
+  codPostal,
+  onCodPostalChange,
+  isLoading = false,
+
+}: LocationManagerProps) => {
   // Estado local para saber si ya hay una ubicacion lista para dibujar
   const [selectedLocation, setSelectedLocation] = useState<DireccionNormalizada | null>(null);
 
@@ -44,7 +54,29 @@ export const LocationManager = ({ onLocationComplete }: LocationManagerProps) =>
 
       <div className="space-y-6">
         {/* 1. El Buscador (Input + Hook USIG) */}
-        <AddressAutocomplete onAddressSelect={handleAddressSelect} />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="md:col-span-2">
+            <AddressAutocomplete 
+              onAddressSelect={handleAddressSelect} 
+              disabled={isLoading} 
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Código Postal <span className="text-red-500">*</span>
+            </label>
+            <Input
+              type="text"
+              name="cod_postal"
+              value={codPostal}
+              onChange={onCodPostalChange}
+              placeholder="Ej. 1615"
+              required
+              disabled={isLoading}
+            />
+          </div>
+        </div>
 
         {/* 2. El Mapa Dinámico o Estado Vacío */}
         {selectedLocation && selectedLocation.coordenadas ? (

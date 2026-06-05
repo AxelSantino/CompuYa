@@ -92,6 +92,9 @@ export default function NewClientPage() {
 
           <LocationManager 
             onLocationComplete={handleLocationComplete}
+            codPostal={formData.cod_postal}
+            onCodPostalChange={handleChange}
+            isLoading={isLoading}
           />
 
           {error && (
