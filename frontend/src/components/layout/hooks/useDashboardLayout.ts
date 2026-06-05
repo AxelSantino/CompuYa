@@ -6,7 +6,7 @@ import { FaRoute, FaUsers } from "react-icons/fa";
 const NAV_ITEMS = [
   { name: 'Gestión de envíos', href: '/dashboard', icon: BiCube, roles: ['admin', 'supervisor', 'operador', 'visor'] },
   { name: 'Control Logístico', href: '/dashboard/routes', icon: FaRoute, roles: ['admin', 'supervisor', 'repartidor'] },
-  { name: 'Gestión de usuarios', href: '/dashboard/users', icon: FaUsers, roles: ['admin']}
+  { name: 'Gestión de empleados', href: '/dashboard/employees', icon: FaUsers, roles: ['admin']}
 ];
 
 export const useDashboardLayout = () => {
