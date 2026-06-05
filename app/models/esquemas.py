@@ -180,3 +180,15 @@ class ReporteVolumenResponse(BaseModel):
     por_estado: Dict[str, int]
     por_tipo: Dict[str, int]
     historico_lineal: List[HistoricoLinealDia]
+    
+ # --- ESQUEMAS REPORTE INCIDENCIAS ---
+       
+class DesgloseCausa(BaseModel):
+    causa: str
+    cantidad: int
+
+class ReporteIncidenciasResponse(BaseModel):
+    total_incidencias: int
+    cancelaciones: List[DesgloseCausa]
+    
+    model_config = ConfigDict(from_attributes=True)
