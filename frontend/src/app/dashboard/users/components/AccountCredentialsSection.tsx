@@ -51,9 +51,10 @@ export const AccountCredentialsSection = ({
             required
             disabled={isLoading}
           />
-          <p className="text-xs text-gray-500 mt-1">
-            Mínimo 8 caracteres.
-          </p>
+          {//<p className="text-xs text-gray-500 mt-1">
+           // Mínimo 8 caracteres.
+          //</p>
+          }
         </div>
       </div>
     </div>

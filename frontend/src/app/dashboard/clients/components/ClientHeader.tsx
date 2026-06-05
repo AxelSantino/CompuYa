@@ -15,7 +15,7 @@ export const ClientHeader = () => {
             <Button
                 variant="primary"
                 className="w-full md:w-auto"
-                // onClick={() => router.push('/dashboard/clients/new')}
+                onClick={() => router.push('/dashboard/clients/new')}
             >
                 + Nuevo Cliente
             </Button>
