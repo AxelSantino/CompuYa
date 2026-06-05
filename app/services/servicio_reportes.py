@@ -1,7 +1,8 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import func, select
-from datetime import date, timedelta
-from app.models.entidades import Envio 
+from datetime import date, datetime, timedelta
+from app.models.entidades import Envio, EstadoEnvio, Historial
+from app.models.esquemas import DesgloseCausa, ReporteIncidenciasResponse 
 
 class ServicioReportes:
     
@@ -54,3 +55,40 @@ class ServicioReportes:
             "por_tipo": por_tipo,
             "historico_lineal": historico_lineal
         }
+        
+        
+    @staticmethod
+    async def obtener_reporte_incidencias(
+        db: AsyncSession, fecha_inicio: date, fecha_fin: date
+    ) -> ReporteIncidenciasResponse:
+        
+        desde = datetime.combine(fecha_inicio, datetime.min.time())
+        hasta = datetime.combine(fecha_fin, datetime.max.time())
+
+        
+        query = (
+            select(Historial.motivo, func.count(Historial.id).label("total"))
+            .where(
+                Historial.fecha.between(desde, hasta),
+                Historial.estado == EstadoEnvio.CANCELADO, 
+                Historial.motivo.isnot(None),
+                Historial.motivo != ""
+            )
+            .group_by(Historial.motivo)
+        )
+
+        result = await db.execute(query)
+        filas = result.all()
+
+        cancelaciones_dict = {}
+        total_general = 0
+
+        for motivo, total in filas:
+            total_general += total
+            causa_str = motivo or "No especificado"
+            cancelaciones_dict[causa_str] = cancelaciones_dict.get(causa_str, 0) + total
+
+        return ReporteIncidenciasResponse(
+            total_incidencias=total_general,
+            cancelaciones=[DesgloseCausa(causa=k, cantidad=v) for k, v in cancelaciones_dict.items()]
+        )        
