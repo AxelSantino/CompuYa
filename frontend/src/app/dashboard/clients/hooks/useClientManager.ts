@@ -9,7 +9,6 @@ export const useClientManager = () => {
     const [error, setError] = useState<string | null>(null);
 
     const [searchTerm, setSearchTerm] = useState('');
-    const [provinceFilter, setProvinceFilter] = useState('');
 
     useEffect(() => {
         let isMounted = true;
@@ -50,16 +49,9 @@ export const useClientManager = () => {
             const razonSocial = client.perfil_empresa?.razon_social?.toLowerCase() || '';
             const cuit = client.perfil_empresa?.cuit || '';
             
-            // Búsqueda por Razón Social o CUIT
-            const matchesSearch = razonSocial.includes(searchLower) || cuit.includes(searchLower);
-                
-            // Verificamos coincidencia de rol
-            const clientProvince = client.perfil_empresa?.provincia?.toLowerCase() || '';
-            const matchesProvince = provinceFilter === '' || clientProvince === provinceFilter.toLowerCase();
-
-            return matchesSearch && matchesProvince;
+            return razonSocial.includes(searchLower) || cuit.includes(searchLower);
         });
-    }, [clients, searchTerm, provinceFilter]);
+    }, [clients, searchTerm]);
 
     const { user } = useAuth();
 
@@ -67,8 +59,6 @@ export const useClientManager = () => {
         user,
         searchTerm,
         setSearchTerm,
-        provinceFilter,
-        setProvinceFilter,
         isLoading,
         error,
         filteredClients

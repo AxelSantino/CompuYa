@@ -16,8 +16,6 @@ export default function ClientsPage() {
     user,
     searchTerm,
     setSearchTerm,
-    provinceFilter,
-    setProvinceFilter,
     isLoading: isDataLoading,
     error,
     filteredClients
@@ -41,8 +39,6 @@ return (
         <ClientFilters 
           searchTerm={searchTerm} 
           setSearchTerm={setSearchTerm} 
-          provinceFilter={provinceFilter} 
-          setProvinceFilter={setProvinceFilter}
         />
 
         {error && (
