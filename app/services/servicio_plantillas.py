@@ -10,6 +10,7 @@ class PlantillaService:
         self.db = db
 
     async def obtener_todas(self):
+        
         query = select(PlantillaNotificacion).order_by(PlantillaNotificacion.estado_disparador)
         resultado = await self.db.execute(query)
         return resultado.scalars().all()
