@@ -32,7 +32,7 @@ export const getClientColumns = (): Column<Usuario>[] => [
     accessor: (row) => (
       <button 
         onClick={() => console.log('Ver detalle de', row.id)}
-        className="text-orange-600 hover:text-orange-800 font-bold transition-colors"
+        className="text-orange-600 hover:text-orange-800 font-bold transition-colors cursor-pointer"
       >
         Ver detalle
       </button>

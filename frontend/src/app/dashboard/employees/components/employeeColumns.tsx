@@ -8,7 +8,7 @@ export const getEmployeeColumns = (): Column<Usuario>[] => [
     accessor: (row) => {
       const nombre = row.perfil_empleado?.nombre || '-';
       const apellido = row.perfil_empleado?.apellido || '';
-      return <span className="font-bold text-gray-900">{`${nombre} ${apellido}`.trim()}</span>;
+      return <span>{`${nombre} ${apellido}`.trim()}</span>;
     }
   },
   { header: 'Email', accessor: 'email' },
@@ -29,7 +29,7 @@ export const getEmployeeColumns = (): Column<Usuario>[] => [
     accessor: (row) => (
       <button 
         onClick={() => console.log('Ver detalle de', row.id)}
-        className="text-orange-600 hover:text-orange-800 font-bold transition-colors"
+        className="text-orange-600 hover:text-orange-800 font-bold transition-colors cursor-pointer"
       >
         Ver detalle
       </button>
