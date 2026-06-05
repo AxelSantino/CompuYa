@@ -1,6 +1,21 @@
 import { Column } from '../../users/components/DataTable';
 import { Usuario } from '@/types/usuario';
 
+const getRoleBadgeClasses = (rol: string) => {
+  switch (rol.toLowerCase()) {
+    case 'admin':
+      return 'bg-purple-100 text-purple-800';
+    case 'supervisor':
+      return 'bg-emerald-100 text-emerald-800';
+    case 'operador':
+      return 'bg-blue-100 text-blue-800';
+    case 'repartidor':
+      return 'bg-amber-100 text-amber-800';
+    default:
+      return 'bg-gray-100 text-gray-800';
+  }
+};
+
 export const getEmployeeColumns = (): Column<Usuario>[] => [
   { header: 'ID', accessor: 'id' },
   { 
@@ -15,7 +30,7 @@ export const getEmployeeColumns = (): Column<Usuario>[] => [
   { 
     header: 'Rol', 
     accessor: (row) => (
-      <span className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800 capitalize">
+      <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full capitalize ${getRoleBadgeClasses(row.rol)}`}>
         {row.rol}
       </span>
     )
