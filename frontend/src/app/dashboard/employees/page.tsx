@@ -1,12 +1,12 @@
 'use client';
 
-import React from 'react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
-import { Button } from '@/components/ui/Button';
 import { DataTable, Column } from '../users/components/DataTable';
 import { EmployeeFilters } from './components/EmployeeFilters';
+import { EmployeeHeader } from './components/EmployeeHeader';
 import { useEmployeeManager } from './hooks/useEmployeeManager';
 import { Usuario } from '@/types/usuario';
+import LoadingOverlay from '@/components/LoadingOverlay';
 
 // Configuración visual de la tabla
 const employeeColumns: Column<Usuario>[] = [
@@ -58,22 +58,11 @@ export default function EmployeesPage() {
 
 return (
     <DashboardLayout>
-      <div className="relative bg-white p-4 md:p-6 rounded-lg shadow-md m-4 md:m-6">
+      <div className="relative bg-white p-4 md:p-6 rounded-lg shadow-md">
+        <LoadingOverlay isLoading={isLoading} text="Cargando nómina de empleados..." />
         
-        {/* Encabezado Principal */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 border-b border-gray-100 pb-4">
-          <div>
-            <h2 className="text-2xl font-bold mb-1 text-orange-700">Gestión de Empleados</h2>
-            <p className="text-gray-600 text-sm">
-              Administración de personal, asignación de roles y control de accesos.
-            </p>
-          </div>
-          <Button variant="primary" className="w-full md:w-auto">
-            + Nuevo Empleado
-          </Button>
-        </div>
+        <EmployeeHeader />
 
-        {/* Filtros */}
         <EmployeeFilters 
           searchTerm={searchTerm} 
           setSearchTerm={setSearchTerm} 
@@ -88,11 +77,7 @@ return (
           </div>
         )}
 
-        {isLoading ? (
-          <div className="py-12 text-center text-gray-500 animate-pulse font-medium">
-            Cargando nómina de empleados...
-          </div>
-        ) : !error && (
+        {!isLoading && !error && (
           <DataTable 
             data={filteredEmployees} 
             columns={employeeColumns} 
