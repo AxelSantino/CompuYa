@@ -3,13 +3,13 @@
 import { useRouter } from 'next/navigation';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { Button } from '@/components/ui/Button';
-import LoadingOverlay from '@/components/LoadingOverlay';
 import { AccessDenied } from '@/components/ui/AccessDenied';
 import { useAuth } from '@/contexts/AuthContext';
 
 import { useEmployeeForm } from './hooks/useEmployeeForm';
 import { AccountCredentialsSection } from '../../users/components/AccountCredentialsSection';
 import { EmployeeDetailsSection } from './components/EmployeeDetailsSection';
+import { SuccessFeedback } from '@/components/ui/SuccessFeedback';
 
 export default function NewEmployeePage() {
   const router = useRouter();
@@ -20,7 +20,8 @@ export default function NewEmployeePage() {
     handleChange, 
     handleSubmit, 
     isLoading, 
-    error 
+    error,
+    createdEmployee
   } = useEmployeeForm();
 
   // 2. Control de seguridad (Solo Admin puede registrar empleados)
@@ -28,6 +29,24 @@ export default function NewEmployeePage() {
     return (
       <DashboardLayout>
         <AccessDenied mensaje="No tienes permisos para dar de alta nuevos empleados." />
+      </DashboardLayout>
+    );
+  }
+
+
+  if (createdEmployee) {
+    return (
+      <DashboardLayout>
+        <SuccessFeedback 
+          title="¡Registro Exitoso!"
+          message={
+            <p>
+              El empleado <span className="font-bold text-gray-900">{formData.nombre} {formData.apellido}</span> ha sido creado con éxito y se le asignó el ID <span className="font-bold text-orange-600">#{createdEmployee.id}</span>.
+            </p>
+          }
+          buttonText="Volver a la nómina de Empleados"
+          onButtonClick={() => router.push('/dashboard/employees')}
+        />
       </DashboardLayout>
     );
   }

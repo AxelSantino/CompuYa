@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import userService from '@/services/userService';
-import { RegistroEmpleado } from '@/types/usuario';
+import { RegistroEmpleado, Usuario } from '@/types/usuario';
 
 export const useEmployeeForm = () => {
   const router = useRouter();
   
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [createdEmployee, setCreatedEmployee] = useState<Usuario | null>(null);
 
   // Inicializamos el estado cumpliendo con la interfaz RegistroEmpleado
   const [formData, setFormData] = useState<RegistroEmpleado>({
@@ -43,8 +44,8 @@ export const useEmployeeForm = () => {
     }
 
     try {
-      await userService.createEmployee(formData);
-      router.push('/dashboard/employees');
+      const response = await userService.createEmployee(formData);
+      setCreatedEmployee(response);
     } catch (err: any) {
       console.error('Error al registrar empleado:', err);
       // Extraemos el mensaje de error de Axios si existe, sino usamos uno genérico
@@ -61,5 +62,6 @@ export const useEmployeeForm = () => {
     handleSubmit,
     isLoading,
     error,
+    createdEmployee
   };
 };
