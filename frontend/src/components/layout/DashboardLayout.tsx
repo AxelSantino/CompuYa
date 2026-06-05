@@ -4,7 +4,7 @@ import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter, usePathname } from 'next/navigation';
 import { BiCube } from "react-icons/bi";
-import { FaRoute } from "react-icons/fa";
+import { FaRoute, FaChartBar } from "react-icons/fa";
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -15,6 +15,7 @@ type DashboardLayoutProps = {
 const NAV_ITEMS = [
   { name: 'Gestión de envíos', href: '/dashboard', icon: BiCube, roles: ['admin', 'supervisor', 'operador', 'visor'] },
   { name: 'Control Logístico', href: '/dashboard/routes', icon: FaRoute, roles: ['admin', 'supervisor', 'repartidor'] },
+  { name: 'Métricas', href: '/dashboard/metrics', icon: FaChartBar, roles: ['admin'] },
 ];
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
