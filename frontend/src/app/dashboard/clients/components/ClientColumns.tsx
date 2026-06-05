@@ -17,7 +17,7 @@ export const getClientColumns = (): Column<Usuario>[] => [
     accessor: (row) => {
       const direccion = row.perfil_empresa?.direccion_normalizada || '-';
       return (
-        <div className="max-w-[200px] truncate" title={direccion}>
+        <div className="whitespace-normal break-words min-w-[200px] md:min-w-[300px]" title={direccion}>
           {direccion}
         </div>
       );
