@@ -10,6 +10,8 @@ from app.models.esquemas import EnvioCrear, EditarEnvio, CancelarEnvio
 from app.services.servicio_ruteo import ServicioRuteo
 from app.ml.modelo_prioridad import predecir_prioridad
 from app.services.servicio_notificacion import NotificacionService
+from app.services.servicio_notificacion import NotificacionService
+from app.services.servicio__alertas import crear_alerta_y_enviar_push
 
 class EnvioService:
     def __init__(self, db: AsyncSession):
@@ -19,7 +21,6 @@ class EnvioService:
     async def obtenerMailDestinatario(self, envio: Envio):
         if envio.destinatario:
             return envio.destinatario.email
-        # Por si el destinatario no vino cargado en la consulta principal
         usuario_db = await self.db.execute(select(Usuario).where(Usuario.id == envio.destinatario_id))
         user_obj = usuario_db.scalar_one_or_none()
         return user_obj.email if user_obj else None
@@ -177,6 +178,7 @@ class EnvioService:
         email = await self.obtenerMailDestinatario(envio)
         if email:
             background_tasks.add_task(servicio.procesar_notificacion_estado, envio, email, envio.razon_social_destinatario)
+            background_tasks.add_task(crear_alerta_y_enviar_push, self.db, envio.destinatario_id, "Envío Entregado", f"El envío {tracking_id} ha sido entregado.")
 
         return await self.obtener_envio_por_id(envio.tracking_id)
 
@@ -196,7 +198,7 @@ class EnvioService:
         email = await self.obtenerMailDestinatario(envio)
         if email:
             background_tasks.add_task(servicio.procesar_notificacion_estado, envio, email, envio.razon_social_destinatario)
-
+            background_tasks.add_task(crear_alerta_y_enviar_push, self.db, envio.destinatario_id, "Envío Cancelado", f"El envío {tracking_id} fue cancelado.")
         return await self.obtener_envio_por_id(envio.tracking_id)
 
     async def actualizar_estado_envio(self, tracking_id: str, nuevo_estado: EstadoEnvio, usuario: Usuario, background_tasks: BackgroundTasks) -> Envio:
@@ -220,6 +222,7 @@ class EnvioService:
         email = await self.obtenerMailDestinatario(envio)
         if email:
             background_tasks.add_task(servicio.procesar_notificacion_estado, envio, email, envio.razon_social_destinatario)
+            background_tasks.add_task(crear_alerta_y_enviar_push, self.db, envio.destinatario_id, f"Estado Envío Actualizado: {nuevo_estado.value}", f"El estado del envío {tracking_id} ha sido actualizado a {nuevo_estado.value}.")
 
         return await self.obtener_envio_por_id(envio.tracking_id)
 
@@ -300,7 +303,7 @@ class EnvioService:
         email = await self.obtenerMailDestinatario(envio)
         if email:
             background_tasks.add_task(servicio.procesar_notificacion_estado, envio, email, envio.razon_social_destinatario)
-
+            background_tasks.add_task(crear_alerta_y_enviar_push, self.db, envio.destinatario_id, "Envío en Tránsito", f"El envío {tracking_id} ha sido asignado a un repartidor y está en tránsito.")  
         return {"message": f"Envío {tracking_id} asignado manualmente al repartidor ID {repatidor} (Estado: EN_TRANSITO)"}
 
     async def asignar_todos_pendientes(self, background_tasks: BackgroundTasks):
@@ -352,7 +355,7 @@ class EnvioService:
             email = await self.obtenerMailDestinatario(envio)
             if email:
                 background_tasks.add_task(servicio.procesar_notificacion_estado, envio, email, envio.razon_social_destinatario)
-
+                background_tasks.add_task(crear_alerta_y_enviar_push, self.db, envio.destinatario_id, "Envío en Tránsito", f"El envío {envio.tracking_id} ha sido asignado a un repartidor y está en tránsito.")
         return {"message": f"Se han asignado {count} envíos exitosamente de forma masiva", "asignados": count}
 
     async def actualizar_prioridades_pendientes(self):

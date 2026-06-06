@@ -169,6 +169,14 @@ class HistorialNotificacionResponse(HistorialNotificacionBase):
     fecha_envio: datetime
     model_config = ConfigDict(from_attributes=True)
 
+class NotificacionAppResponse(BaseModel):
+    id: int
+    titulo: str
+    mensaje: str
+    leida: bool
+    fecha_creacion: datetime
+    model_config = ConfigDict(from_attributes=True)
+
 # --- ESQUEMAS DE REPORTES ---
 
 class HistoricoLinealDia(BaseModel):
@@ -181,8 +189,8 @@ class ReporteVolumenResponse(BaseModel):
     por_tipo: Dict[str, int]
     historico_lineal: List[HistoricoLinealDia]
     
- # --- ESQUEMAS REPORTE INCIDENCIAS ---
-       
+# --- ESQUEMAS REPORTE INCIDENCIAS ---
+
 class DesgloseCausa(BaseModel):
     causa: str
     cantidad: int
