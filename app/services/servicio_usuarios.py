@@ -85,8 +85,7 @@ class UsuarioService:
         self.db.add(nuevo_perfil)
         
         await self.db.commit()
-        
-        # CARGA COMPLETA: Cargamos ambos perfiles para evitar errores de validación de respuesta
+    
         query = select(Usuario).where(Usuario.id == nuevo_usuario.id).options(
             selectinload(Usuario.perfil_empleado),
             selectinload(Usuario.perfil_empresa)
@@ -181,6 +180,33 @@ class UsuarioService:
                 )
 
             return response.json()
+        
+    async def modificar_usuario(self, usuario_id: int, data: dict) -> Usuario:
+        usuario = await self.obtener_usuario_por_id(usuario_id)
+        
+        # Actualizar campos básicos si están presentes
+        if "rol" in data:
+            usuario.rol = data["rol"]
+        if "activo" in data:
+            usuario.activo = data["activo"]
+            
+        # Actualizar perfil_empleado si es un empleado
+        if usuario.tipo == TipoCliente.EMPLEADO and usuario.perfil_empleado:
+            if "nombre" in data:
+                usuario.perfil_empleado.nombre = data["nombre"]
+            if "apellido" in data:
+                usuario.perfil_empleado.apellido = data["apellido"]
+                
+        # Actualizar perfil_empresa si es una empresa
+        if usuario.tipo == TipoCliente.EMPRESA and usuario.perfil_empresa:
+            fields = ["razon_social", "cuit", "direccion_normalizada", "latitud", "longitud", "provincia", "municipio", "cod_postal"]
+            for field in fields:
+                if field in data:
+                    setattr(usuario.perfil_empresa, field, data[field])
+                
+        await self.db.commit()
+        await self.db.refresh(usuario)
+        return await self.obtener_usuario_por_id(usuario_id)
         
     async def buscar_empresa_por_razon_social_o_cuit(self, razon_social: str | None = None, cuit: str | None = None) -> Usuario:
         if not razon_social and not cuit:

@@ -59,6 +59,7 @@ return (
             emptyMessage="No se encontraron empleados que coincidan con los filtros."
           />
         )}
+
       </div>
     </DashboardLayout>
   );
