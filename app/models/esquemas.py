@@ -3,6 +3,7 @@ from datetime import date, datetime
 from typing import List, Optional, Union, Dict
 from uuid import UUID
 from app.models.entidades import TipoEnvio, RestriccionEnvio, EstadoEnvio, TipoCliente, PrioridadEnvio
+from pydantic import Field
 
 # --- ESQUEMAS DE PERFIL ---
 
@@ -175,9 +176,9 @@ class NotificacionAppResponse(BaseModel):
     mensaje: str
     leida: bool
     fecha_creacion: datetime
-    model_config = ConfigDict(from_attributes=True)
 
-# --- ESQUEMAS DE REPORTES ---
+    model_config = ConfigDict(from_attributes = True,populate_by_name = True)
+# --- ESQUEMAS DE REPORTES --- 
 
 class HistoricoLinealDia(BaseModel):
     fecha: date

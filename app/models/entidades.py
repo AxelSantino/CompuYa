@@ -2,7 +2,7 @@ from enum import Enum as PyEnum
 from sqlalchemy import Column, Enum, BigInteger, ForeignKey, String, Date, Text, DateTime, Float, func, Boolean
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import DeclarativeBase, relationship
-from datetime import datetime
+
 class Base(DeclarativeBase):
     pass
 
@@ -175,7 +175,9 @@ class NotificacionApp(Base):
 
     id = Column(BigInteger, primary_key=True, index=True)
     usuario_id = Column(BigInteger, ForeignKey("usuarios.id"), nullable=False)
+    envio_id = Column(BigInteger, ForeignKey("envios.id"), nullable=True) 
     titulo = Column(String(100), nullable=False)
     mensaje = Column(String(255), nullable=False)
     leida = Column(Boolean, default=False)
-    fecha_creacion = Column(DateTime, default=datetime.now)
+    fecha_creacion = Column(DateTime, server_default=func.now())    
+    envio = relationship("Envio")
