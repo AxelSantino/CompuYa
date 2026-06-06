@@ -1,5 +1,6 @@
 import { Column } from '../../users/components/DataTable';
 import { Usuario } from '@/types/usuario';
+import Link from 'next/link';
 
 const getRoleBadgeClasses = (rol: string) => {
   switch (rol.toLowerCase()) {
@@ -40,19 +41,19 @@ export const getEmployeeColumns = (): Column<Usuario>[] => [
     accessor: (row) => {
       if (!row.fecha) return '-';
       const [year, month, day] = row.fecha.split('T')[0].split('-');
-      
+
       return `${day}/${month}/${year}`;
     }
   },
   { 
     header: 'Acciones', 
     accessor: (row) => (
-      <button 
-        onClick={() => console.log('Ver detalle de', row.id)}
+      <Link 
+        href={`/dashboard/employees/${row.id}/edit`}
         className="text-orange-600 hover:text-orange-800 font-bold transition-colors cursor-pointer"
       >
         Ver detalle
-      </button>
+      </Link>
     )
   }
 ];

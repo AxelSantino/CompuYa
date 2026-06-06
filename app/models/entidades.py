@@ -42,7 +42,8 @@ class Usuario(Base):
     tipo = Column(Enum(TipoCliente, native_enum=False, values_callable=lambda x: [e.value for e in x]), nullable=False)
     supabase_id = Column(UUID(as_uuid=True), unique=True, nullable=False)
     email = Column(Text, unique=True, nullable=False)
-    rol = Column(String(20), default="visor")
+    rol = Column(Enum("repartidor", "operador", "supervisor", "admin", "cliente", name="roles_usuario", native_enum=False), default="repartidor")
+    activo = Column(Boolean, default=True, nullable=False)
 
     perfil_empleado = relationship(
         "PerfilEmpleado", back_populates="usuario", uselist=False)

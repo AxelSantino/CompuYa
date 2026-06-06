@@ -92,23 +92,15 @@ async def buscar_destinatario(
     return destinatario
 
 
-@router.get("/roles/empleados",response_model=List[UsuarioRespuesta], dependencies = [Depends(tiene_rol(["admin"]))])
-async def listar_solo_empleados(
+@router.put("/{usuario_id}", response_model=UsuarioRespuesta, dependencies=[Depends(tiene_rol(["admin"]))])
+async def modificar_usuario(
+    usuario_id: int,
+    usuario_in: dict,
     usuario_service: UsuarioService = Depends(get_usuario_service)
 ):
+    return await usuario_service.modificar_usuario(usuario_id, usuario_in)
+
     
-
-    query = select(Usuario).where(
-            Usuario.tipo == TipoCliente.EMPLEADO
-        ).options(
-            selectinload(Usuario.perfil_empleado),
-            selectinload(Usuario.perfil_empresa)
-        )
-    result = await usuario_service.db.execute(query)
-    return result.scalars().all()
-    
-
-
 @router.get("/roles/clientes",response_model=List[UsuarioRespuesta], dependencies = [Depends(tiene_rol(["admin"]))])
 async def listar_solo_clientes(
     usuario_service: UsuarioService = Depends(get_usuario_service)

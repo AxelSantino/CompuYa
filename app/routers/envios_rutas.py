@@ -19,7 +19,7 @@ async def listar_envios(
 ):
     return await envio_service.listar_envios(usuario_actual)
 
-@router.post("/", response_model=EnvioRespuesta, status_code=status.HTTP_201_CREATED, dependencies=[Depends(tiene_rol(["operador", "supervisor", "admin"]))])
+@router.post("/", response_model=EnvioRespuesta, status_code=status.HTTP_201_CREATED, dependencies=[Depends(tiene_rol(["operador", "supervisor"]))])
 async def crear_envio(
     envio_in: EnvioCrear,
     usuario_actual: Usuario = Depends(obtener_usuario_actual),
@@ -28,7 +28,7 @@ async def crear_envio(
     
     return await envio_service.crear_envio(envio_in, usuario_actual.id)
 
-@router.put("/{tracking_id}", response_model=EnvioRespuesta, dependencies=[Depends(tiene_rol(["admin", "supervisor", "operador"]))])
+@router.put("/{tracking_id}", response_model=EnvioRespuesta, dependencies=[Depends(tiene_rol(["supervisor", "operador"]))])
 async def editar_envio(
     tracking_id: str,
     envio_in: EditarEnvio,
@@ -54,7 +54,7 @@ async def cancelar_envio(
 ):
     return await envio_service.cancelar_envio(tracking_id, usuario_actual.id, datos_cancelacion, background_tasks)
 
-@router.post("/{tracking_id}/entregar", response_model=EnvioRespuesta, dependencies=[Depends(tiene_rol(["supervisor","repartidor","admin"]))])
+@router.post("/{tracking_id}/entregar", response_model=EnvioRespuesta, dependencies=[Depends(tiene_rol(["supervisor","repartidor"]))])
 async def entregar_envio(
     tracking_id: str,
     background_tasks: BackgroundTasks,
@@ -63,7 +63,7 @@ async def entregar_envio(
 ):
     return await envio_service.entregar_envio(tracking_id, usuario_actual.id, background_tasks)
 
-@router.post("/{tracking_id}/actualizar-estado", response_model=EnvioRespuesta, dependencies=[Depends(tiene_rol(["admin", "supervisor", "operador"]))])
+@router.post("/{tracking_id}/actualizar-estado", response_model=EnvioRespuesta, dependencies=[Depends(tiene_rol(["supervisor", "operador"]))])
 async def actualizar_estado_envio(
     tracking_id: str,
     nuevo_estado: EstadoEnvio,
