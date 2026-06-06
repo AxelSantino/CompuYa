@@ -57,3 +57,4 @@ scikit-learn==1.8.0
 alembic
 psycopg2-binary
 aiosmtplib
+httpx==0.28.1

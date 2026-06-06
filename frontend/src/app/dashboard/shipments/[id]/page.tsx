@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import { EnvioStatus } from '@/types/envio';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import LoadingOverlay from '@/components/LoadingOverlay';
 import { Button } from '@/components/ui/Button';
@@ -90,7 +89,6 @@ export default function ShipmentDetailPage() {
                 )}
               </form>
 
-              {/* Audit Card ORIGINAL (Supervisor only) */}
               {user?.rol === 'supervisor' && history.length > 0 && (
                 <div>
                   <AuditTimeline history={history} />

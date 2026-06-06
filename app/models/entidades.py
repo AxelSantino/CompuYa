@@ -169,3 +169,15 @@ class HistorialNotificacion(Base):
     canal = Column(String, nullable=False, default="correo")
     motivo_error = Column(String, nullable=True)
     envio = relationship("Envio")
+
+class NotificacionApp(Base):
+    __tablename__ = "notificaciones_app"
+
+    id = Column(BigInteger, primary_key=True, index=True)
+    usuario_id = Column(BigInteger, ForeignKey("usuarios.id"), nullable=False)
+    envio_id = Column(BigInteger, ForeignKey("envios.id"), nullable=True) 
+    titulo = Column(String(100), nullable=False)
+    mensaje = Column(String(255), nullable=False)
+    leida = Column(Boolean, default=False)
+    fecha_creacion = Column(DateTime, server_default=func.now())    
+    envio = relationship("Envio")
