@@ -3,7 +3,7 @@ import EmployeeEditPage from "./EmployeeEditPage";
 export const dynamicParams = false;
 
 export function generateStaticParams() {
-    return [];
+    return [{ id: '0' }];
 }
 
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
