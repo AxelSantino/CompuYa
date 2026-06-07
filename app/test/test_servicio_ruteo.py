@@ -16,8 +16,11 @@ def test_calcular_distancia_haversine_calcula_distancia_correcta_entre_puntos():
     assert round(distancia, 1) == 20.3
 
 
+from app.services.servicio_ruteo import ServicioRuteo, sucursales_cache
+
 @pytest.mark.asyncio
 async def test_obtener_sucursal_mas_cercana_devuelve_none_si_no_hay_sucursales():
+    sucursales_cache.clear() # Limpiamos caché para el test
     db_mock = AsyncMock()
     resultado_mock = MagicMock()
     resultado_mock.scalars().all.return_value = []
@@ -31,6 +34,7 @@ async def test_obtener_sucursal_mas_cercana_devuelve_none_si_no_hay_sucursales()
 
 @pytest.mark.asyncio
 async def test_obtener_sucursal_mas_cercana_elige_la_de_menor_distancia():
+    sucursales_cache.clear() # Limpiamos caché para el test
     sucursal_lejos = Sucursal()
     sucursal_lejos.id = 1
     sucursal_lejos.latitud = -34.6037

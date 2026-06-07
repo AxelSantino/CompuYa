@@ -9,7 +9,8 @@ from app.services.servicio_usuarios import UsuarioService
 async def test_verificar_email_existe_devuelve_true_si_encuentra_registro():
     db_mock = AsyncMock()
     resultado_mock = MagicMock()
-    resultado_mock.scalar_one_or_none.return_value = Usuario()
+    # Cambiado a unique().scalar_one_or_none
+    resultado_mock.unique().scalar_one_or_none.return_value = Usuario()
     db_mock.execute.return_value = resultado_mock
 
     servicio = UsuarioService(db=db_mock)
@@ -22,6 +23,7 @@ async def test_verificar_email_existe_devuelve_true_si_encuentra_registro():
 async def test_verificar_email_existe_devuelve_false_si_esta_vacio():
     db_mock = AsyncMock()
     resultado_mock = MagicMock()
+    # Sin unique() porque lo quitamos del servicio para esta funcion simple
     resultado_mock.scalar_one_or_none.return_value = None
     db_mock.execute.return_value = resultado_mock
 
@@ -35,7 +37,8 @@ async def test_verificar_email_existe_devuelve_false_si_esta_vacio():
 async def test_crear_usuario_empleado_falla_si_el_email_ya_existe():
     db_mock = AsyncMock()
     resultado_mock = MagicMock()
-    resultado_mock.scalar_one_or_none.return_value = Usuario()
+    # Cambiado a unique().scalar_one_or_none
+    resultado_mock.unique().scalar_one_or_none.return_value = Usuario()
     db_mock.execute.return_value = resultado_mock
 
     empleado_data = UsuarioRegistroEmpleado(
@@ -60,7 +63,8 @@ async def test_crear_usuario_empleado_falla_si_el_email_ya_existe():
 async def test_obtener_usuario_por_id_falla_si_id_no_existe():
     db_mock = AsyncMock()
     resultado_mock = MagicMock()
-    resultado_mock.scalar_one_or_none.return_value = None
+    # Cambiado a unique().scalar_one_or_none
+    resultado_mock.unique().scalar_one_or_none.return_value = None
     db_mock.execute.return_value = resultado_mock
 
     servicio = UsuarioService(db=db_mock)
@@ -89,7 +93,8 @@ async def test_buscar_empresa_por_cuit_devuelve_usuario_si_existe():
     db_mock = AsyncMock()
     resultado_mock = MagicMock()
     usuario_fijo = Usuario(id=10, email="empresa@test.com", tipo=TipoCliente.EMPRESA)
-    resultado_mock.scalar_one_or_none.return_value = usuario_fijo
+    # Cambiado a unique().scalar_one_or_none
+    resultado_mock.unique().scalar_one_or_none.return_value = usuario_fijo
     db_mock.execute.return_value = resultado_mock
 
     servicio = UsuarioService(db=db_mock)
@@ -103,7 +108,8 @@ async def test_buscar_empresa_por_cuit_devuelve_usuario_si_existe():
 async def test_buscar_empresa_por_cuit_falla_si_la_empresa_no_existe():
     db_mock = AsyncMock()
     resultado_mock = MagicMock()
-    resultado_mock.scalar_one_or_none.return_value = None
+    # Cambiado a unique().scalar_one_or_none
+    resultado_mock.unique().scalar_one_or_none.return_value = None
     db_mock.execute.return_value = resultado_mock
 
     servicio = UsuarioService(db=db_mock)
@@ -160,7 +166,8 @@ async def test_crear_supabase_auth_falla_si_formato_json_es_invalido():
 async def test_crear_usuario_empresa_falla_si_el_email_ya_existe():
     db_mock = AsyncMock()
     resultado_mock = MagicMock()
-    resultado_mock.scalar_one_or_none.return_value = Usuario() 
+    # Cambiado a unique().scalar_one_or_none
+    resultado_mock.unique().scalar_one_or_none.return_value = Usuario() 
     db_mock.execute.return_value = resultado_mock
 
     from app.models.esquemas import UsuarioRegistroEmpresa
@@ -198,11 +205,10 @@ async def test_login_usuario_falla_con_credenciales_invalidas():
 async def test_listar_usuarios_devuelve_coleccion_correctamente():
     db_mock = AsyncMock()
     resultado_mock = MagicMock()
-    scalars_mock = MagicMock()
     
     usuarios_lista = [Usuario(id=1), Usuario(id=2)]
-    scalars_mock.all.return_value = usuarios_lista
-    resultado_mock.scalars.return_value = scalars_mock
+    # Cambiado para seguir la cadena unique().scalars().all()
+    resultado_mock.unique().scalars().all.return_value = usuarios_lista
     db_mock.execute.return_value = resultado_mock
 
     servicio = UsuarioService(db=db_mock)

@@ -153,7 +153,7 @@ async def test_asignar_envio_manual_falla_si_no_hay_repartidores():
 async def test_asignar_todos_pendientes_avisa_si_la_sucursal_esta_vacia():
     db_mock = AsyncMock()
     resultado_mock = MagicMock()
-    resultado_mock.scalars().all.return_value = []
+    resultado_mock.unique().scalars().all.return_value = []
     db_mock.execute.return_value = resultado_mock
 
     servicio = EnvioService(db=db_mock)
