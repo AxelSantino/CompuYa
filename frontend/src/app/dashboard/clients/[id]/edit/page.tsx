@@ -61,10 +61,12 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
   }, [id]);
 
   const handleLocationComplete = (direccion: DireccionNormalizada) => {
+    if (!direccion.coordenadas) return;
+
     setFormData(prev => ({
         ...prev,
-        latitud: parseFloat(direccion.coordenadas.y),
-        longitud: parseFloat(direccion.coordenadas.x),
+        latitud: parseFloat(direccion.coordenadas!.y),
+        longitud: parseFloat(direccion.coordenadas!.x),
         direccion_normalizada: direccion.direccion,
         provincia: direccion.provincia || '',
         municipio: direccion.municipio || ''
