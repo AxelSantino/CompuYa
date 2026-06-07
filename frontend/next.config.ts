@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: 'export',
+  // Solo activamos export si estamos compilando para Tauri
+  output: process.env.IS_TAURI === 'true' ? 'export' : undefined,
   images: {
     unoptimized: true,
   },
