@@ -68,8 +68,8 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
         latitud: parseFloat(direccion.coordenadas!.y),
         longitud: parseFloat(direccion.coordenadas!.x),
         direccion_normalizada: direccion.direccion,
-        provincia: direccion.provincia || '',
-        municipio: direccion.municipio || ''
+        provincia: direccion.nombre_partido || '',
+        municipio: direccion.nombre_localidad || ''
     }));
   };
 
