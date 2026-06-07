@@ -10,7 +10,8 @@ engine = create_async_engine(
     connect_args={
         "ssl": "require",
         "prepared_statement_cache_size": 0,
-        "statement_cache_size": 0
+        "statement_cache_size": 0,
+        "prepared_statement_name_func": lambda: f"__asyncpg_stmt_{os.urandom(8).hex()}__"
     }
 )
 

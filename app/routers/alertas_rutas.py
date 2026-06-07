@@ -5,7 +5,8 @@ from typing import List
 from app.db.session import obtener_db
 from app.utils.auth import obtener_usuario_actual, tiene_rol
 from app.models.entidades import NotificacionApp
-from app.models.esquemas import NotificacionAppResponse 
+from app.models.esquemas import NotificacionAppResponse
+
 
 router = APIRouter(prefix="/alertas", tags=["Alertas"])
 
@@ -28,3 +29,6 @@ async def marcar_notificaciones_leidas(db: AsyncSession = Depends(obtener_db),us
     await db.execute(stmt)
     await db.commit()
     return {"message": "Notificaciones marcadas"}
+
+
+

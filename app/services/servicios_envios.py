@@ -31,27 +31,22 @@ class EnvioService:
         return f"CY-{anio}-{caracteres}"
 
     async def crear_envio(self, envio_data: EnvioCrear, usuario_id: int) -> Envio:
-        query = (
-            select(Usuario)
-            .join(Usuario.perfil_empresa)
-            .where(
-                PerfilEmpresa.razon_social == envio_data.razon_social_destinatario,
-                PerfilEmpresa.cuit == envio_data.cuit_destinatario,
-                Usuario.tipo == TipoCliente.EMPRESA
-            )
-            .options(selectinload(Usuario.perfil_empresa))
+        query = select(PerfilEmpresa).where(
+            PerfilEmpresa.razon_social == envio_data.razon_social_destinatario,
+            PerfilEmpresa.cuit == envio_data.cuit_destinatario
         )
         result = await self.db.execute(query)
-        empresa = result.scalar_one_or_none()
+        perfil_empresa = result.scalar_one_or_none()
         
-        if not empresa or not empresa.perfil_empresa:
+        if not perfil_empresa:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="La empresa destinataria no existe o no tiene perfil configurado"
             )
         
-        lat_dest = empresa.perfil_empresa.latitud
-        lon_dest = empresa.perfil_empresa.longitud
+        lat_dest = perfil_empresa.latitud
+        lon_dest = perfil_empresa.longitud
+        destinatario_id = perfil_empresa.usuario_id
         
         sucursal_optima = await self.ruteo_service.obtener_sucursal_mas_cercana(lat_dest, lon_dest)
         
@@ -77,7 +72,7 @@ class EnvioService:
             **envio_data.model_dump(),
             tracking_id=tracking_id,
             creado_por_id=usuario_id,
-            destinatario_id=empresa.id,
+            destinatario_id=destinatario_id,
             sucursal_id=sucursal_optima.id,
             latitud_destino=lat_dest,
             longitud_destino=lon_dest,
@@ -89,7 +84,6 @@ class EnvioService:
         
         await self.registrar_historial(nuevo_envio.id, usuario_id, nuevo_envio.estado)
         await self.db.commit()
-        await self.db.refresh(nuevo_envio)
 
         return await self.obtener_envio_por_id(nuevo_envio.tracking_id)
 
@@ -158,9 +152,7 @@ class EnvioService:
             envio.restriccion = datos_actualizados.restriccion
 
         await self.db.commit()
-        await self.db.refresh(envio)
-
-        return await self.obtener_envio_por_id(envio.tracking_id)
+        return envio
 
     async def entregar_envio(self, tracking_id: str, usuario_id: int, background_tasks: BackgroundTasks) -> Envio:
         envio = await self.obtener_envio_por_id(tracking_id)
@@ -172,7 +164,6 @@ class EnvioService:
         envio.estado = EstadoEnvio.ENTREGADO
         await self.registrar_historial(envio.id, usuario_id, EstadoEnvio.ENTREGADO)
         await self.db.commit()
-        await self.db.refresh(envio)
 
         servicio = NotificacionService(db=self.db)
         email = await self.obtenerMailDestinatario(envio)
@@ -180,7 +171,7 @@ class EnvioService:
             background_tasks.add_task(servicio.procesar_notificacion_estado, envio, email, envio.razon_social_destinatario)
             background_tasks.add_task(crear_alerta_y_enviar_push, self.db, envio.destinatario_id, "Envío Entregado", f"El envío {tracking_id} ha sido entregado.",envio_id=envio.id)
 
-        return await self.obtener_envio_por_id(envio.tracking_id)
+        return envio
 
     async def cancelar_envio(self, tracking_id: str, usuario_id: int, datos_cancelacion: CancelarEnvio, background_tasks: BackgroundTasks) -> Envio:
         envio = await self.obtener_envio_por_id(tracking_id)
@@ -192,14 +183,13 @@ class EnvioService:
         envio.estado = EstadoEnvio.CANCELADO
         await self.registrar_historial(envio.id, usuario_id, EstadoEnvio.CANCELADO)
         await self.db.commit()
-        await self.db.refresh(envio)
 
         servicio = NotificacionService(db=self.db)
         email = await self.obtenerMailDestinatario(envio)
         if email:
             background_tasks.add_task(servicio.procesar_notificacion_estado, envio, email, envio.razon_social_destinatario)
             background_tasks.add_task(crear_alerta_y_enviar_push, self.db, envio.destinatario_id, "Envío Cancelado", f"El envío {tracking_id} fue cancelado.",envio_id=envio.id)
-        return await self.obtener_envio_por_id(envio.tracking_id)
+        return envio
 
     async def actualizar_estado_envio(self, tracking_id: str, nuevo_estado: EstadoEnvio, usuario: Usuario, background_tasks: BackgroundTasks) -> Envio:
         envio = await self.obtener_envio_por_id(tracking_id)
@@ -216,7 +206,6 @@ class EnvioService:
         envio.estado = nuevo_estado
         await self.registrar_historial(envio.id, usuario.id, nuevo_estado)
         await self.db.commit()
-        await self.db.refresh(envio)
 
         servicio = NotificacionService(db=self.db)
         email = await self.obtenerMailDestinatario(envio)
@@ -224,20 +213,20 @@ class EnvioService:
             background_tasks.add_task(servicio.procesar_notificacion_estado, envio, email, envio.razon_social_destinatario)
             background_tasks.add_task(crear_alerta_y_enviar_push, self.db, envio.destinatario_id, f"Estado Envío Actualizado: {nuevo_estado.value}", f"El estado del envío {tracking_id} ha sido actualizado a {nuevo_estado.value}.",envio_id=envio.id)
 
-        return await self.obtener_envio_por_id(envio.tracking_id)
+        return envio
 
     async def listar_envios(self, usuario: Usuario) -> list[Envio]:
         query = select(Envio).options(
-            selectinload(Envio.creador).selectinload(Usuario.perfil_empleado),
-            selectinload(Envio.destinatario).selectinload(Usuario.perfil_empresa),
-            selectinload(Envio.destinatario).selectinload(Usuario.perfil_empleado),
-            selectinload(Envio.sucursal)
+            joinedload(Envio.creador).joinedload(Usuario.perfil_empleado),
+            joinedload(Envio.destinatario).joinedload(Usuario.perfil_empresa),
+            joinedload(Envio.destinatario).joinedload(Usuario.perfil_empleado),
+            joinedload(Envio.sucursal)
         )
         if usuario.rol == "cliente":
             query = query.where(Envio.destinatario_id == usuario.id)
             
         result = await self.db.execute(query)
-        return result.scalars().all()
+        return result.unique().scalars().all()
 
     async def registrar_historial(self, envio_id: int, usuario_id: int, nuevo_estado: EstadoEnvio):
         nuevo_historial = Historial(
@@ -258,11 +247,11 @@ class EnvioService:
                 detail="Envio no encontrado"
             )
         historial_query = select(Historial).where(Historial.envio_id == envio_id).options(
-            selectinload(Historial.empleado).selectinload(Usuario.perfil_empleado)
+            joinedload(Historial.empleado).joinedload(Usuario.perfil_empleado)
         ).order_by(Historial.fecha.desc())
 
         result = await self.db.execute(historial_query)
-        historial = result.scalars().all()
+        historial = result.unique().scalars().all()
         return historial
 
     async def asignar_envio_manual(self, tracking_id: str, id_repartidor: int, background_tasks: BackgroundTasks):
@@ -283,35 +272,34 @@ class EnvioService:
                 detail="No se encontró un repartidor con el ID proporcionado"
             )
 
-        repatidor = id_repartidor
-
         query_existente = select(AsignacionEnvio).where(AsignacionEnvio.envio_id == envio.id)
         asignacion_existente = (await self.db.execute(query_existente)).scalar_one_or_none()
 
         if asignacion_existente:
-            asignacion_existente.id_empleado = repatidor
+            asignacion_existente.id_empleado = id_repartidor
         else:
-            self.db.add(AsignacionEnvio(envio_id=envio.id, id_empleado=repatidor))
+            self.db.add(AsignacionEnvio(envio_id=envio.id, id_empleado=id_repartidor))
 
         envio.estado = EstadoEnvio.EN_TRANSITO
         
-        await self.registrar_historial(envio.id, repatidor, EstadoEnvio.EN_TRANSITO)
+        await self.registrar_historial(envio.id, id_repartidor, EstadoEnvio.EN_TRANSITO)
 
         await self.db.commit()
 
         servicio = NotificacionService(db=self.db)
-        email = await self.obtenerMailDestinatario(envio)
+        email = envio.destinatario.email if envio.destinatario else None
+        
         if email:
             background_tasks.add_task(servicio.procesar_notificacion_estado, envio, email, envio.razon_social_destinatario)
             background_tasks.add_task(crear_alerta_y_enviar_push, self.db, envio.destinatario_id, "Envío en Tránsito", f"El envío {tracking_id} ha sido asignado a un repartidor y está en tránsito.",envio_id=envio.id)  
-        return {"message": f"Envío {tracking_id} asignado manualmente al repartidor ID {repatidor} (Estado: EN_TRANSITO)"}
+        return {"message": f"Envío {tracking_id} asignado manualmente al repartidor ID {id_repartidor} (Estado: EN_TRANSITO)"}
 
     async def asignar_todos_pendientes(self, background_tasks: BackgroundTasks):
         query_pendientes = select(Envio).where(Envio.estado == EstadoEnvio.EN_SUCURSAL).options(
-            selectinload(Envio.destinatario)
+            joinedload(Envio.destinatario)
         )
         result_pendientes = await self.db.execute(query_pendientes)
-        envios_pendientes = result_pendientes.scalars().all()
+        envios_pendientes = result_pendientes.unique().scalars().all()
 
         if not envios_pendientes:
             return {"message": "No hay envíos pendientes en sucursal", "asignados": 0}
@@ -352,7 +340,7 @@ class EnvioService:
         
         servicio = NotificacionService(db=self.db)
         for envio in envios_pendientes:
-            email = await self.obtenerMailDestinatario(envio)
+            email = envio.destinatario.email if envio.destinatario else None
             if email:
                 background_tasks.add_task(servicio.procesar_notificacion_estado, envio, email, envio.razon_social_destinatario)
                 background_tasks.add_task(crear_alerta_y_enviar_push, self.db, envio.destinatario_id, "Envío en Tránsito",
@@ -361,9 +349,9 @@ class EnvioService:
 
     async def actualizar_prioridades_pendientes(self):
         envios_en_sucursal = await self.db.execute(select(Envio).where(Envio.estado == EstadoEnvio.EN_SUCURSAL).options(
-                selectinload(Envio.sucursal)
+                joinedload(Envio.sucursal)
             ))
-        envios = envios_en_sucursal.scalars().all()
+        envios = envios_en_sucursal.unique().scalars().all()
         if not envios:
             return {"message": "No hay envíos pendientes en sucursal para actualizar prioridades", "actualizados": 0}
         
@@ -397,14 +385,14 @@ class EnvioService:
             .where(AsignacionEnvio.id_empleado == id_empleado)
             .where(Envio.estado == EstadoEnvio.EN_TRANSITO)
             .options(
-                selectinload(Envio.creador).selectinload(Usuario.perfil_empleado),
-                selectinload(Envio.destinatario).selectinload(Usuario.perfil_empresa),
-                selectinload(Envio.destinatario).selectinload(Usuario.perfil_empleado),
-                selectinload(Envio.sucursal)
+                joinedload(Envio.creador).joinedload(Usuario.perfil_empleado),
+                joinedload(Envio.destinatario).joinedload(Usuario.perfil_empresa),
+                joinedload(Envio.destinatario).joinedload(Usuario.perfil_empleado),
+                joinedload(Envio.sucursal)
             )
         )
         result = await self.db.execute(query)
-        envios = result.scalars().all()
+        envios = result.unique().scalars().all()
 
         if not envios:
             return []

@@ -25,7 +25,6 @@ async def crear_envio(
     usuario_actual: Usuario = Depends(obtener_usuario_actual),
     envio_service: EnvioService = Depends(get_envio_service)
 ):
-    
     return await envio_service.crear_envio(envio_in, usuario_actual.id)
 
 @router.put("/{tracking_id}", response_model=EnvioRespuesta, dependencies=[Depends(tiene_rol(["supervisor", "operador"]))])
@@ -35,7 +34,7 @@ async def editar_envio(
     usuario_actual: Usuario = Depends(obtener_usuario_actual),
     envio_service: EnvioService = Depends(get_envio_service)
 ):
-    return await envio_service.editar_envio(tracking_id, envio_in, usuario_actual.id)  
+    return await envio_service.editar_envio(tracking_id, envio_in, usuario_actual.id)
 
 @router.get("/{tracking_id}", response_model=EnvioRespuesta)
 async def obtener_envio(
@@ -100,7 +99,7 @@ async def asignar_todos_pendientes(
 async def obtener_hoja_ruta_repartidor(
     id_empleado: int,
     envio_service: EnvioService = Depends(get_envio_service)
-):
+):  
     return await envio_service.obtener_hoja_ruta(id_empleado)
 
 @router.get("/hoja-ruta/mi-recorrido", response_model=List[EnvioRespuesta])
@@ -113,5 +112,4 @@ async def obtener_hoja_ruta(
 @router.post("/actualizar-prioridad", response_model=dict, tags=["Prioridad"])
 async def actualizar_prioridad(db: AsyncSession = Depends(obtener_db)):
     envio_service = EnvioService(db)
-    resultado = await envio_service.actualizar_prioridad_pendientes()
-    return resultado
+    return await envio_service.actualizar_prioridad_pendientes()

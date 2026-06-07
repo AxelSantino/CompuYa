@@ -1,3 +1,4 @@
+import time
 from jose import jwt, jwk
 from jose.exceptions import JWTError, ExpiredSignatureError
 import httpx
@@ -10,9 +11,13 @@ from app.db.session import obtener_db
 from app.models.entidades import Usuario
 from cachetools import TTLCache
 from typing import Dict
+import logging
+
+logger = logging.getLogger("app")
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="usuarios/logintoken")
 jwks_cache = TTLCache(maxsize=1, ttl=3600)
+user_cache = TTLCache(maxsize=1000, ttl=300)
 
 async def obtener_claves_publicas_supabase() -> Dict:
     if "keys" in jwks_cache:
@@ -23,7 +28,6 @@ async def obtener_claves_publicas_supabase() -> Dict:
             response = await client.get(url)
             response.raise_for_status()
             jwks = response.json()
-            # Cache the keys
             jwks_cache["keys"] = jwks
             return jwks
         except httpx.HTTPStatusError as e:
@@ -44,6 +48,7 @@ async def obtener_usuario_actual(
     
     try:
         jwks = await obtener_claves_publicas_supabase()
+        
         payload = jwt.decode(
             token,
             jwks,
@@ -55,6 +60,10 @@ async def obtener_usuario_actual(
         supabase_id: str = payload.get("sub")
         if supabase_id is None:
             raise credentials_exception
+        
+        if supabase_id in user_cache:
+            return user_cache[supabase_id]
+        
         from sqlalchemy.orm import selectinload, joinedload
         query = select(Usuario).where(Usuario.supabase_id == supabase_id).options(
             joinedload(Usuario.perfil_empleado),
@@ -69,6 +78,9 @@ async def obtener_usuario_actual(
                 detail="Usuario no autorizado en este sistema. Contacte al administrador."
             )
             
+        # Store in cache and detach from session to avoid DetachedInstanceError on next request
+        db.expunge(usuario)
+        user_cache[supabase_id] = usuario
         return usuario
         
     except ExpiredSignatureError:

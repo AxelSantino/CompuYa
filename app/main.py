@@ -1,12 +1,16 @@
 import time
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 import logging
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 from app.routers import usuarios_rutas, envios_rutas, reportes_rutas, notificaciones_rutas, plantillas_rutas, alertas_rutas
 
+logging.basicConfig(level=logging.INFO,
+                    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 
-
+# Silenciamos el ruido de librerías externas
+logging.getLogger("httpx").setLevel(logging.WARNING)
+logging.getLogger("httpcore").setLevel(logging.WARNING)
 logger = logging.getLogger("app")
 
 app = FastAPI(
@@ -23,6 +27,19 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    start_time = time.time()
+    response = await call_next(request)
+    duration = (time.time() - start_time) * 1000
+    
+    logger.info(
+        f"API Request: {request.method} {request.url.path} - "
+        f"Status: {response.status_code} - "
+        f"Duración: {duration:.2f} ms"
+    )
+    return response
 
 app.include_router(usuarios_rutas.router)
 app.include_router(envios_rutas.router)

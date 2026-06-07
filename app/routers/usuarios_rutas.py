@@ -13,8 +13,12 @@ from app.models.esquemas import (
 )
 from app.models.entidades import Usuario, TipoCliente
 from typing import List, Union
-from sqlalchemy.orm import selectinload
+from sqlalchemy.orm import joinedload
 from sqlalchemy import select
+import logging
+import time
+
+logger = logging.getLogger("app")
 
 
 router = APIRouter(prefix="/usuarios", tags=["Usuarios"])
@@ -24,32 +28,52 @@ async def get_usuario_service(db: AsyncSession = Depends(obtener_db)) -> Usuario
 
 @router.get("/yo", response_model=UsuarioRespuesta)
 async def obtener_perfil(usuario: Usuario = Depends(obtener_usuario_actual)):
-    return usuario
+    logger.info(f"Obteniendo perfil para usuario ID: {usuario.id}")
+    t0 = time.time()
+    try:
+        # En este endpoint el usuario ya fue cargado por la dependencia `obtener_usuario_actual`.
+        # Así que simplemente lo devolvemos.
+        logger.info(f"obtener_perfil (retorno en memoria) tardó {(time.time() - t0) * 1000:.2f} ms")
+        return usuario
+    except Exception as e:
+        logger.error(f"Error al obtener perfil: {str(e)}")
+        raise
 
 @router.get("/repartidores", response_model=List[UsuarioRespuesta], dependencies=[Depends(tiene_rol(["admin", "supervisor"]))])
 async def listar_repartidores(
     usuario_service: UsuarioService = Depends(get_usuario_service)
 ):
-    from sqlalchemy import select
-    from app.models.entidades import TipoCliente
-    from sqlalchemy.orm import selectinload
-    
-    query = select(Usuario).where(
-        Usuario.tipo == TipoCliente.EMPLEADO,
-        Usuario.rol == "repartidor"
-    ).options(
-        selectinload(Usuario.perfil_empleado),
-        selectinload(Usuario.perfil_empresa)
-    )
-    
-    result = await usuario_service.db.execute(query)
-    return result.scalars().all()
+    logger.info("Iniciando obtención de lista de repartidores")
+    t0 = time.time()
+    try:
+        from sqlalchemy import select
+        from app.models.entidades import TipoCliente
+        from sqlalchemy.orm import joinedload
+        
+        query = select(Usuario).where(
+            Usuario.tipo == TipoCliente.EMPLEADO,
+            Usuario.rol == "repartidor"
+        ).options(
+            joinedload(Usuario.perfil_empleado),
+            joinedload(Usuario.perfil_empresa)
+        )
+        
+        result = await usuario_service.db.execute(query)
+        repartidores = result.unique().scalars().all()
+        logger.info(f"listar_repartidores tardó {(time.time() - t0) * 1000:.2f} ms")
+        return repartidores
+    except Exception as e:
+        logger.error(f"Error al listar repartidores: {str(e)}")
+        raise
 
 @router.get("/", response_model=List[UsuarioRespuesta], dependencies=[Depends(tiene_rol(["admin"]))])
 async def listar_usuarios(
     usuario_service: UsuarioService = Depends(get_usuario_service)
 ):
+    logger.info("Iniciando obtención de lista de usuarios")
+    t0 = time.time()
     usuarios = await usuario_service.listar_usuarios()
+    logger.info(f"listar_usuarios tardó {(time.time() - t0) * 1000:.2f} ms")
     return usuarios
 
 @router.post("/registro-empleado", response_model=UsuarioRespuesta, status_code=status.HTTP_201_CREATED)
@@ -100,19 +124,35 @@ async def modificar_usuario(
 ):
     return await usuario_service.modificar_usuario(usuario_id, usuario_in)
 
+@router.get("/roles/empleados",response_model=List[UsuarioRespuesta], dependencies = [Depends(tiene_rol(["admin"]))])
+async def listar_solo_empleados(
+    usuario_service: UsuarioService = Depends(get_usuario_service)
+):
+    from sqlalchemy.orm import joinedload
+    query = select(Usuario).where(
+            Usuario.tipo == TipoCliente.EMPLEADO
+        ).options(
+            joinedload(Usuario.perfil_empleado),
+            joinedload(Usuario.perfil_empresa)
+        )
+    result = await usuario_service.db.execute(query)
+    return result.unique().scalars().all()
     
+
+
 @router.get("/roles/clientes",response_model=List[UsuarioRespuesta], dependencies = [Depends(tiene_rol(["admin"]))])
 async def listar_solo_clientes(
     usuario_service: UsuarioService = Depends(get_usuario_service)
 ):
+    from sqlalchemy.orm import joinedload
     query = select(Usuario).where(
             Usuario.tipo == TipoCliente.EMPRESA
         ).options(
-            selectinload(Usuario.perfil_empleado),
-            selectinload(Usuario.perfil_empresa)
+            joinedload(Usuario.perfil_empleado),
+            joinedload(Usuario.perfil_empresa)
         )
     result = await usuario_service.db.execute(query)
-    return result.scalars().all()
+    return result.unique().scalars().all()
 
 
 
@@ -121,13 +161,13 @@ async def obtener_usuario_por_id(
     usuario_id: int = Path(..., description="ID del usuario a buscar"),
     usuario_service: UsuarioService = Depends(get_usuario_service)
 ):
-    
+    from sqlalchemy.orm import joinedload
     query = select(Usuario).where(Usuario.id == usuario_id).options(
-        selectinload(Usuario.perfil_empleado),
-        selectinload(Usuario.perfil_empresa)
+        joinedload(Usuario.perfil_empleado),
+        joinedload(Usuario.perfil_empresa)
     )
     result = await usuario_service.db.execute(query)
-    usuario = result.scalar_one_or_none()
+    usuario = result.unique().scalar_one_or_none()
     
     if not usuario:
         raise HTTPException(

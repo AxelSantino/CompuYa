@@ -11,7 +11,7 @@ async def crear_alerta_y_enviar_push(db: AsyncSession, usuario_id: int, titulo: 
     
     topic = f"logitrack_user_{usuario_id}"
     url = f"https://ntfy.sh/{topic}"
-    headers = {"Title": titulo, "Tags": "bell,package", "Priority": "high"}
+    headers = {"Title": titulo.encode('utf-8'), "Tags": "bell,package", "Priority": "high"}
     
     async with httpx.AsyncClient() as client:
         try:

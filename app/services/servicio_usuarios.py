@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, or_
-from sqlalchemy.orm import selectinload
+from sqlalchemy.orm import joinedload
 from fastapi import HTTPException, status
 import httpx
 from app.models.entidades import Usuario, PerfilEmpleado, PerfilEmpresa, TipoCliente
@@ -85,13 +85,13 @@ class UsuarioService:
         self.db.add(nuevo_perfil)
         
         await self.db.commit()
-    
+        
         query = select(Usuario).where(Usuario.id == nuevo_usuario.id).options(
-            selectinload(Usuario.perfil_empleado),
-            selectinload(Usuario.perfil_empresa)
+            joinedload(Usuario.perfil_empleado),
+            joinedload(Usuario.perfil_empresa)
         )
         result = await self.db.execute(query)
-        return result.scalar_one()
+        return result.unique().scalar_one()
 
     async def crear_usuario_empresa(self, empresa_data: UsuarioRegistroEmpresa) -> Usuario:
         if await self.verificar_email_existe(empresa_data.email):
@@ -134,19 +134,19 @@ class UsuarioService:
         await self.db.commit()
         
         query = select(Usuario).where(Usuario.id == nuevo_usuario.id).options(
-            selectinload(Usuario.perfil_empleado),
-            selectinload(Usuario.perfil_empresa)
+            joinedload(Usuario.perfil_empleado),
+            joinedload(Usuario.perfil_empresa)
         )
         result = await self.db.execute(query)
-        return result.scalar_one()
+        return result.unique().scalar_one()
 
     async def obtener_usuario_por_id(self, usuario_id: int) -> Usuario:
         query = select(Usuario).where(Usuario.id == usuario_id).options(
-            selectinload(Usuario.perfil_empleado),
-            selectinload(Usuario.perfil_empresa)
+            joinedload(Usuario.perfil_empleado),
+            joinedload(Usuario.perfil_empresa)
         )
         result = await self.db.execute(query)
-        usuario = result.scalar_one_or_none()
+        usuario = result.unique().scalar_one_or_none()
         if not usuario:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -156,11 +156,11 @@ class UsuarioService:
 
     async def listar_usuarios(self) -> list[Usuario]:
         query = select(Usuario).options(
-            selectinload(Usuario.perfil_empleado),
-            selectinload(Usuario.perfil_empresa)
+            joinedload(Usuario.perfil_empleado),
+            joinedload(Usuario.perfil_empresa)
         )
         result = await self.db.execute(query)
-        return result.scalars().all()
+        return result.unique().scalars().all()
 
     async def login_usuario(self, email: str, password: str) -> dict:
         async with httpx.AsyncClient() as client:
@@ -205,8 +205,7 @@ class UsuarioService:
                     setattr(usuario.perfil_empresa, field, data[field])
                 
         await self.db.commit()
-        await self.db.refresh(usuario)
-        return await self.obtener_usuario_por_id(usuario_id)
+        return usuario
         
     async def buscar_empresa_por_razon_social_o_cuit(self, razon_social: str | None = None, cuit: str | None = None) -> Usuario:
         if not razon_social and not cuit:
@@ -220,12 +219,12 @@ class UsuarioService:
                 PerfilEmpresa.cuit == cuit if cuit else False
             )
         ).options(
-            selectinload(Usuario.perfil_empresa),
-            selectinload(Usuario.perfil_empleado)
+            joinedload(Usuario.perfil_empresa),
+            joinedload(Usuario.perfil_empleado)
         )
         
         result = await self.db.execute(query)
-        usuario = result.scalar_one_or_none()
+        usuario = result.unique().scalar_one_or_none()
         
         if not usuario:
             raise HTTPException(

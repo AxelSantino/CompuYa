@@ -2,6 +2,9 @@ import math
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from app.models.entidades import Sucursal
+from cachetools import TTLCache
+
+sucursales_cache = TTLCache(maxsize=1, ttl=3600)
 
 class ServicioRuteo:
     def __init__(self, db: AsyncSession):
@@ -18,9 +21,17 @@ class ServicioRuteo:
         return R * c
     
     async def obtener_sucursal_mas_cercana(self, lat_destino: float, lon_destino: float) -> Sucursal:
-        query = select(Sucursal)
-        result = await self.db.execute(query)
-        sucursales = result.scalars().all()
+        if "sucursales" in sucursales_cache:
+            sucursales = sucursales_cache["sucursales"]
+            for s in sucursales:
+                self.db.add(s)
+        else:
+            query = select(Sucursal)
+            result = await self.db.execute(query)
+            sucursales = result.scalars().all()
+            for s in sucursales:
+                self.db.expunge(s)
+            sucursales_cache["sucursales"] = sucursales
         
         if not sucursales:
             return None
