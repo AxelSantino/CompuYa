@@ -12,6 +12,10 @@ import LoadingOverlay from '@/components/LoadingOverlay';
 import { LocationManager } from '../../new/components/LocationManager';
 import { DireccionNormalizada } from '@/services/usigService';
 
+export function generateStaticParams() {
+    return [];
+}
+
 export default function ClientDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
   const { user } = useAuth();

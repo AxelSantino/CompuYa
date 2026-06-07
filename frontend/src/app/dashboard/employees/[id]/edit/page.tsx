@@ -11,6 +11,10 @@ import userService from '@/services/userService';
 import { Usuario } from '@/types/usuario';
 import LoadingOverlay from '@/components/LoadingOverlay';
 
+export function generateStaticParams() {
+    return [];
+}
+
 export default function EmployeeDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
   const { user } = useAuth();
