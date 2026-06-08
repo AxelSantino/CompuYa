@@ -345,7 +345,7 @@ export default function RoutesPage() {
                 </>
               ) : (
                 <div className="card p-20 text-center text-gray-400 bg-gray-50 border-dashed border-2 border-gray-200">
-                  <FaRoute className="text-6xl mx-auto mb-4 opacity-10" />
+                  <FaRoute className="text-6xl mx-auto mb-4 opacity-75" />
                   <h3 className="text-xl font-medium text-gray-500">
                     {selectedDriverId ? 'Este repartidor no tiene entregas activas' : 'Sin recorrido asignado'}
                   </h3>
