@@ -4,11 +4,11 @@ import { BiCube } from "react-icons/bi";
 import { FaRoute, FaUsers, FaUserTie, FaBuilding, FaHandshake, FaChartBar } from "react-icons/fa";
 
 const NAV_ITEMS = [
-  { name: 'Gestión de envíos', href: '/dashboard', icon: BiCube, roles: ['supervisor', 'operador', 'visor'] },
-  { name: 'Control Logístico', href: '/dashboard/routes', icon: FaRoute, roles: ['supervisor', 'repartidor'] },
-  { name: 'Empleados', href: '/dashboard/employees', icon: FaUsers, roles: ['admin']},
-  { name: 'Clientes', href: '/dashboard/clients', icon: FaHandshake, roles: ['admin']},
-  { name: 'Métricas', href: '/dashboard/metrics', icon: FaChartBar, roles: ['admin'] },
+    { name: 'Gestión de envíos', href: '/dashboard', icon: BiCube, roles: ['supervisor', 'operador', 'visor'] },
+    { name: 'Control Logístico', href: '/dashboard/routes', icon: FaRoute, roles: ['supervisor', 'repartidor'] },
+    { name: 'Métricas', href: '/dashboard/metrics', icon: FaChartBar, roles: ['admin'] },
+    { name: 'Empleados', href: '/dashboard/employees', icon: FaUsers, roles: ['admin']},
+    { name: 'Clientes', href: '/dashboard/clients', icon: FaHandshake, roles: ['admin']},
 ];
 
 export const useDashboardLayout = () => {
