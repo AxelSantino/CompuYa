@@ -2,14 +2,14 @@ import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
 from fastapi import HTTPException
 from app.models.esquemas import UsuarioRegistroEmpleado
-from app.models.entidades import TipoCliente, Usuario
+from app.models.entidades import PerfilEmpleado, TipoCliente, Usuario
 from app.services.servicio_usuarios import UsuarioService
 
 @pytest.mark.asyncio
 async def test_verificar_email_existe_devuelve_true_si_encuentra_registro():
     db_mock = AsyncMock()
     resultado_mock = MagicMock()
-    # Cambiado a unique().scalar_one_or_none
+    
     resultado_mock.unique().scalar_one_or_none.return_value = Usuario()
     db_mock.execute.return_value = resultado_mock
 
@@ -23,7 +23,7 @@ async def test_verificar_email_existe_devuelve_true_si_encuentra_registro():
 async def test_verificar_email_existe_devuelve_false_si_esta_vacio():
     db_mock = AsyncMock()
     resultado_mock = MagicMock()
-    # Sin unique() porque lo quitamos del servicio para esta funcion simple
+    
     resultado_mock.scalar_one_or_none.return_value = None
     db_mock.execute.return_value = resultado_mock
 
@@ -37,7 +37,7 @@ async def test_verificar_email_existe_devuelve_false_si_esta_vacio():
 async def test_crear_usuario_empleado_falla_si_el_email_ya_existe():
     db_mock = AsyncMock()
     resultado_mock = MagicMock()
-    # Cambiado a unique().scalar_one_or_none
+    
     resultado_mock.unique().scalar_one_or_none.return_value = Usuario()
     db_mock.execute.return_value = resultado_mock
 
@@ -63,7 +63,7 @@ async def test_crear_usuario_empleado_falla_si_el_email_ya_existe():
 async def test_obtener_usuario_por_id_falla_si_id_no_existe():
     db_mock = AsyncMock()
     resultado_mock = MagicMock()
-    # Cambiado a unique().scalar_one_or_none
+   
     resultado_mock.unique().scalar_one_or_none.return_value = None
     db_mock.execute.return_value = resultado_mock
 
@@ -93,7 +93,7 @@ async def test_buscar_empresa_por_cuit_devuelve_usuario_si_existe():
     db_mock = AsyncMock()
     resultado_mock = MagicMock()
     usuario_fijo = Usuario(id=10, email="empresa@test.com", tipo=TipoCliente.EMPRESA)
-    # Cambiado a unique().scalar_one_or_none
+    
     resultado_mock.unique().scalar_one_or_none.return_value = usuario_fijo
     db_mock.execute.return_value = resultado_mock
 
@@ -108,7 +108,7 @@ async def test_buscar_empresa_por_cuit_devuelve_usuario_si_existe():
 async def test_buscar_empresa_por_cuit_falla_si_la_empresa_no_existe():
     db_mock = AsyncMock()
     resultado_mock = MagicMock()
-    # Cambiado a unique().scalar_one_or_none
+    
     resultado_mock.unique().scalar_one_or_none.return_value = None
     db_mock.execute.return_value = resultado_mock
 
@@ -216,3 +216,137 @@ async def test_listar_usuarios_devuelve_coleccion_correctamente():
 
     assert len(resultado) == 2
     assert resultado[0].id == 1
+    
+    
+    
+    
+    
+
+@pytest.mark.asyncio
+async def test_crear_usuario_empleado_exitoso():
+    
+    db_mock = AsyncMock()
+    db_mock.flush = AsyncMock()
+    db_mock.commit = AsyncMock()
+    db_mock.add = MagicMock() 
+
+    empleado_data = UsuarioRegistroEmpleado(
+        email="nuevo_empleado@compuya.com",
+        password="securepassword123",
+        nombre="Santi",
+        apellido="Dev",
+        tipo=TipoCliente.EMPLEADO,
+        rol="supervisor"
+    )
+
+    
+    res_email = MagicMock()
+    res_email.scalar_one_or_none.return_value = None
+    
+    usuario_creado = Usuario(id=1, email="nuevo_empleado@compuya.com", tipo=TipoCliente.EMPLEADO)
+    res_final = MagicMock()
+    res_final.unique().scalar_one.return_value = usuario_creado
+    
+    db_mock.execute.side_effect = [res_email, res_final]
+
+    servicio = UsuarioService(db=db_mock)
+
+    
+    with patch.object(servicio, 'crear_usuario_en_supabase_auth', new_callable=AsyncMock, return_value="uuid-mock-123"):
+        
+        resultado = await servicio.crear_usuario_empleado(empleado_data)
+
+        
+        assert resultado.id == 1
+        assert resultado.email == "nuevo_empleado@compuya.com"
+        assert db_mock.add.call_count == 2  
+        db_mock.commit.assert_called_once()
+
+
+@pytest.mark.asyncio
+async def test_crear_usuario_empresa_exitoso():
+    db_mock = AsyncMock()
+    db_mock.flush = AsyncMock()
+    db_mock.commit = AsyncMock()
+    db_mock.add = MagicMock()
+
+    from app.models.esquemas import UsuarioRegistroEmpresa
+    empresa_data = UsuarioRegistroEmpresa(
+        email="empresa_ok@compuya.com",
+        password="password12345",
+        razon_social="CompuYa S.A.",
+        cuit="30-12345678-9",
+        direccion_normalizada="Av. Siempreviva 742",
+        latitud=-34.6,
+        longitud=-58.6,
+        tipo=TipoCliente.EMPRESA,
+        rol="operario"
+    )
+
+    res_email = MagicMock()
+    res_email.scalar_one_or_none.return_value = None
+    
+    usuario_creado = Usuario(id=2, email="empresa_ok@compuya.com", tipo=TipoCliente.EMPRESA)
+    res_final = MagicMock()
+    res_final.unique().scalar_one.return_value = usuario_creado
+    
+    db_mock.execute.side_effect = [res_email, res_final]
+
+    servicio = UsuarioService(db=db_mock)
+
+    with patch.object(servicio, 'crear_usuario_en_supabase_auth', new_callable=AsyncMock, return_value="uuid-empresa-123"):
+        resultado = await servicio.crear_usuario_empresa(empresa_data)
+
+        assert resultado.id == 2
+        assert db_mock.add.call_count == 2  
+        db_mock.commit.assert_called_once()
+
+
+@pytest.mark.asyncio
+async def test_login_usuario_camino_feliz():
+    db_mock = AsyncMock()
+    servicio = UsuarioService(db=db_mock)
+
+    
+    mock_response = MagicMock()
+    mock_response.status_code = 200
+    mock_response.json.return_value = {
+        "access_token": "token_secreto_jwt",
+        "user": {"id": "uuid-123", "email": "test@compuya.com"}
+    }
+
+    with patch('httpx.AsyncClient.post', new_callable=AsyncMock, return_value=mock_response):
+        resultado = await servicio.login_usuario("test@compuya.com", "clave123")
+        
+        assert "access_token" in resultado
+        assert resultado["user"]["email"] == "test@compuya.com"
+
+
+@pytest.mark.asyncio
+async def test_modificar_usuario_perfiles_exitoso():
+    
+    usuario_mock = Usuario(id=5, tipo=TipoCliente.EMPLEADO, rol="visor")
+    usuario_mock.perfil_empleado = PerfilEmpleado(nombre="Juan", apellido="Perez")
+
+    db_mock = AsyncMock()
+    db_mock.commit = AsyncMock()
+
+    servicio = UsuarioService(db=db_mock)
+
+    
+    with patch.object(servicio, 'obtener_usuario_por_id', new_callable=AsyncMock, return_value=usuario_mock):
+        
+        data_cambios = {
+            "rol": "admin",
+            "nombre": "SantiModificado",
+            "apellido": "ApellidoModificado"
+        }
+
+        
+        resultado = await servicio.modificar_usuario(usuario_id=5, data=data_cambios)
+
+        
+        assert resultado.rol == "admin"
+        assert resultado.perfil_empleado.nombre == "SantiModificado"
+        assert resultado.perfil_empleado.apellido == "ApellidoModificado"
+        db_mock.commit.assert_called_once()

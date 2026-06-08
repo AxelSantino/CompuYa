@@ -34,7 +34,7 @@ async def test_obtener_sucursal_mas_cercana_devuelve_none_si_no_hay_sucursales()
 
 @pytest.mark.asyncio
 async def test_obtener_sucursal_mas_cercana_elige_la_de_menor_distancia():
-    sucursales_cache.clear() # Limpiamos caché para el test
+    sucursales_cache.clear() 
     sucursal_lejos = Sucursal()
     sucursal_lejos.id = 1
     sucursal_lejos.latitud = -34.6037
@@ -46,6 +46,7 @@ async def test_obtener_sucursal_mas_cercana_elige_la_de_menor_distancia():
     sucursal_cerca.longitud = -58.5900
 
     db_mock = AsyncMock()
+    db_mock.expunge = MagicMock()
     resultado_mock = MagicMock()
     resultado_mock.scalars().all.return_value = [sucursal_lejos, sucursal_cerca]
     db_mock.execute.return_value = resultado_mock
