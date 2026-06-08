@@ -3,6 +3,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import shipmentService from '@/services/shipmentService';
 import { Envio, HistorialEnvio } from '@/types/envio';
+import toast from 'react-hot-toast';
 
 export const useShipmentDetail = () => {
     const router = useRouter();
@@ -87,10 +88,19 @@ export const useShipmentDetail = () => {
             await shipmentService.cancelShipment(shipment.tracking_id, motivo);
             await fetchData();
             setIsCancelModalOpen(false);
-            // Opcional: Podrías usar un toast acá en lugar de un alert si tenés uno configurado
+            toast.success('El envío ha sido cancelado exitosamente');
         } catch (err: unknown) {
             const errorData = err as { response?: { data?: { detail?: string } } };
-            alert(errorData.response?.data?.detail || 'Error al cancelar el envío.');
+            const detail = errorData.response?.data?.detail;
+
+            if (Array.isArray(detail)) {
+                const mensajeError = detail.map(d => `'${d.loc[d.loc.length - 1]}': ${d.msg}`).join(', ');
+                toast.error(`Error de validación: ${mensajeError}`);
+            } else if (typeof detail === 'string') {
+                toast.error(detail);
+            } else {
+                toast.error('Ocurrió un error al cancelar el envío.');
+            }
         } finally {
             setIsProcessing(false);
         }
