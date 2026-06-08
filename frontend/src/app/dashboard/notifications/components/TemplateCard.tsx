@@ -1,6 +1,6 @@
 import { PlantillaCorreo } from '@/types/notificacion';
 import { Button } from '@/components/ui/Button';
-import { FaEdit, FaBolt } from 'react-icons/fa';
+import { FaEdit } from 'react-icons/fa';
 
 interface TemplateCardProps {
   template: PlantillaCorreo;
@@ -12,7 +12,6 @@ export const TemplateCard = ({ template, onEdit }: TemplateCardProps) => {
     <div className="bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-shadow p-5 flex flex-col h-full">
       <div className="flex justify-between items-start mb-4">
         <div className="flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">
-          <FaBolt className="text-blue-500" />
           {template.estado_disparador}
         </div>
         <span className={`text-xs font-bold px-2 py-1 rounded-md ${template.activa ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>

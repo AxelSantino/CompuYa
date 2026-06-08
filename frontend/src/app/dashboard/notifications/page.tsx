@@ -6,15 +6,15 @@ import LoadingOverlay from '@/components/LoadingOverlay';
 import { Button } from '@/components/ui/Button';
 import { FaDownload, FaInfoCircle } from 'react-icons/fa';
 
-// Importamos lo construido en las Fases 2 y 3
 import { useNotifications } from './hooks/useNotifications';
 import { NotificationsTabs } from './components/NotificationTabs';
 import { TemplateCard } from './components/TemplateCard';
 import { EditTemplateModal } from './components/EditTemplateModal';
 
-// Importamos tus herramientas reutilizables
 import { DataTable, Column } from '@/app/dashboard/users/components/DataTable';
 import { HistorialNotificacion, PlantillaCorreo } from '@/types/notificacion';
+
+import { NotificationFilter, FilterOption } from './components/NotificationFilter';
 
 export default function NotificationsPage() {
   const {
@@ -34,6 +34,9 @@ export default function NotificationsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<PlantillaCorreo | null>(null);
 
+  const [filterResult, setFilterResult] = useState<FilterOption>('Todos');
+
+  
   const handleEditClick = (template: PlantillaCorreo) => {
     setSelectedTemplate(template);
     setIsModalOpen(true);
@@ -59,7 +62,7 @@ export default function NotificationsPage() {
       className: 'font-semibold text-gray-900'
     },
     {
-      header: 'Asunto / Disparador',
+      header: 'Asunto',
       accessor: 'asunto_enviado'
     },
     {
@@ -87,6 +90,11 @@ export default function NotificationsPage() {
       }
     }
   ];
+
+  const filteredHistory = history.filter(notif => {
+    if (filterResult === 'Todos') return true;
+    return notif.resultado.toLowerCase() === filterResult.toLowerCase();
+  });
 
   return (
     <DashboardLayout>
@@ -130,20 +138,28 @@ export default function NotificationsPage() {
                   <FaDownload size={24} />
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-2">Historial de notificaciones enviadas</h3>
-                <p className="text-gray-500 max-w-md mb-8">
-                  El historial puede contener múltiples registros.
-                </p>
                 <Button variant="primary" onClick={loadHistory} disabled={isLoadingHistory} className="shadow-md">
                   Cargar Historial Completo
                 </Button>
               </div>
             ) : (
+              <div>
+              <NotificationFilter 
+                filterResult={filterResult}
+                onFilterChange={setFilterResult}
+                totalCount={filteredHistory.length}
+              />
               <DataTable
                 columns={historyColumns}
-                data={history}
+                data={filteredHistory}
                 keyExtractor={(row) => row.id}
-                emptyMessage="No se encontraron notificaciones enviadas."
+                emptyMessage={
+                  filterResult !== 'Todos' 
+                    ? `No se encontraron notificaciones con estado "${filterResult}".` 
+                    : "No se encontraron notificaciones enviadas."
+                }
               />
+              </div>
             )}
           </div>
         )}
