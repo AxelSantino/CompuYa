@@ -215,7 +215,7 @@ export default function RoutesPage() {
               {/* Filtro de Repartidor */}
               <div className="card bg-gradient-to-br from-gray-900 to-gray-800 text-white border-none shadow-xl">
                 <div className="card-header border-gray-700 bg-transparent">
-                  <h2 className="text-white flex items-center gap-2"><FaUserTie className="text-blue-400" /> Monitoreo por Repartidor</h2>
+                  <h2 className="text-black flex items-center gap-2"><FaUserTie className="text-blue-400" /> Monitoreo por Repartidor</h2>
                 </div>
                 <div className="card-body">
                   <select 
