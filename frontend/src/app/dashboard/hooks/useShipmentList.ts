@@ -3,6 +3,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import shipmentService from '@/services/shipmentService';
 import { Envio, EnvioStatus } from '@/types/envio';
+import { usePagination } from '@/hooks/usePagination';
 
 export const useShipmentList = () => {
     const router = useRouter();
@@ -73,6 +74,15 @@ export const useShipmentList = () => {
     }, [shipments, searchTerm, statusFilter]);
 
 
+    const {
+        currentPage,
+        setCurrentPage,
+        pageSize,
+        setPageSize,
+        totalPages,
+        currentPageData: paginatedShipments,
+    } = usePagination(filteredShipments, 15);
+
     return {
         user,
         searchTerm,
@@ -81,6 +91,12 @@ export const useShipmentList = () => {
         setStatusFilter,
         isLoading,
         error,
-        filteredShipments
+        filteredShipments,
+        paginatedShipments,
+        currentPage,
+        setCurrentPage,
+        pageSize,
+        setPageSize,
+        totalPages,
     };
 };

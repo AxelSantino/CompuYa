@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import userService from '@/services/userService';
 import { Usuario } from '@/types/usuario';
 import { useAuth } from '@/contexts/AuthContext';
+import { usePagination } from '@/hooks/usePagination';
 
 export const useEmployeeManager = () => {
     const [employees, setEmployees] = useState<Usuario[]>([]);
@@ -64,6 +65,15 @@ export const useEmployeeManager = () => {
         });
     }, [employees, searchTerm, roleFilter]);
 
+    const {
+        currentPage,
+        setCurrentPage,
+        pageSize,
+        setPageSize,
+        totalPages,
+        currentPageData: paginatedEmployees,
+    } = usePagination(filteredEmployees, 15);
+
     const { user } = useAuth();
 
     return {
@@ -74,6 +84,12 @@ export const useEmployeeManager = () => {
         setRoleFilter,
         isLoading,
         error,
-        filteredEmployees
+        filteredEmployees,
+        paginatedEmployees,
+        currentPage,
+        setCurrentPage,
+        pageSize,
+        setPageSize,
+        totalPages
     };
 };

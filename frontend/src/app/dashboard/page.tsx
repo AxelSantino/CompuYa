@@ -3,6 +3,7 @@
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import withAuth from '@/components/auth/withAuth';
 import LoadingOverlay from '@/components/LoadingOverlay';
+import { PaginationControls } from '@/components/ui/PaginationControls';
 
 import { useShipmentList } from './hooks/useShipmentList';
 import { DashboardHeader } from './components/DashboardHeader';
@@ -20,7 +21,12 @@ const ShipmentsPage = () => {
     setStatusFilter,
     isLoading,
     error,
-    filteredShipments
+    paginatedShipments,
+    currentPage,
+    setCurrentPage,
+    pageSize,
+    setPageSize,
+    totalPages,
   } = useShipmentList();
 
   // 2. Control de seguridad visual (mientras el Hook redirige si hace falta)
@@ -53,7 +59,16 @@ const ShipmentsPage = () => {
         )}
 
         {!isLoading && !error && (
-          <ShipmentTable shipments={filteredShipments} />
+          <>
+            <ShipmentTable shipments={paginatedShipments} />
+            <PaginationControls
+              currentPage={currentPage}
+              totalPages={totalPages}
+              pageSize={pageSize}
+              onPageChange={setCurrentPage}
+              onPageSizeChange={setPageSize}
+            />
+          </>
         )}
       </div>
     </DashboardLayout>
