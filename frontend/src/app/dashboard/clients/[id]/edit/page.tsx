@@ -1,7 +1,5 @@
 import ClientEditPage from "./ClientEditPage";
 
-export const dynamicParams = false;
-
 export function generateStaticParams() {
     return [{ id: '0' }];
 }

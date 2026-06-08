@@ -1,7 +1,5 @@
 import EmployeeEditPage from "./EmployeeEditPage";
 
-export const dynamicParams = false;
-
 export function generateStaticParams() {
     return [{ id: '0' }];
 }
