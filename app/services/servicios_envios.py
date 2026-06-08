@@ -181,8 +181,11 @@ class EnvioService:
                 detail=f"El envío no se puede cancelar ya que su estado esta {envio.estado}"
             )
         envio.estado = EstadoEnvio.CANCELADO
+        envio.prioridad = "baja"
         await self.registrar_historial(envio.id, usuario_id, EstadoEnvio.CANCELADO)
         await self.db.commit()
+        await self.db.refresh(envio)
+
 
         servicio = NotificacionService(db=self.db)
         email = await self.obtenerMailDestinatario(envio)
