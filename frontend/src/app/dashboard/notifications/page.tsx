@@ -16,6 +16,8 @@ import { HistorialNotificacion, PlantillaCorreo } from '@/types/notificacion';
 
 import { NotificationFilter, FilterOption } from './components/NotificationFilter';
 
+import { ErrorDetailModal } from './components/ErrorDetailModal';
+
 export default function NotificationsPage() {
   const {
     activeTab,
@@ -44,10 +46,10 @@ export default function NotificationsPage() {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    setTimeout(() => setSelectedTemplate(null), 200); // Limpiamos después de la animación de cierre
+    setTimeout(() => setSelectedTemplate(null), 200);
   };
 
-  // Definimos la estructura de la tabla utilizando tu componente DataTable
+
   const historyColumns: Column<HistorialNotificacion>[] = [
     {
       header: 'Fecha de Envío',
@@ -81,9 +83,13 @@ export default function NotificationsPage() {
               {row.resultado}
             </span>
             {!isSuccess && row.motivo_error && (
-              <div title={row.motivo_error} className="text-red-500 cursor-help transition-transform hover:scale-110">
+              <button 
+                onClick={() => setErrorModal({ isOpen: true, message: row.motivo_error || 'Error desconocido' })}
+                className="text-red-500 transition-transform hover:scale-110 focus:outline-none"
+                title="Hacer clic para ver el detalle del error"
+              >
                 <FaInfoCircle size={16} />
-              </div>
+              </button>
             )}
           </div>
         );
@@ -94,6 +100,11 @@ export default function NotificationsPage() {
   const filteredHistory = history.filter(notif => {
     if (filterResult === 'Todos') return true;
     return notif.resultado.toLowerCase() === filterResult.toLowerCase();
+  });
+
+  const [errorModal, setErrorModal] = useState<{ isOpen: boolean; message: string }>({
+    isOpen: false,
+    message: ''
   });
 
   return (
@@ -170,6 +181,12 @@ export default function NotificationsPage() {
           onSave={handleUpdateTemplate}
           isUpdating={isUpdating}
           template={selectedTemplate}
+        />
+
+        <ErrorDetailModal
+          isOpen={errorModal.isOpen}
+          onClose={() => setErrorModal({ isOpen: false, message: '' })}
+          errorMessage={errorModal.message}
         />
 
       </div>
