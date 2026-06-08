@@ -129,9 +129,9 @@ export default function NotificationsPage() {
                 <div className="bg-blue-50 text-blue-500 w-16 h-16 rounded-full flex items-center justify-center mb-5 shadow-sm">
                   <FaDownload size={24} />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Historial de Envíos Masivos</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">Historial de notificaciones enviadas</h3>
                 <p className="text-gray-500 max-w-md mb-8">
-                  El historial puede contener miles de registros. Para optimizar el rendimiento del sistema, la carga se realiza a petición.
+                  El historial puede contener múltiples registros.
                 </p>
                 <Button variant="primary" onClick={loadHistory} disabled={isLoadingHistory} className="shadow-md">
                   Cargar Historial Completo
