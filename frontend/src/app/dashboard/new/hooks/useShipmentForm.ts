@@ -13,7 +13,6 @@ export const useShipmentForm = () => {
         descripcion: '',
         tipo_envio: 'normal',
         restriccion: 'ninguna',
-        fecha_limite: '',
     });
 
     const [isLoading, setIsLoading] = useState(false);
