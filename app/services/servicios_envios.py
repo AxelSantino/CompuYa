@@ -182,10 +182,9 @@ class EnvioService:
             )
         envio.estado = EstadoEnvio.CANCELADO
         envio.prioridad = "baja"
-        await self.registrar_historial(envio.id, usuario_id, EstadoEnvio.CANCELADO)
+        await self.registrar_historial(envio.id, usuario_id, EstadoEnvio.CANCELADO, datos_cancelacion.motivo)
         await self.db.commit()
         await self.db.refresh(envio)
-
 
         servicio = NotificacionService(db=self.db)
         email = await self.obtenerMailDestinatario(envio)
@@ -231,11 +230,12 @@ class EnvioService:
         result = await self.db.execute(query)
         return result.unique().scalars().all()
 
-    async def registrar_historial(self, envio_id: int, usuario_id: int, nuevo_estado: EstadoEnvio):
+    async def registrar_historial(self, envio_id: int, usuario_id: int, nuevo_estado: EstadoEnvio, motivo: str = None):
         nuevo_historial = Historial(
             envio_id=envio_id,
             id_empleado=usuario_id,
-            estado=nuevo_estado
+            estado=nuevo_estado,
+            motivo=motivo
         )
         self.db.add(nuevo_historial)
 
