@@ -8,6 +8,16 @@ const userService = {
         return response.data;
     },
 
+    getEmployees: async(): Promise<Usuario[]> => {
+        const response = await api.get<Usuario[]>('/usuarios/roles/empleados');
+        return response.data;
+    },
+
+    getClients: async(): Promise<Usuario[]> => {
+        const response = await api.get<Usuario[]>('/usuarios/roles/clientes');
+        return response.data;
+    },
+
     createEmployee: async (data: RegistroEmpleado): Promise<Usuario> => {
         const response = await api.post<Usuario>('/usuarios/registro-empleado', data);
         return response.data;

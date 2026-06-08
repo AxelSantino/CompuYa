@@ -17,13 +17,11 @@ export const useEmployeeManager = () => {
 
         const fetchEmployees = async () => {
             try {
-                // Obtenemos todos los usuarios del sistema
-                const allUsers = await userService.getUsers();
+                // Obtenemos todos los empleados del sistema
+                const employeesData = await userService.getEmployees();
                 
                 if (isMounted) {
-                    // Filtramos puramente a nivel frontend (Deuda técnica documentada)
-                    const onlyEmployees = allUsers.filter(user => user.tipo === 'empleado');
-                    setEmployees(onlyEmployees);
+                    setEmployees(employeesData);
                 }
             } catch (err) {
                 if (isMounted) {
