@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import userService from '@/services/userService';
 import { Usuario } from '@/types/usuario';
 import { useAuth } from '@/contexts/AuthContext';
+import { usePagination } from '@/hooks/usePagination';
 
 export const useClientManager = () => {
     const [clients, setClients] = useState<Usuario[]>([]);
@@ -53,6 +54,15 @@ export const useClientManager = () => {
         });
     }, [clients, searchTerm]);
 
+    const {
+        currentPage,
+        setCurrentPage,
+        pageSize,
+        setPageSize,
+        totalPages,
+        currentPageData: paginatedClients,
+    } = usePagination(filteredClients, 15);
+
     const { user } = useAuth();
 
     return {
@@ -61,6 +71,12 @@ export const useClientManager = () => {
         setSearchTerm,
         isLoading,
         error,
-        filteredClients
+        filteredClients,
+        paginatedClients,
+        currentPage,
+        setCurrentPage,
+        pageSize,
+        setPageSize,
+        totalPages
     };
 };

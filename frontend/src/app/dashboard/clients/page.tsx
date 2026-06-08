@@ -8,6 +8,7 @@ import { getClientColumns } from './components/ClientColumns';
 import { useClientManager } from './hooks/useClientManager';
 import LoadingOverlay from '@/components/LoadingOverlay';
 import { AccessDenied } from '@/components/ui/AccessDenied';
+import { PaginationControls } from '@/components/ui/PaginationControls';
 
 // Funcion principal 
 
@@ -18,7 +19,12 @@ export default function ClientsPage() {
     setSearchTerm,
     isLoading: isDataLoading,
     error,
-    filteredClients
+    paginatedClients,
+    currentPage,
+    totalPages,
+    pageSize,
+    setCurrentPage,
+    setPageSize,
   } = useClientManager();
 
 if (!user || user.rol !== 'admin') {
@@ -48,12 +54,21 @@ return (
         )}
 
         {!isDataLoading && !error && (
-          <DataTable 
-            data={filteredClients} 
-            columns={getClientColumns()} 
-            keyExtractor={(row) => row.id}
-            emptyMessage="No se encontraron clientes que coincidan con los filtros."
-          />
+          <>
+            <DataTable 
+              data={paginatedClients} 
+              columns={getClientColumns()} 
+              keyExtractor={(row) => row.id}
+              emptyMessage="No se encontraron clientes que coincidan con los filtros."
+            />
+            <PaginationControls
+              currentPage={currentPage}
+              totalPages={totalPages}
+              pageSize={pageSize}
+              onPageChange={setCurrentPage}
+              onPageSizeChange={setPageSize}
+            />
+          </>
         )}
       </div>
     </DashboardLayout>

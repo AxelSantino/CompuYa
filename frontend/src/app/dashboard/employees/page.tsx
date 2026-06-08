@@ -8,6 +8,7 @@ import { useEmployeeManager } from './hooks/useEmployeeManager';
 import LoadingOverlay from '@/components/LoadingOverlay';
 import { AccessDenied } from '@/components/ui/AccessDenied';
 import { getEmployeeColumns } from './components/employeeColumns';
+import { PaginationControls } from '@/components/ui/PaginationControls';
 
 // Funcion principal 
 
@@ -20,7 +21,12 @@ export default function EmployeesPage() {
     setRoleFilter,
     isLoading,
     error,
-    filteredEmployees
+    paginatedEmployees,
+    currentPage,
+    totalPages,
+    pageSize,
+    setCurrentPage,
+    setPageSize,
   } = useEmployeeManager();
 
 if (!user || user.rol !== 'admin') {
@@ -52,12 +58,21 @@ return (
         )}
 
         {!isLoading && !error && (
-          <DataTable 
-            data={filteredEmployees} 
-            columns={getEmployeeColumns()} 
-            keyExtractor={(row) => row.id}
-            emptyMessage="No se encontraron empleados que coincidan con los filtros."
-          />
+          <>
+            <DataTable 
+              data={paginatedEmployees} 
+              columns={getEmployeeColumns()} 
+              keyExtractor={(row) => row.id}
+              emptyMessage="No se encontraron empleados que coincidan con los filtros."
+            />
+            <PaginationControls
+              currentPage={currentPage}
+              totalPages={totalPages}
+              pageSize={pageSize}
+              onPageChange={setCurrentPage}
+              onPageSizeChange={setPageSize}
+            />
+          </>
         )}
 
       </div>
