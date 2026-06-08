@@ -10,6 +10,7 @@ import LoadingOverlay from '@/components/LoadingOverlay';
 import dynamic from 'next/dynamic';
 import { FaRoute, FaMagic, FaTruck, FaMapMarkerAlt, FaWarehouse, FaSync, FaUserTie } from 'react-icons/fa';
 import './RoutesPage.css';
+import { AccessDenied } from '@/components/ui/AccessDenied';
 
 const MapHojaRuta = dynamic(() => import('@/components/MapHojaRuta'), { 
   ssr: false,
@@ -40,8 +41,9 @@ export default function RoutesPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const isSupervisor = user?.rol === 'admin' || user?.rol === 'supervisor';
-  const isDriver = user?.rol === 'repartidor' || user?.rol === 'operador';
+  const isSupervisor = user?.rol === 'supervisor';
+  const isDriver = user?.rol === 'repartidor'
+  const isAuthorized = isSupervisor || isDriver
 
   const fetchData = useCallback(async () => {
     setIsLoading(true);
@@ -175,6 +177,14 @@ export default function RoutesPage() {
     ];
   }, [route]);
 
+  if (!isAuthorized) {
+    return (
+      <DashboardLayout>
+        <AccessDenied mensaje="Solo el personal logístico y repartidores tienen acceso al Centro de Control Logístico." />
+      </DashboardLayout>
+    );
+  }
+
   return (
     <DashboardLayout>
       <div className="routes-container p-4 md:p-6">
@@ -205,7 +215,7 @@ export default function RoutesPage() {
               {/* Filtro de Repartidor */}
               <div className="card bg-gradient-to-br from-gray-900 to-gray-800 text-white border-none shadow-xl">
                 <div className="card-header border-gray-700 bg-transparent">
-                  <h2 className="text-white flex items-center gap-2"><FaUserTie className="text-blue-400" /> Monitoreo por Repartidor</h2>
+                  <h2 className="text-black flex items-center gap-2"><FaUserTie className="text-blue-400" /> Monitoreo por Repartidor</h2>
                 </div>
                 <div className="card-body">
                   <select 
@@ -335,7 +345,7 @@ export default function RoutesPage() {
                 </>
               ) : (
                 <div className="card p-20 text-center text-gray-400 bg-gray-50 border-dashed border-2 border-gray-200">
-                  <FaRoute className="text-6xl mx-auto mb-4 opacity-10" />
+                  <FaRoute className="text-6xl mx-auto mb-4 opacity-75" />
                   <h3 className="text-xl font-medium text-gray-500">
                     {selectedDriverId ? 'Este repartidor no tiene entregas activas' : 'Sin recorrido asignado'}
                   </h3>

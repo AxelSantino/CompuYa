@@ -74,7 +74,7 @@ export default function NotificationsPage() {
     {
       header: 'Resultado',
       accessor: (row) => {
-        const isSuccess = row.resultado.toLowerCase() === 'exito';
+        const isSuccess = row.resultado.toLowerCase() === 'exitoso';
         return (
           <div className="flex items-center gap-2">
             <span className={`px-2 py-1 rounded-full text-xs font-bold ${

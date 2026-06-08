@@ -16,13 +16,11 @@ export const useClientManager = () => {
 
         const fetchClients = async () => {
             try {
-                // Obtenemos todos los usuarios del sistema
-                const allUsers = await userService.getUsers();
+                // Obtenemos todos los clientes del sistema
+                const clientsData = await userService.getClients();
                 
                 if (isMounted) {
-                    // Filtramos puramente a nivel frontend (Deuda técnica documentada)
-                    const onlyClients = allUsers.filter(user => user.tipo === 'empresa');
-                    setClients(onlyClients);
+                    setClients(clientsData);
                 }
             } catch (err) {
                 if (isMounted) {
