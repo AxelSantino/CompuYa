@@ -10,6 +10,7 @@ import LoadingOverlay from '@/components/LoadingOverlay';
 import dynamic from 'next/dynamic';
 import { FaRoute, FaMagic, FaTruck, FaMapMarkerAlt, FaWarehouse, FaSync, FaUserTie } from 'react-icons/fa';
 import './RoutesPage.css';
+import { AccessDenied } from '@/components/ui/AccessDenied';
 
 const MapHojaRuta = dynamic(() => import('@/components/MapHojaRuta'), { 
   ssr: false,
@@ -40,8 +41,9 @@ export default function RoutesPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const isSupervisor = user?.rol === 'admin' || user?.rol === 'supervisor';
-  const isDriver = user?.rol === 'repartidor' || user?.rol === 'operador';
+  const isSupervisor = user?.rol === 'supervisor';
+  const isDriver = user?.rol === 'repartidor'
+  const isAuthorized = isSupervisor || isDriver
 
   const fetchData = useCallback(async () => {
     setIsLoading(true);
@@ -174,6 +176,14 @@ export default function RoutesPage() {
       }))
     ];
   }, [route]);
+
+  if (!isAuthorized) {
+    return (
+      <DashboardLayout>
+        <AccessDenied mensaje="Solo el personal logístico y repartidores tienen acceso al Centro de Control Logístico." />
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout>
