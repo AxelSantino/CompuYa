@@ -4,13 +4,14 @@ import React from 'react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import LoadingOverlay from '@/components/LoadingOverlay';
 import { Button } from '@/components/ui/Button';
-import { FaArrowLeft, FaShippingFast, FaWarehouse, FaTimesCircle, FaCheckCircle, } from 'react-icons/fa';
+import { FaArrowLeft, FaTimesCircle } from 'react-icons/fa';
 import './ShipmentDetailPage.css';
 import { useShipmentDetail } from './hooks/useShipmentDetail';
 import { ShipmentHeader } from './components/ShipmentHeader';
 import { RecipientInfoCard } from './components/RecipientInfoCard';
 import { ShipmentInfoCard } from './components/ShipmentInfoCard';
 import { AuditTimeline } from './components/AuditTimeline';
+import { CancelShipmentModal } from './components/CancelShipmentModal';
 
 const DetailItem = React.memo(({ icon, label, value }: { icon?: React.ReactNode, label: string, value: React.ReactNode }) => (
   <div>
@@ -29,7 +30,7 @@ export default function ShipmentDetailPage() {
   const {
     user, router, shipment, history, isLoading, isProcessing, error,
     isEditing, isSaving, formData, canEdit, handleCancel, handleEditClick,
-    handleCancelEdit, handleChange, handleSubmit
+    handleCancelEdit, handleChange, handleSubmit, isCancelModalOpen, closeCancelModal, confirmCancellation
   } = useShipmentDetail();
 
   const isBusy = isLoading || isProcessing || isSaving;
@@ -99,6 +100,13 @@ export default function ShipmentDetailPage() {
         )}
 
         {error && !isLoading && <div className="text-center py-10 text-red-500 font-medium">{error}</div>}
+
+        <CancelShipmentModal 
+          isOpen={isCancelModalOpen}
+          onClose={closeCancelModal}
+          onConfirm={confirmCancellation}
+          isProcessing={isProcessing}
+        />
       </div>
     </DashboardLayout>
   );

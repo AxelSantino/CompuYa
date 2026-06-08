@@ -18,6 +18,8 @@ export default function LoginPage() {
     if (isAuthenticated && user) {
       if (user.rol === 'repartidor') {
         router.push('/dashboard/routes');
+      } else if (user.rol === 'admin') {
+        router.push('/dashboard/metrics');
       } else {
         router.push('/dashboard');
       }

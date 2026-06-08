@@ -3,6 +3,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import shipmentService from '@/services/shipmentService';
 import { Envio, HistorialEnvio } from '@/types/envio';
+import toast from 'react-hot-toast';
 
 export const useShipmentDetail = () => {
     const router = useRouter();
@@ -24,6 +25,7 @@ export const useShipmentDetail = () => {
     // Estados de edicion
     const [isEditing, setIsEditing] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
+    const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
     const [formData, setFormData] = useState({ 
         descripcion: '', 
         tipo_envio: '', 
@@ -67,19 +69,38 @@ export const useShipmentDetail = () => {
         return () => { isMounted = false; };
     }, [fetchData]);
 
-    // Acciones
-    const handleCancel = async () => {
-        if (!id || !window.confirm('¿Estás seguro de que deseas cancelar este envío?')) return;
+    // Abrir modal tras llamado de cancelacion
+    const handleCancel = () => {
+        setIsCancelModalOpen(true);
+    };
+
+    // Cerrar el modal
+    const closeCancelModal = () => {
+        setIsCancelModalOpen(false);
+    };
+
+    // Ejecuta la cancelacion con el motivo
+    const confirmCancellation = async (motivo: string) => {
+        if (!shipment) return;
         
         setIsProcessing(true);
         try {
-            await shipmentService.cancelShipment(id as string);
-            await fetchData(); // Refrescar los datos tras cancelar
-            alert('Envío cancelado con éxito.');
+            await shipmentService.cancelShipment(shipment.tracking_id, motivo);
+            await fetchData();
+            setIsCancelModalOpen(false);
+            toast.success('El envío ha sido cancelado exitosamente');
         } catch (err: unknown) {
-            // Reemplazamos el "any" por un casteo seguro
             const errorData = err as { response?: { data?: { detail?: string } } };
-            alert(errorData.response?.data?.detail || 'Error al cancelar el envío.');
+            const detail = errorData.response?.data?.detail;
+
+            if (Array.isArray(detail)) {
+                const mensajeError = detail.map(d => `'${d.loc[d.loc.length - 1]}': ${d.msg}`).join(', ');
+                toast.error(`Error de validación: ${mensajeError}`);
+            } else if (typeof detail === 'string') {
+                toast.error(detail);
+            } else {
+                toast.error('Ocurrió un error al cancelar el envío.');
+            }
         } finally {
             setIsProcessing(false);
         }
@@ -120,7 +141,6 @@ export const useShipmentDetail = () => {
             await fetchData();
             setIsEditing(false);
         } catch (err: unknown) {
-            // Reemplazamos el "any" aquí también
             const errorResponse = err as { response?: { data?: { detail?: string } } };
             setError(errorResponse.response?.data?.detail || 'Error al actualizar el envío.');
         } finally { 
@@ -144,6 +164,9 @@ export const useShipmentDetail = () => {
         handleEditClick,
         handleCancelEdit,
         handleChange,
-        handleSubmit
+        handleSubmit,
+        isCancelModalOpen,
+        closeCancelModal,
+        confirmCancellation
     };
 };

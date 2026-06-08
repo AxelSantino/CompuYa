@@ -13,7 +13,6 @@ export const useShipmentForm = () => {
         descripcion: '',
         tipo_envio: 'normal',
         restriccion: 'ninguna',
-        fecha_limite: '',
     });
 
     const [isLoading, setIsLoading] = useState(false);
@@ -21,6 +20,8 @@ export const useShipmentForm = () => {
 
     const [isSearchingRecipient, setIsSearchingRecipient] = useState(false);
     const [recipientNotFound, setRecipientNotFound] = useState(false);
+
+    const [createdTrackingId, setCreatedTrackingId] = useState<string | null>(null);
 
     // Controlador de cambios (Memorizado con useCallback para mejor performance)
     const handleChange = useCallback((e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -40,8 +41,8 @@ export const useShipmentForm = () => {
 
         try {
             // Se manda el DTO directamente, ya que ahora formData tiene el tipo EnvioCrear
-            await shipmentService.createShipment(formData);
-            router.push('/dashboard');
+            const newShipment = await shipmentService.createShipment(formData);
+            setCreatedTrackingId(newShipment.tracking_id);
         } catch (err: unknown) {
             const errorResponse = err as { response?: { data?: { detail?: string | any[] } } };
             let errorMessage = 'Error al crear el envío. Por favor, revisa los datos e intenta de nuevo.';
@@ -98,6 +99,7 @@ export const useShipmentForm = () => {
         handleRazonSocialBlur,
         isSearchingRecipient,
         recipientNotFound,
+        createdTrackingId
     };
 
 };

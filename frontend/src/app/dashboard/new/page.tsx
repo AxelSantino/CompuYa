@@ -7,12 +7,33 @@ import { useRouter } from 'next/navigation';
 import { useShipmentForm } from '@/app/dashboard/new/hooks/useShipmentForm';
 import { RecipientSection } from './components/RecipientSection';
 import { ComponentDetailsSection } from './components/ComponentDetailsSection';
+import { SuccessFeedback } from '@/components/ui/SuccessFeedback';
 
 const NewShipmentPage = () => {
   const router = useRouter();
     
   // El hook personalizado maneja toda la lógica del formulario, incluyendo estado, cambios y envío
-  const { formData, handleChange, handleSubmit, isLoading, error, handleRazonSocialBlur, isSearchingRecipient, recipientNotFound } = useShipmentForm();
+  const { formData, handleChange, handleSubmit, isLoading, error, handleRazonSocialBlur, isSearchingRecipient, recipientNotFound, createdTrackingId } = useShipmentForm();
+
+  if (createdTrackingId) {
+    return (
+      <DashboardLayout>
+        <SuccessFeedback 
+          title="¡Envío Creado Exitosamente!"
+          message={
+            <span>
+              El envío ha sido registrado en el sistema y se le asignó el siguiente tracking ID:<br/><br/>
+              <strong className="text-xl text-blue-700 tracking-wide bg-blue-50 px-3 py-1 rounded-md border border-blue-100">
+                {createdTrackingId}
+              </strong>
+            </span>
+          }
+          buttonText="Volver a la Gestión de Envíos"
+          onButtonClick={() => router.push('/dashboard')}
+        />
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout>

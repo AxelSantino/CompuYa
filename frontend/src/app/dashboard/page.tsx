@@ -24,7 +24,7 @@ const ShipmentsPage = () => {
   } = useShipmentList();
 
   // 2. Control de seguridad visual (mientras el Hook redirige si hace falta)
-  if (!user || user.rol === 'repartidor') {
+  if (!user || user.rol === 'repartidor' || user.rol === 'admin') {
     return (
       <DashboardLayout>
         <LoadingOverlay isLoading={true} text="Verificando permisos..." />

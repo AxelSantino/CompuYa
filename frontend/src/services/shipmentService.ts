@@ -47,8 +47,8 @@ const shipmentService = {
     return response.data;
   },
 
-  cancelShipment: async (id: string): Promise<Envio> => {
-    const response = await api.post(`/envios/${id}/cancelar`);
+  cancelShipment: async (tracking_id: string, motivo: string): Promise<Envio> => {
+    const response = await api.post(`/envios/${tracking_id}/cancelar`, {motivo});
     return response.data;
   },
 

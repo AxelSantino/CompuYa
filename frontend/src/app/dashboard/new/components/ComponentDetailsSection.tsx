@@ -51,24 +51,6 @@ export const ComponentDetailsSection = ({ formData, handleChange, isLoading }: S
                         </Select>
                         <p className="text-xs text-gray-400 mt-2">Requerimientos especiales para el transporte.</p>
                     </div>
-                    <div>
-                        <label htmlFor="fecha_limite" className="block text-sm font-medium text-gray-700 mb-2">
-                            Fecha límite de entrega <span className="text-red-500">*</span>
-                        </label>
-                        <Input
-                            type="date"
-                            id="fecha_limite"
-                            name="fecha_limite"
-                            value={formData.fecha_limite}
-                            onChange={handleChange}
-                            required
-                            disabled={isLoading}
-                            className="w-full"
-                            /* Opcional: min={new Date().toISOString().split('T')[0]} 
-                               para evitar que elijan fechas en el pasado */
-                        />
-                        <p className="text-xs text-gray-400 mt-2">Plazo máximo de entrega.</p>
-                    </div>
                 </div>
             </div>
         </div>
