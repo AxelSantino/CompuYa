@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { BiLogOut } from 'react-icons/bi';
 
 interface SidebarProps {
   user: any; 
@@ -76,7 +77,7 @@ export const Sidebar = ({ user, userName, pathname, filteredNavItems, handleLogo
           onClick={handleLogout} 
           className="flex items-center p-3 rounded-lg hover:bg-red-900/20 hover:text-red-300 text-gray-300 transition-all duration-200 w-full text-left group"
         >
-          <div className="w-5 h-5 bg-gray-700 rounded mr-3 group-hover:bg-red-400/30 transition-colors"></div>
+          <BiLogOut className="w-5 h-5 mr-3 flex-shrink-0 text-gray-400 group-hover:text-red-400 transition-colors" />
           <span className="font-medium text-sm">Cerrar Sesión</span>
         </button>
       </div>
