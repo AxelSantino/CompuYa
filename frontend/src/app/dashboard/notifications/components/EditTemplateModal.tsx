@@ -63,7 +63,7 @@ export const EditTemplateModal = ({ isOpen, onClose, onSave, isUpdating, templat
                 disabled={isUpdating}
                 value={formData.cuerpo}
                 onChange={(e) => setFormData({ ...formData, cuerpo: e.target.value })}
-                className="w-full rounded-md border border-gray-300 p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                className="w-full rounded-md border border-gray-300 bg-white p-3 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
               />
             </div>
 
