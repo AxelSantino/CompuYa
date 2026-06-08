@@ -137,6 +137,7 @@ class EnvioRespuesta(EnvioBase):
     estado: EstadoEnvio
     prioridad: PrioridadEnvio
     fecha_creacion: datetime
+    fecha_limite: Optional[datetime] = None
     creador: UsuarioSimple
     destinatario: UsuarioRespuesta 
     sucursal: Optional[SucursalRespuesta] = None
