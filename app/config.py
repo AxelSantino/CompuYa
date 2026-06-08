@@ -4,14 +4,18 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import List, Optional
 
 def get_env_path():
+    # Si estamos dentro del ejecutable de PyInstaller
     if getattr(sys, 'frozen', False):
-        # Directorio del .exe
-        base_path = os.path.dirname(sys.executable)
+        # Primero intentamos buscar en la carpeta temporal interna (donde empaquetaremos el .env)
+        internal_path = os.path.join(sys._MEIPASS, ".env")
+        if os.path.exists(internal_path):
+            return internal_path
+        
+        # Si no está adentro, buscamos afuera al lado del .exe (por si el admin quiere sobrescribir algo)
+        return os.path.join(os.path.dirname(sys.executable), ".env")
     else:
-        # Directorio de desarrollo
-        base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    
-    return os.path.join(base_path, ".env")
+        # Modo desarrollo
+        return os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), ".env")
 
 class Settings(BaseSettings):
     CORS_ORIGINS: str = "http://localhost:5173,http://localhost:3000,tauri://localhost,http://tauri.localhost"
