@@ -164,24 +164,24 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                     </div>
                   </form>
                 ) : (
-                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-in fade-in duration-300">
+                  <div className="space-y-8 animate-in fade-in duration-300">
                     
-                    <div className="lg:col-span-2 space-y-4">
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <DetailItem icon={<FaBuilding />} label="Razón Social" value={client.perfil_empresa?.razon_social} />
-                        <DetailItem icon={<FaHashtag />} label="CUIT Fiscal" value={client.perfil_empresa?.cuit} />
-                        <DetailItem icon={<FaEnvelope />} label="Correo de Contacto" value={client.email} />
-                        <DetailItem icon={<FaCalendarAlt />} label="Fecha de Alta" value={new Date(client.fecha || '').toLocaleDateString('es-AR')} />
-                        <DetailItem icon={<FaIdCard />} label="Código Postal" value={client.perfil_empresa?.cod_postal || 'No asignado'} />
-                        <DetailItem icon={<FaMapMarkerAlt />} label="Dirección Normalizada" value={client.perfil_empresa?.direccion_normalizada || 'No especificada'} />
-                      </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                      <DetailItem icon={<FaBuilding />} label="Razón Social" value={client.perfil_empresa?.razon_social} />
+                      <DetailItem icon={<FaHashtag />} label="CUIT Fiscal" value={client.perfil_empresa?.cuit} />
+                      <DetailItem icon={<FaEnvelope />} label="Correo electrónico" value={client.email} />
+                      <DetailItem icon={<FaCalendarAlt />} label="Fecha de Alta" value={new Date(client.fecha || '').toLocaleDateString('es-AR')} />
+                      <DetailItem icon={<FaIdCard />} label="Código Postal" value={client.perfil_empresa?.cod_postal || 'No asignado'} />
+                      <DetailItem icon={<FaMapMarkerAlt />} label="Dirección" value={client.perfil_empresa?.direccion_normalizada || 'No especificada'} />
                     </div>
-                    <div className="flex flex-col h-full">
-                      <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-2">
-                        <FaMapMarkerAlt className="text-green-500" /> Vista de Ubicación
+
+                    <div className="flex flex-col pt-2">
+                      <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3 flex items-center gap-2">
+                        <FaMapMarkerAlt className="text-green-500" /> Ubicación en el mapa
                       </h4>
+                      
                       {client.perfil_empresa?.latitud && client.perfil_empresa?.longitud ? (
-                        <div className="flex-1 rounded-lg overflow-hidden border border-gray-200 shadow-sm min-h-[300px]">
+                        <div className="w-full h-[450px] rounded-lg overflow-hidden border border-gray-200 shadow-sm">
                           <DynamicMapViewer 
                             latitud={client.perfil_empresa.latitud}
                             longitud={client.perfil_empresa.longitud}
@@ -189,8 +189,10 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                           />
                         </div>
                       ) : (
-                        <div className="flex-1 min-h-[300px] bg-gray-50 rounded-lg border border-dashed border-gray-300 flex items-center justify-center text-gray-400 p-4 text-center text-sm">
-                          Esta empresa no cuenta con coordenadas de geolocalización registradas.
+                        /* Si no hay mapa, se achicael alto del mensaje vacío para que no ocupe tanto espacio */
+                        <div className="w-full h-[200px] bg-gray-50 rounded-lg border border-dashed border-gray-300 flex flex-col items-center justify-center text-gray-400 p-4 text-center text-sm transition-all">
+                          <FaMapMarkerAlt className="text-gray-300 text-3xl mb-2" />
+                          <p>Esta empresa no cuenta con coordenadas de geolocalización registradas.</p>
                         </div>
                       )}
                     </div>

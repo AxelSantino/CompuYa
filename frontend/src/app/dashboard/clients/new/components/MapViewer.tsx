@@ -70,7 +70,7 @@ export default function MapViewer({ latitud, longitud, direccionNormalizada }: M
   }, [latitud, longitud, direccionNormalizada]);
 
   return (
-    <div className="w-full h-[300px] rounded-lg overflow-hidden border border-gray-200 shadow-inner relative z-0">
+    <div className="w-full h-full relative z-0">
       <div ref={mapContainerRef} className="w-full h-full" />
     </div>
   );
