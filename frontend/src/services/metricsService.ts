@@ -1,15 +1,22 @@
-import api from './api';
+import api from './api'; // Asumiendo que usás una instancia configurada de Axios o Fetch
+import { IncidentReport, DateFilterParams } from '@/types/metrics';
 
 const metricsService = {
-  getShipmentVolumeReport: async (): Promise<[]> => {
-    const response = await api.get('/reportes/volumen');
-    return response.data;
-  },
+  getIncidents: async (filters?: DateFilterParams): Promise<IncidentReport> => {
+    const params = new URLSearchParams();
 
-  getIncidentsReport: async (): Promise<[]> => {
-    const response = await api.get('/reportes/volumen');
+    if (filters?.fecha_inicio) {
+      params.append('fecha_inicio', filters.fecha_inicio);
+    }
+    if (filters?.fecha_fin) {
+      params.append('fecha_fin', filters.fecha_fin);
+    }
+
+    const queryString = params.toString() ? `?${params.toString()}` : '';
+    
+    const response = await api.get(`/reportes/incidencias${queryString}`);
     return response.data;
-  },
+  }
 };
 
 export default metricsService;

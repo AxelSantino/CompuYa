@@ -6,14 +6,23 @@ import withAuth from '@/components/auth/withAuth';
 import { useAuth } from '@/contexts/AuthContext';
 import shipmentService from '@/services/shipmentService';
 import { Envio } from '@/types/envio';
-import ShipmentMetrics from '@/components/metrics/ShipmentMetrics';
+import ShipmentMetrics from '@/app/dashboard/metrics/ShipmentMetrics';
 import LoadingOverlay from '@/components/LoadingOverlay';
+import { DateFilterParams } from '@/types/metrics';
 
 const MetricsPage = () => {
   const { user } = useAuth();
   const [shipments, setShipments] = useState<Envio[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const [fechaInicio, setFechaInicio] = useState('2026-05-01');
+  const [fechaFin, setFechaFin] = useState(new Date().toISOString().split('T')[0]);
+
+  const dateFilters: DateFilterParams = {
+    fecha_inicio: fechaInicio,
+    fecha_fin: fechaFin,
+  };
 
   useEffect(() => {
     let isMounted = true;
@@ -29,9 +38,11 @@ const MetricsPage = () => {
       }
 
       try {
+        setIsLoading(true);
         const data = await shipmentService.getShipments();
         if (isMounted) {
           setShipments(data);
+          setError(null);
         }
       } catch {
         if (isMounted) {
@@ -49,7 +60,7 @@ const MetricsPage = () => {
     return () => {
       isMounted = false;
     };
-  }, [user]);
+  }, [user, fechaInicio, fechaFin]);
 
   return (
     <DashboardLayout>
@@ -59,9 +70,32 @@ const MetricsPage = () => {
           <div>
             <h2 className="text-2xl font-bold mb-1">Métricas de Envíos</h2>
             <p className="text-gray-600">
-              Indicadores de prioridad y estado para los envíos registrados en el sistema.
+              Indicadores de prioridad, estado e incidencias operativas.
             </p>
           </div>
+        </div>
+
+        {/* Panel de Filtros */}
+        <div className="flex items-center gap-3 bg-gray-50 p-3 rounded-lg border border-gray-200 shadow-sm">
+            <div className="flex flex-col">
+              <label className="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Desde</label>
+              <input 
+                type="date" 
+                value={fechaInicio} 
+                onChange={(e) => setFechaInicio(e.target.value)}
+                className="text-sm border border-gray-300 rounded-md px-3 py-1.5 focus:ring-orange-500 focus:border-orange-500 outline-none text-gray-700"
+              />
+            </div>
+            <span className="text-gray-300 mt-4 font-bold">-</span>
+            <div className="flex flex-col">
+              <label className="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Hasta</label>
+              <input 
+                type="date" 
+                value={fechaFin} 
+                onChange={(e) => setFechaFin(e.target.value)}
+                className="text-sm border border-gray-300 rounded-md px-3 py-1.5 focus:ring-orange-500 focus:border-orange-500 outline-none text-gray-700"
+              />
+            </div>
         </div>
 
         {user?.rol !== 'admin' ? (
@@ -72,7 +106,7 @@ const MetricsPage = () => {
         ) : error ? (
           <div className="py-8 text-center text-red-500">{error}</div>
         ) : (
-          <ShipmentMetrics shipments={shipments} isLoading={isLoading} />
+          <ShipmentMetrics shipments={shipments} isLoading={isLoading} filters={dateFilters} />
         )}
       </div>
     </DashboardLayout>
