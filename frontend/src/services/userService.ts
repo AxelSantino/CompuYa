@@ -8,6 +8,11 @@ const userService = {
         return response.data;
     },
 
+    getUserById: async (id: number): Promise<Usuario> => {
+        const response = await api.get<Usuario>(`/usuarios/${id}`);
+        return response.data;
+    },
+
     getEmployees: async(): Promise<Usuario[]> => {
         const response = await api.get<Usuario[]>('/usuarios/roles/empleados');
         return response.data;
@@ -33,7 +38,7 @@ const userService = {
         return response.data;
     },
 
-    updateEmployee: async (id: number, data: any): Promise<Usuario> => {
+    updateUser: async (id: number, data: any): Promise<Usuario> => {
         const response = await api.put<Usuario>(`/usuarios/${id}`, data);
         return response.data;
     }

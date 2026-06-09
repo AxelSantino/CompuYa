@@ -6,11 +6,18 @@ import { DireccionNormalizada } from '@/services/usigService';
 interface AddressAutocompleteProps {
   onAddressSelect: (direccion: DireccionNormalizada) => void;
   disabled?: boolean;
+  initialValue?: string;
 }
 
-export const AddressAutocomplete = ({ onAddressSelect, disabled = false }: AddressAutocompleteProps) => {
-  const [inputValue, setInputValue] = useState('');
+export const AddressAutocomplete = ({ onAddressSelect, disabled = false, initialValue = '' }: AddressAutocompleteProps) => {
+  const [inputValue, setInputValue] = useState(initialValue);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  
+  useEffect(() => {
+    if (initialValue) {
+      setInputValue(initialValue);
+    }
+  }, [initialValue]);
   
   // Referencia para detectar clics fuera del componente
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -23,6 +30,7 @@ export const AddressAutocomplete = ({ onAddressSelect, disabled = false }: Addre
     selectOption
   } = useUSIG();
 
+  
   // Efecto para cerrar el dropdown si el usuario hace clic en otro lado de la pantalla
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

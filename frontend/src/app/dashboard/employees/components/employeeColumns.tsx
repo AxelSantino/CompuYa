@@ -2,7 +2,7 @@ import { Column } from '../../users/components/DataTable';
 import { Usuario } from '@/types/usuario';
 import Link from 'next/link';
 
-const getRoleBadgeClasses = (rol: string) => {
+export const getRoleBadgeClasses = (rol: string) => {
   switch (rol.toLowerCase()) {
     case 'admin':
       return 'bg-purple-100 text-purple-800';
@@ -49,7 +49,7 @@ export const getEmployeeColumns = (): Column<Usuario>[] => [
     header: 'Acciones', 
     accessor: (row) => (
       <Link 
-        href={`/dashboard/employees/${row.id}/edit`}
+        href={`/dashboard/employees/${row.id}`}
         className="text-orange-600 hover:text-orange-800 font-bold transition-colors cursor-pointer"
       >
         Ver detalle

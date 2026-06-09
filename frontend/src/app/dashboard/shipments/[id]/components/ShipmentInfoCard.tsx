@@ -1,5 +1,10 @@
 import { Select } from '@/components/ui/Select';
-import { FaBox, FaEdit, FaCalendar, FaUser, FaShippingFast, FaExclamationCircle, FaCheckCircle, FaFileAlt } from 'react-icons/fa';
+import { FaBox, FaEdit, FaCalendar, FaUser, FaShippingFast, FaExclamationCircle, FaCheckCircle, FaFileAlt, FaClock } from 'react-icons/fa';
+
+const capitalizeFirst = (text: string | null | undefined) => {
+    if (!text) return 'No especificado';
+    return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+};
 
 export const DetailItem = ({ icon, label, value }: { icon?: React.ReactNode, label: string, value: React.ReactNode }) => (
     <div>
@@ -16,10 +21,17 @@ export const ShipmentInfoCard = ({ shipment, isEditing, formData, handleChange, 
     const formatCreatorName = () => {
         const perfil = shipment.creador?.perfil_empleado;
         if (perfil?.nombre) {
-            return `${perfil.nombre} ${perfil.apellido || ''}`.trim();
+            return capitalizeFirst(perfil.nombre) + ' ' + capitalizeFirst(perfil.apellido);
         }
         return shipment.creador.email;
     };
+
+    const deadlineDateFormated = shipment.fecha_limite
+        ? new Date(shipment.fecha_limite).toLocaleString('es-AR', {
+            dateStyle: 'short',
+            timeStyle: 'short'
+          })
+        : <span className="text-gray-500">No disponible</span>;
 
     return (
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
@@ -61,9 +73,10 @@ export const ShipmentInfoCard = ({ shipment, isEditing, formData, handleChange, 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <DetailItem icon={<FaCalendar />} label="Fecha de Creación" value={new Date(shipment.fecha_creacion).toLocaleString()} />
                         <DetailItem icon={<FaUser />} label="Creado por" value={formatCreatorName()} />
-                        <DetailItem icon={<FaShippingFast />} label="Tipo de Envío" value={shipment.tipo_envio} />
-                        <DetailItem icon={<FaExclamationCircle />} label="Manejo Especial" value={shipment.restriccion} />
-                        <DetailItem icon={<FaCheckCircle />} label="Prioridad Asignada" value={<span className="capitalize">{shipment.prioridad}</span>} />
+                        <DetailItem icon={<FaShippingFast />} label="Tipo de Envío" value={capitalizeFirst(shipment.tipo_envio)} />
+                        <DetailItem icon={<FaExclamationCircle />} label="Manejo Especial" value={capitalizeFirst(shipment.restriccion)} />
+                        <DetailItem icon={<FaCheckCircle />} label="Prioridad Asignada" value={capitalizeFirst(shipment.prioridad)} />
+                        <DetailItem icon={<FaClock />} label="Límite de Entrega" value={deadlineDateFormated}/>
                         <div className="md:col-span-2">
                             <DetailItem icon={<FaFileAlt />} label="Descripción" value={shipment.descripcion} />
                         </div>

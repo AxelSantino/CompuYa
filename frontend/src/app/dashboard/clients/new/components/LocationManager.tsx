@@ -11,8 +11,8 @@ import { Input } from '@/components/ui/Input';
 const DynamicMapViewer = dynamic(() => import('./MapViewer'), {
   ssr: false,
   loading: () => (
-    <div className="w-full h-[300px] bg-gray-50 rounded-lg border border-gray-200 flex items-center justify-center">
-      <span className="text-gray-400 font-medium animate-pulse">Cargando visor de mapas...</span>
+    <div className="w-full h-full bg-gray-50 flex items-center justify-center">
+      <span className="text-gray-400 font-medium animate-pulse">Cargando visor...</span>
     </div>
   )
 });
@@ -22,6 +22,9 @@ interface LocationManagerProps {
   codPostal: string
   onCodPostalChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   isLoading?: boolean;
+  initialAddress?: string;
+  initialLat?: number;
+  initialLng?: number;
 }
 
 export const LocationManager = ({ 
@@ -29,10 +32,23 @@ export const LocationManager = ({
   codPostal,
   onCodPostalChange,
   isLoading = false,
+  initialAddress = '',
+  initialLat = 0,
+  initialLng = 0
 
 }: LocationManagerProps) => {
   // Estado local para saber si ya hay una ubicacion lista para dibujar
-  const [selectedLocation, setSelectedLocation] = useState<DireccionNormalizada | null>(null);
+  const [selectedLocation, setSelectedLocation] = useState<DireccionNormalizada | null>(() => {
+    if (initialAddress) {
+      return {
+        direccion: initialAddress,
+        coordenadas: (initialLat !== 0 && initialLng !== 0) 
+          ? { x: initialLng.toString(), y: initialLat.toString() } 
+          : undefined
+      };
+    }
+    return null;
+  });
 
   const handleAddressSelect = (direccion: DireccionNormalizada) => {
     setSelectedLocation(direccion);
@@ -58,7 +74,8 @@ export const LocationManager = ({
           <div className="md:col-span-2">
             <AddressAutocomplete 
               onAddressSelect={handleAddressSelect} 
-              disabled={isLoading} 
+              disabled={isLoading}
+              initialValue={initialAddress} 
             />
           </div>
           
@@ -84,19 +101,18 @@ export const LocationManager = ({
             <p className="block text-sm font-medium text-gray-700 mb-2">
               Verificación en Mapa
             </p>
-            <DynamicMapViewer 
-              // USIG devuelve strings ("-34.123"), Leaflet necesita números (-34.123)
-              latitud={parseFloat(selectedLocation.coordenadas.y)} 
-              longitud={parseFloat(selectedLocation.coordenadas.x)}
-              direccionNormalizada={selectedLocation.direccion}
-            />
+            {/* El padre dicta la altura y los bordes */}
+            <div className="h-[450px] w-full rounded-lg overflow-hidden border border-gray-200 shadow-inner">
+              <DynamicMapViewer 
+                latitud={parseFloat(selectedLocation.coordenadas.y)} 
+                longitud={parseFloat(selectedLocation.coordenadas.x)}
+                direccionNormalizada={selectedLocation.direccion}
+              />
+            </div>
           </div>
         ) : (
-          <div className="w-full h-[150px] md:h-[300px] bg-gray-50 rounded-lg border border-dashed border-gray-300 flex flex-col items-center justify-center text-gray-400 transition-all">
-            <p className="text-sm text-center px-4">
-              El mapa aparecerá una vez que <br className="hidden md:block" />
-              se seleccione una dirección válida.
-            </p>
+          <div className="w-full h-[150px] md:h-[450px] bg-gray-50 rounded-lg border border-dashed border-gray-300 flex flex-col items-center justify-center text-gray-400 transition-all">
+            {/* ... texto vacío ... */}
           </div>
         )}
       </div>
