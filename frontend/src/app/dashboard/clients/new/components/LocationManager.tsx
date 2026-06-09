@@ -74,7 +74,8 @@ export const LocationManager = ({
           <div className="md:col-span-2">
             <AddressAutocomplete 
               onAddressSelect={handleAddressSelect} 
-              disabled={isLoading} 
+              disabled={isLoading}
+              initialValue={initialAddress} 
             />
           </div>
           
