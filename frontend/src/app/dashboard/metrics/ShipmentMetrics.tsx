@@ -51,7 +51,7 @@ export default function ShipmentMetrics({ shipments, isLoading = false, filters 
         <div>
           <br></br>
           <h3 className="text-lg font-semibold text-gray-900">Resumen de Operaciones</h3>
-          <p className="text-sm text-gray-500">Total general: {metrics.total} envíos</p>
+          <p className="text-sm text-gray-500">Total de envíos: {metrics.total}</p>
         </div>
       </div>
 
