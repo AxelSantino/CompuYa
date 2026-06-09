@@ -19,6 +19,7 @@ export interface Envio {
   estado: EnvioStatus;
   prioridad: EnvioPrioridad;
   fecha_creacion: string;
+  fecha_limite: string | null;
   descripcion: string;
   tipo_envio: EnvioType;
   restriccion: EnvioRestriction;
