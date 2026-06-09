@@ -1,9 +1,7 @@
 'use client';
 
-import React from 'react';
 import { Envio } from '@/types/envio';
 import { DateFilterParams } from '@/types/metrics';
-import { FaBox, FaTruck, FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
 
 // Capas lógicas (Sincrónica y Asincrónica)
 import { useShipmentMetrics } from '@/app/dashboard/metrics/hooks/useShipmentMetrics';
@@ -11,7 +9,6 @@ import { useIncidentsMetrics } from '@/app/dashboard/metrics/hooks/useIncidentsM
 
 // Componentes genéricos reutilizables de UI
 import { PieChart } from '@/components/ui/PieChart';
-import { MetricCard, MetricCardProps } from '@/components/ui/MetricCard';
 
 interface ShipmentMetricsProps {
   shipments: Envio[];
@@ -32,61 +29,6 @@ export default function ShipmentMetrics({ shipments, isLoading = false, filters 
   } = useIncidentsMetrics(filters);
 
   // Configuración de las tarjetas de resumen
-  const metricCards: MetricCardProps[] = [
-    {
-      label: 'Prioridad Alta',
-      value: metrics.alta,
-      icon: <FaBox className="text-red-500" size={24} />,
-      bgColor: 'bg-red-50',
-      textColor: 'text-red-700',
-      percentage: metrics.total > 0 ? Math.round((metrics.alta / metrics.total) * 100) : 0,
-    },
-    {
-      label: 'Prioridad Media',
-      value: metrics.media,
-      icon: <FaBox className="text-blue-500" size={24} />,
-      bgColor: 'bg-blue-50',
-      textColor: 'text-blue-700',
-      percentage: metrics.total > 0 ? Math.round((metrics.media / metrics.total) * 100) : 0,
-    },
-    {
-      label: 'Prioridad Baja',
-      value: metrics.baja,
-      icon: <FaBox className="text-green-500" size={24} />,
-      bgColor: 'bg-green-50',
-      textColor: 'text-green-700',
-      percentage: metrics.total > 0 ? Math.round((metrics.baja / metrics.total) * 100) : 0,
-    },
-    {
-      label: 'En Sucursal',
-      value: metrics.enSucursal,
-      icon: <FaBox className="text-gray-500" size={24} />,
-      bgColor: 'bg-gray-50',
-      textColor: 'text-gray-700',
-    },
-    {
-      label: 'En Tránsito',
-      value: metrics.enTransito,
-      icon: <FaTruck className="text-yellow-500" size={24} />,
-      bgColor: 'bg-yellow-50',
-      textColor: 'text-yellow-700',
-    },
-    {
-      label: 'Entregados',
-      value: metrics.entregado,
-      icon: <FaCheckCircle className="text-green-500" size={24} />,
-      bgColor: 'bg-green-50',
-      textColor: 'text-green-700',
-      percentage: metrics.porcentajeEntregado,
-    },
-    {
-      label: 'Cancelados',
-      value: metrics.cancelado,
-      icon: <FaTimesCircle className="text-red-500" size={24} />,
-      bgColor: 'bg-red-50',
-      textColor: 'text-red-700',
-    },
-  ];
 
   // Estado de carga inicial general (Mantenemos tus Skeletons)
   if (isLoading) {
@@ -155,21 +97,6 @@ export default function ShipmentMetrics({ shipments, isLoading = false, filters 
             slices={incidentsSlices}
           />
         )}
-      </div>
-
-      {/* Grilla inferior de tarjetas detalladas */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {metricCards.map((card, index) => (
-          <MetricCard
-            key={index}
-            label={card.label}
-            value={card.value}
-            icon={card.icon}
-            bgColor={card.bgColor}
-            textColor={card.textColor}
-            percentage={card.percentage}
-          />
-        ))}
       </div>
     </div>
   );
