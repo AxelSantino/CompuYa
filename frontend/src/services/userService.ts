@@ -8,6 +8,11 @@ const userService = {
         return response.data;
     },
 
+    getUserById: async (id: number): Promise<Usuario> => {
+        const response = await api.get<Usuario>(`/usuarios/${id}`);
+        return response.data;
+    },
+
     getEmployees: async(): Promise<Usuario[]> => {
         const response = await api.get<Usuario[]>('/usuarios/roles/empleados');
         return response.data;
