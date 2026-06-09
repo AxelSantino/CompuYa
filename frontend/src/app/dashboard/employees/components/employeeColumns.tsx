@@ -2,7 +2,7 @@ import { Column } from '../../users/components/DataTable';
 import { Usuario } from '@/types/usuario';
 import Link from 'next/link';
 
-const getRoleBadgeClasses = (rol: string) => {
+export const getRoleBadgeClasses = (rol: string) => {
   switch (rol.toLowerCase()) {
     case 'admin':
       return 'bg-purple-100 text-purple-800';
