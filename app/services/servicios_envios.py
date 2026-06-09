@@ -1,11 +1,11 @@
 import random
 import string
-from datetime import datetime
+from datetime import datetime, timedelta, date, time
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload, joinedload
 from sqlalchemy import select, func
 from fastapi import HTTPException, status, BackgroundTasks
-from app.models.entidades import AsignacionEnvio, Envio, Usuario, TipoCliente, EstadoEnvio, Historial, PerfilEmpresa
+from app.models.entidades import AsignacionEnvio, Envio, PrioridadEnvio, TipoEnvio, Usuario, TipoCliente, EstadoEnvio, Historial, PerfilEmpresa
 from app.models.esquemas import EnvioCrear, EditarEnvio, CancelarEnvio
 from app.services.servicio_ruteo import ServicioRuteo
 from app.ml.modelo_prioridad import predecir_prioridad
@@ -67,6 +67,8 @@ class EnvioService:
         
         prioridad_predicha = predecir_prioridad(datos_para_modelo)
         
+        fecha_limite = self._calcular_fecha_limite(envio_data.tipo_envio, prioridad_predicha)
+
         tracking_id = self.generar_tracking_id()
         nuevo_envio = Envio(
             **envio_data.model_dump(),
@@ -76,7 +78,8 @@ class EnvioService:
             sucursal_id=sucursal_optima.id,
             latitud_destino=lat_dest,
             longitud_destino=lon_dest,
-            prioridad=prioridad_predicha
+            prioridad=prioridad_predicha,
+            fecha_limite=fecha_limite
         )
         
         self.db.add(nuevo_envio)
@@ -86,6 +89,33 @@ class EnvioService:
         await self.db.commit()
 
         return await self.obtener_envio_por_id(nuevo_envio.tracking_id)
+    
+    def _calcular_fecha_limite(self, tipo_envio: TipoEnvio, prioridad: PrioridadEnvio) -> datetime:
+        if tipo_envio == TipoEnvio.EXPRESS: 
+            if prioridad == PrioridadEnvio.ALTA:
+                dias_base = 1
+                variacion = random.randint(0, 1) 
+            elif prioridad== PrioridadEnvio.MEDIA:
+                dias_base = 3
+                variacion = random.randint(0, 1) 
+            else: 
+                dias_base = 5
+                variacion = random.randint(0, 1)         
+        else: 
+            if prioridad == PrioridadEnvio.ALTA:
+                dias_base = 8
+                variacion = random.randint(0, 1)
+            elif prioridad == PrioridadEnvio.MEDIA:
+                dias_base = 11
+                variacion = random.randint(0, 1)
+            else:
+                dias_base = 14
+                variacion = random.randint(0, 2) 
+            
+        dias_totales = dias_base + variacion
+            
+        fecha_objetivo = date.today() + timedelta(days=max(1, dias_totales))
+        return datetime.combine(fecha_objetivo, time.min)
 
     async def obtener_envio_por_id(self, tracking_id: str) -> Envio:
         query = select(Envio).where(Envio.tracking_id == tracking_id).options(
