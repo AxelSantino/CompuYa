@@ -1,0 +1,207 @@
+'use client';
+
+import React, { use } from 'react';
+import dynamic from 'next/dynamic';
+import DashboardLayout from '@/components/layout/DashboardLayout';
+import LoadingOverlay from '@/components/LoadingOverlay';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { useClientProfile } from './hooks/useClientProfile';
+import { LocationManager } from '../new/components/LocationManager';
+import { 
+  FaArrowLeft, 
+  FaBuilding, 
+  FaIdCard, 
+  FaEnvelope, 
+  FaCalendarAlt, 
+  FaMapMarkerAlt, 
+  FaHashtag 
+} from 'react-icons/fa';
+
+// Deshabilitamos SSR para el visor de mapas en modo lectura para evitar errores con Leaflet
+const DynamicMapViewer = dynamic(() => import('../new/components/MapViewer'), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-[300px] bg-gray-50 rounded-lg border border-gray-200 flex items-center justify-center">
+      <span className="text-gray-400 font-medium animate-pulse">Cargando mapa de ubicación...</span>
+    </div>
+  )
+});
+
+// Componente Interno para mostrar los datos de lectura prolijamente
+const DetailItem = ({ icon, label, value }: { icon: React.ReactNode, label: string, value: React.ReactNode }) => (
+  <div className="flex flex-col p-4 bg-gray-50 rounded-lg border border-gray-100">
+    <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1 flex items-center gap-2">
+      <span className="text-gray-400">{icon}</span> {label}
+    </h4>
+    <p className="text-sm font-medium text-gray-900 ml-6 break-words">{value}</p>
+  </div>
+);
+
+export default function ClientDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = use(params);
+
+  const {
+    router,
+    client,
+    isLoading,
+    error,
+    isEditing,
+    setIsEditing,
+    isSaving,
+    formData,
+    handleChange,
+    handleCancelEdit,
+    handleSave,
+    handleAddressUpdated
+  } = useClientProfile(resolvedParams.id);
+
+  if (error) {
+    return (
+      <DashboardLayout>
+        <div className="p-6 text-center text-red-500 font-medium">
+          {error}
+          <div className="mt-4">
+            <Button variant="secondary" onClick={() => router.push('/dashboard/clients')}>
+              Volver al listado
+            </Button>
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  // Iniciales para la empresa (Razón Social)
+  const iniciales = client?.perfil_empresa?.razon_social
+    ? client.perfil_empresa.razon_social.substring(0, 2).toUpperCase()
+    : '🏢';
+
+  return (
+    <DashboardLayout>
+      <div className="p-4 md:p-6 relative min-h-screen">
+        <LoadingOverlay isLoading={isLoading} text="Cargando ficha del cliente..." />
+
+        {/* Botón de navegación superior */}
+        <div className="mb-6">
+          <button 
+            onClick={() => router.push('/dashboard/clients')} 
+            className="flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-orange-600 transition-colors cursor-pointer"
+          >
+            <FaArrowLeft /> Volver al listado de clientes
+          </button>
+        </div>
+
+        {client && (
+          <div className="max-w-5xl mx-auto">
+            {/* Tarjeta de Contenedor Principal */}
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+              <div className="p-6 md:p-10">
+                
+                {/* Cabecera de la Ficha */}
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-8 pb-8 border-b border-gray-100">
+                  <div className="flex items-center gap-5">
+                    <div className="w-20 h-20 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-2xl font-bold text-gray-500 shadow-sm shrink-0">
+                      {iniciales}
+                    </div>
+                    <div>
+                      <h1 className="text-2xl font-bold text-gray-900 capitalize">
+                        {client.perfil_empresa?.razon_social}
+                      </h1>
+                      <p className="text-gray-500 font-medium mt-1">CUIT: {client.perfil_empresa?.cuit || 'No registrado'}</p>
+                    </div>
+                  </div>
+                  
+                  {!isEditing && (
+                    <Button variant="secondary" onClick={() => setIsEditing(true)}>
+                      Editar Cliente
+                    </Button>
+                  )}
+                </div>
+
+                {/* Contenido Dinámico: Formulario vs Vista General */}
+                {isEditing ? (
+                  <form onSubmit={handleSave} className="space-y-6 animate-in fade-in duration-300">
+                    <div className="bg-gray-50 p-6 rounded-xl border border-gray-100 space-y-4">
+                      <h3 className="text-sm font-bold text-gray-700 uppercase tracking-wider mb-2">Datos de la Empresa</h3>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                          <label className="block text-sm font-bold text-gray-700 mb-1">Razón Social</label>
+                          <Input name="razon_social" required value={formData.razon_social} onChange={handleChange} disabled={isSaving} />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-bold text-gray-700 mb-1">Correo Electrónico</label>
+                          <Input name="email" type="email" value={client.email} disabled={true} className="bg-gray-100 text-gray-500 cursor-not-allowed opacity-70" />
+                          <p className="text-xs text-gray-400 mt-1">Por seguridad, el correo no se puede modificar.</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <LocationManager 
+                      codPostal={formData.cod_postal}
+                      onCodPostalChange={handleChange}
+                      onLocationComplete={(direccion) => {
+                        const lat = direccion.coordenadas ? parseFloat(direccion.coordenadas.y) : 0;
+                        const lng = direccion.coordenadas ? parseFloat(direccion.coordenadas.x) : 0;
+
+                        handleAddressUpdated(
+                          direccion.direccion,
+                          lat,
+                          lng,
+                          formData.cod_postal 
+                        );
+                      }}
+                      isLoading={isSaving}
+                    />
+                    
+                    <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
+                      <Button variant="secondary" type="button" onClick={handleCancelEdit} disabled={isSaving}>
+                        Cancelar
+                      </Button>
+                      <Button variant="primary" type="submit" disabled={isSaving}>
+                        {isSaving ? 'Guardando...' : 'Guardar Todos los Cambios'}
+                      </Button>
+                    </div>
+                  </form>
+                ) : (
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-in fade-in duration-300">
+                    
+                    <div className="lg:col-span-2 space-y-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <DetailItem icon={<FaBuilding />} label="Razón Social" value={client.perfil_empresa?.razon_social} />
+                        <DetailItem icon={<FaHashtag />} label="CUIT Fiscal" value={client.perfil_empresa?.cuit} />
+                        <DetailItem icon={<FaEnvelope />} label="Correo de Contacto" value={client.email} />
+                        <DetailItem icon={<FaCalendarAlt />} label="Fecha de Alta" value={new Date(client.fecha || '').toLocaleDateString('es-AR')} />
+                        <DetailItem icon={<FaIdCard />} label="Código Postal" value={client.perfil_empresa?.cod_postal || 'No asignado'} />
+                        <DetailItem icon={<FaMapMarkerAlt />} label="Dirección Normalizada" value={client.perfil_empresa?.direccion_normalizada || 'No especificada'} />
+                      </div>
+                    </div>
+                    <div className="flex flex-col h-full">
+                      <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-2">
+                        <FaMapMarkerAlt className="text-green-500" /> Vista de Ubicación
+                      </h4>
+                      {client.perfil_empresa?.latitud && client.perfil_empresa?.longitud ? (
+                        <div className="flex-1 rounded-lg overflow-hidden border border-gray-200 shadow-sm min-h-[300px]">
+                          <DynamicMapViewer 
+                            latitud={client.perfil_empresa.latitud}
+                            longitud={client.perfil_empresa.longitud}
+                            direccionNormalizada={client.perfil_empresa.direccion_normalizada ?? undefined}
+                          />
+                        </div>
+                      ) : (
+                        <div className="flex-1 min-h-[300px] bg-gray-50 rounded-lg border border-dashed border-gray-300 flex items-center justify-center text-gray-400 p-4 text-center text-sm">
+                          Esta empresa no cuenta con coordenadas de geolocalización registradas.
+                        </div>
+                      )}
+                    </div>
+
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </DashboardLayout>
+  );
+}

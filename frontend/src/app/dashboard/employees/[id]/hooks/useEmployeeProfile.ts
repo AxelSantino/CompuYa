@@ -68,7 +68,7 @@ export const useEmployeeProfile = (id: string) => {
                 rol: formData.rol,
             };
 
-            await userService.updateEmployee(employee.id, payload);
+            await userService.updateUser(employee.id, payload);
             
             toast.success('Perfil actualizado correctamente.');
             setIsEditing(false);

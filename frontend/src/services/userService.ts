@@ -38,7 +38,7 @@ const userService = {
         return response.data;
     },
 
-    updateEmployee: async (id: number, data: any): Promise<Usuario> => {
+    updateUser: async (id: number, data: any): Promise<Usuario> => {
         const response = await api.put<Usuario>(`/usuarios/${id}`, data);
         return response.data;
     }

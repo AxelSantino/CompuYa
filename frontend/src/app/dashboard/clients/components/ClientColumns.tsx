@@ -37,7 +37,7 @@ export const getClientColumns = (): Column<Usuario>[] => [
     header: 'Acciones', 
     accessor: (row) => (
       <Link 
-        href={`/dashboard/clients/${row.id}/edit`}
+        href={`/dashboard/clients/${row.id}`}
         className="text-orange-600 hover:text-orange-800 font-bold transition-colors cursor-pointer"
       >
         Ver detalle
