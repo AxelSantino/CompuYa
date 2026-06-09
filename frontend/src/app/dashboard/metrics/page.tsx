@@ -70,7 +70,7 @@ const MetricsPage = () => {
           <div>
             <h2 className="text-2xl font-bold mb-1">Métricas de Envíos</h2>
             <p className="text-gray-600">
-              Indicadores de prioridad, estado e incidencias operativas.
+              Indicadores de prioridad, estado de envíos y cancelaciones.
             </p>
           </div>
         </div>

@@ -49,11 +49,9 @@ export default function ShipmentMetrics({ shipments, isLoading = false, filters 
       {/* Resumen General */}
       <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-gray-100">
         <div>
+          <br></br>
           <h3 className="text-lg font-semibold text-gray-900">Resumen de Operaciones</h3>
           <p className="text-sm text-gray-500">Total general: {metrics.total} envíos bajo análisis</p>
-        </div>
-        <div className="bg-orange-50 px-4 py-2 rounded-lg border border-orange-100 text-sm font-medium text-orange-800">
-          Incidencias en el período: <span className="font-bold">{totalIncidents}</span>
         </div>
       </div>
 
@@ -93,7 +91,7 @@ export default function ShipmentMetrics({ shipments, isLoading = false, filters 
           </div>
         ) : (
           <PieChart
-            title="Causas de Incidencias"
+            title="Motivos de cancelación de envios"
             slices={incidentsSlices}
           />
         )}
