@@ -22,6 +22,9 @@ interface LocationManagerProps {
   codPostal: string
   onCodPostalChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   isLoading?: boolean;
+  initialAddress?: string;
+  initialLat?: number;
+  initialLng?: number;
 }
 
 export const LocationManager = ({ 
@@ -29,10 +32,23 @@ export const LocationManager = ({
   codPostal,
   onCodPostalChange,
   isLoading = false,
+  initialAddress = '',
+  initialLat = 0,
+  initialLng = 0
 
 }: LocationManagerProps) => {
   // Estado local para saber si ya hay una ubicacion lista para dibujar
-  const [selectedLocation, setSelectedLocation] = useState<DireccionNormalizada | null>(null);
+  const [selectedLocation, setSelectedLocation] = useState<DireccionNormalizada | null>(() => {
+    if (initialAddress) {
+      return {
+        direccion: initialAddress,
+        coordenadas: (initialLat !== 0 && initialLng !== 0) 
+          ? { x: initialLng.toString(), y: initialLat.toString() } 
+          : undefined
+      };
+    }
+    return null;
+  });
 
   const handleAddressSelect = (direccion: DireccionNormalizada) => {
     setSelectedLocation(direccion);

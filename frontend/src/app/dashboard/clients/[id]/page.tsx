@@ -140,16 +140,10 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                     <LocationManager 
                       codPostal={formData.cod_postal}
                       onCodPostalChange={handleChange}
+                      initialAddress={formData.direccion_normalizada}
+                      initialLat={formData.latitud}
+                      initialLng={formData.longitud}
                       onLocationComplete={(direccion) => {
-                        const lat = direccion.coordenadas ? parseFloat(direccion.coordenadas.y) : 0;
-                        const lng = direccion.coordenadas ? parseFloat(direccion.coordenadas.x) : 0;
-
-                        handleAddressUpdated(
-                          direccion.direccion,
-                          lat,
-                          lng,
-                          formData.cod_postal 
-                        );
                       }}
                       isLoading={isSaving}
                     />
