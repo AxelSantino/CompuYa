@@ -1,8 +1,27 @@
 import { useMemo } from 'react';
 import { Envio } from '@/types/envio';
+import { DateFilterParams } from '@/types/metrics';
 
-export const useShipmentMetrics = (shipments: Envio[]) => {
+export const useShipmentMetrics = (shipments: Envio[], filters?: DateFilterParams) => {
   return useMemo(() => {
+
+    let enviosFiltrados = shipments;
+
+    if (filters?.fecha_inicio && filters?.fecha_fin) {
+      const start = new Date(filters.fecha_inicio).getTime();
+      const end = new Date(filters.fecha_fin).getTime() + 86399999;
+
+      enviosFiltrados = shipments.filter((s) => {
+
+        const fechaEnvioStr =  s.fecha_creacion; 
+        
+        if (!fechaEnvioStr) return false;
+        
+        const envioTime = new Date(fechaEnvioStr).getTime();
+        return envioTime >= start && envioTime <= end;
+      });
+    }
+
     if (!shipments || shipments.length === 0) {
       return {
         alta: 0,
@@ -17,16 +36,16 @@ export const useShipmentMetrics = (shipments: Envio[]) => {
       };
     }
 
-    const total = shipments.length;
+    const total = enviosFiltrados.length;
 
-    const alta = shipments.filter((s) => s.prioridad === 'alta').length;
-    const media = shipments.filter((s) => s.prioridad === 'media').length;
-    const baja = shipments.filter((s) => s.prioridad === 'baja').length;
+    const alta = enviosFiltrados.filter((s) => s.prioridad === 'alta').length;
+    const media = enviosFiltrados.filter((s) => s.prioridad === 'media').length;
+    const baja = enviosFiltrados.filter((s) => s.prioridad === 'baja').length;
 
-    const enSucursal = shipments.filter((s) => s.estado === 'en sucursal').length;
-    const enTransito = shipments.filter((s) => s.estado === 'en transito').length;
-    const entregado = shipments.filter((s) => s.estado === 'entregado').length;
-    const cancelado = shipments.filter((s) => s.estado === 'cancelado').length;
+    const enSucursal = enviosFiltrados.filter((s) => s.estado === 'en sucursal').length;
+    const enTransito = enviosFiltrados.filter((s) => s.estado === 'en transito').length;
+    const entregado = enviosFiltrados.filter((s) => s.estado === 'entregado').length;
+    const cancelado = enviosFiltrados.filter((s) => s.estado === 'cancelado').length;
 
     const porcentajeEntregado = total > 0 ? Math.round((entregado / total) * 100) : 0;
 
@@ -41,5 +60,5 @@ export const useShipmentMetrics = (shipments: Envio[]) => {
       total,
       porcentajeEntregado,
     };
-  }, [shipments]);
+  }, [shipments, , filters?.fecha_inicio, filters?.fecha_fin]);
 };

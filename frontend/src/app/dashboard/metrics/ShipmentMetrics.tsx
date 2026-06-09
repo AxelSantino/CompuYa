@@ -18,7 +18,7 @@ interface ShipmentMetricsProps {
 
 export default function ShipmentMetrics({ shipments, isLoading = false, filters }: ShipmentMetricsProps) {
   // Cerebro Sincrónico: Procesa los envíos en memoria
-  const metrics = useShipmentMetrics(shipments);
+  const metrics = useShipmentMetrics(shipments, filters);
 
   // Cerebro Asincrónico: Consigue y mapea las incidencias desde la API usando las fechas
   const { 
@@ -51,7 +51,7 @@ export default function ShipmentMetrics({ shipments, isLoading = false, filters 
         <div>
           <br></br>
           <h3 className="text-lg font-semibold text-gray-900">Resumen de Operaciones</h3>
-          <p className="text-sm text-gray-500">Total general: {metrics.total} envíos bajo análisis</p>
+          <p className="text-sm text-gray-500">Total general: {metrics.total} envíos</p>
         </div>
       </div>
 
