@@ -66,7 +66,7 @@ export const ShipmentInfoCard = ({ shipment, isEditing, formData, handleChange, 
                         </div>
                         <div>
                             <label className="block text-xs font-bold text-gray-700 mb-1">Descripción</label>
-                            <textarea name="descripcion" value={formData.descripcion} onChange={handleChange} rows={3} disabled={isSaving} className="w-full rounded-md border border-gray-300 p-3 text-sm focus:ring-2 focus:ring-blue-500" required />
+                            <textarea name="descripcion" value={formData.descripcion} onChange={handleChange} rows={3} disabled={isSaving} className="w-full rounded-md border border-gray-300 p-3 text-sm text-gray-900 focus:ring-2 focus:ring-blue-500" required />
                         </div>
                     </div>
                 ) : (

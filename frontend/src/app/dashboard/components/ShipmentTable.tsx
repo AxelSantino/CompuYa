@@ -3,16 +3,16 @@ import Link from 'next/link';
 import { Envio, EnvioStatus } from '@/types/envio';
 
 const STATUS_CLASSES: Record<EnvioStatus, string> = {
-    'en sucursal': 'bg-gray-100 text-gray-800',
-    'en transito': 'bg-yellow-100 text-yellow-800',
-    'entregado': 'bg-green-100 text-green-800',
-    'cancelado': 'bg-red-100 text-red-800',
+    'en sucursal': 'bg-gray-100 text-gray-800 capitalize',
+    'en transito': 'bg-yellow-100 text-yellow-800 capitalize',
+    'entregado': 'bg-green-100 text-green-800 capitalize',
+    'cancelado': 'bg-red-100 text-red-800 capitalize',
 };
 
 const PRIORITY_CLASSES: Record<string, string> = {
-    'alta': 'bg-orange-600 text-white',
-    'media': 'bg-blue-100 text-blue-800',
-    'baja': 'bg-green-100 text-green-800',
+    'alta': 'bg-orange-600 text-white uppercase',
+    'media': 'bg-blue-100 text-blue-800 uppercase',
+    'baja': 'bg-green-100 text-green-800 uppercase',
 };
 
 export const StatusBadge = React.memo(({ status }: { status: EnvioStatus }) => (
@@ -23,7 +23,7 @@ export const StatusBadge = React.memo(({ status }: { status: EnvioStatus }) => (
 StatusBadge.displayName = 'StatusBadge';
 
 export const PriorityBadge = React.memo(({ priority }: { priority: string }) => (
-    <span className={`px-2 inline-flex text-xs leading-5 font-bold rounded-full uppercase ${PRIORITY_CLASSES[priority] || 'bg-gray-100 text-gray-800'}`}>
+    <span className={`px-2 inline-flex text-xs leading-5 font-bold rounded-full ${PRIORITY_CLASSES[priority] || 'bg-gray-100 text-gray-800'}`}>
         {priority}
     </span>
 ));
