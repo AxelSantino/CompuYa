@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react';
 import metricsService from '@/services/metricsService';
 import { DateFilterParams } from '@/types/metrics';
-import { PieSlice } from '@/components/ui/PieChart';
+import { PieSlice } from '@/components/ui/pieChart/PieChart';
 
 const INCIDENTS_COLORS = [
-  '#ef4444', // Rojo (Tailwind red-500)
-  '#f97316', // Naranja (orange-500)
-  '#f59e0b', // Ámbar (amber-500)
-  '#f43f5e', // Rosa fuerte (rose-500)
-  '#8b5cf6', // Violeta (violet-500)
+  '#D32F2F', // Rojo (Tailwind red-500)
+  '#F57C00', // Naranja (orange-500)
+  '#c5a518', // Ámbar (amber-500)
+  '#263486', // Rosa fuerte (rose-500)
+  '#6A1B9A', // Violeta (violet-500)
 ];
 
 const OTHER_COLOR = '#6b7280'; // Gris (gray-500) para métricas no especificadas

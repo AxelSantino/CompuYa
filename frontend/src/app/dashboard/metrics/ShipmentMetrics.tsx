@@ -8,7 +8,7 @@ import { useShipmentMetrics } from '@/app/dashboard/metrics/hooks/useShipmentMet
 import { useIncidentsMetrics } from '@/app/dashboard/metrics/hooks/useIncidentsMetrics';
 
 // Componentes genéricos reutilizables de UI
-import { PieChart } from '@/components/ui/PieChart';
+import { PieChart } from '@/components/ui/pieChart/PieChart';
 
 interface ShipmentMetricsProps {
   shipments: Envio[];
