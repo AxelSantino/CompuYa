@@ -1,4 +1,5 @@
 import { Envio } from '@/types/envio';
+import { STATUS_CLASSES, PRIORITY_CLASSES } from '@/app/dashboard/components/ShipmentTable';
 
 export const ShipmentHeader = ({ shipment }: { shipment: Envio }) => {
 
@@ -18,7 +19,7 @@ export const ShipmentHeader = ({ shipment }: { shipment: Envio }) => {
                 <p className="text-sm text-gray-500">ID Interno: #{shipment.id}</p>
             </div>
             <div className="flex items-center gap-2">
-                <span className="px-3 py-1 rounded-full font-semibold text-xs uppercase bg-yellow-100 text-yellow-800">
+                <span className={`px-3 py-1 rounded-full font-semibold text-xs uppercase ${STATUS_CLASSES[shipment.estado]}`}>
                     {shipment.estado}
                 </span>
                 <span className={`px-3 py-1 rounded-full font-semibold text-xs uppercase ${getPriorityColors(shipment.prioridad)}`}>
