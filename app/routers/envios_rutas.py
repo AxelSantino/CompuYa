@@ -22,10 +22,11 @@ async def listar_envios(
 @router.post("/", response_model=EnvioRespuesta, status_code=status.HTTP_201_CREATED, dependencies=[Depends(tiene_rol(["operador", "supervisor"]))])
 async def crear_envio(
     envio_in: EnvioCrear,
+    background_tasks: BackgroundTasks,
     usuario_actual: Usuario = Depends(obtener_usuario_actual),
     envio_service: EnvioService = Depends(get_envio_service)
 ):
-    return await envio_service.crear_envio(envio_in, usuario_actual.id)
+    return await envio_service.crear_envio(envio_in, usuario_actual.id, background_tasks)
 
 @router.put("/{tracking_id}", response_model=EnvioRespuesta, dependencies=[Depends(tiene_rol(["supervisor", "operador"]))])
 async def editar_envio(

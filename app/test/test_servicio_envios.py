@@ -290,7 +290,6 @@ async def test_obtener_hoja_ruta_ordena_por_proximidad():
         
 @pytest.mark.asyncio
 async def test_crear_envio_exitoso_con_prediccion_ml():
-    
     envio_in = EnvioCrear(
         razon_social_destinatario="CompuYa SRL",
         cuit_destinatario="30-12345678-9",
@@ -304,7 +303,6 @@ async def test_crear_envio_exitoso_con_prediccion_ml():
     db_mock.commit = AsyncMock()
     db_mock.add = MagicMock() 
 
-    
     perfil_empresa_mock = PerfilEmpresa(
         usuario_id=4,
         razon_social="CompuYa SRL",
@@ -315,32 +313,32 @@ async def test_crear_envio_exitoso_con_prediccion_ml():
     res_perfil = MagicMock()
     res_perfil.scalar_one_or_none.return_value = perfil_empresa_mock
 
-    db_mock.execute.return_value = res_perfil
+    usuario_mock = Usuario(id=4, email="cliente@compuya.com")
+    res_usuario = MagicMock()
+    res_usuario.scalar_one_or_none.return_value = usuario_mock
+
+    db_mock.execute.side_effect = [res_perfil, res_usuario]
 
     servicio = EnvioService(db=db_mock)
 
-    
     sucursal_mock = Sucursal(id=1, latitud=-34.60, longitud=-58.38)
     servicio.ruteo_service.obtener_sucursal_mas_cercana = AsyncMock(return_value=sucursal_mock)
     servicio.ruteo_service.calcular_distancia_haversine = MagicMock(return_value=12.5)
 
-    
     envio_final_mock = Envio(tracking_id="CY-2026-OK", estado=EstadoEnvio.EN_SUCURSAL)
+    mock_bg = MagicMock()
     
     with patch('app.services.servicios_envios.predecir_prioridad', return_value=MagicMock(value="alta")):
         with patch.object(servicio, 'registrar_historial', new_callable=AsyncMock) as mock_hist:
             with patch.object(servicio, 'obtener_envio_por_id', new_callable=AsyncMock, return_value=envio_final_mock):
                 
-                
-                resultado = await servicio.crear_envio(envio_in, usuario_id=9)
+                resultado = await servicio.crear_envio(envio_in, usuario_id=9, background_tasks=mock_bg)
 
-                
                 assert resultado.tracking_id == "CY-2026-OK"
                 db_mock.add.assert_called_once() 
                 db_mock.flush.assert_called_once()
                 db_mock.commit.assert_called_once()
                 mock_hist.assert_called_once()
-
 
 @pytest.mark.asyncio
 async def test_crear_envio_falla_si_perfil_empresa_no_existe():
@@ -359,9 +357,10 @@ async def test_crear_envio_falla_si_perfil_empresa_no_existe():
 
     servicio = EnvioService(db=db_mock)
 
+    mock_bg = MagicMock()
     
     with pytest.raises(HTTPException) as info_error:
-        await servicio.crear_envio(envio_in, usuario_id=9)
+        await servicio.crear_envio(envio_in, usuario_id=9, background_tasks=mock_bg)
 
     assert info_error.value.status_code == 404
     assert "La empresa destinataria no existe" in info_error.value.detail
@@ -502,9 +501,9 @@ async def test_crear_envio_falla_si_no_hay_sucursales_disponibles():
     servicio = EnvioService(db=db_mock)
     
     servicio.ruteo_service.obtener_sucursal_mas_cercana = AsyncMock(return_value=None)
-
+    mock_bg = MagicMock()
     with pytest.raises(HTTPException) as info_error:
-        await servicio.crear_envio(envio_in, usuario_id=1)
+        await servicio.crear_envio(envio_in, usuario_id=1, background_tasks=mock_bg)
 
     assert info_error.value.status_code == 400
     assert "No hay sucursales disponibles" in info_error.value.detail
