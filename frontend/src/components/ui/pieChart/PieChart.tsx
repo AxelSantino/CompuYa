@@ -22,21 +22,21 @@ export const PieChart = ({ slices, title }: PieChartProps) => {
   const total = slices.reduce((sum, slice) => sum + slice.value, 0);
 
   return (
-    <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-      <div className="mb-4">
+    <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200 flex flex-col h-full min-h-[360px]">
+      <div className="mb-4 text-center lg:text-left">
         <h4 className="text-base font-semibold text-gray-900">{title}</h4>
       </div>
       
-      <div className="flex flex-col lg:flex-row gap-6 items-center">
+      <div className="flex flex-col flex-col items-center gap-6 items-center">
         {total === 0 ? (
-          <div className="w-full text-center py-4 text-sm text-gray-500">
-            No hay datos para mostrar.
+          <div className="text-sm text-gray-500 text-center py-12 flex-grow flex items-center justify-center">
+          No hay datos para mostrar.
           </div>
         ) : (
-          <>
+          <div className="flex flex-col items-center justify-center gap-6 flex-grow w-full">
             <PieChartSvg slices={slices} total={total} />
             <PieChartLegend slices={slices} total={total} />
-          </>
+        </div>
         )}
       </div>
     </div>

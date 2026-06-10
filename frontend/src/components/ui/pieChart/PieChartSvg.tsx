@@ -35,8 +35,8 @@ export const PieChartSvg = ({ slices, total }: PieChartSvgProps) => {
   };
 
   return (
-    <div className="w-full lg:w-1/2 flex justify-center">
-      <svg width="160" height="160" viewBox="0 0 100 100">
+    <div className="w-full flex justify-center">
+      <svg width="160" height="160" viewBox="0 0 100 100" className="overflow-visible">
         {slices.map((slice, index) => (
           <path key={`${slice.label}-${index}`} d={getPath(slice.value)} fill={slice.color} />
         ))}
