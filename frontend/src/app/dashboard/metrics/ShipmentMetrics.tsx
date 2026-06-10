@@ -49,9 +49,11 @@ export default function ShipmentMetrics({ shipments, isLoading = false, filters 
       {/* Resumen General */}
       <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-gray-100">
         <div>
+          {/*
           <br></br>
           <h3 className="text-lg font-semibold text-gray-900">Resumen de Operaciones</h3>
           <p className="text-sm text-gray-500">Total de envíos: {metrics.total}</p>
+          */}
         </div>
       </div>
 
