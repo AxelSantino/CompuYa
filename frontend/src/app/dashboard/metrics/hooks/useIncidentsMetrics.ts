@@ -7,7 +7,7 @@ const INCIDENTS_COLORS = [
   '#D32F2F', // Rojo (Tailwind red-500)
   '#F57C00', // Naranja (orange-500)
   '#c5a518', // Ámbar (amber-500)
-  '#263486', // Rosa fuerte (rose-500)
+  '#265086', // Rosa fuerte (rose-500)
   '#6A1B9A', // Violeta (violet-500)
 ];
 
