@@ -108,7 +108,7 @@ export const CancelShipmentModal = ({
                 rows={3}
                 disabled={isProcessing}
                 placeholder="Describa brevemente la situación..."
-                className={`w-full rounded-md border p-3 text-sm focus:outline-none focus:ring-2 transition-shadow resize-none ${
+                className={`w-full rounded-md border p-3 text-sm text-gray-700 focus:outline-none focus:ring-2 transition-shadow resize-none ${
                   charCount > 255 
                     ? 'border-red-500 focus:ring-red-500' 
                     : 'border-gray-300 focus:ring-red-500'
