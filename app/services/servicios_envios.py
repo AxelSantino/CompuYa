@@ -30,7 +30,7 @@ class EnvioService:
         caracteres = ''.join(random.choices(string.ascii_uppercase + string.digits, k=4))
         return f"CY-{anio}-{caracteres}"
 
-    async def crear_envio(self, envio_data: EnvioCrear, usuario_id: int) -> Envio:
+    async def crear_envio(self, envio_data: EnvioCrear, usuario_id: int, background_tasks: BackgroundTasks) -> Envio:
         query = select(PerfilEmpresa).where(
             PerfilEmpresa.razon_social == envio_data.razon_social_destinatario,
             PerfilEmpresa.cuit == envio_data.cuit_destinatario
@@ -88,7 +88,15 @@ class EnvioService:
         await self.registrar_historial(nuevo_envio.id, usuario_id, nuevo_envio.estado)
         await self.db.commit()
 
-        return await self.obtener_envio_por_id(nuevo_envio.tracking_id)
+        servicio = NotificacionService(db=self.db)
+    
+        envio = await self.obtener_envio_por_id(nuevo_envio.tracking_id)
+        email = await self.obtenerMailDestinatario(envio)
+        if email:
+            background_tasks.add_task(servicio.procesar_notificacion_estado, envio, email, envio.razon_social_destinatario)
+            background_tasks.add_task(crear_alerta_y_enviar_push, self.db, envio.destinatario_id, "Estamos preparando tu pedido", f"El envío {tracking_id} está siendo preparado.",envio_id=envio.id)
+
+        return envio
     
     def _calcular_fecha_limite(self, tipo_envio: TipoEnvio, prioridad: PrioridadEnvio) -> datetime:
         if tipo_envio == TipoEnvio.EXPRESS: 
