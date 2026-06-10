@@ -17,7 +17,7 @@ export const PieChartSvg = ({ slices, total }: PieChartSvgProps) => {
 
     const angle = (value / total) * 360;
     const endAngle = startAngle + angle;
-    const radius = 40;
+    const radius = 45;
     const center = 50;
     const startRadians = (Math.PI / 180) * startAngle;
     const endRadians = (Math.PI / 180) * endAngle;
@@ -36,7 +36,7 @@ export const PieChartSvg = ({ slices, total }: PieChartSvgProps) => {
 
   return (
     <div className="w-full flex justify-center">
-      <svg width="160" height="160" viewBox="0 0 100 100" className="overflow-visible">
+      <svg width="220" height="220" viewBox="0 0 100 100" className="overflow-visible">
         {slices.map((slice, index) => (
           <path key={`${slice.label}-${index}`} d={getPath(slice.value)} fill={slice.color} />
         ))}
