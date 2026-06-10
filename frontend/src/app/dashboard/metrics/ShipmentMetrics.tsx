@@ -67,6 +67,7 @@ export default function ShipmentMetrics({ shipments, isLoading = false, filters 
             { label: 'Entregados', value: metrics.entregado, color: '#16a34a' },
             { label: 'Cancelados', value: metrics.cancelado, color: '#dc2626' },
           ]}
+          subtitle={"Envíos en el sistema: " + metrics.total}
         />
 
         {/* Gráfico 2: Prioridades */}
@@ -77,6 +78,7 @@ export default function ShipmentMetrics({ shipments, isLoading = false, filters 
             { label: 'Media', value: metrics.media, color: '#3b82f6' },
             { label: 'Baja', value: metrics.baja, color: '#22c55e' },
           ]}
+          subtitle={"Envíos en el sistema: " + metrics.total}
         />
 
         {/* Gráfico 3: Manejo de los estados de la petición asincrónica de Incidencias */}
@@ -93,6 +95,7 @@ export default function ShipmentMetrics({ shipments, isLoading = false, filters 
           <PieChart
             title="Motivos de cancelación de envios"
             slices={incidentsSlices}
+            subtitle={"Envíos cancelados: " + totalIncidents}
           />
         )}
       </div>

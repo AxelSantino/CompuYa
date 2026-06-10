@@ -16,16 +16,18 @@ interface PieChartProps {
 interface PieChartProps {
   slices: PieSlice[];
   title: string;
+  subtitle: string;
 }
 
-export const PieChart = ({ slices, title }: PieChartProps) => {
+export const PieChart = ({ slices, title, subtitle }: PieChartProps) => {
   // Única lógica de negocio a este nivel
   const total = slices.reduce((sum, slice) => sum + slice.value, 0);
 
   return (
     <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200 flex flex-col h-full min-h-[360px]">
-      <div className="mb-4 text-center lg:text-left">
-        <h4 className="text-base font-semibold text-gray-900">{title}</h4>
+      <div className="mb-4 text-center">
+        <h2 className="text-xl font-bold text-gray-900">{title}</h2>
+        <h3 className="text-base text-gray-900">{subtitle}</h3>
       </div>
       
       <div className="flex flex-col flex-col items-center gap-6 items-center">
@@ -44,8 +46,8 @@ export const PieChart = ({ slices, title }: PieChartProps) => {
                   nameKey="label"
                   cx="50%"
                   cy="50%"
-                  innerRadius={40} // Radio interno para el hueco de la dona
-                  outerRadius={95} // Radio externo agrandado para ocupar más espacio
+                  innerRadius={50} // Radio interno para el hueco de la dona
+                  outerRadius={105} // Radio externo agrandado para ocupar más espacio
                   paddingAngle={3}  // Separación estética sutil entre porciones
                   animationDuration={1000}
                   animationEasing="ease-out"
