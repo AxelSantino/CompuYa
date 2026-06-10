@@ -1,12 +1,12 @@
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter, usePathname } from 'next/navigation';
 import { BiCube } from "react-icons/bi";
-import { FaRoute, FaUsers, FaUserTie, FaBuilding, FaHandshake, FaChartBar } from "react-icons/fa";
-import { FiBell } from 'react-icons/fi';
+import { FaRoute, FaUsers, FaHandshake, FaChartBar } from "react-icons/fa";
 import { MdNotifications } from 'react-icons/md';
 
 const NAV_ITEMS = [
     { name: 'Gestión de envíos', href: '/dashboard', icon: BiCube, roles: ['supervisor', 'operador', 'visor'] },
+    { name: 'Mis envíos', href: '/dashboard', icon: BiCube, roles: ['cliente'] },
     { name: 'Control Logístico', href: '/dashboard/routes', icon: FaRoute, roles: ['supervisor', 'repartidor'] },
     { name: 'Métricas', href: '/dashboard/metrics', icon: FaChartBar, roles: ['admin'] },
     { name: 'Empleados', href: '/dashboard/employees', icon: FaUsers, roles: ['admin']},

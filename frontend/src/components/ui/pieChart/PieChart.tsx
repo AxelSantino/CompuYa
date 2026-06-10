@@ -1,5 +1,5 @@
 import { PieChartLegend } from "./PieChartLegend";
-import { PieChart as RechartsPieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
+import { PieChart as RechartsPieChart, Pie, Cell, Tooltip } from 'recharts';
 
 export interface PieSlice {
   label: string;
