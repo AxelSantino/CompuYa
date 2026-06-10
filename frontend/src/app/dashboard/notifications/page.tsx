@@ -4,7 +4,8 @@ import React, { useState } from 'react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import LoadingOverlay from '@/components/LoadingOverlay';
 import { Button } from '@/components/ui/Button';
-import { FaDownload, FaInfoCircle } from 'react-icons/fa';
+import { FaInfoCircle } from 'react-icons/fa';
+import { AiOutlineHistory } from 'react-icons/ai'
 
 import { useNotifications } from './hooks/useNotifications';
 import { NotificationsTabs } from './components/NotificationTabs';
@@ -146,7 +147,7 @@ export default function NotificationsPage() {
             {!historyLoaded ? (
               <div className="flex flex-col items-center justify-center py-20 px-4 text-center h-full absolute inset-0">
                 <div className="bg-blue-50 text-blue-500 w-16 h-16 rounded-full flex items-center justify-center mb-5 shadow-sm">
-                  <FaDownload size={24} />
+                  <AiOutlineHistory size={35} />
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-2">Historial de notificaciones enviadas</h3>
                 <Button variant="primary" onClick={loadHistory} disabled={isLoadingHistory} className="shadow-md">
