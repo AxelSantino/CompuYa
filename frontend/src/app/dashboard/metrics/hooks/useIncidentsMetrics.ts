@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import metricsService from '@/services/metricsService';
 import { DateFilterParams } from '@/types/metrics';
-import { PieSlice } from '@/components/ui/PieChart';
+import { PieSlice } from '@/components/ui/pieChart/PieChart';
 
 const INCIDENTS_COLORS = [
   '#D32F2F', // Rojo (Tailwind red-500)
