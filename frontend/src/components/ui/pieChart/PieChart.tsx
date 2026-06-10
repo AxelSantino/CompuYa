@@ -1,4 +1,3 @@
-import { PieChartSvg } from "./PieChartSvg";
 import { PieChartLegend } from "./PieChartLegend";
 import { PieChart as RechartsPieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
 
@@ -6,11 +5,6 @@ export interface PieSlice {
   label: string;
   value: number;
   color: string;
-}
-
-interface PieChartProps {
-  slices: PieSlice[];
-  title: string;
 }
 
 interface PieChartProps {
@@ -30,7 +24,7 @@ export const PieChart = ({ slices, title, subtitle }: PieChartProps) => {
         <h3 className="text-base text-gray-900">{subtitle}</h3>
       </div>
       
-      <div className="flex flex-col flex-col items-center gap-6 items-center">
+      <div className="flex flex-col items-center gap-6">
         {total === 0 ? (
           <div className="text-sm text-gray-500 text-center py-12 flex-grow flex items-center justify-center">
           No hay datos para mostrar.
@@ -38,8 +32,8 @@ export const PieChart = ({ slices, title, subtitle }: PieChartProps) => {
         ) : (
           <div className="flex flex-col items-center justify-center gap-6 flex-grow w-full">
             <div className="w-[240px] h-[240px] relative flex items-center justify-center">
-            <ResponsiveContainer width="100%" height="100%">
-              <RechartsPieChart>
+            
+              <RechartsPieChart width={240} height={240}>
                 <Pie
                   data={slices}
                   dataKey="value"
@@ -71,7 +65,7 @@ export const PieChart = ({ slices, title, subtitle }: PieChartProps) => {
                   }}
                 />
               </RechartsPieChart>
-            </ResponsiveContainer>
+            
           </div>
             <PieChartLegend slices={slices} total={total} />
         </div>
