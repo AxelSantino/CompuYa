@@ -85,7 +85,7 @@ class ServicioReportes:
 
         for motivo, total in filas:
             total_general += total
-            causa_str = motivo or "No especificado"
+            causa_str = (motivo or "No especificado").strip()
             cancelaciones_dict[causa_str] = cancelaciones_dict.get(causa_str, 0) + total
 
         return ReporteIncidenciasResponse(
