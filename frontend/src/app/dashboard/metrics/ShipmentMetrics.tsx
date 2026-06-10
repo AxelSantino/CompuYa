@@ -58,17 +58,7 @@ export default function ShipmentMetrics({ shipments, isLoading = false, filters 
       {/* 3. Ajuste de Grilla: Pasamos de cols-2 a cols-3 en pantallas grandes */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         
-        {/* Gráfico 1: Prioridades */}
-        <PieChart
-          title="Distribución de Prioridades"
-          slices={[
-            { label: 'Alta', value: metrics.alta, color: '#ef4444' },
-            { label: 'Media', value: metrics.media, color: '#3b82f6' },
-            { label: 'Baja', value: metrics.baja, color: '#22c55e' },
-          ]}
-        />
-        
-        {/* Gráfico 2: Estados */}
+        {/* Gráfico 1: Estados */}
         <PieChart
           title="Distribución de Estados"
           slices={[
@@ -76,6 +66,16 @@ export default function ShipmentMetrics({ shipments, isLoading = false, filters 
             { label: 'En Tránsito', value: metrics.enTransito, color: '#f59e0b' },
             { label: 'Entregados', value: metrics.entregado, color: '#16a34a' },
             { label: 'Cancelados', value: metrics.cancelado, color: '#dc2626' },
+          ]}
+        />
+
+        {/* Gráfico 2: Prioridades */}
+        <PieChart
+          title="Distribución de Prioridades"
+          slices={[
+            { label: 'Alta', value: metrics.alta, color: '#ef4444' },
+            { label: 'Media', value: metrics.media, color: '#3b82f6' },
+            { label: 'Baja', value: metrics.baja, color: '#22c55e' },
           ]}
         />
 

@@ -1,5 +1,6 @@
 import { PieChartSvg } from "./PieChartSvg";
 import { PieChartLegend } from "./PieChartLegend";
+import { PieChart as RechartsPieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
 
 export interface PieSlice {
   label: string;
@@ -34,7 +35,42 @@ export const PieChart = ({ slices, title }: PieChartProps) => {
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center gap-6 flex-grow w-full">
-            <PieChartSvg slices={slices} total={total} />
+            <div className="w-[240px] h-[240px] relative flex items-center justify-center">
+            <ResponsiveContainer width="100%" height="100%">
+              <RechartsPieChart>
+                <Pie
+                  data={slices}
+                  dataKey="value"
+                  nameKey="label"
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={40} // Radio interno para el hueco de la dona
+                  outerRadius={95} // Radio externo agrandado para ocupar más espacio
+                  paddingAngle={3}  // Separación estética sutil entre porciones
+                  animationDuration={1000}
+                  animationEasing="ease-out"
+                >
+                  {slices.map((slice, index) => (
+                    <Cell 
+                      key={`cell-${index}`} 
+                      fill={slice.color} 
+                      className="focus:outline-none hover:opacity-85 transition-opacity duration-200" 
+                    />
+                  ))}
+                </Pie>
+                {/* Tooltip flotante nativo configurado en español */}
+                <Tooltip 
+                  formatter={(value: any) => [`${value} envíos`, 'Cantidad']}
+                  contentStyle={{ 
+                    backgroundColor: '#fff', 
+                    borderRadius: '8px', 
+                    border: '1px solid #e5e7eb',
+                    fontSize: '14px'
+                  }}
+                />
+              </RechartsPieChart>
+            </ResponsiveContainer>
+          </div>
             <PieChartLegend slices={slices} total={total} />
         </div>
         )}
