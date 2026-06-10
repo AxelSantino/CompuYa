@@ -49,26 +49,18 @@ export default function ShipmentMetrics({ shipments, isLoading = false, filters 
       {/* Resumen General */}
       <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-gray-100">
         <div>
+          {/*
           <br></br>
           <h3 className="text-lg font-semibold text-gray-900">Resumen de Operaciones</h3>
           <p className="text-sm text-gray-500">Total de envíos: {metrics.total}</p>
+          */}
         </div>
       </div>
 
       {/* 3. Ajuste de Grilla: Pasamos de cols-2 a cols-3 en pantallas grandes */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         
-        {/* Gráfico 1: Prioridades */}
-        <PieChart
-          title="Distribución de Prioridades"
-          slices={[
-            { label: 'Alta', value: metrics.alta, color: '#ef4444' },
-            { label: 'Media', value: metrics.media, color: '#3b82f6' },
-            { label: 'Baja', value: metrics.baja, color: '#22c55e' },
-          ]}
-        />
-        
-        {/* Gráfico 2: Estados */}
+        {/* Gráfico 1: Estados */}
         <PieChart
           title="Distribución de Estados"
           slices={[
@@ -77,6 +69,18 @@ export default function ShipmentMetrics({ shipments, isLoading = false, filters 
             { label: 'Entregados', value: metrics.entregado, color: '#16a34a' },
             { label: 'Cancelados', value: metrics.cancelado, color: '#dc2626' },
           ]}
+          subtitle={"Envíos en el sistema: " + metrics.total}
+        />
+
+        {/* Gráfico 2: Prioridades */}
+        <PieChart
+          title="Distribución de Prioridades"
+          slices={[
+            { label: 'Alta', value: metrics.alta, color: '#ef4444' },
+            { label: 'Media', value: metrics.media, color: '#3b82f6' },
+            { label: 'Baja', value: metrics.baja, color: '#22c55e' },
+          ]}
+          subtitle={"Envíos en el sistema: " + metrics.total}
         />
 
         {/* Gráfico 3: Manejo de los estados de la petición asincrónica de Incidencias */}
@@ -93,6 +97,7 @@ export default function ShipmentMetrics({ shipments, isLoading = false, filters 
           <PieChart
             title="Motivos de cancelación de envios"
             slices={incidentsSlices}
+            subtitle={"Envíos cancelados: " + totalIncidents}
           />
         )}
       </div>
