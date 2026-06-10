@@ -8,7 +8,7 @@ from app.routers import usuarios_rutas, envios_rutas, reportes_rutas, notificaci
 logging.basicConfig(level=logging.INFO,
                     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 
-# Silenciamos el ruido de librerías externas
+
 logging.getLogger("httpx").setLevel(logging.WARNING)
 logging.getLogger("httpcore").setLevel(logging.WARNING)
 logger = logging.getLogger("app")
