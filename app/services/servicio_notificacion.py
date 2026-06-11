@@ -131,7 +131,7 @@ class NotificacionService:
             return
 
         msg = EmailMessage()
-        msg["From"] = self.smtp_user
+        msg["From"] = "CompuYa Logística <compuyalogistica@gmail.com>"
         msg["To"] = email_original  
         msg["Subject"] = asunto_final
         msg.set_content(cuerpo_final, subtype='html')
@@ -143,8 +143,9 @@ class NotificacionService:
             await aiosmtplib.send(
                 msg, 
                 hostname=self.smtp_host, 
-                port=int(self.smtp_port or 465), 
-                use_tls=True, 
+                port=int(self.smtp_port or 2525), 
+                use_tls=False,
+                start_tls=True,
                 username=self.smtp_user, 
                 password=self.smtp_password
             )
