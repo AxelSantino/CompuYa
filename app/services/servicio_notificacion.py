@@ -36,9 +36,7 @@ PLANTILLA_HTML_BASE = """<!DOCTYPE html>
     <tr>
     <td style="padding:24px 40px 0;">
     <p style="margin:0 0 12px;font-size:15px;color:#1a1a1a;line-height:1.6;">Hola, <strong>{nombre_cliente}</strong>.</p>
-    
     <p style="margin:0;font-size:14px;color:#666;line-height:1.8;">{mensaje_estado}</p>
-    
     </td>
     </tr>
     <tr>
@@ -138,7 +136,7 @@ class NotificacionService:
 
         resultado_envio = "Pendiente"
         motivo_del_error = None
-        
+
         try:
             await aiosmtplib.send(
                 msg, 
@@ -151,7 +149,7 @@ class NotificacionService:
             )
             resultado_envio = "Exitoso"
             logger.info(f"Correo enviado correctamente a {email_original}")
-            
+
         except Exception as e:
             logger.error(f"Fallo envío SMTP: {str(e)}")
             resultado_envio = "Fallido"
