@@ -1,8 +1,9 @@
 import logging
-import resend
 from datetime import datetime
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from email.message import EmailMessage
+import aiosmtplib
 
 from app.models.entidades import PlantillaNotificacion, HistorialNotificacion, Envio 
 from app.config import settings
@@ -85,11 +86,14 @@ PLANTILLA_HTML_BASE = """<!DOCTYPE html>
 class NotificacionService:
     def __init__(self, db: AsyncSession):
         self.db = db
-        resend.api_key = settings.RESEND_API_KEY
+        self.smtp_host = settings.SMTP_HOST
+        self.smtp_port = settings.SMTP_PORT
+        self.smtp_user = settings.SMTP_USER
+        self.smtp_password = settings.SMTP_PASSWORD
 
     async def procesar_notificacion_estado(self, envio: Envio, email_original: str, nombre_destinatario: str):
-        if not settings.RESEND_API_KEY:
-            logger.error("Error Resend: Falta la variable RESEND_API_KEY.")
+        if not all([self.smtp_host, self.smtp_user, self.smtp_password]):
+            logger.error("Error SMTP: Faltan variables de configuración (HOST, USER o PASSWORD).")
             return
 
         query = select(PlantillaNotificacion).where(
@@ -124,21 +128,30 @@ class NotificacionService:
             logger.error(f"Error de formato: Falta la etiqueta {e}")
             return
 
+        msg = EmailMessage()
+        msg["From"] = "CompuYa Logística <compuyalogistica@gmail.com>"
+        msg["To"] = email_original  
+        msg["Subject"] = asunto_final
+        msg.set_content(cuerpo_final, subtype='html')
+
         resultado_envio = "Pendiente"
         motivo_del_error = None
 
         try:
-            resend.Emails.send({
-                "from": "compuYa <onboarding@resend.dev>",
-                "to": [email_original],
-                "subject": asunto_final,
-                "html": cuerpo_final
-            })
+            await aiosmtplib.send(
+                msg, 
+                hostname=self.smtp_host, 
+                port=int(self.smtp_port or 2525), 
+                use_tls=False,
+                start_tls=True,
+                username=self.smtp_user, 
+                password=self.smtp_password
+            )
             resultado_envio = "Exitoso"
             logger.info(f"Correo enviado correctamente a {email_original}")
 
         except Exception as e:
-            logger.error(f"Fallo Resend: {str(e)}")
+            logger.error(f"Fallo envío SMTP: {str(e)}")
             resultado_envio = "Fallido"
             motivo_del_error = str(e)
 
