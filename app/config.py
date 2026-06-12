@@ -18,7 +18,9 @@ class Settings(BaseSettings):
     SMTP_PORT: Optional[int] = None
     SMTP_USER: Optional[str] = None
     SMTP_PASSWORD: Optional[str] = None
-
+    RESEND_API_KEY: Optional[str] = None
+    
+        # Configuración de la aplicación
     # Base de Datos
     DB_USER: Optional[str] = None
     DB_PASSWORD: Optional[str] = None

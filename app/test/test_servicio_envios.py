@@ -7,6 +7,12 @@ from app.models.esquemas import CancelarEnvio, EditarEnvio, EnvioCrear
 from app.services.servicios_envios import EnvioService
 from datetime import datetime
 
+@pytest.fixture(autouse=True)
+def mock_settings_resend():
+    with patch("app.services.servicio_notificacion.settings") as mock_settings:
+        mock_settings.RESEND_API_KEY = "test-key-mock"
+        yield mock_settings
+
 def test_generar_tracking_id_devuelve_formato_correcto():
     servicio = EnvioService(db=AsyncMock())
     tracking = servicio.generar_tracking_id()
@@ -41,7 +47,7 @@ async def test_entregar_envio_funciona_si_esta_en_transito():
     db_mock.execute.return_value = resultado_mock
 
     servicio = EnvioService(db=db_mock)
-    mock_bg = MagicMock() # Mock de background_tasks
+    mock_bg = MagicMock() 
     
     with patch.object(servicio, 'registrar_historial', new_callable=AsyncMock) as mock_historial:
         with patch.object(servicio, 'obtener_envio_por_id', return_value=envio_mock):
@@ -165,13 +171,8 @@ async def test_asignar_todos_pendientes_avisa_si_la_sucursal_esta_vacia():
     assert respuesta["asignados"] == 0
     assert "No hay envíos pendientes" in respuesta["message"]
     
-    
-    
-    
-    
 @pytest.mark.asyncio
 async def test_asignar_todos_pendientes_exitoso():
-    
     envio_mock = Envio()
     envio_mock.id = 10
     envio_mock.tracking_id = "CY-2026-PEND"
@@ -181,14 +182,12 @@ async def test_asignar_todos_pendientes_exitoso():
     envio_mock.destinatario.email = "cliente@test.com"
     envio_mock.razon_social_destinatario = "Test S.A."
 
-    
     fila_repartidor_mock = MagicMock()
     fila_repartidor_mock.id = 9
     fila_repartidor_mock.carga = 2  
 
     db_mock = AsyncMock()
     db_mock.add_all = MagicMock()
-    
     
     res_envios = MagicMock()
     res_envios.unique().scalars().all.return_value = [envio_mock]
@@ -201,21 +200,15 @@ async def test_asignar_todos_pendientes_exitoso():
     servicio = EnvioService(db=db_mock)
     mock_bg = MagicMock()
 
-    
     respuesta = await servicio.asignar_todos_pendientes(background_tasks=mock_bg)
 
-    
     assert respuesta["asignados"] == 1
     assert envio_mock.estado == EstadoEnvio.EN_TRANSITO
     assert "exitosamente de forma masiva" in respuesta["message"]
     db_mock.commit.assert_called_once()
     
-    
-    
-    
 @pytest.mark.asyncio
 async def test_actualizar_prioridades_pendientes_exitoso():
-    
     envio_mock = Envio()
     envio_mock.estado = EstadoEnvio.EN_SUCURSAL
     envio_mock.prioridad = MagicMock()
@@ -239,26 +232,19 @@ async def test_actualizar_prioridades_pendientes_exitoso():
 
     servicio = EnvioService(db=db_mock)
     
-    
     servicio.ruteo_service.calcular_distancia_haversine = MagicMock(return_value=15.5)
     
     with patch('app.services.servicios_envios.predecir_prioridad', return_value="alta") as mock_modelo:
-        
         respuesta = await servicio.actualizar_prioridades_pendientes()
-        
         
         assert respuesta["actualizados"] == 1
         assert envio_mock.prioridad == "alta"
         db_mock.commit.assert_called_once()
         
-        
-        
 @pytest.mark.asyncio
 async def test_obtener_hoja_ruta_ordena_por_proximidad():
-    
     envio_lejos = Envio(id=1, latitud_destino=-34.90, longitud_destino=-58.90)
     envio_cerca = Envio(id=2, latitud_destino=-34.61, longitud_destino=-58.39)
-    
     
     sucursal_mock = MagicMock(latitud=-34.60, longitud=-58.38)
     envio_lejos.sucursal = sucursal_mock
@@ -271,22 +257,17 @@ async def test_obtener_hoja_ruta_ordena_por_proximidad():
 
     servicio = EnvioService(db=db_mock)
 
-    
     def mock_distancias(lat1, lon1, lat2, lon2):
         if lat2 == -34.61: return 1.0
         return 50.0
         
     servicio.ruteo_service.calcular_distancia_haversine = MagicMock(side_effect=mock_distancias)
 
-    
     ruta_ordenada = await servicio.obtener_hoja_ruta(id_empleado=9)
 
-    
     assert len(ruta_ordenada) == 2
     assert ruta_ordenada[0].id == 2
     assert ruta_ordenada[1].id == 1       
-        
-        
         
 @pytest.mark.asyncio
 async def test_crear_envio_exitoso_con_prediccion_ml():
@@ -365,10 +346,8 @@ async def test_crear_envio_falla_si_perfil_empresa_no_existe():
     assert info_error.value.status_code == 404
     assert "La empresa destinataria no existe" in info_error.value.detail
 
-
 @pytest.mark.asyncio
 async def test_editar_envio_exitoso_mutando_campos():
-    
     envio_existente = Envio(
         id=7,
         tracking_id="CY-EDIT-TEST",
@@ -390,33 +369,24 @@ async def test_editar_envio_exitoso_mutando_campos():
     db_mock.commit = AsyncMock()
     servicio = EnvioService(db=db_mock)
 
-   
     with patch.object(servicio, 'obtener_envio_por_id', new_callable=AsyncMock, return_value=envio_existente):
-        
-        
         resultado = await servicio.editar_envio("CY-EDIT-TEST", datos_nuevos, usuario_id=1)
 
-        
         assert resultado.descripcion == "Modificada con éxito"
         db_mock.commit.assert_called_once()        
         
-        
-        
 @pytest.mark.asyncio
 async def test_editar_envio_cambiando_empresa_destino_exitoso():
-    
     envio_existente = Envio(
         id=8, tracking_id="CY-EDIT-COMP", estado=EstadoEnvio.EN_SUCURSAL,
         cuit_destinatario="30-11111111-1", razon_social_destinatario="Vieja S.A."
     )
 
-    
     datos_nuevos = EditarEnvio(
         cuit_destinatario="30-22222222-2",
         razon_social_destinatario="Nueva S.A."
     )
 
-    
     empresa_nueva_mock = PerfilEmpresa(
         cuit="30-22222222-2", razon_social="Nueva S.A.",
         usuario_id=99, latitud=-34.50, longitud=-58.50
@@ -432,15 +402,12 @@ async def test_editar_envio_cambiando_empresa_destino_exitoso():
     servicio = EnvioService(db=db_mock)
 
     with patch.object(servicio, 'obtener_envio_por_id', new_callable=AsyncMock, return_value=envio_existente):
-        
         resultado = await servicio.editar_envio("CY-EDIT-COMP", datos_nuevos, usuario_id=1)
 
-        
         assert resultado.cuit_destinatario == "30-22222222-2"
         assert resultado.razon_social_destinatario == "Nueva S.A."
         assert resultado.latitud_destino == -34.50
         db_mock.commit.assert_called_once()
-
 
 @pytest.mark.asyncio
 async def test_editar_envio_falla_si_nueva_empresa_no_existe():
@@ -460,22 +427,16 @@ async def test_editar_envio_falla_si_nueva_empresa_no_existe():
 
         assert info_error.value.status_code == 404
         assert "La empresa destino ingresada no existe" in info_error.value.detail        
-        
-        
-        
-        
 
 @pytest.mark.asyncio
 async def test_obtener_mail_destinatario_desde_objeto_o_db():
     db_mock = AsyncMock()
     servicio = EnvioService(db=db_mock)
 
-    
     envio_con_relacion = Envio(destinatario=MagicMock(email="directo@test.com"))
     mail_a = await servicio.obtenerMailDestinatario(envio_con_relacion)
     assert mail_a == "directo@test.com"
 
-    
     envio_sin_relacion = Envio(destinatario=None, destinatario_id=42)
     usuario_mock = Usuario(email="db@test.com")
     res_db = MagicMock()
@@ -484,7 +445,6 @@ async def test_obtener_mail_destinatario_desde_objeto_o_db():
 
     mail_b = await servicio.obtenerMailDestinatario(envio_sin_relacion)
     assert mail_b == "db@test.com"
-
 
 @pytest.mark.asyncio
 async def test_crear_envio_falla_si_no_hay_sucursales_disponibles():
@@ -508,7 +468,6 @@ async def test_crear_envio_falla_si_no_hay_sucursales_disponibles():
     assert info_error.value.status_code == 400
     assert "No hay sucursales disponibles" in info_error.value.detail
 
-
 @pytest.mark.asyncio
 async def test_editar_envio_falla_si_el_estado_no_es_permitido():
     envio_in_transito = Envio(tracking_id="CY-TR-123", estado=EstadoEnvio.EN_TRANSITO)
@@ -524,7 +483,6 @@ async def test_editar_envio_falla_si_el_estado_no_es_permitido():
         assert info_error.value.status_code == 400
         assert "El envío no se puede editar" in info_error.value.detail
 
-
 @pytest.mark.asyncio
 async def test_listar_envios_aplica_filtro_si_es_cliente():
     db_mock = AsyncMock()
@@ -534,19 +492,16 @@ async def test_listar_envios_aplica_filtro_si_es_cliente():
 
     servicio = EnvioService(db=db_mock)
 
-    
     usuario_cliente = Usuario(id=10, rol="cliente")
     resultados = await servicio.listar_envios(usuario_cliente)
     assert len(resultados) == 1
     db_mock.execute.assert_called_once()
-
 
 @pytest.mark.asyncio
 async def test_obtener_historial_envio_exitoso_y_error():
     db_mock = AsyncMock()
     servicio = EnvioService(db=db_mock)
 
-    
     res_vacio = MagicMock()
     res_vacio.scalar_one_or_none.return_value = None
     db_mock.execute.return_value = res_vacio
@@ -555,7 +510,6 @@ async def test_obtener_historial_envio_exitoso_y_error():
         await servicio.obtener_historial_envio("CY-NOT-FOUND")
     assert info_error.value.status_code == 404
 
-    
     res_envio_id = MagicMock()
     res_envio_id.scalar_one_or_none.return_value = 500 
     
@@ -566,13 +520,10 @@ async def test_obtener_historial_envio_exitoso_y_error():
     
     historial = await servicio.obtener_historial_envio("CY-OK")
     assert len(historial) == 2        
-        
-        
-        
+
 @pytest.mark.asyncio
 async def test_editar_envio_solo_cuit_destinatario_exitoso():
     envio_existente = Envio(id=11, tracking_id="CY-EDIT-CUIT", estado=EstadoEnvio.EN_SUCURSAL)
-    
     
     datos_nuevos = EditarEnvio(
         cuit_destinatario="30-77777777-7",
@@ -592,11 +543,9 @@ async def test_editar_envio_solo_cuit_destinatario_exitoso():
         resultado = await servicio.editar_envio("CY-EDIT-CUIT", datos_nuevos, usuario_id=1)
         assert resultado.cuit_destinatario == "30-77777777-7"
 
-
 @pytest.mark.asyncio
 async def test_editar_envio_solo_razon_social_exitoso():
     envio_existente = Envio(id=12, tracking_id="CY-EDIT-RAZON", estado=EstadoEnvio.EN_SUCURSAL)
-    
     
     datos_nuevos = EditarEnvio(
         cuit_destinatario=None,
@@ -615,6 +564,3 @@ async def test_editar_envio_solo_razon_social_exitoso():
     with patch.object(servicio, 'obtener_envio_por_id', new_callable=AsyncMock, return_value=envio_existente):
         resultado = await servicio.editar_envio("CY-EDIT-RAZON", datos_nuevos, usuario_id=1)
         assert resultado.razon_social_destinatario == "Solo Razon SA"
-        
-        
-        
