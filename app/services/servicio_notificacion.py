@@ -143,8 +143,8 @@ class NotificacionService:
             await aiosmtplib.send(
                 msg, 
                 hostname=self.smtp_host, 
-                port=int(self.smtp_port or 465), 
-                use_tls=True, 
+                port=587,
+                start_tls=True,  
                 username=self.smtp_user, 
                 password=self.smtp_password
             )
