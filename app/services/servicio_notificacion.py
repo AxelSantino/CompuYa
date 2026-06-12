@@ -1,9 +1,8 @@
 import logging
+import resend
 from datetime import datetime
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from email.message import EmailMessage
-import aiosmtplib
 
 from app.models.entidades import PlantillaNotificacion, HistorialNotificacion, Envio 
 from app.config import settings
@@ -36,9 +35,7 @@ PLANTILLA_HTML_BASE = """<!DOCTYPE html>
     <tr>
     <td style="padding:24px 40px 0;">
     <p style="margin:0 0 12px;font-size:15px;color:#1a1a1a;line-height:1.6;">Hola, <strong>{nombre_cliente}</strong>.</p>
-    
     <p style="margin:0;font-size:14px;color:#666;line-height:1.8;">{mensaje_estado}</p>
-    
     </td>
     </tr>
     <tr>
@@ -88,14 +85,11 @@ PLANTILLA_HTML_BASE = """<!DOCTYPE html>
 class NotificacionService:
     def __init__(self, db: AsyncSession):
         self.db = db
-        self.smtp_host = settings.SMTP_HOST
-        self.smtp_port = settings.SMTP_PORT
-        self.smtp_user = settings.SMTP_USER
-        self.smtp_password = settings.SMTP_PASSWORD
+        resend.api_key = settings.RESEND_API_KEY
 
     async def procesar_notificacion_estado(self, envio: Envio, email_original: str, nombre_destinatario: str):
-        if not all([self.smtp_host, self.smtp_user, self.smtp_password]):
-            logger.error("Error SMTP: Faltan variables de configuración (HOST, USER o PASSWORD).")
+        if not settings.RESEND_API_KEY:
+            logger.error("Error Resend: Falta la variable RESEND_API_KEY.")
             return
 
         query = select(PlantillaNotificacion).where(
@@ -130,29 +124,21 @@ class NotificacionService:
             logger.error(f"Error de formato: Falta la etiqueta {e}")
             return
 
-        msg = EmailMessage()
-        msg["From"] = self.smtp_user
-        msg["To"] = email_original  
-        msg["Subject"] = asunto_final
-        msg.set_content(cuerpo_final, subtype='html')
-
         resultado_envio = "Pendiente"
         motivo_del_error = None
-        
+
         try:
-            await aiosmtplib.send(
-                msg, 
-                hostname=self.smtp_host, 
-                port=587,
-                start_tls=True,  
-                username=self.smtp_user, 
-                password=self.smtp_password
-            )
+            resend.Emails.send({
+                "from": "compuYa <onboarding@resend.dev>",
+                "to": [email_original],
+                "subject": asunto_final,
+                "html": cuerpo_final
+            })
             resultado_envio = "Exitoso"
             logger.info(f"Correo enviado correctamente a {email_original}")
-            
+
         except Exception as e:
-            logger.error(f"Fallo envío SMTP: {str(e)}")
+            logger.error(f"Fallo Resend: {str(e)}")
             resultado_envio = "Fallido"
             motivo_del_error = str(e)
 
