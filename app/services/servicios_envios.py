@@ -200,6 +200,7 @@ class EnvioService:
                 detail=f"El envío no se puede entregar ya que su estado esta {envio.estado}"
             )
         envio.estado = EstadoEnvio.ENTREGADO
+        envio.fecha_entrega_real = datetime.now()
         await self.registrar_historial(envio.id, usuario_id, EstadoEnvio.ENTREGADO)
         await self.db.commit()
 
@@ -244,6 +245,13 @@ class EnvioService:
                 detail="No tiene permisos para cancelar un envío. Solo los supervisores pueden realizar esta acción."
             )
         envio.estado = nuevo_estado
+        
+        if nuevo_estado == EstadoEnvio.ENTREGADO:
+            envio.fecha_entrega_real = datetime.now()
+        else:
+            envio.fecha_entrega_real = None    
+        
+        
         await self.registrar_historial(envio.id, usuario.id, nuevo_estado)
         await self.db.commit()
 
