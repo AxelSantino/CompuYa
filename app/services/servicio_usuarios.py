@@ -232,3 +232,15 @@ class UsuarioService:
                 detail="La empresa no existe en el sistema"
             )
         return usuario
+
+    async def usuario_modificar_activo(self, usuario_id: int, peticion: bool) -> Usuario:
+        usuario = await self.obtener_usuario_por_id(usuario_id)
+        if usuario.activo == peticion:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"El usuario ya estÃ¡ {'activo' if peticion else 'desactivado'}"
+            )
+
+        usuario.activo = peticion 
+        await self.db.commit()
+        return usuario 

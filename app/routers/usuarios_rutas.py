@@ -13,7 +13,7 @@ from app.models.esquemas import (
 )
 from app.models.entidades import Usuario, TipoCliente
 from typing import List, Union
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import Query, joinedload
 from sqlalchemy import select
 import logging
 import time
@@ -174,4 +174,13 @@ async def obtener_usuario_por_id(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Usuario no encontrado."
         )
+    return usuario
+
+@router.post("/cambiar-activo/{usuario_id}", response_model=UsuarioRespuesta, dependencies=[Depends(tiene_rol(["admin"]))])
+async def cambiar_estado_activo(
+    peticion: bool,  # <-- Va primero porque no tiene el signo "="
+    usuario_id: int = Path(..., description="ID del usuario a modificar"), 
+    usuario_service: UsuarioService = Depends(get_usuario_service)
+):
+    usuario = await usuario_service.usuario_modificar_activo(usuario_id, peticion)
     return usuario
