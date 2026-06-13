@@ -106,6 +106,8 @@ class Envio(Base):
 
     fecha_creacion = Column(DateTime, server_default=func.now())
     fecha_limite = Column(DateTime, nullable=True)
+    
+    fecha_entrega_real = Column(DateTime, nullable=True)
 
     sucursal = relationship("Sucursal")
     historial = relationship(

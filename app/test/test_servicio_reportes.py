@@ -1,8 +1,9 @@
 import pytest
 from unittest.mock import AsyncMock, MagicMock
-from datetime import date
-from app.models.entidades import EstadoEnvio
+from datetime import date, datetime, timedelta
+from app.models.entidades import Envio, EstadoEnvio
 from app.services.servicio_reportes import ServicioReportes
+from app.services.servicios_envios import EnvioService
 
 @pytest.mark.asyncio
 async def test_reporte_volumen_vacio():
@@ -87,3 +88,74 @@ async def test_obtener_reporte_incidencias_vacio():
     
     assert reporte.total_incidencias == 0
     assert len(reporte.cancelaciones) == 0
+
+
+
+
+@pytest.mark.asyncio
+async def test_obtener_tasa_entregas_a_tiempo_division_por_cero():
+    
+    db_mock = AsyncMock()
+    
+    mock_res_total = MagicMock()
+    mock_res_total.scalar.return_value = 0  
+    
+    mock_res_a_tiempo = MagicMock()
+    mock_res_a_tiempo.scalar.return_value = 0
+    
+    db_mock.execute.side_effect = [mock_res_total, mock_res_a_tiempo]
+    
+    fecha_mock = date(2026, 6, 1)
+    resultado = await ServicioReportes.obtener_tasa_entregas_a_tiempo(None, db_mock, fecha_mock, fecha_mock)
+    
+    
+    assert resultado["entregados_a_tiempo"] == 0
+    assert resultado["tasa_entrega"] == 0.0
+    
+    if "total_envios" in resultado:
+        assert resultado["total_envios"] == 0
+    else:
+        assert resultado["total_entregados"] == 0
+
+@pytest.mark.asyncio
+async def test_obtener_tasa_entregas_a_tiempo_cero_por_ciento():
+   
+    db_mock = AsyncMock()
+    
+    mock_res_total = MagicMock()
+    mock_res_total.scalar.return_value = 5  
+    
+    mock_res_a_tiempo = MagicMock()
+    mock_res_a_tiempo.scalar.return_value = 0  # 
+    
+    db_mock.execute.side_effect = [mock_res_total, mock_res_a_tiempo]
+    
+    fecha_mock = date(2026, 6, 1)
+    resultado = await ServicioReportes.obtener_tasa_entregas_a_tiempo(None, db_mock, fecha_mock, fecha_mock)
+    
+    assert resultado["entregados_a_tiempo"] == 0
+    assert resultado["tasa_entrega"] == 0.0
+
+@pytest.mark.asyncio
+async def test_obtener_tasa_entregas_a_tiempo_cien_por_ciento():
+    
+    db_mock = AsyncMock()
+    
+    mock_res_total = MagicMock()
+    mock_res_total.scalar.return_value = 8  
+    
+    mock_res_a_tiempo = MagicMock()
+    mock_res_a_tiempo.scalar.return_value = 8  
+    
+    db_mock.execute.side_effect = [mock_res_total, mock_res_a_tiempo]
+    
+    fecha_mock = date(2026, 6, 1)
+    resultado = await ServicioReportes.obtener_tasa_entregas_a_tiempo(None, db_mock, fecha_mock, fecha_mock)
+    
+    assert resultado["entregados_a_tiempo"] == 8
+    assert resultado["tasa_entrega"] == 100.0
+    
+    
+    
+    
+    

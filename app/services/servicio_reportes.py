@@ -92,3 +92,34 @@ class ServicioReportes:
             total_incidencias=total_general,
             cancelaciones=[DesgloseCausa(causa=k, cantidad=v) for k, v in cancelaciones_dict.items()]
         )        
+        
+        
+        
+        
+    async def obtener_tasa_entregas_a_tiempo(self, db: AsyncSession, fecha_inicio: date, fecha_fin: date):
+        desde = datetime.combine(fecha_inicio, datetime.min.time())
+        hasta = datetime.combine(fecha_fin, datetime.max.time())
+
+        stmt_total_entregados = select(func.count(Envio.id)).where(
+            Envio.fecha_creacion.between(desde, hasta),
+            Envio.estado == EstadoEnvio.ENTREGADO
+        )
+        resultado_total = await db.execute(stmt_total_entregados)
+        total_envios = resultado_total.scalar() or 0
+
+        stmt_entregados_a_tiempo = select(func.count(Envio.id)).where(
+            Envio.fecha_creacion.between(desde, hasta),
+            Envio.estado == EstadoEnvio.ENTREGADO,
+            Envio.fecha_entrega_real <= Envio.fecha_limite
+        )
+        resultado_entregados = await db.execute(stmt_entregados_a_tiempo)
+        entregados_a_tiempo = resultado_entregados.scalar() or 0
+
+        tasa_entrega = (entregados_a_tiempo / total_envios * 100) if total_envios > 0 else 0
+
+        return {
+            "total_envios": total_envios,
+            "entregados_a_tiempo": entregados_a_tiempo,
+            "tasa_entrega": round(tasa_entrega, 2)
+        }
+
