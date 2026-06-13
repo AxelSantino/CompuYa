@@ -233,7 +233,7 @@ class UsuarioService:
             )
         return usuario
 
-    async def usuario_modificar_activo(self, usuario_id: int, peticion: bool) -> Usuario:
+    async def usuario_modificar_activo_inactivo(self, usuario_id: int, peticion: bool) -> Usuario:
         usuario = await self.obtener_usuario_por_id(usuario_id)
         if usuario.activo == peticion:
             raise HTTPException(
