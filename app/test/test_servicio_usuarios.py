@@ -166,7 +166,6 @@ async def test_crear_supabase_auth_falla_si_formato_json_es_invalido():
 async def test_crear_usuario_empresa_falla_si_el_email_ya_existe():
     db_mock = AsyncMock()
     resultado_mock = MagicMock()
-    # Cambiado a unique().scalar_one_or_none
     resultado_mock.unique().scalar_one_or_none.return_value = Usuario() 
     db_mock.execute.return_value = resultado_mock
 
@@ -182,10 +181,17 @@ async def test_crear_usuario_empresa_falla_si_el_email_ya_existe():
     assert info_error.value.status_code == 400
     assert "El email ya está registrado" in info_error.value.detail
 
-
 @pytest.mark.asyncio
 async def test_login_usuario_falla_con_credenciales_invalidas():
     db_mock = AsyncMock()
+
+    resultado_mock = MagicMock()
+    usuario_mock = Usuario(email="error@compuya.com")
+    usuario_mock.activo = True 
+    resultado_mock.scalar_one_or_none.return_value = usuario_mock
+    db_mock.execute.return_value = resultado_mock
+
+
     servicio = UsuarioService(db=db_mock)
 
     mock_response = MagicMock()
@@ -199,7 +205,6 @@ async def test_login_usuario_falla_con_credenciales_invalidas():
 
         assert info_error.value.status_code == 401
         assert "Email o contraseña incorrectos" in info_error.value.detail
-
 
 @pytest.mark.asyncio
 async def test_listar_usuarios_devuelve_coleccion_correctamente():
@@ -305,9 +310,15 @@ async def test_crear_usuario_empresa_exitoso():
 @pytest.mark.asyncio
 async def test_login_usuario_camino_feliz():
     db_mock = AsyncMock()
+    
+    resultado_mock = MagicMock()
+    usuario_mock = Usuario(email="test@compuya.com")
+    usuario_mock.activo = True
+    resultado_mock.scalar_one_or_none.return_value = usuario_mock
+    db_mock.execute.return_value = resultado_mock
+
     servicio = UsuarioService(db=db_mock)
 
-    
     mock_response = MagicMock()
     mock_response.status_code = 200
     mock_response.json.return_value = {
@@ -320,7 +331,6 @@ async def test_login_usuario_camino_feliz():
         
         assert "access_token" in resultado
         assert resultado["user"]["email"] == "test@compuya.com"
-
 
 @pytest.mark.asyncio
 async def test_modificar_usuario_perfiles_exitoso():

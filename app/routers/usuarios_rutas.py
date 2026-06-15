@@ -31,8 +31,6 @@ async def obtener_perfil(usuario: Usuario = Depends(obtener_usuario_actual)):
     logger.info(f"Obteniendo perfil para usuario ID: {usuario.id}")
     t0 = time.time()
     try:
-        # En este endpoint el usuario ya fue cargado por la dependencia `obtener_usuario_actual`.
-        # Así que simplemente lo devolvemos.
         logger.info(f"obtener_perfil (retorno en memoria) tardó {(time.time() - t0) * 1000:.2f} ms")
         return usuario
     except Exception as e:
