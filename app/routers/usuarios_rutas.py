@@ -13,7 +13,7 @@ from app.models.esquemas import (
 )
 from app.models.entidades import Usuario, TipoCliente
 from typing import List, Union
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import Query, joinedload
 from sqlalchemy import select
 import logging
 import time
@@ -31,8 +31,6 @@ async def obtener_perfil(usuario: Usuario = Depends(obtener_usuario_actual)):
     logger.info(f"Obteniendo perfil para usuario ID: {usuario.id}")
     t0 = time.time()
     try:
-        # En este endpoint el usuario ya fue cargado por la dependencia `obtener_usuario_actual`.
-        # Así que simplemente lo devolvemos.
         logger.info(f"obtener_perfil (retorno en memoria) tardó {(time.time() - t0) * 1000:.2f} ms")
         return usuario
     except Exception as e:
@@ -174,4 +172,13 @@ async def obtener_usuario_por_id(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Usuario no encontrado."
         )
+    return usuario
+
+@router.post("/cambiar-activo-inactivo/{usuario_id}", response_model=UsuarioRespuesta, dependencies=[Depends(tiene_rol(["admin"]))])
+async def cambiar_estado_activo(
+    peticion: bool, 
+    usuario_id: int = Path(..., description="ID del usuario a modificar"), 
+    usuario_service: UsuarioService = Depends(get_usuario_service)
+):
+    usuario = await usuario_service.usuario_modificar_activo_inactivo(usuario_id, peticion)
     return usuario
