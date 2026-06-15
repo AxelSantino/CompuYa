@@ -179,6 +179,7 @@ class NotificacionAppResponse(BaseModel):
     fecha_creacion: datetime
 
     model_config = ConfigDict(from_attributes = True,populate_by_name = True)
+    
 # --- ESQUEMAS DE REPORTES --- 
 
 class HistoricoLinealDia(BaseModel):
@@ -202,3 +203,21 @@ class ReporteIncidenciasResponse(BaseModel):
     cancelaciones: List[DesgloseCausa]
     
     model_config = ConfigDict(from_attributes=True)
+    
+    
+    
+# --- ESQUEMAS REPORTE TASA ENTREGA A TIEMPO ---
+
+class ReporteTasaEntregas(BaseModel):
+    
+    total_envios: int 
+    entregados_a_tiempo: int
+    tasa_entrega: float
+    
+    
+# --- ESQUEMAS REPORTE TASA DE ENTREGAS CON DEMORA ---
+
+class TasaEntregaDemoradaResponse(BaseModel):
+    total_envios: int
+    entregados_con_demora: int
+    tasa_demora: float
