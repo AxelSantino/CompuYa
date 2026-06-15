@@ -5,9 +5,11 @@ from app.models.entidades import Envio, EstadoEnvio, Historial
 from app.models.esquemas import DesgloseCausa, ReporteIncidenciasResponse 
 
 class ServicioReportes:
+
+    def __init__(self, db: AsyncSession):
+        self.db = db
     
-    @staticmethod
-    async def obtener_reporte_volumen(db: AsyncSession, fecha_desde: date = None, fecha_hasta: date = None):
+    async def obtener_reporte_volumen(self, fecha_desde: date = None, fecha_hasta: date = None):
         if not fecha_hasta:
             fecha_hasta = date.today()
         if not fecha_desde:
@@ -18,7 +20,7 @@ class ServicioReportes:
             func.date(Envio.fecha_creacion) >= fecha_desde, 
             func.date(Envio.fecha_creacion) <= fecha_hasta
         )
-        resultado_total = await db.execute(stmt_total)
+        resultado_total = await self.db.execute(stmt_total)
         total_envios = resultado_total.scalar() or 0
         
         
@@ -27,7 +29,7 @@ class ServicioReportes:
             .where(func.date(Envio.fecha_creacion) >= fecha_desde, func.date(Envio.fecha_creacion) <= fecha_hasta)
             .group_by(Envio.estado)
         )
-        resultado_estados = await db.execute(stmt_estados)
+        resultado_estados = await self.db.execute(stmt_estados)
         por_estado = {estado.value if hasattr(estado, 'value') else str(estado): cantidad for estado, cantidad in resultado_estados.all()}
         
         
@@ -36,7 +38,7 @@ class ServicioReportes:
             .where(func.date(Envio.fecha_creacion) >= fecha_desde, func.date(Envio.fecha_creacion) <= fecha_hasta)
             .group_by(Envio.tipo_envio)
         )
-        resultado_tipos = await db.execute(stmt_tipos)
+        resultado_tipos = await self.db.execute(stmt_tipos)
         por_tipo = {tipo.value if hasattr(tipo, 'value') else str(tipo): cantidad for tipo, cantidad in resultado_tipos.all()}
         
         
@@ -46,7 +48,7 @@ class ServicioReportes:
             .group_by(func.date(Envio.fecha_creacion))
             .order_by(func.date(Envio.fecha_creacion).asc())
         )
-        resultado_historico = await db.execute(stmt_historico)
+        resultado_historico = await self.db.execute(stmt_historico)
         historico_lineal = [{"fecha": fila[0], "cantidad": fila[1]} for fila in resultado_historico.all()]
         
         return {
@@ -57,9 +59,9 @@ class ServicioReportes:
         }
         
         
-    @staticmethod
+
     async def obtener_reporte_incidencias(
-        db: AsyncSession, fecha_inicio: date, fecha_fin: date
+        self, fecha_inicio: date, fecha_fin: date
     ) -> ReporteIncidenciasResponse:
         
         desde = datetime.combine(fecha_inicio, datetime.min.time())
@@ -77,7 +79,7 @@ class ServicioReportes:
             .group_by(Historial.motivo)
         )
 
-        result = await db.execute(query)
+        result = await self.db.execute(query)
         filas = result.all()
 
         cancelaciones_dict = {}
@@ -96,7 +98,7 @@ class ServicioReportes:
         
         
         
-    async def obtener_tasa_entregas_a_tiempo(self, db: AsyncSession, fecha_inicio: date, fecha_fin: date):
+    async def obtener_tasa_entregas_a_tiempo(self, fecha_inicio: date, fecha_fin: date):
         desde = datetime.combine(fecha_inicio, datetime.min.time())
         hasta = datetime.combine(fecha_fin, datetime.max.time())
 
@@ -104,7 +106,7 @@ class ServicioReportes:
             Envio.fecha_creacion.between(desde, hasta),
             Envio.estado == EstadoEnvio.ENTREGADO
         )
-        resultado_total = await db.execute(stmt_total_entregados)
+        resultado_total = await self.db.execute(stmt_total_entregados)
         total_envios = resultado_total.scalar() or 0
 
         stmt_entregados_a_tiempo = select(func.count(Envio.id)).where(
@@ -112,7 +114,7 @@ class ServicioReportes:
             Envio.estado == EstadoEnvio.ENTREGADO,
             Envio.fecha_entrega_real <= Envio.fecha_limite
         )
-        resultado_entregados = await db.execute(stmt_entregados_a_tiempo)
+        resultado_entregados = await self.db.execute(stmt_entregados_a_tiempo)
         entregados_a_tiempo = resultado_entregados.scalar() or 0
 
         tasa_entrega = (entregados_a_tiempo / total_envios * 100) if total_envios > 0 else 0
@@ -123,3 +125,29 @@ class ServicioReportes:
             "tasa_entrega": round(tasa_entrega, 2)
         }
 
+    async def obtener_tasa_entregas_con_demora(self, fecha_inicio: date, fecha_fin: date):
+            desde = datetime.combine(fecha_inicio, datetime.min.time())
+            hasta = datetime.combine(fecha_fin, datetime.max.time())
+
+            stmt_total_entregados = select(func.count(Envio.id)).where(
+                Envio.fecha_creacion.between(desde, hasta),
+                Envio.estado == EstadoEnvio.ENTREGADO
+            )
+            resultado_total = await self.db.execute(stmt_total_entregados)
+            total_envios = resultado_total.scalar() or 0
+
+            stmt_entregados_con_demora = select(func.count(Envio.id)).where(
+                Envio.fecha_creacion.between(desde, hasta),
+                Envio.estado == EstadoEnvio.ENTREGADO,
+                Envio.fecha_entrega_real > Envio.fecha_limite 
+            )
+            resultado_demorados = await self.db.execute(stmt_entregados_con_demora)
+            entregados_con_demora = resultado_demorados.scalar() or 0
+
+            tasa_demora = (entregados_con_demora / total_envios * 100) if total_envios > 0 else 0
+
+            return {
+                "total_envios": total_envios,
+                "entregados_con_demora": entregados_con_demora,
+                "tasa_demora": round(tasa_demora, 2)
+            }
