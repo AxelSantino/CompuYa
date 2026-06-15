@@ -64,7 +64,7 @@ export default function ShipmentMetrics({ shipments, isLoading = false, filters 
         <PieChart
           title="Distribución de Estados"
           slices={[
-            { label: 'En Sucursal', value: metrics.enSucursal, color: '#6b7280' },
+            { label: 'En Sucursal', value: metrics.enSucursal, color: '#6b7a80' },
             { label: 'En Tránsito', value: metrics.enTransito, color: '#f59e0b' },
             { label: 'Entregados', value: metrics.entregado, color: '#16a34a' },
             { label: 'Cancelados', value: metrics.cancelado, color: '#dc2626' },
@@ -77,7 +77,7 @@ export default function ShipmentMetrics({ shipments, isLoading = false, filters 
           title="Distribución de Prioridades"
           slices={[
             { label: 'Alta', value: metrics.alta, color: '#ef4444' },
-            { label: 'Media', value: metrics.media, color: '#3b82f6' },
+            { label: 'Media', value: metrics.media, color: '#ecaf3e' },
             { label: 'Baja', value: metrics.baja, color: '#22c55e' },
           ]}
           subtitle={"Envíos en el sistema: " + metrics.total}
