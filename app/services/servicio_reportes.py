@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import func, select
 from datetime import date, datetime, timedelta
-from app.models.entidades import Envio, EstadoEnvio, Historial
+from app.models.entidades import Envio, EstadoEnvio, Historial, PrioridadEnvio
 from app.models.esquemas import DesgloseCausa, ReporteIncidenciasResponse 
 
 class ServicioReportes:
@@ -57,8 +57,50 @@ class ServicioReportes:
             "por_tipo": por_tipo,
             "historico_lineal": historico_lineal
         }
+
+    async def exportar_estado_csv(self, fecha_desde: date, fecha_hasta: date):
+        stmt = (
+            select(Envio.estado, func.count(Envio.id))
+            .where(func.date(Envio.fecha_creacion) >= fecha_desde, func.date(Envio.fecha_creacion) <= fecha_hasta)
+            .group_by(Envio.estado)
+        )
+        result = await self.db.execute(stmt)
+        filas = result.all()
         
+        total = sum(f[1] for f in filas)
+        datos_csv = []
+        for estado, cantidad in filas:
+            porcentaje = (cantidad / total * 100) if total > 0 else 0
+            datos_csv.append({
+                "Estado": estado.value if hasattr(estado, 'value') else str(estado),
+                "Cantidad": cantidad,
+                "Porcentaje": f"{round(porcentaje, 2)}%"
+            })
+        if total > 0:
+            datos_csv.append({"Estado": "TOTAL", "Cantidad": total, "Porcentaje": "100.0%"})
+        return datos_csv
+
+    async def exportar_prioridad_csv(self, fecha_desde: date, fecha_hasta: date):
+        stmt = (
+            select(Envio.prioridad, func.count(Envio.id))
+            .where(func.date(Envio.fecha_creacion) >= fecha_desde, func.date(Envio.fecha_creacion) <= fecha_hasta)
+            .group_by(Envio.prioridad)
+        )
+        result = await self.db.execute(stmt)
+        filas = result.all()
         
+        total = sum(f[1] for f in filas)
+        datos_csv = []
+        for prioridad, cantidad in filas:
+            porcentaje = (cantidad / total * 100) if total > 0 else 0
+            datos_csv.append({
+                "Prioridad": prioridad.value if hasattr(prioridad, 'value') else str(prioridad),
+                "Cantidad": cantidad,
+                "Porcentaje": f"{round(porcentaje, 2)}%"
+            })
+        if total > 0:
+            datos_csv.append({"Prioridad": "TOTAL", "Cantidad": total, "Porcentaje": "100.0%"})
+        return datos_csv
 
     async def obtener_reporte_incidencias(
         self, fecha_inicio: date, fecha_fin: date
@@ -93,10 +135,22 @@ class ServicioReportes:
         return ReporteIncidenciasResponse(
             total_incidencias=total_general,
             cancelaciones=[DesgloseCausa(causa=k, cantidad=v) for k, v in cancelaciones_dict.items()]
-        )        
-        
-        
-        
+        )
+
+    async def exportar_motivo_cancelacion_csv(self, fecha_inicio: date, fecha_fin: date):
+        reporte = await self.obtener_reporte_incidencias(fecha_inicio, fecha_fin)
+        total = reporte.total_incidencias
+        datos_csv = []
+        for item in reporte.cancelaciones:
+            porcentaje = (item.cantidad / total * 100) if total > 0 else 0
+            datos_csv.append({
+                "Motivo": item.causa,
+                "Cantidad": item.cantidad,
+                "Porcentaje": f"{round(porcentaje, 2)}%"
+            })
+        if total > 0:
+            datos_csv.append({"Motivo": "TOTAL", "Cantidad": total, "Porcentaje": "100.0%"})
+        return datos_csv
         
     async def obtener_tasa_entregas_a_tiempo(self, fecha_inicio: date, fecha_fin: date):
         desde = datetime.combine(fecha_inicio, datetime.min.time())
