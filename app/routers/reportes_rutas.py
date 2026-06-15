@@ -4,7 +4,7 @@ from datetime import date
 
 from app.db.session import obtener_db
 from app.services.servicio_reportes import ServicioReportes
-from app.models.esquemas import ReporteIncidenciasResponse, ReporteVolumenResponse
+from app.models.esquemas import ReporteIncidenciasResponse, ReporteVolumenResponse,ReporteTasaEntregas,TasaEntregaDemoradaResponse
 from app.utils.auth import obtener_usuario_actual, tiene_rol
 
 router = APIRouter(
@@ -38,8 +38,8 @@ async def get_reporte_incidencias(
     return await reporte_service.obtener_reporte_incidencias(fecha_inicio, fecha_fin)
 
     
-@router.get("/reporte/tasa-entrega-demorada", dependencies=[Depends(tiene_rol(["admin"]))])
-async def get_reporte_incidencias_tasa_entrega_demorada(
+@router.get("/tasa-entregas-con-demora", response_model=TasaEntregaDemoradaResponse, dependencies=[Depends(tiene_rol(["admin"]))])
+async def get_tasa_entregas_con_demora(
     fecha_inicio: date = Query(..., description="Fecha de inicio del reporte (YYYY-MM-DD)"),
     fecha_fin: date = Query(..., description="Fecha de fin del reporte (YYYY-MM-DD)"),
     reporte_service: ServicioReportes = Depends(get_reporte_service)
@@ -51,3 +51,24 @@ async def get_reporte_incidencias_tasa_entrega_demorada(
         )
     
     return await reporte_service.obtener_tasa_entregas_con_demora(fecha_inicio, fecha_fin)
+
+
+
+
+@router.get("/tasa-entregas-a-tiempo", response_model=ReporteTasaEntregas, dependencies=[Depends(tiene_rol(["admin"]))])
+async def get_tasa_entregas_a_tiempo(
+    fecha_inicio: date = Query(..., description="Fecha de inicio del reporte (YYYY-MM-DD)"),
+    fecha_fin: date = Query(..., description="Fecha de fin del reporte (YYYY-MM-DD)"),
+    reporte_service: ServicioReportes = Depends(get_reporte_service)
+):
+    if fecha_inicio > fecha_fin:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="La fecha de inicio no puede ser posterior a la fecha de fin."
+        )
+    
+    return await reporte_service.obtener_tasa_entregas_a_tiempo(fecha_inicio, fecha_fin)
+
+
+
+
