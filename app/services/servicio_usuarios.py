@@ -163,6 +163,17 @@ class UsuarioService:
         return result.unique().scalars().all()
 
     async def login_usuario(self, email: str, password: str) -> dict:
+
+        stmt = select(Usuario).where(Usuario.email == email)
+        resultado = await self.db.execute(stmt)
+        usuario = resultado.scalar_one_or_none()
+
+        if usuario and not usuario.activo: 
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Tu cuenta se encuentra desactivada. Por favor, contactá a un administrador."
+            )
+
         async with httpx.AsyncClient() as client:
             url = f"{settings.SUPABASE_URL}/auth/v1/token?grant_type=password"
             headers = {
@@ -184,20 +195,17 @@ class UsuarioService:
     async def modificar_usuario(self, usuario_id: int, data: dict) -> Usuario:
         usuario = await self.obtener_usuario_por_id(usuario_id)
         
-        # Actualizar campos básicos si están presentes
         if "rol" in data:
             usuario.rol = data["rol"]
         if "activo" in data:
             usuario.activo = data["activo"]
             
-        # Actualizar perfil_empleado si es un empleado
         if usuario.tipo == TipoCliente.EMPLEADO and usuario.perfil_empleado:
             if "nombre" in data:
                 usuario.perfil_empleado.nombre = data["nombre"]
             if "apellido" in data:
                 usuario.perfil_empleado.apellido = data["apellido"]
                 
-        # Actualizar perfil_empresa si es una empresa
         if usuario.tipo == TipoCliente.EMPRESA and usuario.perfil_empresa:
             fields = ["razon_social", "cuit", "direccion_normalizada", "latitud", "longitud", "provincia", "municipio", "cod_postal"]
             for field in fields:
@@ -232,3 +240,15 @@ class UsuarioService:
                 detail="La empresa no existe en el sistema"
             )
         return usuario
+
+    async def usuario_modificar_activo_inactivo(self, usuario_id: int, peticion: bool) -> Usuario:
+        usuario = await self.obtener_usuario_por_id(usuario_id)
+        if usuario.activo == peticion:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"El usuario ya estÃ¡ {'activo' if peticion else 'desactivado'}"
+            )
+
+        usuario.activo = peticion 
+        await self.db.commit()
+        return usuario 
