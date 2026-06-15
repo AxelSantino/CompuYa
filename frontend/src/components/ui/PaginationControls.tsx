@@ -16,7 +16,7 @@ export const PaginationControls = ({
   pageSize,
   onPageChange,
   onPageSizeChange,
-  pageSizeOptions = [10, 15],
+  pageSizeOptions = [15, 30],
 }: PaginationControlsProps) => {
   return (
     <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

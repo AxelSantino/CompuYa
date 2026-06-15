@@ -18,6 +18,9 @@ export const useClientManager = () => {
             try {
                 // Obtenemos todos los clientes del sistema
                 const clientsData = await userService.getClients();
+
+                // -- ORDENAR CLIENTES POR FECHA DESCENDENTE -- 
+                clientsData.sort((a, b) => b.fecha.localeCompare(a.fecha));
                 
                 if (isMounted) {
                     setClients(clientsData);
