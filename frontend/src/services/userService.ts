@@ -33,8 +33,12 @@ const userService = {
         return response.data;
     },
 
-    deactivateEmployee: async (id: number): Promise<Usuario> => {
-        const response = await api.patch<Usuario>(`/usuarios/${id}/desactivar`);
+    changeUserStatus: async (id: number, isActive: boolean): Promise<Usuario> => {
+        const response = await api.patch<Usuario>(`/usuarios/cambiar-activo-inactivo/${id}`, null, {
+            params: {
+                peticion: isActive
+            }
+        });
         return response.data;
     },
 
