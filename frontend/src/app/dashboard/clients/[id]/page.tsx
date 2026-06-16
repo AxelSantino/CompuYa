@@ -68,7 +68,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
   } = useClientProfile(resolvedParams.id);
 
   // CAMBIAR CUANDO LA API DEVUELVA EL ESTADO DEL EMPLEADO
-  const isClientActive = /*client?.activo ??*/ false;
+  const isClientActive = /*client?.activo ??*/ true;
 
   if (error) {
     return (
