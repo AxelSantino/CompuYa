@@ -1,11 +1,13 @@
-from fastapi import APIRouter, Depends, status, BackgroundTasks
+from fastapi import APIRouter, Depends, status, BackgroundTasks, UploadFile, File, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.session import obtener_db
 from app.services.servicios_envios import EnvioService
 from app.models.esquemas import EnvioCrear, EnvioRespuesta, HistorialRespuesta, EditarEnvio, CancelarEnvio
-from app.models.entidades import Usuario, EstadoEnvio
+from app.models.entidades import Usuario, EstadoEnvio,TipoEnvio, RestriccionEnvio
 from app.utils.auth import obtener_usuario_actual, tiene_rol
 from typing import List
+import csv
+import io
 
 router = APIRouter(prefix="/envios", tags=["Envios"])
 
@@ -114,3 +116,78 @@ async def obtener_hoja_ruta(
 async def actualizar_prioridad(db: AsyncSession = Depends(obtener_db)):
     envio_service = EnvioService(db)
     return await envio_service.actualizar_prioridad_pendientes()
+
+@router.post("/importar/validar", dependencies=[Depends(tiene_rol(["operador", "supervisor"]))])
+async def importar_validar(
+    file: UploadFile = File(...),
+    envio_service: EnvioService = Depends(get_envio_service)
+):
+    if not file.filename.endswith(".csv"):
+        raise HTTPException(status_code=400, detail="El archivo debe ser un archivo CSV")
+    contents = await file.read()
+    try:
+        decoded = contents.decode("utf-8")
+    except UnicodeDecodeError:
+        raise HTTPException(status_code=400, detail="El archivo debe tener codificación UTF-8")
+        
+    reader = csv.DictReader(io.StringIO(decoded))
+    
+    columnas_requeridas = {"razon_social_destinatario", "cuit_destinatario", "descripcion", "tipo_envio", "restriccion"}
+    if not reader.fieldnames or not columnas_requeridas.issubset(set(reader.fieldnames)):
+        faltantes = columnas_requeridas - set(reader.fieldnames)
+        raise HTTPException(status_code=400, detail=f"Columnas faltantes: {', '.join(faltantes)}")
+    
+    validos = []
+    errores = []
+    
+    for i, row in enumerate(reader, start=2):
+        fila_errores = []
+        # Validaciones de Enums
+        if row.get("tipo_envio") not in [e.value for e in TipoEnvio]:
+            fila_errores.append(f"Tipo de envío '{row.get('tipo_envio')}' inválido")
+        if row.get("restriccion") not in [e.value for e in RestriccionEnvio]:
+            fila_errores.append(f"Restricción '{row.get('restriccion')}' inválida")
+            
+        if not fila_errores:
+            validos.append(row)
+        else:
+            errores.append({"fila": i, "errores": fila_errores})
+            
+    if errores:
+        raise HTTPException(status_code=400, detail={"mensaje": "Errores de validación", "errores": errores})
+    
+    return {"mensaje": "CSV válido", "datos": validos}
+
+@router.post("/importar/confirmar", status_code=status.HTTP_201_CREATED, dependencies=[Depends(tiene_rol(["operador", "supervisor"]))])
+async def confirmar_importacion_csv(
+    background_tasks: BackgroundTasks,
+    file: UploadFile = File(...),
+    usuario_actual: Usuario = Depends(obtener_usuario_actual),
+    envio_service: EnvioService = Depends(get_envio_service)
+):
+    if not file.filename.endswith(".csv"):
+        raise HTTPException(status_code=400, detail="El archivo debe ser un archivo CSV")
+        
+    contents = await file.read()
+    decoded = contents.decode("utf-8")
+    reader = csv.DictReader(io.StringIO(decoded))
+    
+    creados = []
+    errores = []
+    
+    for i, row in enumerate(reader, start=2):
+        try:
+            envio_in = EnvioCrear(**row)
+            envio = await envio_service.crear_envio(envio_in, usuario_actual.id, background_tasks)
+            creados.append({"tracking_id": envio.tracking_id, "destinatario": row["razon_social_destinatario"]})
+        except Exception as e:
+            errores.append({"fila": i, "error": str(e)})
+            
+    if errores and not creados:
+        raise HTTPException(status_code=400, detail={"mensaje": "No se pudo crear ningún envío", "errores": errores})
+        
+    return {
+        "mensaje": f"Proceso completado. Se crearon {len(creados)} envíos.",
+        "creados": creados,
+        "errores": errores
+    }
