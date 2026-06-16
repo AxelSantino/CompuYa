@@ -13,6 +13,11 @@ interface BarChartProps {
 }
 
 export const BarChart = ({ data, title, subtitle }: BarChartProps) => {
+  const chartData = data.map(item => ({
+    ...item,
+    fill: item.color 
+  }));
+
   return (
     <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200 flex flex-col h-full min-h-[360px]">
       <div className="mb-6 border-b border-gray-100 pb-4">
@@ -24,7 +29,7 @@ export const BarChart = ({ data, title, subtitle }: BarChartProps) => {
         <ResponsiveContainer width="100%" height={260}>
           {/* 1. Declaramos el layout como vertical */}
           <RechartsBarChart
-            data={data}
+            data={chartData}
             layout="vertical"
             margin={{ top: 10, right: 30, left: 20, bottom: 5 }}
           >
@@ -43,28 +48,31 @@ export const BarChart = ({ data, title, subtitle }: BarChartProps) => {
             <YAxis 
               dataKey="name" 
               type="category"
-              tick={{ fill: '#4b5563', fontSize: 13, fontWeight: 600 }}
+              tick={{ fill: '#4b5563', fontSize: 14, fontWeight: 600 }}
               axisLine={false}
               tickLine={false}
               width={110} // Reservamos espacio para que textos como "Total Entregas" no se corten
             />
             
             <Tooltip
-              formatter={(value: any) => [`${value} envíos`, 'Cantidad']}
-              contentStyle={{
-                backgroundColor: '#fff',
-                borderRadius: '8px',
-                border: '1px solid #e5e7eb',
-                fontSize: '14px',
-              }}
               cursor={{ fill: '#f9fafb' }}
+              content={({ active, payload }) => {
+                if (!active || !payload || !payload.length) return null;
+                return (
+                  <div className="bg-white px-3 py-2 rounded-lg border border-gray-200 shadow-sm text-sm">
+                    <span className="font-regular text-gray-900">
+                      <span style={{ color: payload[0].payload.color }} className="mr-1 text-sm leading-none">{payload[0].value} envíos</span>
+                      
+                    </span>
+                  </div>
+                );
+              }}
             />
             
-            {/* 4. Ajustamos el radio de la barra: Arriba-Der, Abajo-Der redondeados */}
             <Bar 
               dataKey="value" 
               radius={[0, 6, 6, 0]} 
-              barSize={45} // Hace las barras más gruesas
+              barSize={45}
               animationDuration={1000}
               animationEasing="ease-out"
             >

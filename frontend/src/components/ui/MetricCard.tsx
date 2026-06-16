@@ -1,37 +1,29 @@
 import React from 'react';
 
-export interface MetricCardProps {
-  label: string;
+interface MetricCardProps {
+  title: string;
   value: number | string;
   icon: React.ReactNode;
-  bgColor: string;
-  textColor: string;
-  percentage?: number;
+  bgColor: string;   // Clase de Tailwind para el fondo del ícono (ej. 'bg-blue-50')
+  textColor: string; // Clase de Tailwind para el color del ícono (ej. 'text-blue-600')
 }
 
-export const MetricCard = ({
-  label,
-  value,
-  icon,
-  bgColor,
-  textColor,
-  percentage
-}: MetricCardProps) => {
+export const MetricCard = ({ title, value, icon, bgColor, textColor }: MetricCardProps) => {
   return (
-    <div className={`${bgColor} rounded-lg p-6 shadow-sm border-l-4 border-gray-200 hover:shadow-md transition-shadow`}>
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex-1">
-          <p className={`text-sm font-medium ${textColor} mb-1`}>{label}</p>
-          <div className="flex items-baseline gap-2">
-            <p className="text-3xl font-bold text-gray-900">{value}</p>
-            {percentage !== undefined && (
-              <span className={`text-sm font-semibold ${textColor}`}>
-                ({percentage}%)
-              </span>
-            )}
-          </div>
-        </div>
-        <div className="flex-shrink-0">{icon}</div>
+    <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200 flex items-center gap-5 transition-transform duration-200">
+      {/* Contenedor del ícono con colores dinámicos */}
+      <div className={`p-4 rounded-full flex-shrink-0 ${bgColor} ${textColor}`}>
+        {icon}
+      </div>
+      
+      {/* Contenedor de la información */}
+      <div className="flex flex-col">
+        <span className="text-xs font-bold text-gray-600 uppercase tracking-wider mb-1">
+          {title}
+        </span>
+        <span className="text-3xl font-bold text-gray-900">
+          {value}
+        </span>
       </div>
     </div>
   );
