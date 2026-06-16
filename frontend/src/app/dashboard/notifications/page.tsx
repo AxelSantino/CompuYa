@@ -18,8 +18,11 @@ import { HistorialNotificacion, PlantillaCorreo } from '@/types/notificacion';
 import { NotificationFilter, FilterOption } from './components/NotificationFilter';
 
 import { ErrorDetailModal } from './components/ErrorDetailModal';
+import '@/i18n/i18n';
+import { useTranslation } from 'react-i18next';
 
 export default function NotificationsPage() {
+  const {t} = useTranslation();
   const {
     activeTab,
     setActiveTab,

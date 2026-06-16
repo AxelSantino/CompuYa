@@ -29,7 +29,13 @@ export const en = {
             empresa: "Company",
             cargando_aplicacion: "Loading application...",
             cerrar_sesion: "Log out",
-            actualizando_logistica: "Updating logistics..."
+            actualizando_logistica: "Updating logistics...",
+            mis_envios: "My shipments",
+            metricas: "Metrics",
+            empleados: "Employees",
+            clientes: "Clients",
+            notificaciones: "Notifications"
+
         },
         dashboard_header: {
             gestion_de_envios: "Shipment Management",
@@ -85,7 +91,13 @@ export const en = {
             registrando: "Registering...",
             generar_trackingID_registrar: "Generate TrackingID and Register",
             boton_cancelar: "Cancel",
-            campos_obligatorios: "The fields with (*) are obligatory"
+            campos_obligatorios: "The fields with (*) are obligatory",
+            buscando: "Searching...",
+            dest_no_encontrado: "Recipient not found",
+            dest_encontrado: "Recipient found",
+            datos_destinatario: "Recipient Details",
+            razon_nombre_comp: "Company Name / Full Name",
+            cuit_destinatario: "CUIT/CUIL of Recipient"
         },
         componentDetailsSection: {
             detalles_del_componente: "Details of the component and shipment",
@@ -100,6 +112,50 @@ export const en = {
             requerimientos_especiales: "Special transport requirements",
             fecha_limite_entrega: "Delivery deadline",
             plazo_maximo_entrega: "Maximum delivery time"
-        }
+        },
+        metricsPage: {
+                metricas_envios: "Shipments Metrics",
+                indicadores_prioridad: "Priority indicators, shipment status and cancellations.",
+                fecha_desde: "From",
+                fecha_hasta: "To",
+                error_al_cargar_metricas: "Error loading metrics. Please try again later.",
+                cargando_metricas: "Loading metrics...",
+                acceso_denegado: "Access denied",
+                solo_admin_ven_metricas: "Only admins can see metrics"
+        },
+        employeesPage: {
+                cargando_nomina: "Loading employee payroll...",
+                no_se_encontraron_empleados: "No employees were found matching the filters.",
+                nombre_completo: "Full Name",
+                rol: "Role",
+                fecha_alta: "Start Date",
+                acciones: "Actions",
+                ver_detalle: "See details",
+                placeholder_buscar_por: "Search by name, lastname or email...",
+                todos_los_roles: "All the roles",
+                rol_admin: "Administrator",
+                rol_supervisor: "Supervisor",
+                rol_operador: "Operator",
+                rol_repartidor: "Delivery Driver",
+                titulo: "Employees Management",
+                subtitulo: "Personnel administration, role assignment, and access control.",
+                nuevo_empleado: "New Employee"
+            },
+            clientsPage: {
+                cargando_lista_clientes: "Loading clients list...",
+                no_se_encontraron_clietnes: "No customers were found matching the filters.",
+                razon_social: "Company Name",
+                direccion: "Address",
+                fecha_alta: "Start date",
+                acciones: "Actions",
+                ver_detalle: "See details",
+                placeholder_buscar_por: "Search by Company name or CUIT...",
+                titulo: "Clients Management",
+                subtitulo: "Administration, registration and monitoring of clients (recipients).",
+                nuevo_cliente: "New Client"
+            },
+            notificationsPage: {
+
+            }
     }
 };

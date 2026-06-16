@@ -3,18 +3,21 @@ import { useRouter, usePathname } from 'next/navigation';
 import { BiCube } from "react-icons/bi";
 import { FaRoute, FaUsers, FaHandshake, FaChartBar } from "react-icons/fa";
 import { MdNotifications } from 'react-icons/md';
+import '@/i18n/i18n';
+import { useTranslation } from 'react-i18next';
 
 const NAV_ITEMS = [
-    { name: 'Gestión de envíos', href: '/dashboard', icon: BiCube, roles: ['supervisor', 'operador', 'visor'] },
-    { name: 'Mis envíos', href: '/dashboard', icon: BiCube, roles: ['cliente'] },
-    { name: 'Control Logístico', href: '/dashboard/routes', icon: FaRoute, roles: ['supervisor', 'repartidor'] },
-    { name: 'Métricas', href: '/dashboard/metrics', icon: FaChartBar, roles: ['admin'] },
-    { name: 'Empleados', href: '/dashboard/employees', icon: FaUsers, roles: ['admin']},
-    { name: 'Clientes', href: '/dashboard/clients', icon: FaHandshake, roles: ['admin']},
-    { name: 'Notificaciones', href: '/dashboard/notifications', icon: MdNotifications, roles: ['admin']},
+    { key: 'gestion_de_envios', href: '/dashboard', icon: BiCube, roles: ['supervisor', 'operador', 'visor'] },
+    { key: 'mis_envios', href: '/dashboard', icon: BiCube, roles: ['cliente'] },
+    { key: 'control_logistico', href: '/dashboard/routes', icon: FaRoute, roles: ['supervisor', 'repartidor'] },
+    { key: 'metricas', href: '/dashboard/metrics', icon: FaChartBar, roles: ['admin'] },
+    { key: 'empleados', href: '/dashboard/employees', icon: FaUsers, roles: ['admin']},
+    { key: 'clientes', href: '/dashboard/clients', icon: FaHandshake, roles: ['admin']},
+    { key: 'notificaciones', href: '/dashboard/notifications', icon: MdNotifications, roles: ['admin']},
 ];
 
 export const useDashboardLayout = () => {
+    const {t} = useTranslation();
     const { user, logout, isLoading } = useAuth();
     const router = useRouter();
     const pathname = usePathname();
@@ -24,9 +27,12 @@ export const useDashboardLayout = () => {
         router.push('/');
     };
 
-    const filteredNavItems = NAV_ITEMS.filter(item => 
-        !item.roles || (user && item.roles.includes(user.rol))
-    );
+    const filteredNavItems = NAV_ITEMS
+        .filter(item => !item.roles || (user && item.roles.includes(user.rol)))
+        .map(item => ({
+            ...item,
+            name: t(`dashboard_layout.${item.key}`)
+        }));
 
     const getUserName = () => {
         if (!user) return 'Usuario';

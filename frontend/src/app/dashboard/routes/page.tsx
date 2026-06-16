@@ -14,8 +14,6 @@ import { AccessDenied } from '@/components/ui/AccessDenied';
 import '@/i18n/i18n';
 import { useTranslation } from 'react-i18next';
 
-const {t} = useTranslation();
-
 const MapHojaRuta = dynamic(() => import('@/components/MapHojaRuta'), { 
   ssr: false,
   loading: () => <div className="w-full h-[500px] bg-gray-100 animate-pulse rounded-lg flex items-center justify-center text-gray-400">Cargando mapa de ruta...</div>
@@ -37,6 +35,7 @@ interface Repartidor {
 }
 
 export default function RoutesPage() {
+  const {t} = useTranslation();
   const { user } = useAuth();
   const [shipments, setShipments] = useState<Envio[]>([]);
   const [route, setRoute] = useState<Envio[]>([]);

@@ -11,9 +11,10 @@ import { SuccessFeedback } from '@/components/ui/SuccessFeedback';
 import '@/i18n/i18n';
 import { useTranslation } from 'react-i18next';
 
-const {t} = useTranslation();
+
 
 const NewShipmentPage = () => {
+  const {t} = useTranslation();
   const router = useRouter();
     
   // El hook personalizado maneja toda la lógica del formulario, incluyendo estado, cambios y envío
@@ -46,7 +47,7 @@ const NewShipmentPage = () => {
           onClick={() => router.back()} 
           className="flex items-center text-sm text-gray-500 hover:text-gray-800 transition-colors mb-6 group"
         >
-          <span className="mr-1 group-hover:-translate-x-1 transition-transform inline-block">←</span> {t('newShipmentpage.volver')}
+          <span className="mr-1 group-hover:-translate-x-1 transition-transform inline-block">←</span> {t('newShipmentPage.volver')}
         </button>
         
         <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-1">{t('newShipmentPage.registrar_nuevo_envio')}</h2>

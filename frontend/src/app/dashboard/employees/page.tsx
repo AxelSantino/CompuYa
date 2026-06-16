@@ -9,10 +9,13 @@ import LoadingOverlay from '@/components/LoadingOverlay';
 import { AccessDenied } from '@/components/ui/AccessDenied';
 import { getEmployeeColumns } from './components/employeeColumns';
 import { PaginationControls } from '@/components/ui/PaginationControls';
+import '@/i18n/i18n';
+import { useTranslation } from 'react-i18next';
 
 // Funcion principal 
 
 export default function EmployeesPage() {
+  const {t} = useTranslation();
   const {
     user,
     searchTerm,
@@ -40,7 +43,7 @@ if (!user || user.rol !== 'admin') {
 return (
     <DashboardLayout>
       <div className="relative bg-white p-4 md:p-6 rounded-lg shadow-md">
-        <LoadingOverlay isLoading={isLoading} text="Cargando nómina de empleados..." />
+        <LoadingOverlay isLoading={isLoading} text={t('employeesPage.cargando_nomina')} />
         
         <EmployeeHeader />
 
@@ -61,9 +64,9 @@ return (
           <>
             <DataTable 
               data={paginatedEmployees} 
-              columns={getEmployeeColumns()} 
+              columns={getEmployeeColumns(t)} 
               keyExtractor={(row) => row.id}
-              emptyMessage="No se encontraron empleados que coincidan con los filtros."
+              emptyMessage={t('employeesPage.no_se_encontraron_empleados')}
             />
             <PaginationControls
               currentPage={currentPage}

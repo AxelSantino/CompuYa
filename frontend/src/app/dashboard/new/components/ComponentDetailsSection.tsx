@@ -5,9 +5,10 @@ import { Input } from '@/components/ui/Input';
 import '@/i18n/i18n';
 import { useTranslation } from 'react-i18next';
 
-const {t} = useTranslation();
 
 export const ComponentDetailsSection = ({ formData, handleChange, isLoading }: ShipmentSectionProps) => {
+    const {t} = useTranslation();
+
     return (
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
             <div className="mb-6">

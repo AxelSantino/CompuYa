@@ -3,11 +3,11 @@ import { Button } from '@/components/ui/Button';
 import '@/i18n/i18n';
 import { useTranslation } from 'react-i18next';
 
-const{t}=useTranslation();
+
 
 export const DashboardHeader = ({ user }: { user: any }) => {
     const router = useRouter();
-
+    const{t}=useTranslation();
     let title = ''
     let subtitle = ''
 

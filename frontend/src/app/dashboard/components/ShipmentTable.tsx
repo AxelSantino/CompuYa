@@ -4,7 +4,6 @@ import { Envio, EnvioStatus, EnvioPrioridad } from '@/types/envio';
 import '@/i18n/i18n';
 import { useTranslation } from 'react-i18next';
 
-const {t} = useTranslation();
 
 export const STATUS_CLASSES: Record<EnvioStatus, string> = {
     'en sucursal': 'bg-gray-100 text-gray-800 capitalize',
@@ -34,6 +33,7 @@ export const PriorityBadge = React.memo(({ priority }: { priority: EnvioPriorida
 PriorityBadge.displayName = 'PriorityBadge';
 
 export const ShipmentTable = ({ shipments }: { shipments: Envio[] }) => {
+    const {t} = useTranslation();
     return (
         <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">

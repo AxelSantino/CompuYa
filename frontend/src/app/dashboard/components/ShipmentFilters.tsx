@@ -10,8 +10,9 @@ interface ShipmentFiltersProps {
     statusFilter: EnvioStatus | '';
     setStatusFilter: (value: EnvioStatus | '') => void;
 }
-const {t} = useTranslation();
+
 export const ShipmentFilters = ({ searchTerm, setSearchTerm, statusFilter, setStatusFilter }: ShipmentFiltersProps) => {
+    const {t} = useTranslation();
     return (
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4 text-gray-800">
             <div className="w-full md:w-1/3 text-gray-800">
