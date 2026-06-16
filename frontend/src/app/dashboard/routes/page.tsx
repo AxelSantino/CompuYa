@@ -11,6 +11,10 @@ import dynamic from 'next/dynamic';
 import { FaRoute, FaMagic, FaTruck, FaMapMarkerAlt, FaWarehouse, FaSync, FaUserTie } from 'react-icons/fa';
 import './RoutesPage.css';
 import { AccessDenied } from '@/components/ui/AccessDenied';
+import '@/i18n/i18n';
+import { useTranslation } from 'react-i18next';
+
+const {t} = useTranslation();
 
 const MapHojaRuta = dynamic(() => import('@/components/MapHojaRuta'), { 
   ssr: false,
@@ -193,16 +197,16 @@ export default function RoutesPage() {
         <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
           <div>
             <h1 className="text-3xl font-extrabold text-gray-900 flex items-center gap-3">
-              <FaRoute className="text-blue-600" /> Centro de Control Logístico
+              <FaRoute className="text-blue-600" /> {t('routesPage.centro_de_control')}
             </h1>
-            <p className="text-gray-500 mt-1">Gestión de asignaciones masivas y monitoreo de rutas en tiempo real.</p>
+            <p className="text-gray-500 mt-1">{t('routesPage.gestion_de_asignaciones')}</p>
           </div>
           {(isSupervisor && shipments.length > 0) ? (
             <button 
               onClick={handleAssignAll}
               className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-indigo-200 transition-all active:scale-95"
             >
-              <FaSync className={isProcessing ? "animate-spin" : ""} /> Asignar Todo ({shipments.length})
+              <FaSync className={isProcessing ? "animate-spin" : ""} /> {t('routesPage.asignar_todo')} ({shipments.length})
             </button>
           ) : null}
         </header>
@@ -215,7 +219,7 @@ export default function RoutesPage() {
               {/* Filtro de Repartidor */}
               <div className="card bg-gradient-to-br from-gray-900 to-gray-800 text-white border-none shadow-xl">
                 <div className="card-header border-gray-700 bg-transparent">
-                  <h2 className="text-black flex items-center gap-2"><FaUserTie className="text-blue-400" /> Monitoreo por Repartidor</h2>
+                  <h2 className="text-black flex items-center gap-2"><FaUserTie className="text-blue-400" /> {t('routesPage.monitoreo_por_repartidor')}</h2>
                 </div>
                 <div className="card-body">
                   <select 
@@ -223,7 +227,7 @@ export default function RoutesPage() {
                     value={selectedDriverId || ''}
                     onChange={(e) => setSelectedDriverId(e.target.value ? Number(e.target.value) : null)}
                   >
-                    <option value="">Seleccionar Repartidor para ver su Ruta...</option>
+                    <option value="">{t('routesPage.seleccionar_repartidor_para_ver_ruta')}.</option>
                     {repartidores.map(r => (
                       <option key={r.id} value={r.id}>
                         {r.perfil_empleado?.nombre} {r.perfil_empleado?.apellido} ({r.email})
@@ -243,16 +247,16 @@ export default function RoutesPage() {
 
               <div className="card h-full">
                 <div className="card-header flex items-center justify-between">
-                  <h2 className="flex items-center gap-2"><FaMagic /> Envíos en Sucursal</h2>
+                  <h2 className="flex items-center gap-2"><FaMagic /> {t('routesPage.envios_en_sucursal')}</h2>
                   <span className="bg-blue-100 text-blue-700 text-xs font-bold px-2 py-1 rounded-full">
-                    {shipments.length} pendientes
+                    {shipments.length} {t('routesPage.pendientes')}
                   </span>
                 </div>
                 <div className="card-body overflow-y-auto max-h-[400px] p-0">
                   {shipments.length === 0 ? (
                     <div className="p-10 text-center text-gray-400">
                       <FaWarehouse className="text-4xl mx-auto mb-3 opacity-20" />
-                      <p>No hay envíos pendientes.</p>
+                      <p>{t('routesPage.no_hay_envios_pendientes')}</p>
                     </div>
                   ) : (
                     <ul className="divide-y divide-gray-100">
@@ -272,7 +276,7 @@ export default function RoutesPage() {
                               onClick={() => handleManualAssign(s.tracking_id)}
                               className="btn-assign group-hover:scale-105 transition-transform"
                             >
-                              <FaMagic /> Asignar
+                              <FaMagic /> {t('routesPage.faMagic_asignar')}
                             </button>
                           </div>
                         </li>
@@ -292,9 +296,9 @@ export default function RoutesPage() {
                   <div className="card">
                     <div className="card-header flex items-center justify-between bg-green-50 text-green-800 border-b border-green-100">
                       <h2 className="flex items-center gap-2">
-                        <FaTruck /> {selectedDriverId ? 'Visualizando Recorrido del Repartidor' : 'Mi Hoja de Ruta Optimizada'}
+                        <FaTruck /> {selectedDriverId ? t('routesPage.visualizando_recorrido_del_repartidor') : t('routesPage.mi_hoja_de_ruta_optimizada')}
                       </h2>
-                      <span className="text-xs font-medium">Orden eficiente sugerido</span>
+                      <span className="text-xs font-medium">{t('routesPage.orden_eficiente_sugerido')}</span>
                     </div>
                     <div className="card-body p-0">
                       <MapHojaRuta puntos={mapPoints} />
@@ -303,7 +307,7 @@ export default function RoutesPage() {
 
                   <div className="card">
                     <div className="card-header bg-gray-50">
-                      <h2 className="text-gray-700">Orden de Entrega</h2>
+                      <h2 className="text-gray-700">{t('routesPage.orden_de_entrega')}</h2>
                     </div>
                     <div className="card-body p-0">
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0 divide-x divide-y divide-gray-100">
@@ -334,7 +338,7 @@ export default function RoutesPage() {
                                 disabled={isProcessing}
                                 title="Marcar como entregado"
                               >
-                                <FaTruck /> Entregado
+                                <FaTruck /> {t('routesPage.faTruck_entregado')}
                               </button>
                             ) : null}
                           </div>
@@ -347,10 +351,10 @@ export default function RoutesPage() {
                 <div className="card p-20 text-center text-gray-400 bg-gray-50 border-dashed border-2 border-gray-200">
                   <FaRoute className="text-6xl mx-auto mb-4 opacity-75" />
                   <h3 className="text-xl font-medium text-gray-500">
-                    {selectedDriverId ? 'Este repartidor no tiene entregas activas' : 'Sin recorrido asignado'}
+                    {selectedDriverId ? t('routesPage.este_repartidor_no_tiene_entregas') : t('routesPage.sin_recorrido_asignado')}
                   </h3>
                   <p className="mt-2 text-sm">
-                    {isSupervisor && !selectedDriverId ? 'Selecciona un repartidor para monitorear su ruta.' : 'Las entregas aparecerán aquí una vez asignadas.'}
+                    {isSupervisor && !selectedDriverId ? t('routesPage.selecciona_un_repartidor') : t('routesPage.entregas_apareceran_aqui')}
                   </p>
                 </div>
               )}

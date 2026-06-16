@@ -1,6 +1,8 @@
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 import { EnvioStatus } from '@/types/envio';
+import '@/i18n/i18n';
+import { useTranslation } from 'react-i18next';
 
 interface ShipmentFiltersProps {
     searchTerm: string;
@@ -8,13 +10,13 @@ interface ShipmentFiltersProps {
     statusFilter: EnvioStatus | '';
     setStatusFilter: (value: EnvioStatus | '') => void;
 }
-
+const {t} = useTranslation();
 export const ShipmentFilters = ({ searchTerm, setSearchTerm, statusFilter, setStatusFilter }: ShipmentFiltersProps) => {
     return (
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4 text-gray-800">
             <div className="w-full md:w-1/3 text-gray-800">
                 <Input
-                    placeholder="Buscar por Tracking ID..."
+                    placeholder={t('shipmentFilters.buscar_por_trackingID')}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="w-full"
@@ -26,11 +28,11 @@ export const ShipmentFilters = ({ searchTerm, setSearchTerm, statusFilter, setSt
                     onChange={(e) => setStatusFilter(e.target.value as EnvioStatus | '')}
                     className="w-full md:w-40"
                 >
-                    <option value="">Todos los estados</option>
-                    <option value="en sucursal">En Sucursal</option>
-                    <option value="en transito">En Tránsito</option>
-                    <option value="entregado">Entregado</option>
-                    <option value="cancelado">Cancelado</option>
+                    <option value="">{t('shipmentFilters.todos_los_estados')}</option>
+                    <option value="en sucursal">{t('shipmentFilters.en_sucursal')}</option>
+                    <option value="en transito">{t('shipmentFilters.en_transito')}</option>
+                    <option value="entregado">{t('shipmentFilters.entregado')}</option>
+                    <option value="cancelado">{t('shipmentFilters.cancelado')}</option>
                 </Select>
             </div>
         </div>
