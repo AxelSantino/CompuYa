@@ -36,6 +36,10 @@ export const useShipmentList = () => {
                 try {
                     const data = await shipmentService.getShipments();
                     if (isMounted) {
+                        
+                        // -- ORDENAR ENVIOS POR FECHA DESCENDENTE -- 
+                        data.sort((a, b) => b.fecha_creacion.localeCompare(a.fecha_creacion));
+
                         setShipments(data);
                     }
                 } catch {
