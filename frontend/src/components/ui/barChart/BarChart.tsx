@@ -20,8 +20,8 @@ export const BarChart = ({ data, title, subtitle }: BarChartProps) => {
         <h3 className="text-base text-gray-900">{subtitle}</h3>
       </div>
 
-      <div className="w-full flex-grow h-[260px]">
-        <ResponsiveContainer width="100%" height="100%">
+      <div className="w-full flex-grow min-h-[260px]">
+        <ResponsiveContainer width="100%" height={260}>
           {/* 1. Declaramos el layout como vertical */}
           <RechartsBarChart
             data={data}

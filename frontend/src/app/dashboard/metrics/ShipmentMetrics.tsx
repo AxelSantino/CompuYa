@@ -66,7 +66,7 @@ export default function ShipmentMetrics({ shipments, isLoading = false, filters 
         </div>
       </div>
 
-      {/* 3. Ajuste de Grilla: Pasamos de cols-2 a cols-3 en pantallas grandes */}
+      {/* Corta la pantalla en tres columnas iguales y asigna el ancho exterior*/}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         
         {/* Gráfico 1: Estados */}
