@@ -6,9 +6,11 @@ import { DateFilterParams } from '@/types/metrics';
 // Capas lógicas (Sincrónica y Asincrónica)
 import { useShipmentMetrics } from '@/app/dashboard/metrics/hooks/useShipmentMetrics';
 import { useIncidentsMetrics } from '@/app/dashboard/metrics/hooks/useIncidentsMetrics';
+import { useDeliveryMetrics } from '@/app/dashboard/metrics/hooks/useDeliveryMetrics';
 
 // Componentes genéricos reutilizables de UI
 import { PieChart } from '@/components/ui/pieChart/PieChart';
+import { BarChart } from '@/components/ui/barChart/BarChart';
 
 interface ShipmentMetricsProps {
   shipments: Envio[];
@@ -27,6 +29,13 @@ export default function ShipmentMetrics({ shipments, isLoading = false, filters 
     isLoading: incidentsLoading, 
     error: incidentsError 
   } = useIncidentsMetrics(filters);
+
+  const {
+    data: deliveryData,
+    totalDeliveries,
+    isLoading: deliveryLoading,
+    error: deliveryError
+  } = useDeliveryMetrics(filters);
 
   // Configuración de las tarjetas de resumen
 
@@ -83,7 +92,7 @@ export default function ShipmentMetrics({ shipments, isLoading = false, filters 
           subtitle={"Envíos en el sistema: " + metrics.total}
         />
 
-        {/* Gráfico 3: Manejo de los estados de la petición asincrónica de Incidencias */}
+        {/* Gráfico 3: Incidencias */}
         {incidentsLoading ? (
           <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200 flex flex-col items-center justify-center min-h-[280px]">
             <span className="animate-spin inline-block w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full mb-3"></span>
@@ -100,6 +109,26 @@ export default function ShipmentMetrics({ shipments, isLoading = false, filters 
             subtitle={"Envíos cancelados: " + totalIncidents}
           />
         )}
+
+        {/* Gráfico 4: Puntualidad de las entregas */}
+        <div className="col-span-1 md:col-span-2 lg:col-span-3 mt-4">
+        {deliveryLoading ? (
+          <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200 flex flex-col items-center justify-center min-h-[360px]">
+            <span className="animate-spin inline-block w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full mb-3"></span>
+            <span className="text-sm text-gray-400 font-medium animate-pulse">Cargando rendimiento de entregas...</span>
+          </div>
+        ) : deliveryError ? (
+          <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200 flex items-center justify-center text-sm font-medium text-red-500 min-h-[360px] text-center px-4">
+            {deliveryError}
+          </div>
+        ) : (
+          <BarChart
+            title="Puntualidad de las entregas"
+            subtitle={`Total evaluado: ${totalDeliveries} envíos`}
+            data={deliveryData}
+          />
+        )}
+        </div>
       </div>
     </div>
   );
