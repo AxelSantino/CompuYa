@@ -45,6 +45,7 @@ export default function EmployeeDetailPage({ params }: { params: Promise<{ id: s
 
   const iniciales = employee ? `${employee.perfil_empleado?.nombre?.charAt(0) || ''}${employee.perfil_empleado?.apellido?.charAt(0) || ''}`.toUpperCase() : '👤';
 
+  // CAMBIAR CUANDO LA API DEVUELVA EL ESTADO DEL EMPLEADO
   const isEmployeeActive = /*employee?.activo ??*/ true;
 
   return (
