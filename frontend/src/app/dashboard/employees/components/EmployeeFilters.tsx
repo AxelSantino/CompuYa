@@ -7,13 +7,17 @@ interface EmployeeFiltersProps {
   setSearchTerm: (value: string) => void;
   roleFilter: string;
   setRoleFilter: (value: string) => void;
+  statusFilter: string; 
+  setStatusFilter: (value: string) => void;
 }
 
 export const EmployeeFilters = ({ 
   searchTerm, 
   setSearchTerm, 
   roleFilter, 
-  setRoleFilter 
+  setRoleFilter,
+  statusFilter,
+  setStatusFilter
 }: EmployeeFiltersProps) => {
     return (
     <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 text-gray-800">
@@ -25,7 +29,7 @@ export const EmployeeFilters = ({
           className="w-full"
         />
       </div>
-      <div className="w-full md:w-auto">
+      <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
         <Select 
           value={roleFilter} 
           onChange={(e) => setRoleFilter(e.target.value)}
@@ -36,6 +40,16 @@ export const EmployeeFilters = ({
           <option value="supervisor">Supervisor</option>
           <option value="operador">Operador</option>
           <option value="repartidor">Repartidor</option>
+        </Select>
+
+        <Select 
+          value={statusFilter} 
+          onChange={(e) => setStatusFilter(e.target.value)}
+          className="w-full md:w-48"
+        >
+          <option value="">Todos los estados</option>
+          <option value="active">Solo Activos</option>
+          <option value="inactive">Solo Inactivos</option>
         </Select>
       </div>
     </div>
