@@ -67,21 +67,21 @@ export default function ShipmentMetrics({ shipments, isLoading = false, filters 
           ========================================= */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6 w-full">
         <MetricCard
-          title="Total de Envíos"
+          title={t('metricsPage.total_envios')}
           value={metrics.total}
           icon={<FaBox size={26} />}
           bgColor="bg-blue-50"
           textColor="text-blue-600"
         />
         <MetricCard
-          title="Envíos Entregados"
+          title={t('metricsPage.envios_entregados')}
           value={metrics.entregado}
           icon={<FaCheckCircle size={26} />}
           bgColor="bg-green-50"
           textColor="text-green-600"
         />
         <MetricCard
-          title="Envíos Cancelados"
+          title={t('metricsPage.envios_cancel')}
           value={metrics.cancelado}
           icon={<FaTimesCircle size={26} />}
           bgColor="bg-red-50"
@@ -96,7 +96,7 @@ export default function ShipmentMetrics({ shipments, isLoading = false, filters 
         {deliveryLoading ? (
           <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200 flex flex-col items-center justify-center h-full min-h-[360px]">
             <span className="animate-spin inline-block w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full mb-3"></span>
-            <span className="text-sm text-gray-400 font-medium animate-pulse">Cargando rendimiento de entregas...</span>
+            <span className="text-sm text-gray-400 font-medium animate-pulse">{t('metricsPage.cargando_rendimiento')}</span>
           </div>
         ) : deliveryError ? (
           <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200 flex items-center justify-center text-sm font-medium text-red-500 h-full min-h-[360px] text-center px-4">
@@ -104,8 +104,8 @@ export default function ShipmentMetrics({ shipments, isLoading = false, filters 
           </div>
         ) : (
           <BarChart
-            title="Puntualidad de las entregas"
-            subtitle={`Total evaluado: ${totalDeliveries} envíos`}
+            title={t('metricsPage.puntualidad_entregas')}
+            subtitle={t('metricsPage.total_evaluado', { count: totalDeliveries })}
             data={deliveryData}
           />
         )}

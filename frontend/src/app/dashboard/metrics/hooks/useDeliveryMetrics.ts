@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import metricsService from '@/services/metricsService';
 import { DateFilterParams } from '@/types/metrics';
+import '@/i18n/i18n';
+import { useTranslation } from 'react-i18next';
 
 export interface BarChartData {
   name: string;
@@ -13,6 +15,7 @@ export const useDeliveryMetrics = (filters?: DateFilterParams) => {
   const [totalDeliveries, setTotalDeliveries] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const {t} = useTranslation();
 
   useEffect(() => {
     let isMounted = true;
@@ -46,14 +49,14 @@ export const useDeliveryMetrics = (filters?: DateFilterParams) => {
 
           // Estructuramos el array plano con la nomenclatura que espera Recharts
           setData([
-            { name: 'Total Entregas', value: total, color: '#3b82f6' },
-            { name: 'A Tiempo', value: onTimeCount, color: '#16a34a' },
-            { name: 'Con Demora', value: lateCount, color: '#ef4444' }
+            { name: t('metricsPage.total_entregas'), value: total, color: '#3b82f6' },
+            { name: t('metricsPage.a_tiempo'), value: onTimeCount, color: '#16a34a' },
+            { name: t('metricsPage.con_demora'), value: lateCount, color: '#ef4444' }
           ]);
         }
       } catch {
         if (isMounted) {
-          setError('Error al cargar las métricas de rendimiento de entrega.');
+          setError(t('metricsPage.error_cargar_metricas'));
         }
       } finally {
         if (isMounted) {

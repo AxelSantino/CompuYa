@@ -22,6 +22,28 @@ export const es = {
                 guardando: "Guardando...",
                 guardar_todos_los_cambios: "Guardar todos los cambios",
             },
+            shipmentInfo: {
+                info_envio: "Información del Envío",
+                faEdit: "Editar",
+                tipo_envio: "Tipo de Envío",
+                manejo_esp: "Manejo Especial",
+                ninguna: "Ninguna",
+                fragil: "Frágil",
+                valioso: "Valioso",
+                desc: "Descripción",
+                no_disp: "No disponible",
+                id_interno: "ID Interno: ",
+                dir_no_especi: "Dirección no especificada en el perfil",
+                info_dest: "Información del Destinatario",
+                razon_social: "Razón Social",
+                rzn_social_name: "Razón Social / Nombre",
+                direccion: "Dirección",
+                fecha_creacion: "Fecha de Creación",
+                creado_por: "Creado por",
+                prioridad_asignada: "Prioridad Asignada",
+                lim_entrega: "Límite de Entrega"
+
+            },
             dashboard_layout: {
                 gestion_de_envios: "Gestión de envios",
                 control_logistico: "Control logístico",
@@ -57,7 +79,19 @@ export const es = {
                 descripcion: "Descripcion",
                 tipo: "Tipo",
                 estado: "Estado",
-                no_se_encontraron_envios: "No se encontraron envios con el criterio."
+                no_se_encontraron_envios: "No se encontraron envios con el criterio.",
+                en_sucursal: "en sucursal",
+                status: {
+                    "en sucursal": "En sucursal",
+                    "en transito": "En tránsito",
+                    "entregado": "Entregado",
+                    "cancelado": "Cancelado"
+                },
+                priority: {
+                    "alta": "Alta",
+                    "media": "Media",
+                    "baja": "Baja"
+                }
             },
             routesPage: {
                 centro_de_control: "Centro de control logistico",
@@ -133,8 +167,21 @@ export const es = {
                 envios_en_sistema: "Envíos en el sistema: ",
                 cargando_incidencias: "Cargando incidencias del periodo...",
                 motivos_cancelacion: "Motivos de cancelación de envíos",
-                envios_cancelados: "Envíos cancelados: "
-
+                envios_cancelados: "Envíos cancelados: ",
+                total_envios: "Total de Envíos",
+                envios_entregados: "Envíos Entregados",
+                envios_cancel: "Envíos Cancelados",
+                cargando_rendimiento: "Cargando rendimiento de entregas...",
+                puntualidad_entregas: "Puntualidad de las entregas",
+                total_evaluado: "Total evaluado: {{count}} envíos",
+                total_entregas: "Total Entregas",
+                a_tiempo: "A Tiempo",
+                con_demora: "Con Demora",
+                error_cargar_metricas: "Error al cargar las métricas de rendimiento de entrega.",
+                piechart_cant: "Cantidad",
+                piechart_envios: "{{value}} envíos",
+                error_carg_metri: "Error al cargar las métricas de incidencias.",
+                no_hay_datos_mostrar: "No hay datos para mostrar."
             },
             employeesPage: {
                 cargando_nomina: "Cargando nómina de empleados...",

@@ -22,6 +22,27 @@ export const en = {
             guardando: "Saving...",
             guardar_todos_los_cambios: "Save All Changes"
         },
+        shipmentInfo: {
+            info_envio: "Shipment Information",
+            faEdit: "Edit",
+            tipo_envio: "Type of Shipment",
+            manejo_esp: "Especial Treatment",
+            ninguna: "None",
+            fragil: "Fragile",
+            valioso: "Valuable",
+            desc: "Description",
+            no_disp: "Not available",
+            id_interno: "Intern ID: ",
+            dir_no_especi: "Address not specified in profile",
+            info_dest: "Recipient Information",
+            razon_social: "Company Name",
+            rzn_social_name: "Company Name / Name",
+            direccion: "Direction",
+            fecha_creacion: "Date of Creation",
+            creado_por: "Created by",
+            prioridad_asignada: "Priority Assigned",
+            lim_entrega: "Date limit"
+            },
         dashboard_layout: {
             gestion_de_envios: "Shipment Management",
             control_logistico: "Logistics Control",
@@ -58,7 +79,19 @@ export const en = {
             descripcion: "Description",
             tipo: "Type",
             estado: "State",
-            no_se_encontraron_envios: "No shipments were found matching the selected criteria."
+            no_se_encontraron_envios: "No shipments were found matching the selected criteria.",
+            en_sucursal: "en sucursal",
+                status: {
+                    "en sucursal": "In Branch",
+                    "en transito": "On Transit",
+                    "entregado": "Delivered",
+                    "cancelado": "Cancelled"
+                },
+                priority: {
+                    "alta": "High",
+                    "media": "Medium",
+                    "baja": "Low"
+                }
         },
         routesPage: {
             centro_de_control: "Center of logistics control",
@@ -134,7 +167,20 @@ export const en = {
                 envios_en_sistema: "Shipments in the system: ",
                 cargando_incidencias: "Loading incidents for the period...",
                 motivos_cancelacion: "Reasons for shipment cancellation",
-                envios_cancelados: "Shipments cancelled: "
+                envios_cancelados: "Shipments cancelled: ",
+                total_envios: "Shipments in Total",
+                envios_entregados: "Shipments Delivered",
+                envios_cancel: "Shipments Cancelled",
+                cargando_rendimiento: "Loading delivery performance...",
+                puntualidad_entregas: "Punctuality of deliveries",
+                total_evaluado: "Total evaluated: {{count}} shipments",
+                total_entregas: "Total Deliveries",
+                a_tiempo: "On Time",
+                con_demora: "With Delay",
+                error_cargar_metricas: "Error loading delivery performance metrics.",
+                piechart_cant: "Quantity",
+                piechart_envios: "{{value}} shipments",
+                error_carg_metri: "Error while loading incidence metrics."
         },
         employeesPage: {
                 cargando_nomina: "Loading employee payroll...",
