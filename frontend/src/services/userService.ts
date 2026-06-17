@@ -34,7 +34,7 @@ const userService = {
     },
 
     changeUserStatus: async (id: number, isActive: boolean): Promise<Usuario> => {
-        const response = await api.patch<Usuario>(`/usuarios/cambiar-activo-inactivo/${id}`, null, {
+        const response = await api.post<Usuario>(`/usuarios/cambiar-activo-inactivo/${id}`, null, {
             params: {
                 peticion: isActive
             }
