@@ -1,15 +1,18 @@
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
+import '@/i18n/i18n';
+import { useTranslation } from 'react-i18next';
 
 export const EmployeeHeader = () => {
+    const {t} = useTranslation();
     const router = useRouter();
 
     return (
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 text-orange-700">
             <div>
-                <h2 className="text-2xl font-bold mb-1">Gestión de Empleados</h2>
+                <h2 className="text-2xl font-bold mb-1">{t('employeesPage.titulo')}</h2>
                 <p className="text-gray-600">
-                    Administración de personal, asignación de roles y control de accesos.
+                    {t('employeesPage.subtitulo')}
                 </p>
             </div>
             <Button
@@ -17,7 +20,7 @@ export const EmployeeHeader = () => {
                 className="w-full md:w-auto"
                 onClick={() => router.push('/dashboard/employees/new')}
             >
-                + Nuevo Empleado
+                + {t('employeesPage.nuevo_empleado')}
             </Button>
         </div>
     );

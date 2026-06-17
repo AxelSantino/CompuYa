@@ -1,6 +1,8 @@
 import { Column } from '../../users/components/DataTable';
 import { Usuario } from '@/types/usuario';
 import Link from 'next/link';
+import '@/i18n/i18n';
+import { useTranslation } from 'react-i18next';
 
 export const getRoleBadgeClasses = (rol: string) => {
   switch (rol.toLowerCase()) {
@@ -17,10 +19,11 @@ export const getRoleBadgeClasses = (rol: string) => {
   }
 };
 
-export const getEmployeeColumns = (): Column<Usuario>[] => [
+export const getEmployeeColumns = (t: any): Column<Usuario>[] => [
+  
   { header: 'ID', accessor: 'id' },
   { 
-    header: 'Nombre Completo', 
+    header: t('employeesPage.nombre_completo'), 
     accessor: (row) => {
       const nombre = row.perfil_empleado?.nombre || '-';
       const apellido = row.perfil_empleado?.apellido || '';
@@ -29,7 +32,7 @@ export const getEmployeeColumns = (): Column<Usuario>[] => [
   },
   { header: 'Email', accessor: 'email' },
   { 
-    header: 'Rol', 
+    header: t('employeesPage.rol'), 
     accessor: (row) => (
       <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full capitalize ${getRoleBadgeClasses(row.rol)}`}>
         {row.rol}
@@ -37,7 +40,7 @@ export const getEmployeeColumns = (): Column<Usuario>[] => [
     )
   },
   { 
-    header: 'Fecha Alta', 
+    header: t('employeesPage.fecha_alta'), 
     accessor: (row) => {
       if (!row.fecha) return '-';
       const [year, month, day] = row.fecha.split('T')[0].split('-');
@@ -46,13 +49,13 @@ export const getEmployeeColumns = (): Column<Usuario>[] => [
     }
   },
   { 
-    header: 'Acciones', 
+    header: t('employeesPage.acciones'), 
     accessor: (row) => (
       <Link 
         href={`/dashboard/employees/${row.id}`}
         className="text-orange-600 hover:text-orange-800 font-bold transition-colors cursor-pointer"
       >
-        Ver detalle
+        {t('employeesPage.ver_detalle')}
       </Link>
     )
   }
