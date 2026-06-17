@@ -30,7 +30,9 @@ class UsuarioBase(BaseModel):
     tipo: TipoCliente
     rol: str = "visor"
     fecha: Optional[date] = Field(default_factory=date.today)
-
+    activo: bool = True
+    model_config = ConfigDict(from_attributes=True) 
+    
 class UsuarioRegistroEmpleado(UsuarioBase):
     password: str = Field(min_length=6)
     nombre: str
