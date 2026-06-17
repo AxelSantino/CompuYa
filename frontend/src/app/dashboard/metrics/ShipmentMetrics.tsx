@@ -55,7 +55,7 @@ export default function ShipmentMetrics({ shipments, isLoading = false, filters 
     );
   }
 
-  return (
+ return (
     <div className="mb-8">
       {/* Header invisible / divisor */}
       <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-gray-100">
@@ -63,62 +63,56 @@ export default function ShipmentMetrics({ shipments, isLoading = false, filters 
       </div>
 
       {/* =========================================
-          FILA 1: Gráfico de Barras (Izquierda) + Tarjetas (Derecha)
+          FILA 1: Tarjetas de Métricas (Fila horizontal)
           ========================================= */}
-      <div className="flex flex-col lg:flex-row gap-6 mb-8">
-        
-        <div className="w-full lg:w-2/3">
-
-        <div className="w-full lg:w-1/3 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-1 gap-6">
-          <MetricCard
-            title="Total de Envíos"
-            value={metrics.total}
-            icon={<FaBox size={26} />}
-            bgColor="bg-blue-50"
-            textColor="text-blue-600"
-          />
-          <MetricCard
-            title="Envíos Entregados"
-            value={metrics.entregado}
-            icon={<FaCheckCircle size={26} />}
-            bgColor="bg-green-50"
-            textColor="text-green-600"
-          />
-          <MetricCard
-            title="Envíos Cancelados"
-            value={metrics.cancelado}
-            icon={<FaTimesCircle size={26} />}
-            bgColor="bg-red-50"
-            textColor="text-red-600"
-          />
-        </div>
-
-        <br></br>
-
-          {deliveryLoading ? (
-            <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200 flex flex-col items-center justify-center h-full min-h-[360px]">
-              <span className="animate-spin inline-block w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full mb-3"></span>
-              <span className="text-sm text-gray-400 font-medium animate-pulse">Cargando rendimiento de entregas...</span>
-            </div>
-          ) : deliveryError ? (
-            <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200 flex items-center justify-center text-sm font-medium text-red-500 h-full min-h-[360px] text-center px-4">
-              {deliveryError}
-            </div>
-          ) : (
-            <BarChart
-              title="Puntualidad de las entregas"
-              subtitle={`Total evaluado: ${totalDeliveries} envíos`}
-              data={deliveryData}
-            />
-          )}
-        </div>
-
-        
-        
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6 w-full">
+        <MetricCard
+          title="Total de Envíos"
+          value={metrics.total}
+          icon={<FaBox size={26} />}
+          bgColor="bg-blue-50"
+          textColor="text-blue-600"
+        />
+        <MetricCard
+          title="Envíos Entregados"
+          value={metrics.entregado}
+          icon={<FaCheckCircle size={26} />}
+          bgColor="bg-green-50"
+          textColor="text-green-600"
+        />
+        <MetricCard
+          title="Envíos Cancelados"
+          value={metrics.cancelado}
+          icon={<FaTimesCircle size={26} />}
+          bgColor="bg-red-50"
+          textColor="text-red-600"
+        />
       </div>
 
       {/* =========================================
-          FILA 2: Los 3 Gráficos Circulares
+          FILA 2: Gráfico de Barras (Ancho completo)
+          ========================================= */}
+      <div className="w-full mb-8">
+        {deliveryLoading ? (
+          <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200 flex flex-col items-center justify-center h-full min-h-[360px]">
+            <span className="animate-spin inline-block w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full mb-3"></span>
+            <span className="text-sm text-gray-400 font-medium animate-pulse">Cargando rendimiento de entregas...</span>
+          </div>
+        ) : deliveryError ? (
+          <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200 flex items-center justify-center text-sm font-medium text-red-500 h-full min-h-[360px] text-center px-4">
+            {deliveryError}
+          </div>
+        ) : (
+          <BarChart
+            title="Puntualidad de las entregas"
+            subtitle={`Total evaluado: ${totalDeliveries} envíos`}
+            data={deliveryData}
+          />
+        )}
+      </div>
+
+      {/* =========================================
+          FILA 3: Los 3 Gráficos Circulares
           ========================================= */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         

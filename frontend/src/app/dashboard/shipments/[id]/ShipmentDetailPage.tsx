@@ -26,8 +26,10 @@ const DetailItem = React.memo(({ icon, label, value }: { icon?: React.ReactNode,
 ));
 
 DetailItem.displayName = 'DetailItem';
-const {t} = useTranslation();
+
 export default function ShipmentDetailPage() {
+  
+  const {t} = useTranslation();
   
   const {
     user, router, shipment, history, isLoading, isProcessing, error,
