@@ -108,15 +108,20 @@ export const useEmployeeProfile = (id: string) => {
             return;
         }
 
+        setIsChangingStatus(true);
+
         try {
             await userService.changeUserStatus(employee.id, pendingStatus);
             toast.success(`Empleado ${pendingStatus ? 'activado' : 'desactivado'} correctamente.`)
 
             await fetchEmployee();
             handleCloseStatusModal();
-        } catch {
-            toast.error('Error al cambiar el estado del empleado.');
-            console.error('Error al cambiar estado:', error);
+        } catch (err: any) {
+            const backendMessage = err.response?.data?.detail;
+            const errorMessage = backendMessage || 'Error al cambiar el estado del empleado.';
+
+            toast.error(errorMessage);
+            console.error('Error al cambiar estado:', err);
         } finally {
             setIsChangingStatus(false);
         }

@@ -132,15 +132,20 @@ export const useClientProfile = (id: string) => {
             return;
         }
 
+        setIsChangingStatus(true);
+
         try {
             await userService.changeUserStatus(client.id, pendingStatus);
-            toast.success(`Empleado ${pendingStatus ? 'activado' : 'desactivado'} correctamente.`)
+            toast.success(`Cliente ${pendingStatus ? 'activado' : 'desactivado'} correctamente.`)
 
             await fetchClient();
             handleCloseStatusModal();
-        } catch {
-            toast.error('Error al cambiar el estado del empleado.');
-            console.error('Error al cambiar estado:', error);
+        } catch (err: any) {
+            const backendMessage = err.response?.data?.detail;
+            const errorMessage = backendMessage || 'Error al cambiar el estado del cliente.';
+
+            toast.error(errorMessage);
+            console.error('Error al cambiar estado:', err);
         } finally {
             setIsChangingStatus(false);
         }
