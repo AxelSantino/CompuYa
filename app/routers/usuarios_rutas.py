@@ -175,7 +175,7 @@ async def obtener_usuario_por_id(
     return usuario
 
 @router.post("/cambiar-activo-inactivo/{usuario_id}", response_model=UsuarioRespuesta, dependencies=[Depends(tiene_rol(["admin"]))])
-async def cambiar_estado_activo(
+async def cambiar_estado_activo_inactivo(
     peticion: bool, 
     usuario_id: int = Path(..., description="ID del usuario a modificar"), 
     usuario_service: UsuarioService = Depends(get_usuario_service)
