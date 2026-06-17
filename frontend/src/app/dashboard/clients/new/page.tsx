@@ -13,8 +13,10 @@ import { useClientForm } from './hooks/useClientForm';
 import { AccountCredentialsSection } from '../../users/components/AccountCredentialsSection';
 import { ClientDetailsSection } from './components/ClientDetailsSection';
 import { LocationManager } from './components/LocationManager';
-
+import '@/i18n/i18n';
+import { useTranslation } from 'react-i18next';
 export default function NewClientPage() {
+  const {t} = useTranslation();
   const router = useRouter();
   const { user, isLoading: isAuthLoading } = useAuth();
   
@@ -32,7 +34,7 @@ export default function NewClientPage() {
   if (!user || user.rol !== 'admin') {
     return (
       <DashboardLayout>
-        <AccessDenied mensaje="No tienes permisos para dar de alta nuevos clientes/destinatarios." />
+        <AccessDenied mensaje={t('newClientPage.no_tienes_permisos')} />
       </DashboardLayout>
     );
   }
@@ -42,13 +44,13 @@ export default function NewClientPage() {
     return (
       <DashboardLayout>
         <SuccessFeedback 
-          title="¡Registro Exitoso!"
+          title={t('newClientPage.registro_exitoso')}
           message={
             <p>
-              La empresa <span className="font-bold text-gray-900">{formData.razon_social}</span> ha sido registrada con éxito y se le asignó el ID <span className="font-bold text-orange-600">#{createdClient.id}</span>.
+              {t('newClientPage.la_empresa')} <span className="font-bold text-gray-900">{formData.razon_social}</span> {t('newClientPage.ha_sido_registrada')} <span className="font-bold text-orange-600">#{createdClient.id}</span>.
             </p>
           }
-          buttonText="Volver a la nómina de Clientes"
+          buttonText={t('newClientPage.volver_a_nomina_clientes')}
           onButtonClick={() => router.push('/dashboard/clients')}
         />
       </DashboardLayout>
@@ -66,14 +68,14 @@ export default function NewClientPage() {
           className="flex items-center text-sm text-gray-500 hover:text-gray-800 transition-colors mb-6 group"
         >
           <span className="mr-1 group-hover:-translate-x-1 transition-transform inline-block">←</span> 
-          Volver a la nómina
+          {t('newClientPage.volver_nomina')}
         </button>
         
         <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-1">
-          Registrar Nuevo Cliente
+          {t('newClientPage.registrar_nuevo_cliente')}
         </h2>
         <p className="text-gray-600 mb-8">
-          Crea una nueva cuenta corporativa y establece su ubicación fiscal para las operaciones logísticas.
+          {t('newClientPage.nueva_cuenta_corporativa')}
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -111,7 +113,7 @@ export default function NewClientPage() {
               disabled={isLoading}
               className="w-full sm:w-auto"
             >
-              Cancelar
+              {t('newClientPage.boton_cancelar')}
             </Button>
             <Button 
               variant="primary" 
@@ -119,12 +121,12 @@ export default function NewClientPage() {
               disabled={isLoading}
               className="w-full sm:w-auto shadow-md"
             >
-              {isLoading ? 'Registrando...' : 'Registrar Cliente'}
+              {isLoading ? t('newClientPage.registrando') : t('newClientPage.registrar_cliente')}
             </Button>
           </div>
           
           <p className="text-xs text-center text-gray-400 pb-8 mt-4">
-            Los campos con (*) son obligatorios.
+            {t('newClientPage.campos_obligatorios')}
           </p>
           
         </form>

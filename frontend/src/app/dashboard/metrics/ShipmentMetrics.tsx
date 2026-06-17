@@ -9,6 +9,8 @@ import { useIncidentsMetrics } from '@/app/dashboard/metrics/hooks/useIncidentsM
 
 // Componentes genéricos reutilizables de UI
 import { PieChart } from '@/components/ui/pieChart/PieChart';
+import '@/i18n/i18n';
+import { useTranslation } from 'react-i18next';
 
 interface ShipmentMetricsProps {
   shipments: Envio[];
@@ -19,6 +21,8 @@ interface ShipmentMetricsProps {
 export default function ShipmentMetrics({ shipments, isLoading = false, filters }: ShipmentMetricsProps) {
   // Cerebro Sincrónico: Procesa los envíos en memoria
   const metrics = useShipmentMetrics(shipments, filters);
+
+  const{t} = useTranslation();
 
   // Cerebro Asincrónico: Consigue y mapea las incidencias desde la API usando las fechas
   const { 
@@ -62,32 +66,32 @@ export default function ShipmentMetrics({ shipments, isLoading = false, filters 
         
         {/* Gráfico 1: Estados */}
         <PieChart
-          title="Distribución de Estados"
+          title={t('metricsPage.dist_estados')}
           slices={[
-            { label: 'En Sucursal', value: metrics.enSucursal, color: '#6b7280' },
-            { label: 'En Tránsito', value: metrics.enTransito, color: '#f59e0b' },
-            { label: 'Entregados', value: metrics.entregado, color: '#16a34a' },
-            { label: 'Cancelados', value: metrics.cancelado, color: '#dc2626' },
+            { label: t('metricsPage.en_sucursal'), value: metrics.enSucursal, color: '#6b7280' },
+            { label: t('metricsPage.en_transito'), value: metrics.enTransito, color: '#f59e0b' },
+            { label: t('metricsPage.entregados'), value: metrics.entregado, color: '#16a34a' },
+            { label: t('metricsPage.cancelados'), value: metrics.cancelado, color: '#dc2626' },
           ]}
-          subtitle={"Envíos en el sistema: " + metrics.total}
+          subtitle={t('metricsPage.envios_en_sistema') + metrics.total}
         />
 
         {/* Gráfico 2: Prioridades */}
         <PieChart
-          title="Distribución de Prioridades"
+          title={t('metricsPage.dist_prioridades')}
           slices={[
-            { label: 'Alta', value: metrics.alta, color: '#ef4444' },
-            { label: 'Media', value: metrics.media, color: '#3b82f6' },
-            { label: 'Baja', value: metrics.baja, color: '#22c55e' },
+            { label: t('metricsPage.alta'), value: metrics.alta, color: '#ef4444' },
+            { label: t('metricsPage.media'), value: metrics.media, color: '#3b82f6' },
+            { label: t('metricsPage.baja'), value: metrics.baja, color: '#22c55e' },
           ]}
-          subtitle={"Envíos en el sistema: " + metrics.total}
+          subtitle={t('metricsPage.envios_en_sistema') + metrics.total}
         />
 
         {/* Gráfico 3: Manejo de los estados de la petición asincrónica de Incidencias */}
         {incidentsLoading ? (
           <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200 flex flex-col items-center justify-center min-h-[280px]">
             <span className="animate-spin inline-block w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full mb-3"></span>
-            <span className="text-sm text-gray-400 font-medium animate-pulse">Cargando incidencias del período...</span>
+            <span className="text-sm text-gray-400 font-medium animate-pulse">{t('metricsPage.cargando_incidencias')}</span>
           </div>
         ) : incidentsError ? (
           <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200 flex items-center justify-center text-sm font-medium text-red-500 min-h-[280px] text-center px-4">
@@ -95,9 +99,9 @@ export default function ShipmentMetrics({ shipments, isLoading = false, filters 
           </div>
         ) : (
           <PieChart
-            title="Motivos de cancelación de envios"
+            title={t('metricsPage.motivos_cancelacion')}
             slices={incidentsSlices}
-            subtitle={"Envíos cancelados: " + totalIncidents}
+            subtitle={t('metricsPage.envios_cancelados') + totalIncidents}
           />
         )}
       </div>

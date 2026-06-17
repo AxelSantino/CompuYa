@@ -41,7 +41,7 @@ if (!user || user.rol !== 'admin') {
 return (
     <DashboardLayout>
       <div className="relative bg-white p-4 md:p-6 rounded-lg shadow-md">
-        <LoadingOverlay isLoading={isDataLoading} text="Cargando lista de clientes..." />
+        <LoadingOverlay isLoading={isDataLoading} text={t('clientsPage.cargando_lista_clientes')} />
         
         <ClientHeader />
 
@@ -62,7 +62,7 @@ return (
               data={paginatedClients} 
               columns={getClientColumns(t)} 
               keyExtractor={(row) => row.id}
-              emptyMessage="No se encontraron clientes que coincidan con los filtros."
+              emptyMessage={t('clientsPage.no_se_encontraron_clientes')}
             />
             <PaginationControls
               currentPage={currentPage}
