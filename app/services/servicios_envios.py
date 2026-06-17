@@ -10,7 +10,6 @@ from app.models.esquemas import EnvioCrear, EditarEnvio, CancelarEnvio
 from app.services.servicio_ruteo import ServicioRuteo
 from app.ml.modelo_prioridad import predecir_prioridad
 from app.services.servicio_notificacion import NotificacionService
-from app.services.servicio_notificacion import NotificacionService
 from app.services.servicio__alertas import crear_alerta_y_enviar_push
 
 class EnvioService:
@@ -31,17 +30,29 @@ class EnvioService:
         return f"CY-{anio}-{caracteres}"
 
     async def crear_envio(self, envio_data: EnvioCrear, usuario_id: int, background_tasks: BackgroundTasks) -> Envio:
-        query = select(PerfilEmpresa).where(
-            PerfilEmpresa.razon_social == envio_data.razon_social_destinatario,
-            PerfilEmpresa.cuit == envio_data.cuit_destinatario
+        query = (
+            select(PerfilEmpresa, Usuario)
+            .join(Usuario, PerfilEmpresa.usuario_id == Usuario.id)
+            .where(
+                PerfilEmpresa.razon_social == envio_data.razon_social_destinatario,
+                PerfilEmpresa.cuit == envio_data.cuit_destinatario,
+            )
         )
         result = await self.db.execute(query)
-        perfil_empresa = result.scalar_one_or_none()
+        data = result.one_or_none()
         
-        if not perfil_empresa:
+        if not data:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="La empresa destinataria no existe o no tiene perfil configurado"
+            )
+        
+        perfil_empresa, usuario = data
+        
+        if not usuario.activo:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="La empresa destinataria no esta activa"
             )
         
         lat_dest = perfil_empresa.latitud
@@ -86,17 +97,29 @@ class EnvioService:
         await self.db.flush()
         
         await self.registrar_historial(nuevo_envio.id, usuario_id, nuevo_envio.estado)
+        email_destinatario = usuario.email
+
         await self.db.commit()
-
-        servicio = NotificacionService(db=self.db)
+        await self.db.refresh(nuevo_envio)
+        servicio_notificacion = NotificacionService(db=self.db)
     
-        envio = await self.obtener_envio_por_id(nuevo_envio.tracking_id)
-        email = await self.obtenerMailDestinatario(envio)
-        if email:
-            background_tasks.add_task(servicio.procesar_notificacion_estado, envio, email, envio.razon_social_destinatario)
-            background_tasks.add_task(crear_alerta_y_enviar_push, self.db, envio.destinatario_id, "Estamos preparando tu pedido", f"El envío {tracking_id} está siendo preparado.",envio_id=envio.id)
+        if email_destinatario:
+            background_tasks.add_task(
+                servicio_notificacion.procesar_notificacion_estado, 
+                nuevo_envio, 
+                email_destinatario, 
+                nuevo_envio.razon_social_destinatario
+            )
+            background_tasks.add_task(
+                crear_alerta_y_enviar_push, 
+                self.db, 
+                nuevo_envio.destinatario_id, 
+                "Estamos preparando tu pedido", 
+                f"El envío {tracking_id} está siendo preparado.",
+                envio_id=nuevo_envio.id
+            )
 
-        return envio
+        return nuevo_envio
     
     def _calcular_fecha_limite(self, tipo_envio: TipoEnvio, prioridad: PrioridadEnvio) -> datetime:
         if tipo_envio == TipoEnvio.EXPRESS: 
