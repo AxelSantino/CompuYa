@@ -4,16 +4,10 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import List, Optional
 
 def get_env_path():
-    if getattr(sys, 'frozen', False):
-        internal_path = os.path.join(sys._MEIPASS, ".env")
-        if os.path.exists(internal_path):
-            return internal_path
-        return os.path.join(os.path.dirname(sys.executable), ".env")
-    else:
-        return os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), ".env")
+    return os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), ".env")
 
 class Settings(BaseSettings):
-    CORS_ORIGINS: str = "http://localhost:5173,http://localhost:3000,tauri://localhost,http://tauri.localhost"
+    CORS_ORIGINS: str = "http://localhost:5173,http://localhost:3000"
     SMTP_HOST: Optional[str] = None
     SMTP_PORT: Optional[int] = None
     SMTP_USER: Optional[str] = None

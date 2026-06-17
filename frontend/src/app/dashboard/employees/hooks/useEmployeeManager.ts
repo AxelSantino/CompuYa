@@ -23,6 +23,9 @@ export const useEmployeeManager = () => {
                 // Obtenemos todos los empleados del sistema
                 const employeesData = await userService.getEmployees();
                 
+                // -- ORDENAR EMPLEADOS POR FECHA DESCENDENTE -- 
+                employeesData.sort((a, b) => b.fecha.localeCompare(a.fecha));
+                
                 if (isMounted) {
                     setEmployees(employeesData);
                 }
