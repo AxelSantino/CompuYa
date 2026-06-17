@@ -9,8 +9,11 @@ import { Envio } from '@/types/envio';
 import ShipmentMetrics from '@/app/dashboard/metrics/ShipmentMetrics';
 import LoadingOverlay from '@/components/LoadingOverlay';
 import { DateFilterParams } from '@/types/metrics';
+import '@/i18n/i18n';
+import { useTranslation } from 'react-i18next';
 
 const MetricsPage = () => {
+  const {t} = useTranslation();
   const { user } = useAuth();
   const [shipments, setShipments] = useState<Envio[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -46,7 +49,7 @@ const MetricsPage = () => {
         }
       } catch {
         if (isMounted) {
-          setError('Error al cargar las métricas. Por favor, intenta de nuevo más tarde.');
+          setError(t('metricsPage.error_al_cargar_metricas'));
         }
       } finally {
         if (isMounted) {
@@ -65,12 +68,12 @@ const MetricsPage = () => {
   return (
     <DashboardLayout>
       <div className="relative bg-white p-4 md:p-6 rounded-lg shadow-md">
-        <LoadingOverlay isLoading={isLoading} text="Cargando métricas..." />
+        <LoadingOverlay isLoading={isLoading} text={t('metricsPage.cargando_metricas')} />
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 text-orange-700">
           <div>
-            <h2 className="text-2xl font-bold mb-1">Métricas de Envíos</h2>
+            <h2 className="text-2xl font-bold mb-1">{t('metricsPage.metricas_envios')}</h2>
             <p className="text-gray-600">
-              Indicadores de prioridad, estado de envíos y cancelaciones.
+              {t('metricsPage.indicadores_prioridad')}
             </p>
           </div>
         </div>
@@ -78,7 +81,7 @@ const MetricsPage = () => {
         {/* Panel de Filtros */}
         <div className="flex items-center gap-3 bg-gray-50 p-3 rounded-lg border border-gray-200 shadow-sm">
             <div className="flex flex-col">
-              <label className="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Desde</label>
+              <label className="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">{t('metricsPage.fecha_desde')}</label>
               <input 
                 type="date" 
                 value={fechaInicio} 
@@ -88,7 +91,7 @@ const MetricsPage = () => {
             </div>
             <span className="text-gray-300 mt-4 font-bold">-</span>
             <div className="flex flex-col">
-              <label className="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Hasta</label>
+              <label className="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">{t('metricsPage.fecha_hasta')}</label>
               <input 
                 type="date" 
                 value={fechaFin} 
@@ -100,8 +103,8 @@ const MetricsPage = () => {
 
         {user?.rol !== 'admin' ? (
           <div className="py-16 text-center text-gray-700">
-            <p className="text-lg font-semibold">Acceso denegado</p>
-            <p className="mt-2 text-sm text-gray-500">Solo los administradores pueden ver las métricas.</p>
+            <p className="text-lg font-semibold">{t('metricsPage.acceso_denegado')}</p>
+            <p className="mt-2 text-sm text-gray-500">{t('metricsPage.solo_admin_ven_metricas')}</p>
           </div>
         ) : error ? (
           <div className="py-8 text-center text-red-500">{error}</div>

@@ -1,6 +1,9 @@
 import React from 'react';
 import Link from 'next/link';
 import { Envio, EnvioStatus, EnvioPrioridad } from '@/types/envio';
+import '@/i18n/i18n';
+import { useTranslation } from 'react-i18next';
+
 
 export const STATUS_CLASSES: Record<EnvioStatus, string> = {
     'en sucursal': 'bg-gray-100 text-gray-800 capitalize',
@@ -30,18 +33,19 @@ export const PriorityBadge = React.memo(({ priority }: { priority: EnvioPriorida
 PriorityBadge.displayName = 'PriorityBadge';
 
 export const ShipmentTable = ({ shipments }: { shipments: Envio[] }) => {
+    const {t} = useTranslation();
     return (
         <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50 border-b border-gray-200">
                     <tr>
-                        <th className="px-6 py-3 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">Tracking ID</th>
-                        <th className="px-6 py-3 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">Prioridad</th>
-                        <th className="px-6 py-3 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">Fecha de creación</th>
-                        <th className="px-6 py-3 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">Destinatario</th>
-                        <th className="px-6 py-3 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">Descripción</th>
-                        <th className="px-6 py-3 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">Tipo</th>
-                        <th className="px-6 py-3 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">Estado</th>
+                        <th className="px-6 py-3 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">{t('shipmentTable.trackingID')}</th>
+                        <th className="px-6 py-3 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">{t('shipmentTable.prioridad')}</th>
+                        <th className="px-6 py-3 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">{t('shipmentTable.fecha_de_creacion')}</th>
+                        <th className="px-6 py-3 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">{t('shipmentTable.destinatario')}</th>
+                        <th className="px-6 py-3 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">{t('shipmentTable.descripcion')}</th>
+                        <th className="px-6 py-3 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">{t('shipmentTable.tipo')}</th>
+                        <th className="px-6 py-3 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">{t('shipmentTable.estado')}</th>
                     </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
@@ -72,7 +76,7 @@ export const ShipmentTable = ({ shipments }: { shipments: Envio[] }) => {
                     {shipments.length === 0 && (
                         <tr>
                             <td colSpan={7} className="px-6 py-8 text-center text-sm text-gray-500">
-                                No se encontraron envíos con los criterios seleccionados.
+                                {t('shipmentTable.no_se_encontraro_envios')}
                             </td>
                         </tr>
                     )}

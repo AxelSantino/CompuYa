@@ -1,17 +1,18 @@
 import { Column } from '../../users/components/DataTable';
 import { Usuario } from '@/types/usuario';
 import Link from 'next/link';
+import '@/i18n/i18n';
+import { useTranslation } from 'react-i18next';
 
 export const getStatusBadgeClasses = (isActive: boolean) => {
   return isActive 
     ? 'bg-green-100 text-green-800' 
     : 'bg-red-100 text-red-800';
 };
-
-export const getClientColumns = (): Column<Usuario>[] => [
+export const getClientColumns = (t: any): Column<Usuario>[] => [
   { header: 'ID', accessor: 'id' },
   { 
-    header: 'Razón social', 
+    header: t('clientsPage.razon_social'), 
     accessor: (row) => row.perfil_empresa?.razon_social || '-'
   },
   { 
@@ -20,7 +21,7 @@ export const getClientColumns = (): Column<Usuario>[] => [
   },
   { header: 'Email', accessor: 'email' },
   { 
-    header: 'Dirección', 
+    header: t('clientsPage.direccion'), 
     accessor: (row) => {
       const direccion = row.perfil_empresa?.direccion_normalizada || '-';
       return (
@@ -31,7 +32,7 @@ export const getClientColumns = (): Column<Usuario>[] => [
     }
   },
   { 
-    header: 'Fecha Alta', 
+    header: t('clientsPage.fecha_alta'), 
     accessor: (row) => {
       if (!row.fecha) return '-';
       const [year, month, day] = row.fecha.split('T')[0].split('-');
@@ -52,13 +53,13 @@ export const getClientColumns = (): Column<Usuario>[] => [
       }
     },
   { 
-    header: 'Acciones', 
+    header: t('clientsPage.acciones'), 
     accessor: (row) => (
       <Link 
         href={`/dashboard/clients/${row.id}`}
         className="text-orange-600 hover:text-orange-800 font-bold transition-colors cursor-pointer"
       >
-        Ver detalle
+        {t('clientsPage.ver_detalle')}
       </Link>
     )
   }

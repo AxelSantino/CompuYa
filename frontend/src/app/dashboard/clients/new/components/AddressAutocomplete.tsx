@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Input } from '@/components/ui/Input';
 import { useUSIG } from '../hooks/useUSIG';
 import { DireccionNormalizada } from '@/services/usigService';
+import '@/i18n/i18n';
+import { useTranslation } from 'react-i18next';
 
 interface AddressAutocompleteProps {
   onAddressSelect: (direccion: DireccionNormalizada) => void;
@@ -63,10 +65,12 @@ export const AddressAutocomplete = ({ onAddressSelect, disabled = false, initial
     }
   };
 
+  const {t} = useTranslation();
+
   return (
     <div className="relative w-full" ref={dropdownRef}>
       <label className="block text-sm font-medium text-gray-700 mb-1">
-        Dirección Fiscal <span className="text-red-500">*</span>
+        {t('newClientPage.dir_fiscal')} <span className="text-red-500">*</span>
       </label>
       
       <div className="relative">
