@@ -2,6 +2,12 @@ import { Column } from '../../users/components/DataTable';
 import { Usuario } from '@/types/usuario';
 import Link from 'next/link';
 
+export const getStatusBadgeClasses = (isActive: boolean) => {
+  return isActive 
+    ? 'bg-green-100 text-green-800' 
+    : 'bg-red-100 text-red-800';
+};
+
 export const getClientColumns = (): Column<Usuario>[] => [
   { header: 'ID', accessor: 'id' },
   { 
@@ -33,6 +39,18 @@ export const getClientColumns = (): Column<Usuario>[] => [
       return `${day}/${month}/${year}`;
     }
   },
+  {
+      header: 'Estado',
+      accessor: (row) => {
+        const isActive = row.activo ?? false; 
+        
+        return (
+          <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadgeClasses(isActive)}`}>
+            {isActive ? 'Activo' : 'Inactivo'}
+          </span>
+        );
+      }
+    },
   { 
     header: 'Acciones', 
     accessor: (row) => (

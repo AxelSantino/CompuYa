@@ -17,6 +17,12 @@ export const getRoleBadgeClasses = (rol: string) => {
   }
 };
 
+export const getStatusBadgeClasses = (isActive: boolean) => {
+  return isActive 
+    ? 'bg-green-100 text-green-800' 
+    : 'bg-red-100 text-red-800';
+};
+
 export const getEmployeeColumns = (): Column<Usuario>[] => [
   { header: 'ID', accessor: 'id' },
   { 
@@ -43,6 +49,18 @@ export const getEmployeeColumns = (): Column<Usuario>[] => [
       const [year, month, day] = row.fecha.split('T')[0].split('-');
 
       return `${day}/${month}/${year}`;
+    }
+  },
+  {
+    header: 'Estado',
+    accessor: (row) => {
+      const isActive = row.activo ?? false; 
+      
+      return (
+        <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadgeClasses(isActive)}`}>
+          {isActive ? 'Activo' : 'Inactivo'}
+        </span>
+      );
     }
   },
   { 
