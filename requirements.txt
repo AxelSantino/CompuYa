@@ -60,3 +60,4 @@ aiosmtplib
 httpx==0.28.1
 resend
 pytest-cov
+react-hot-toast 
