@@ -30,29 +30,30 @@ class EnvioService:
         return f"CY-{anio}-{caracteres}"
 
     async def crear_envio(self, envio_data: EnvioCrear, usuario_id: int, background_tasks: BackgroundTasks) -> Envio:
+        # 1. Consolidar PerfilEmpresa y Usuario en una sola consulta usando joinedload
         query = (
-            select(PerfilEmpresa, Usuario)
-            .join(Usuario, PerfilEmpresa.usuario_id == Usuario.id)
+            select(PerfilEmpresa)
+            .options(joinedload(PerfilEmpresa.usuario))
             .where(
                 PerfilEmpresa.razon_social == envio_data.razon_social_destinatario,
                 PerfilEmpresa.cuit == envio_data.cuit_destinatario,
             )
         )
         result = await self.db.execute(query)
-        data = result.one_or_none()
+        perfil_empresa = result.scalar_one_or_none()
         
-        if not data:
+        if not perfil_empresa:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="La empresa destinataria no existe o no tiene perfil configurado"
             )
         
-        perfil_empresa, usuario = data
+        usuario = perfil_empresa.usuario
         
-        if not usuario.activo:
+        if not usuario or not usuario.activo:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="La empresa destinataria no esta activa"
+                detail="La empresa destinataria no esta activa o no tiene un usuario asociado"
             )
         
         lat_dest = perfil_empresa.latitud
