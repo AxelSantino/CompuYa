@@ -11,6 +11,10 @@ export const useEmployeeProfile = (id: string) => {
     const [isEditing, setIsEditing] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [error, setError] = useState<string | null>(null);
+
+    const [isChangingStatus, setIsChangingStatus] = useState(false);
+    const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
+    const [pendingStatus, setPendingStatus] = useState<boolean | null>(null);
     
     const [formData, setFormData] = useState({
         nombre: '',
@@ -81,6 +85,48 @@ export const useEmployeeProfile = (id: string) => {
         }
     };
 
+
+    /*
+    * FUNCION DE DESACTIVAR/ACTIVAR USUARIO
+    */
+    const handleRequestStatusChange = (isActive: boolean) => {
+        setPendingStatus(isActive); 
+        setIsStatusModalOpen(true);
+    };
+
+    const handleCloseStatusModal = () => {
+        setIsStatusModalOpen(false);
+        setPendingStatus(null);
+    };
+
+    const handleConfirmStatusChange = async () => {
+        if (!employee || pendingStatus === null) {
+            return;
+        }
+
+        if (isChangingStatus) {
+            return;
+        }
+
+        setIsChangingStatus(true);
+
+        try {
+            await userService.changeUserStatus(employee.id, pendingStatus);
+            toast.success(`Empleado ${pendingStatus ? 'activado' : 'desactivado'} correctamente.`)
+
+            await fetchEmployee();
+            handleCloseStatusModal();
+        } catch (err: any) {
+            const backendMessage = err.response?.data?.detail;
+            const errorMessage = backendMessage || 'Error al cambiar el estado del empleado.';
+
+            toast.error(errorMessage);
+            console.error('Error al cambiar estado:', err);
+        } finally {
+            setIsChangingStatus(false);
+        }
+    };
+
     return {
         router,
         employee,
@@ -92,6 +138,12 @@ export const useEmployeeProfile = (id: string) => {
         formData,
         handleChange,
         handleCancelEdit,
-        handleSave
+        handleSave,
+        isChangingStatus,
+        isStatusModalOpen,
+        pendingStatus,
+        handleRequestStatusChange,
+        handleCloseStatusModal,
+        handleConfirmStatusChange
     };
 };

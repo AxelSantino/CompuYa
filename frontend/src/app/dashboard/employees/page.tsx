@@ -30,6 +30,8 @@ export default function EmployeesPage() {
     pageSize,
     setCurrentPage,
     setPageSize,
+    statusFilter,
+    setStatusFilter
   } = useEmployeeManager();
 
 if (!user || user.rol !== 'admin') {
@@ -52,6 +54,8 @@ return (
           setSearchTerm={setSearchTerm} 
           roleFilter={roleFilter} 
           setRoleFilter={setRoleFilter} 
+          statusFilter={statusFilter}
+          setStatusFilter={setStatusFilter}
         />
 
         {error && (

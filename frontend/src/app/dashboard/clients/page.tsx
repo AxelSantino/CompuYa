@@ -27,7 +27,9 @@ export default function ClientsPage() {
     totalPages,
     pageSize,
     setCurrentPage,
-    setPageSize,
+    setPageSize, 
+    statusFilter, 
+    setStatusFilter
   } = useClientManager();
 
 if (!user || user.rol !== 'admin') {
@@ -48,6 +50,8 @@ return (
         <ClientFilters 
           searchTerm={searchTerm} 
           setSearchTerm={setSearchTerm} 
+          statusFilter={statusFilter}
+          setStatusFilter={setStatusFilter}
         />
 
         {error && (

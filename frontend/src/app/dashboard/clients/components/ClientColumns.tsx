@@ -4,6 +4,11 @@ import Link from 'next/link';
 import '@/i18n/i18n';
 import { useTranslation } from 'react-i18next';
 
+export const getStatusBadgeClasses = (isActive: boolean) => {
+  return isActive 
+    ? 'bg-green-100 text-green-800' 
+    : 'bg-red-100 text-red-800';
+};
 export const getClientColumns = (t: any): Column<Usuario>[] => [
   { header: 'ID', accessor: 'id' },
   { 
@@ -35,6 +40,18 @@ export const getClientColumns = (t: any): Column<Usuario>[] => [
       return `${day}/${month}/${year}`;
     }
   },
+  {
+      header: 'Estado',
+      accessor: (row) => {
+        const isActive = row.activo ?? false; 
+        
+        return (
+          <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadgeClasses(isActive)}`}>
+            {isActive ? 'Activo' : 'Inactivo'}
+          </span>
+        );
+      }
+    },
   { 
     header: t('clientsPage.acciones'), 
     accessor: (row) => (

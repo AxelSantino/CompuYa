@@ -15,6 +15,8 @@ export const useEmployeeManager = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [roleFilter, setRoleFilter] = useState('');
 
+    const [statusFilter, setStatusFilter] = useState('')
+
     useEffect(() => {
         let isMounted = true;
 
@@ -61,13 +63,20 @@ export const useEmployeeManager = () => {
             const matchesSearch = 
                 nombreCompleto.includes(searchLower) || 
                 emp.email.toLowerCase().includes(searchLower);
-                
+
             // Verificamos coincidencia de rol
             const matchesRole = roleFilter === '' || emp.rol === roleFilter;
 
-            return matchesSearch && matchesRole;
+            let matchesStatus = true;
+            if (statusFilter === 'active') {
+                matchesStatus = emp.activo === true;
+            } else if (statusFilter === 'inactive') {
+                matchesStatus = emp.activo === false;
+            }
+
+            return matchesSearch && matchesRole && matchesStatus;
         });
-    }, [employees, searchTerm, roleFilter]);
+    }, [employees, searchTerm, roleFilter, statusFilter]);
 
     const {
         currentPage,
@@ -94,6 +103,8 @@ export const useEmployeeManager = () => {
         setCurrentPage,
         pageSize,
         setPageSize,
-        totalPages
+        totalPages,
+        statusFilter,
+        setStatusFilter
     };
 };

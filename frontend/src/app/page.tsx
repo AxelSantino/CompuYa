@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import LoadingTruck from '@/components/LoadingTruck';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import axios from 'axios';
 import '@/i18n/i18n';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from '@/i18n/LanguageSwitcher';
@@ -41,8 +42,17 @@ export default function LoginPage() {
     try {
       await login(email, password);
     } catch (err: unknown) {
-      const error = err as Error;
-      setError(error.message || 'Ocurrió un error inesperado. Por favor, intenta de nuevo.');
+      if (axios.isAxiosError(err)) {
+        const backendMessage = err.response?.data?.detail;
+        
+        setError(backendMessage || 'Ocurrió un error de conexión con el servidor.');
+      } 
+      else if (err instanceof Error) {
+        setError(err.message);
+      } 
+      else {
+        setError('Ocurrió un error inesperado. Por favor, intenta de nuevo.');
+      }
     }
   };
 

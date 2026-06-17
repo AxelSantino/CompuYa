@@ -6,11 +6,15 @@ import { useTranslation } from 'react-i18next';
 interface ClientFiltersProps {
   searchTerm: string;
   setSearchTerm: (value: string) => void;
+  statusFilter: string; 
+  setStatusFilter: (value: string) => void;
 }
 
 export const ClientFilters = ({ 
   searchTerm, 
-  setSearchTerm
+  setSearchTerm,
+  statusFilter,
+  setStatusFilter
 }: ClientFiltersProps) => {
   const {t} = useTranslation();
     return (
@@ -22,6 +26,17 @@ export const ClientFilters = ({
           onChange={(e) => setSearchTerm(e.target.value)}
           className="w-full"
         />
+      </div>
+      <div className="w-full md:w-auto">
+        <Select 
+          value={statusFilter} 
+          onChange={(e) => setStatusFilter(e.target.value)}
+          className="w-full md:w-48"
+        >
+          <option value="">Todos los estados</option>
+          <option value="active">Solo Activos</option>
+          <option value="inactive">Solo Inactivos</option>
+        </Select>
       </div>
     </div>
   );
