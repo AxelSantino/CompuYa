@@ -57,9 +57,13 @@ export default function ShipmentMetrics({ shipments, isLoading = false, filters 
 
  return (
     <div className="mb-8">
-      {/* Header invisible / divisor */}
-      <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-gray-100">
-        <div></div>
+      {/* =========================================
+          HEADER Y BOTONERA DE ACCIONES
+          ========================================= */}
+      <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-gray-100">
+        <div>
+          {/* Espacio para un título opcional si lo necesitas en el futuro */}
+        </div>
       </div>
 
       {/* =========================================

@@ -134,7 +134,13 @@ export const en = {
                 envios_en_sistema: "Shipments in the system: ",
                 cargando_incidencias: "Loading incidents for the period...",
                 motivos_cancelacion: "Reasons for shipment cancellation",
-                envios_cancelados: "Shipments cancelled: "
+                envios_cancelados: "Shipments cancelled: ",
+                export_procesando: "Procesing ...",
+                export_exportar_datos: "Export data",
+                export_opciones_descarga: "Download options",
+                export_paquete_completo: "Zipped file (.zip)",
+                export_incluye_todo: "Includes states, priorities and cancelations reasons.",
+
         },
         employeesPage: {
                 cargando_nomina: "Loading employee payroll...",

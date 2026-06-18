@@ -133,7 +133,15 @@ export const es = {
                 envios_en_sistema: "Envíos en el sistema: ",
                 cargando_incidencias: "Cargando incidencias del periodo...",
                 motivos_cancelacion: "Motivos de cancelación de envíos",
-                envios_cancelados: "Envíos cancelados: "
+                envios_cancelados: "Envíos cancelados: ",
+                card_total_envios: "Total de Envíos",
+                card_envios_entregados: "Envíos Entregados",
+                card_envios_cancelados: "Envíos Cancelados",
+                export_procesando: "Procesing ...",
+                export_exportar_datos: "Exportar Datos",
+                export_opciones_descarga: "Opciones de descarga",
+                export_paquete_completo: "Paquete completo (.zip)",
+                export_incluye_todo: "Incluye Estados, Prioridades y Cancelaciones consolidados.",
 
             },
             employeesPage: {
