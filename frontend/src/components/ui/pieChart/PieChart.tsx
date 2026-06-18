@@ -1,6 +1,9 @@
 import { PieChartLegend } from "./PieChartLegend";
 import { PieChart as RechartsPieChart, Pie, Cell, Tooltip } from 'recharts';
 
+import '@/i18n/i18n';
+import { useTranslation } from 'react-i18next';
+
 export interface PieSlice {
   label: string;
   value: number;
@@ -16,6 +19,8 @@ interface PieChartProps {
 export const PieChart = ({ slices, title, subtitle }: PieChartProps) => {
   // Única lógica de negocio a este nivel
   const total = slices.reduce((sum, slice) => sum + slice.value, 0);
+
+  const { t } = useTranslation();
 
   return (
     <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200 flex flex-col h-full min-h-[360px]">
@@ -54,9 +59,9 @@ export const PieChart = ({ slices, title, subtitle }: PieChartProps) => {
                     />
                   ))}
                 </Pie>
-                {/* Tooltip flotante nativo configurado en español */}
+                {/* Tooltip flotante */}
                 <Tooltip 
-                  formatter={(value: any) => [`${value} envíos`, 'Cantidad']}
+                  formatter={(value: any) => [`${value} ${t('metricsPage.envios')}`, t('metricsPage.cantidad')]}
                   contentStyle={{ 
                     backgroundColor: '#fff', 
                     borderRadius: '8px', 
