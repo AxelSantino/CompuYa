@@ -74,23 +74,8 @@ export const DropdownExport = ({ isExporting, onExportZip }: DropdownExportProps
               <FaFileArchive className="text-blue-500 mt-1 flex-shrink-0 group-hover:scale-110 transition-transform" size={16} />
               <div className="flex flex-col">
                 <span className="font-semibold">{t('metricsPage.export_paquete_completo')}</span>
-                <span className="text-xs text-gray-400 mt-0.5 leading-tight">{t('metricsPage.export_incluye_todo')}</span>
+                <span className="text-xs text-gray-500 mt-0.5 leading-tight">{t('metricsPage.export_incluye_todo')}</span>
               </div>
-            </button>
-
-            {/* Separador sutil */}
-            <div className="h-px bg-gray-100 my-1 mx-2"></div>
-
-            {/* Opción 2 (Ejemplo): Exportar individual (Si decidís implementarlo luego) */}
-            <button
-              onClick={() => {
-                setIsOpen(false);
-                // toast.error('Función individual en desarrollo'); // Placeholder
-              }}
-              className="flex w-full items-center gap-3 px-3 py-2 text-left text-sm text-gray-500 hover:bg-gray-50 rounded-lg transition-colors group"
-            >
-              <FaFileCsv className="text-gray-400 group-hover:text-gray-600 transition-colors" size={16} />
-              <span>Solo reporte de Estados (.csv)</span>
             </button>
 
           </div>

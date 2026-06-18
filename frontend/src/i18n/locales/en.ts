@@ -138,8 +138,8 @@ export const en = {
                 export_procesando: "Procesing ...",
                 export_exportar_datos: "Export data",
                 export_opciones_descarga: "Download options",
-                export_paquete_completo: "Zipped file (.zip)",
-                export_incluye_todo: "Includes states, priorities and cancelations reasons.",
+                export_paquete_completo: "Compressed file (.zip)",
+                export_incluye_todo: "Includes states, priorities and cancelations.",
 
         },
         employeesPage: {
