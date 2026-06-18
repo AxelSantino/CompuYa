@@ -71,21 +71,21 @@ export default function ShipmentMetrics({ shipments, isLoading = false, filters 
           ========================================= */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6 w-full">
         <MetricCard
-          title="Total de Envíos"
+          title={t('metricsPage.card_total_envios')}
           value={metrics.total}
           icon={<FaBox size={26} />}
           bgColor="bg-blue-50"
           textColor="text-blue-600"
         />
         <MetricCard
-          title="Envíos Entregados"
+          title={t('metricsPage.card_envios_entregados')}
           value={metrics.entregado}
           icon={<FaCheckCircle size={26} />}
           bgColor="bg-green-50"
           textColor="text-green-600"
         />
         <MetricCard
-          title="Envíos Cancelados"
+          title={t('metricsPage.card_envios_cancelados')}
           value={metrics.cancelado}
           icon={<FaTimesCircle size={26} />}
           bgColor="bg-red-50"
@@ -108,8 +108,8 @@ export default function ShipmentMetrics({ shipments, isLoading = false, filters 
           </div>
         ) : (
           <BarChart
-            title="Puntualidad de las entregas"
-            subtitle={`Total evaluado: ${totalDeliveries} envíos`}
+            title={t('metricsPage.puntualidad_entregas')}
+            subtitle={`${t('metricsPage.total_evaluado')} ${totalDeliveries} ${t('metricsPage.envios')}`}
             data={deliveryData}
           />
         )}
