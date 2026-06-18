@@ -12,8 +12,8 @@ export const DashboardHeader = ({ user }: { user: any }) => {
     let subtitle = ''
 
     if ( user.rol === 'cliente') {
-        title = "Mi dashboard de envíos"
-        subtitle = "Listado y seguimiento de todos tus envíos"
+        title = t('dashboard_header.mi_dashboard_cliente')
+        subtitle = t('dashboard_header.listado_seguimiento')
     } else {
         title = t('dashboard_header.gestion_de_envios')
         subtitle = t('dashboard_header.listado_y_administracion')

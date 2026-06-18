@@ -61,7 +61,9 @@ export const en = {
         dashboard_header: {
             gestion_de_envios: "Shipment Management",
             listado_y_administracion: "Listing and management of shipments of computer products registered in the system",
-            nuevo_envio: "New Shipment"
+            nuevo_envio: "New Shipment",
+            mi_dashboard_cliente: "My Shipments Dashboard",
+                listado_seguimiento: "List and track all your shipments."
         },
         shipmentFilters: {
             buscar_por_trackingID: "Search by Tracking ID",
@@ -115,7 +117,11 @@ export const en = {
             visualizando_recorrido_repartidor: "Viewing the delivery driver's route"
         },
         loadingOverlay: {
-            cargando: "Loading..."
+            cargando: "Loading...",
+            cargando_app: "Loading application...",
+            email_contra_incorr: "Email or password incorrect",
+            cuenta_auten_sin_permis: "Your account is authenticated but does not have permissions for this system.",
+            error_obtener_perfil: "Error retrieving user profile. Contact the administrator."
         },
         newShipmentPage: {
             volver: "Back",
@@ -292,6 +298,17 @@ export const en = {
                 guardar_plantilla: "Save Template",
                 temp_activa: "Active",
                 temp_inactiva: "Inactive",
+            },
+            campanita: {
+                hist_alertas: "Alert History",
+                marcar_todas_leidas: "Mark all as read",
+                no_hay_alertas: "No alerts to show"
+            },
+            paginado: {
+                info: "Showing {{pageSize}} elements by page · Page {{currentPage}} of {{totalPages}}",
+                elementos: "Elements: ",
+                anterior: "Prior",
+                siguiente: "Next"
             }
     }
 };

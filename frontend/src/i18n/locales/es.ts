@@ -61,7 +61,9 @@ export const es = {
             dashboard_header: {
                 gestion_de_envios: "Gestión de envíos",
                 listado_y_administracion: "Listado y administracion de los envíos de productos informáticos registrados en el sistema",
-                nuevo_envio: "Nuevo Envío"
+                nuevo_envio: "Nuevo Envío",
+                mi_dashboard_cliente: "Mi dashboard de envíos",
+                listado_seguimiento: "Listado y seguimiento de todos tus envíos"
             },
             shipmentFilters:{
                 buscar_por_trackingID: "Buscar por Tracking ID",
@@ -115,7 +117,11 @@ export const es = {
                 visualizando_recorrido_del_repartidor: "Visualizando recorrido del repartidor"
             },
             loadingOverlay: {
-                cargando: "Cargando..."
+                cargando: "Cargando...",
+                cargando_app: "Cargando aplicación...",
+                email_contra_incorr: "Email o contraseña incorrectos.",
+                cuenta_auten_sin_permis: "Tu cuenta está autenticada pero no tiene permisos para este sistema.",
+                error_obtener_perfil: "Error al obtener el perfil de usuario. Contacte al administrador."
             },
             newShipmentPage: {
                 volver: "Volver",
@@ -293,6 +299,17 @@ export const es = {
                 temp_activa: "Activa",
                 temp_inactiva: "Inactiva",
                 
+            },
+            campanita: {
+                hist_alertas: "Historial de Alertas",
+                marcar_todas_leidas: "Marcar todas como leídas",
+                no_hay_alertas: "No hay alertas para mostrar"
+            },
+            paginado: {
+                info: "Mostrando {{pageSize}} elementos por página · Página {{currentPage}} de {{totalPages}}",
+                elementos: "Elementos: ",
+                anterior: "Anterior",
+                siguiente: "Siguiente"
             }
     }
 };
