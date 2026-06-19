@@ -14,6 +14,7 @@ import { AuditTimeline } from './components/AuditTimeline';
 import { CancelShipmentModal } from './components/CancelShipmentModal';
 import '@/i18n/i18n';
 import { useTranslation } from 'react-i18next';
+import withAuth from '@/components/auth/withAuth';
 
 const DetailItem = React.memo(({ icon, label, value }: { icon?: React.ReactNode, label: string, value: React.ReactNode }) => (
   <div>
@@ -27,7 +28,7 @@ const DetailItem = React.memo(({ icon, label, value }: { icon?: React.ReactNode,
 
 DetailItem.displayName = 'DetailItem';
 
-export default function ShipmentDetailPage() {
+function ShipmentDetailPage() {
   
   const {t} = useTranslation();
   
@@ -115,3 +116,4 @@ export default function ShipmentDetailPage() {
     </DashboardLayout>
   );
 }
+export default withAuth(ShipmentDetailPage, ['supervisor', 'operador', 'cliente']);
