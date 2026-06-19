@@ -8,8 +8,13 @@ import { useShipmentForm } from '@/app/dashboard/new/hooks/useShipmentForm';
 import { RecipientSection } from './components/RecipientSection';
 import { ComponentDetailsSection } from './components/ComponentDetailsSection';
 import { SuccessFeedback } from '@/components/ui/SuccessFeedback';
+import '@/i18n/i18n';
+import { useTranslation } from 'react-i18next';
+
+
 
 const NewShipmentPage = () => {
+  const {t} = useTranslation();
   const router = useRouter();
     
   // El hook personalizado maneja toda la lógica del formulario, incluyendo estado, cambios y envío
@@ -42,12 +47,12 @@ const NewShipmentPage = () => {
           onClick={() => router.back()} 
           className="flex items-center text-sm text-gray-500 hover:text-gray-800 transition-colors mb-6 group"
         >
-          <span className="mr-1 group-hover:-translate-x-1 transition-transform inline-block">←</span> Volver
+          <span className="mr-1 group-hover:-translate-x-1 transition-transform inline-block">←</span> {t('newShipmentPage.volver')}
         </button>
         
-        <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-1">Registrar Nuevo Envío</h2>
+        <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-1">{t('newShipmentPage.registrar_nuevo_envio')}</h2>
         <p className="text-gray-600 mb-8">
-          Completa los datos del destinatario y del componente de computadora.
+          {t('newShipmentPage.completa_los_datos')}
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -78,7 +83,7 @@ const NewShipmentPage = () => {
               disabled={isLoading}
               className="w-full sm:w-auto"
             >
-              Cancelar
+              {t('newShipmentPage.boton_cancelar')}
             </Button>
             <Button 
               variant="primary" 
@@ -86,10 +91,10 @@ const NewShipmentPage = () => {
               disabled={isLoading}
               className="w-full sm:w-auto shadow-md"
             >
-              {isLoading ? 'Registrando...' : 'Generar Tracking ID y Registrar'}
+              {isLoading ? t('newShipmentPage.registrando') : t('newShipmentPage.generar_trackingID_registrar')}
             </Button>
           </div>
-          <p className="text-xs text-center text-gray-400 pb-8">Los campos con (*) son obligatorios.</p>
+          <p className="text-xs text-center text-gray-400 pb-8">{t('newShipmentPage.campos_obligatorios')}</p>
         </form>
       </div>
     </DashboardLayout>

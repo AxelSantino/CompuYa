@@ -12,6 +12,8 @@ import { RecipientInfoCard } from './components/RecipientInfoCard';
 import { ShipmentInfoCard } from './components/ShipmentInfoCard';
 import { AuditTimeline } from './components/AuditTimeline';
 import { CancelShipmentModal } from './components/CancelShipmentModal';
+import '@/i18n/i18n';
+import { useTranslation } from 'react-i18next';
 
 const DetailItem = React.memo(({ icon, label, value }: { icon?: React.ReactNode, label: string, value: React.ReactNode }) => (
   <div>
@@ -27,6 +29,8 @@ DetailItem.displayName = 'DetailItem';
 
 export default function ShipmentDetailPage() {
   
+  const {t} = useTranslation();
+  
   const {
     user, router, shipment, history, isLoading, isProcessing, error,
     isEditing, isSaving, formData, canEdit, handleCancel, handleEditClick,
@@ -34,7 +38,7 @@ export default function ShipmentDetailPage() {
   } = useShipmentDetail();
 
   const isBusy = isLoading || isProcessing || isSaving;
-  const loadingText = isProcessing ? "Cancelando envío..." : isSaving ? "Guardando cambios..." : "Cargando envío...";
+  const loadingText = isProcessing ? t('shipments.cancelando_envio') : isSaving ? t('shipments.guardando_cambios') : t('shipments.cargando_envio');
 
   return (
     <DashboardLayout>
@@ -43,7 +47,7 @@ export default function ShipmentDetailPage() {
         
         <div className="flex justify-between items-center mb-4">
           <button onClick={() => router.back()} className="back-button">
-            <FaArrowLeft /> Volver al listado
+            <FaArrowLeft /> {t('shipments.volver_al_listado')}
           </button>
           
           {user?.rol === 'supervisor' && shipment && shipment.estado !== 'cancelado' && shipment.estado !== 'entregado' && (
@@ -52,7 +56,7 @@ export default function ShipmentDetailPage() {
               className="cancel-button"
               disabled={isProcessing}
             >
-              <FaTimesCircle /> Cancelar Envío
+              <FaTimesCircle /> {t('shipments.cancelar_envio')}
             </button>
           )}
         </div>
@@ -84,8 +88,8 @@ export default function ShipmentDetailPage() {
 
                 {isEditing && (
                   <div className="flex justify-end gap-3">
-                    <Button variant="secondary" type="button" onClick={handleCancelEdit} disabled={isSaving}>Cancelar Edición</Button>
-                    <Button variant="primary" type="submit" disabled={isSaving}>{isSaving ? 'Guardando...' : 'Guardar Todos Los Cambios'}</Button>
+                    <Button variant="secondary" type="button" onClick={handleCancelEdit} disabled={isSaving}>{t('shipments.cancelar_edicion')}</Button>
+                    <Button variant="primary" type="submit" disabled={isSaving}>{isSaving ? t('shipments.guardando') : t('shipments.guardar_todos_los_cambios')}</Button>
                   </div>
                 )}
               </form>

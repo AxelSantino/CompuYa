@@ -3,9 +3,12 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import alertasService from '@/services/alertasService';
 import { useRouter } from 'next/navigation';
-import toast from 'react-hot-toast'; 
+import toast from 'react-hot-toast';
+import '@/i18n/i18n';
+import { useTranslation } from 'react-i18next';
 
 export default function NotificationBell() {
+    const { t } = useTranslation();
     const { user } = useAuth();
     const router = useRouter(); 
     const [notificaciones, setNotificaciones] = useState<any[]>([]);
@@ -16,7 +19,6 @@ export default function NotificationBell() {
             cargarNotificaciones();
         }
     }, [user]);
-
 
     useEffect(() => {
         if (!user || user.rol !== 'cliente' || !user.id) return;
@@ -31,7 +33,7 @@ export default function NotificationBell() {
         const socket = new WebSocket(wsUrl);
 
         socket.onopen = () => {
-            console.log(' WebSocket de Alertas Conectado');
+            console.log('WebSocket de Alertas Conectado');
         };
 
         socket.onmessage = (event) => {
@@ -48,7 +50,6 @@ export default function NotificationBell() {
             ]);
         };
 
-
         socket.onclose = () => {
             console.log('WebSocket Desconectado');
         };
@@ -59,7 +60,6 @@ export default function NotificationBell() {
             }
         };
     }, [user]); 
-
 
     async function cargarNotificaciones() {
         try {
@@ -108,38 +108,38 @@ export default function NotificationBell() {
 
             {isOpen && (
                 <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl overflow-hidden z-50 border border-gray-200">
-                <div className="py-3 px-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
-                    <span className="text-sm font-bold text-gray-700">Historial de Alertas</span>
-                    {unreadCount > 0 && (
-                    <button 
-                        onClick={handleMarcarTodasLeidas} 
-                        className="text-xs text-blue-600 hover:text-blue-800 hover:underline font-semibold focus:outline-none"
-                    >
-                        Marcar todas como leídas
-                    </button>
-                    )}
-                </div>
-
-                <div className="max-h-72 overflow-y-auto">
-                    {notificaciones.length === 0 ? (
-                    <div className="px-4 py-6 text-center text-sm text-gray-500">
-                        No hay alertas para mostrar.
+                    <div className="py-3 px-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
+                        <span className="text-sm font-bold text-gray-700">{t('campanita.hist_alertas')}</span>
+                        {unreadCount > 0 && (
+                            <button 
+                                onClick={handleMarcarTodasLeidas} 
+                                className="text-xs text-blue-600 hover:text-blue-800 hover:underline font-semibold focus:outline-none"
+                            >
+                                {t('campanita.marcar_todas_leidas')}
+                            </button>
+                        )}
                     </div>
-                    ) : (
-                    notificaciones.map((notif) => (
-                        <div 
+
+                    <div className="max-h-72 overflow-y-auto">
+                        {notificaciones.length === 0 ? (
+                            <div className="px-4 py-6 text-center text-sm text-gray-500">
+                                {t('campanita.no_hay_alertas')}
+                            </div>
+                        ) : (
+                            notificaciones.map((notif) => (
+                                <div 
                                     key={notif.id || Math.random()} 
                                     className={`px-4 py-3 border-b border-gray-100 transition-colors ${!notif.leida ? 'bg-blue-50/50' : 'bg-white'}`}
-                        >
-                            <p className="text-sm font-semibold text-gray-800">{notif.titulo}</p>
-                            <p className="text-xs text-gray-600 mt-1">{notif.mensaje}</p>
-                            <span className="text-xs text-gray-700 font-bold mt-2 block">
-                            {new Date(notif.fecha_creacion || new Date()).toLocaleDateString('es-AR', { hour: '2-digit', minute: '2-digit' })}
-                            </span>
-                        </div>
-                    ))
-                    )}
-                </div>
+                                >
+                                    <p className="text-sm font-semibold text-gray-800">{notif.titulo}</p>
+                                    <p className="text-xs text-gray-600 mt-1">{notif.mensaje}</p>
+                                    <span className="text-[10px] text-gray-400 mt-2 block">
+                                        {new Date(notif.fecha_creacion || new Date()).toLocaleDateString('es-AR', { hour: '2-digit', minute: '2-digit' })}
+                                    </span>
+                                </div>
+                            ))
+                        )}
+                    </div>
                 </div>
             )}
         </div>

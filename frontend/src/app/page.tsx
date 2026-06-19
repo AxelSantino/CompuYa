@@ -7,6 +7,11 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import LoadingTruck from '@/components/LoadingTruck';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import axios from 'axios';
+import '@/i18n/i18n';
+import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from '@/i18n/LanguageSwitcher';
+
 
 export default function LoginPage() {
   const router = useRouter();
@@ -16,6 +21,7 @@ export default function LoginPage() {
   const [error, setError] = useState('');
 
   const [showPassword, setShowPassword] = useState(false);
+  const {t} = useTranslation();
 
   useEffect(() => {
     if (isAuthenticated && user) {
@@ -36,28 +42,40 @@ export default function LoginPage() {
     try {
       await login(email, password);
     } catch (err: unknown) {
-      const error = err as Error;
-      setError(error.message || 'Ocurrió un error inesperado. Por favor, intenta de nuevo.');
+      if (axios.isAxiosError(err)) {
+        const backendMessage = err.response?.data?.detail;
+        
+        setError(backendMessage || 'Ocurrió un error de conexión con el servidor.');
+      } 
+      else if (err instanceof Error) {
+        setError(err.message);
+      } 
+      else {
+        setError('Ocurrió un error inesperado. Por favor, intenta de nuevo.');
+      }
     }
   };
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-gray-100 p-24">
+      <div className="absolute top-6 right-6">
+        <LanguageSwitcher></LanguageSwitcher>
+      </div>
       <div className="relative w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md text-gray-900">
         {isLoginLoading ? (
           <div className="login-overlay">
             <LoadingTruck />
-            <p className="mt-4 text-lg">Iniciando sesión...</p>
+            <p className="mt-4 text-lg">{t('login.iniciando_sesion')}</p>
           </div>
         ) : null}
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-900">CompuYa</h1>
-          <p className="text-gray-600 font-medium">Inicia sesión para continuar</p>
+          <h1 className="text-3xl font-bold text-gray-900">Compuya</h1>
+          <p className="text-gray-600 font-medium">{t('login.subtitulo')}</p>
         </div>
         <form className="space-y-6" onSubmit={handleLogin}>
           <div>
             <label htmlFor="email" className="block text-sm font-semibold text-gray-800">
-              Email
+              {t('login.email')}
             </label>
             <Input
               id="email"
@@ -67,7 +85,7 @@ export default function LoginPage() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="tu@email.com"
+              placeholder={t('login.placeholder_email')}
               disabled={isLoginLoading}
             />
           </div>
@@ -76,7 +94,7 @@ export default function LoginPage() {
               htmlFor="password"
               className="block text-sm font-semibold text-gray-800"
             >
-              Contraseña
+              {t('login.password')}
             </label>
             {/* Contenedor relativo para poder posicionar el botón del ojo de forma absoluta */}
             <div className="relative">
@@ -109,7 +127,7 @@ export default function LoginPage() {
 
           <div>
             <Button type="submit" className="w-full" disabled={isLoginLoading}>
-              {isLoginLoading ? 'Verificando...' : 'Iniciar Sesión'}
+              {isLoginLoading ? t('login.verificando') : t('login.iniciar_sesion')}
             </Button>
           </div>
         </form>

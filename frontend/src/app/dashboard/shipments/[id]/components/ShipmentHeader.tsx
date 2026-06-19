@@ -1,8 +1,10 @@
 import { Envio } from '@/types/envio';
 import { STATUS_CLASSES, PRIORITY_CLASSES } from '@/app/dashboard/components/ShipmentTable';
+import { t } from 'i18next';
+import { useTranslation } from 'react-i18next';
 
 export const ShipmentHeader = ({ shipment }: { shipment: Envio }) => {
-
+    const {t} = useTranslation();
     const getPriorityColors = (prioridad: string) => {
         switch (prioridad) {
             case 'alta': return 'bg-orange-200 text-orange-900';
@@ -16,14 +18,14 @@ export const ShipmentHeader = ({ shipment }: { shipment: Envio }) => {
         <header className="flex flex-col md:flex-row gap-2 justify-between md:items-center mb-6">
             <div>
                 <h1 className="text-2xl md:text-3xl font-bold text-gray-800">{shipment.tracking_id}</h1>
-                <p className="text-sm text-gray-500">ID Interno: #{shipment.id}</p>
+                <p className="text-sm text-gray-500">{t('shipmentInfo.id_interno')} #{shipment.id}</p>
             </div>
             <div className="flex items-center gap-2">
                 <span className={`px-3 py-1 rounded-full font-semibold text-xs uppercase ${STATUS_CLASSES[shipment.estado]}`}>
-                    {shipment.estado}
+                    {t(`shipmentTable.status.${shipment.estado}`)}
                 </span>
                 <span className={`px-3 py-1 rounded-full font-semibold text-xs uppercase ${getPriorityColors(shipment.prioridad)}`}>
-                    Prioridad {shipment.prioridad}
+                    {t(`shipmentTable.priority.${shipment.prioridad}`)}
                 </span>
             </div>
         </header>

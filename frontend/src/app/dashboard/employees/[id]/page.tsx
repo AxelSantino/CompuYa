@@ -6,9 +6,10 @@ import LoadingOverlay from '@/components/LoadingOverlay';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
-import { FaArrowLeft, FaUserTie, FaEnvelope, FaIdBadge, FaCalendarAlt } from 'react-icons/fa';
+import { FaArrowLeft, FaUserTie, FaEnvelope, FaIdBadge, FaCalendarAlt, FaUserSlash, FaUserCheck } from 'react-icons/fa';
 import { useEmployeeProfile } from './hooks/useEmployeeProfile'
 import { getRoleBadgeClasses } from '../components/employeeColumns';
+import { ConfirmActionModal } from '@/app/dashboard/users/components/ConfirmActionModal';
 
 const DetailItem = ({ icon, label, value }: { icon: React.ReactNode, label: string, value: React.ReactNode }) => (
   <div className="flex flex-col p-4 bg-gray-50 rounded-lg border border-gray-100">
@@ -24,7 +25,9 @@ export default function EmployeeDetailPage({ params }: { params: Promise<{ id: s
   
   const {
     router, employee, isLoading, error, isEditing, setIsEditing,
-    isSaving, formData, handleChange, handleCancelEdit, handleSave
+    isSaving, formData, handleChange, handleCancelEdit, handleSave, 
+    // variables para desactivar usuario con el modal
+    isChangingStatus, isStatusModalOpen, pendingStatus, handleRequestStatusChange, handleCloseStatusModal, handleConfirmStatusChange
   } = useEmployeeProfile(resolvedParams.id);
 
   if (error) {
@@ -41,6 +44,9 @@ export default function EmployeeDetailPage({ params }: { params: Promise<{ id: s
   }
 
   const iniciales = employee ? `${employee.perfil_empleado?.nombre?.charAt(0) || ''}${employee.perfil_empleado?.apellido?.charAt(0) || ''}`.toUpperCase() : '👤';
+
+  // CAMBIAR CUANDO LA API DEVUELVA EL ESTADO DEL EMPLEADO
+  const isEmployeeActive = employee?.activo ?? true;
 
   return (
     <DashboardLayout>
@@ -62,22 +68,36 @@ export default function EmployeeDetailPage({ params }: { params: Promise<{ id: s
               
               <div className="p-6 md:p-10">
                 
+                {/* CABECERA Y BOTONES DE ACCIÓN */}
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-8 pb-8 border-b border-gray-100">
                   <div className="flex items-center gap-5">
-                    <div className="w-20 h-20 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-2xl font-bold text-gray-500 shadow-sm shrink-0">
+                    <div className="w-20 h-20 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-2xl font-bold text-gray-500 shadow-sm shrink-0 relative">
                       {iniciales}
                     </div>
                     <div>
-                      <h1 className="text-2xl font-bold text-gray-900 capitalize">
+                      <h1 className="text-2xl font-bold text-gray-900 capitalize flex items-center gap-3">
                         {employee.perfil_empleado?.nombre} {employee.perfil_empleado?.apellido}
                       </h1>
+                      <span className={`text-sm font-medium ${isEmployeeActive ? 'text-green-600' : 'text-red-600'}`}>
+                        {isEmployeeActive ? 'Cuenta Activa' : 'Cuenta Inactiva'}
+                      </span>
                     </div>
                   </div>
                   
                   {!isEditing && (
-                    <Button variant="secondary" onClick={() => setIsEditing(true)}>
+                    <div className="flex gap-3">
+                      <Button 
+                        variant={isEmployeeActive ? 'danger' : 'success'}
+                        onClick={() => handleRequestStatusChange(!isEmployeeActive)}
+                       className="flex items-center gap-2"
+                      >
+                        {isEmployeeActive ? <FaUserSlash /> : <FaUserCheck />}
+                        {isEmployeeActive ? 'Desactivar' : 'Activar'}
+                      </Button>              
+                     <Button variant="secondary" onClick={() => setIsEditing(true)}>
                       Editar Perfil
                     </Button>
+                    </div>
                   )}
                 </div>
 
@@ -129,6 +149,23 @@ export default function EmployeeDetailPage({ params }: { params: Promise<{ id: s
             </div>
           </div>
         )}
+
+        <ConfirmActionModal
+          isOpen={isStatusModalOpen}
+          isLoading={isChangingStatus}
+          variant={pendingStatus ? 'success' : 'danger'}
+          icon={pendingStatus ? <FaUserCheck /> : <FaUserSlash />}
+          title={pendingStatus ? 'Activar Empleado' : 'Desactivar Empleado'}
+          message={
+            pendingStatus
+              ? '¿Estás seguro de que deseas reactivar a este empleado? Recuperará inmediatamente el acceso al sistema con su rol actual.'
+              : '¿Estás seguro de que deseas desactivar a este empleado? Ya no podrá iniciar sesión en el sistema, pero todo su historial de operaciones se mantendrá intacto.'
+          }
+          confirmText={pendingStatus ? 'Sí, activar' : 'Sí, desactivar'}
+          cancelText="Cancelar"
+          onClose={handleCloseStatusModal}
+          onConfirm={handleConfirmStatusChange}
+        />
       </div>
     </DashboardLayout>
   );

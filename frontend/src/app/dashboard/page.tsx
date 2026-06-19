@@ -9,6 +9,9 @@ import { useShipmentList } from './hooks/useShipmentList';
 import { DashboardHeader } from './components/DashboardHeader';
 import { ShipmentFilters } from './components/ShipmentFilters';
 import { ShipmentTable } from './components/ShipmentTable';
+import '@/i18n/i18n';
+import { useTranslation } from 'react-i18next';
+
 
 const ShipmentsPage = () => {
   
@@ -28,12 +31,13 @@ const ShipmentsPage = () => {
     setPageSize,
     totalPages,
   } = useShipmentList();
+  const {t} = useTranslation();
 
   // 2. Control de seguridad visual (mientras el Hook redirige si hace falta)
   if (!user || user.rol === 'repartidor' || user.rol === 'admin') {
     return (
       <DashboardLayout>
-        <LoadingOverlay isLoading={true} text="Verificando permisos..." />
+        <LoadingOverlay isLoading={true} text={t('shipments.verificando_permisos')} />
       </DashboardLayout>
     );
   }
@@ -41,7 +45,7 @@ const ShipmentsPage = () => {
   return (
     <DashboardLayout>
       <div className="relative bg-white p-4 md:p-6 rounded-lg shadow-md">
-        <LoadingOverlay isLoading={isLoading} text="Cargando envíos..." />
+        <LoadingOverlay isLoading={isLoading} text={t('shipments.cargando_envios')} />
         
         <DashboardHeader user={user} />
 

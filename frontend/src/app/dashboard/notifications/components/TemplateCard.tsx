@@ -1,6 +1,8 @@
 import { PlantillaCorreo } from '@/types/notificacion';
 import { Button } from '@/components/ui/Button';
 import { FaEdit } from 'react-icons/fa';
+import '@/i18n/i18n';
+import { useTranslation } from 'react-i18next';
 
 interface TemplateCardProps {
   template: PlantillaCorreo;
@@ -8,6 +10,7 @@ interface TemplateCardProps {
 }
 
 export const TemplateCard = ({ template, onEdit }: TemplateCardProps) => {
+  const{t}=useTranslation();
   return (
     <div className="bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-shadow p-5 flex flex-col h-full">
       <div className="flex justify-between items-start mb-4">
@@ -15,15 +18,15 @@ export const TemplateCard = ({ template, onEdit }: TemplateCardProps) => {
           {template.estado_disparador}
         </div>
         <span className={`text-xs font-bold px-2 py-1 rounded-md ${template.activa ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-          {template.activa ? 'Activa' : 'Inactiva'}
+          {template.activa ? t('notificationsPage.temp_activa') : t('notificationsPage.temp_inactiva')}
         </span>
       </div>
       
       <div className="flex-grow">
-        <h3 className="text-sm font-semibold text-gray-500 mb-1">Asunto:</h3>
+        <h3 className="text-sm font-semibold text-gray-500 mb-1">{t('notificationsPage.asunto')}:</h3>
         <p className="text-gray-900 font-medium mb-4">{template.asunto}</p>
         
-        <h3 className="text-sm font-semibold text-gray-500 mb-1">Cuerpo del mensaje:</h3>
+        <h3 className="text-sm font-semibold text-gray-500 mb-1">{t('notificationsPage.cuerpo_mens')}:</h3>
         <p className="text-gray-700 text-sm italic bg-gray-50 p-3 rounded-md border border-gray-100 line-clamp-3">
           "{template.cuerpo}"
         </p>
@@ -35,7 +38,7 @@ export const TemplateCard = ({ template, onEdit }: TemplateCardProps) => {
           className="w-full flex items-center justify-center gap-2"
           onClick={() => onEdit(template)}
         >
-          <FaEdit /> Editar Plantilla
+          <FaEdit /> {t('notificationsPage.editar_plant')}
         </Button>
       </div>
     </div>

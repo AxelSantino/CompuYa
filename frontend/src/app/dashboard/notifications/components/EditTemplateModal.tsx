@@ -3,6 +3,8 @@ import { PlantillaCorreo } from '@/types/notificacion';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { FaTimes, FaInfoCircle } from 'react-icons/fa';
+import '@/i18n/i18n';
+import { useTranslation } from 'react-i18next';
 
 interface EditTemplateModalProps {
   isOpen: boolean;
@@ -14,7 +16,7 @@ interface EditTemplateModalProps {
 
 export const EditTemplateModal = ({ isOpen, onClose, onSave, isUpdating, template }: EditTemplateModalProps) => {
   const [formData, setFormData] = useState<PlantillaCorreo | null>(null);
-
+  const{t}=useTranslation();
   useEffect(() => {
     if (isOpen && template) {
       setFormData(template);
@@ -35,7 +37,7 @@ export const EditTemplateModal = ({ isOpen, onClose, onSave, isUpdating, templat
         
         <div className="bg-blue-50 px-6 py-4 border-b border-blue-100 flex justify-between items-center">
           <h3 className="text-lg font-bold text-blue-800">
-            Editar Plantilla: <span className="uppercase text-blue-600">{formData.estado_disparador}</span>
+            {t('notificationsPage.editar_plant')}: <span className="uppercase text-blue-600">{formData.estado_disparador}</span>
           </h3>
           <button onClick={onClose} disabled={isUpdating} className="text-blue-400 hover:text-blue-700 transition-colors">
             <FaTimes size={18} />
@@ -45,7 +47,7 @@ export const EditTemplateModal = ({ isOpen, onClose, onSave, isUpdating, templat
         <form onSubmit={handleSubmit}>
           <div className="p-6 space-y-4">
             <div>
-              <label className="block text-sm font-bold text-gray-700 mb-1">Asunto del Correo</label>
+              <label className="block text-sm font-bold text-gray-700 mb-1">{t('notificationsPage.asunt_correo')}</label>
               <Input
                 type="text"
                 required
@@ -56,7 +58,7 @@ export const EditTemplateModal = ({ isOpen, onClose, onSave, isUpdating, templat
             </div>
 
             <div>
-              <label className="block text-sm font-bold text-gray-700 mb-1">Cuerpo del Mensaje</label>
+              <label className="block text-sm font-bold text-gray-700 mb-1">{t('notificationsPage.cuerpo_mens')}</label>
               <textarea
                 required
                 rows={5}
@@ -70,7 +72,7 @@ export const EditTemplateModal = ({ isOpen, onClose, onSave, isUpdating, templat
             <div className="bg-amber-50 border-l-4 border-amber-400 p-3 rounded-r-md flex gap-3 mt-2">
               <FaInfoCircle className="text-amber-500 mt-0.5 flex-shrink-0" />
               <div className="text-xs text-amber-800">
-                <strong>Variables dinámicas disponibles:</strong> Podés usar <code>{'{descripcion_producto}'}</code> y <code>{'{estado_texto}'}</code>. El sistema las reemplazará automáticamente con los datos reales del envío.
+                <strong>{t('notificationsPage.variables_din')}:</strong> {t('notificationsPage.podes_usar')} <code>{'{descripcion_producto}'}</code> y <code>{'{estado_texto}'}</code> {t('notificationsPage.el_sistema_las_reemplazara')}. 
               </div>
             </div>
             
@@ -84,17 +86,17 @@ export const EditTemplateModal = ({ isOpen, onClose, onSave, isUpdating, templat
                 className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
               />
               <label htmlFor="activa" className="text-sm font-medium text-gray-700 cursor-pointer">
-                Plantilla Activa (Enviar automáticamente cuando ocurra el evento)
+                {t('notificationsPage.plant_activa')}
               </label>
             </div>
           </div>
 
           <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end gap-3">
             <Button variant="secondary" type="button" onClick={onClose} disabled={isUpdating}>
-              Cancelar
+              {t('notificationsPage.boton_cancelar')}
             </Button>
             <Button variant="primary" type="submit" disabled={isUpdating}>
-              {isUpdating ? 'Guardando...' : 'Guardar Plantilla'}
+              {isUpdating ? t('notificationsPage.guardando') : t('notificationsPage.guardar_plantilla')}
             </Button>
           </div>
         </form>

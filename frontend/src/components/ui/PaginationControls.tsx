@@ -1,5 +1,6 @@
 import React from 'react';
 import { Select } from './Select';
+import { useTranslation } from 'react-i18next';
 
 interface PaginationControlsProps {
   currentPage: number;
@@ -18,14 +19,19 @@ export const PaginationControls = ({
   onPageSizeChange,
   pageSizeOptions = [15, 30],
 }: PaginationControlsProps) => {
+  const {t} = useTranslation();
   return (
     <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div className="text-sm text-gray-600">
-        Mostrando {pageSize} elementos por página · Página {currentPage} de {totalPages}
+        {t('paginado.info', { 
+        pageSize: pageSize, 
+        currentPage: currentPage, 
+        totalPages: totalPages 
+    })}
       </div>
       <div className="flex flex-wrap items-center gap-2">
         <div className="flex items-center gap-2 text-sm text-gray-700">
-          <label htmlFor="pageSize" className="font-medium">Elementos:</label>
+          <label htmlFor="pageSize" className="font-medium">{t('paginado.elementos')}</label>
           <Select
             id="pageSize"
             value={pageSize.toString()}
@@ -46,7 +52,7 @@ export const PaginationControls = ({
             onClick={() => onPageChange(Math.max(1, currentPage - 1))}
             disabled={currentPage === 1}
           >
-            Anterior
+            {t('paginado.anterior')}
           </button>
           <button
             type="button"
@@ -61,7 +67,7 @@ export const PaginationControls = ({
             onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
             disabled={currentPage === totalPages}
           >
-            Siguiente
+            {t('paginado.siguiente')}
           </button>
         </div>
       </div>
