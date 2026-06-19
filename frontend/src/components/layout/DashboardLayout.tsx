@@ -4,6 +4,7 @@ import React from 'react';
 import { useDashboardLayout } from './hooks/useDashboardLayout';
 import { Sidebar } from './components/Sidebar';
 import NotificationBell from './components/NotificationBell';
+import { Toaster } from 'react-hot-toast';
 import '@/i18n/i18n';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from '@/i18n/LanguageSwitcher';
@@ -33,6 +34,34 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
   return (
     <div className="flex h-screen bg-gray-100 overflow-hidden">
+      
+    <Toaster 
+        position="top-right" 
+        containerStyle={{
+          top: 80, 
+          right: 20,
+        }}
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: '#1e293b', 
+            color: '#f8fafc',      
+            borderRadius: '6px',   
+            padding: '12px 24px',
+            boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.3)', 
+            fontSize: '14px',
+            fontWeight: '600',
+            letterSpacing: '0.3px'
+          },
+          success: {
+            iconTheme: {
+              primary: '#22c55e', 
+              secondary: '#1e293b', 
+            },
+          },
+        }} 
+      />
+
       <Sidebar
         user={user}
         userName={userName}
