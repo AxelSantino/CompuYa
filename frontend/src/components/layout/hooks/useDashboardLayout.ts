@@ -23,15 +23,17 @@ export const useDashboardLayout = () => {
     const router = useRouter();
     const pathname = usePathname();
 
-    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false);
-
-   // Al cargar la página, leemos la memoria del navegador
-    useEffect(() => {
-        const savedState = localStorage.getItem('sidebar_collapsed');
-        if (savedState !== null) {
-            setIsSidebarCollapsed(JSON.parse(savedState));
-        }
-    }, []);
+   // INICIALIZACIÓN PEREZOSA: Le pasamos una función al useState en lugar de un valor
+    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(() => {
+    // Verificamos que estamos en el navegador (Next.js tira error si intentamos leer localStorage en el servidor)
+    if (typeof window !== 'undefined') {
+      const savedState = localStorage.getItem('sidebar_collapsed');
+      if (savedState !== null) {
+        return JSON.parse(savedState);
+      }
+    }
+    return false; // Valor por defecto si es la primera vez que entra
+  });
 
     // Cambiar posicion del sidebar
     const toggleSidebar = useCallback(() => {
