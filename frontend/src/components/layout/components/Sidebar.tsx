@@ -55,7 +55,7 @@ export const Sidebar = ({ user, userName, pathname, filteredNavItems, handleLogo
                 <Link 
                   href={item.href}
                   title={isCollapsed ? item.name : undefined}
-                  className={`flex items-center rounded-lg transition-all duration-200 group
+                  className={`flex items-center rounded-lg transition-all duration-200 group min-h-[60px]
                     ${isCollapsed ? 'justify-center p-3' : 'p-3'}
                     ${isActive 
                       ? 'bg-orange-600 text-white shadow-lg shadow-orange-900/20' 
@@ -63,13 +63,18 @@ export const Sidebar = ({ user, userName, pathname, filteredNavItems, handleLogo
                     }`}
                 >
                   <item.icon 
-                    className={`w-5 h-5 flex-shrink-0 transition-all duration-200
-                      ${!isCollapsed ? 'mr-3' : ''}
+                    className={`w-6 h-6 flex-shrink-0 transition-all duration-300
+                      ${isCollapsed ? 'mr-0' : 'mr-3'}
                       ${isActive ? 'text-white drop-shadow-md' : 'text-gray-400 group-hover:text-gray-100'}`} 
                   />
-                  {!isCollapsed && (
-                    <span className="font-medium whitespace-nowrap">{item.name}</span>
-                  )}
+
+                  <div className={`overflow-hidden transition-all duration-300 ease-in-out flex items-center
+                    ${isCollapsed ? 'max-w-0 opacity-0' : 'max-w-[160px] opacity-100'}`}
+                  >
+                    <span className="block w-[160px] min-w-[160px] font-medium text-base leading-tight whitespace-normal">
+                      {item.name}
+                    </span>
+                  </div>
                 </Link>
               </li>
             );
