@@ -262,6 +262,57 @@ export const en = {
                 guardar_plantilla: "Save Template",
                 temp_activa: "Active",
                 temp_inactiva: "Inactive",
+            },
+
+            importCsvPage: {
+                archivo_valido_para_importar: "File checked and ready to import",
+                errores_en_filas: "Several errors found in multiple rows",
+                error_inesperado_al_validar_archivo: "An unexpected error ocurred while validating file",
+                importacion_finalizada: "Finished import",
+                no_se_pudo_crear_envios: "No shipment could be created",
+                importacion_fallida: "Failed import",
+                error_de_red_al_importar: "Network error while importing data",
+                
+                razon_social_destinatario: "recipient company name",
+                cuit_destinatario: "recipient cuit",
+                descripcion: "description",
+                tipo_envio: "shipment type",
+                restriccion: "restriction",
+                plantilla_importacion_envios: "shipment_import_template",
+                instrucciones_de_importacion: "Import instructions",
+                instrucciones_formato: "File must be in <strong>.csv</strong> format (UTF-8 encoding) and contains the following 5 columns in the first row:",
+                revisar_mayusculas: "Check capital letters",
+                descargar_plantilla_vacia: "Download empty template",
+
+                click_para_subir_archivo: "Click and upload file",
+                o_arrastra_y_suelta_archivo: "or drop your .csv file here",
+                
+                archivo_validado_correctamente: "¡File checked succesfuly!",
+                formato_correcto_datos_listos: "File is well-formatted and rows are ready to be imported on the database",
+                errores_en_el_archivo: "Issues found on file",
+                fila: "Row",
+                detalle_del_error: "Issue detail",
+
+                envios_creados: "({{cantidad}}) shipments created",
+                tracking_id: "Tracking ID",
+                destinatario: "Recipient",
+                fallos_al_guardar: "Issues while saving ({{errores}})",
+                motivo_del_error: "Issue reason",
+
+                acceso_denegado: "Denied Access",
+                no_contas_con_permisos_necesarios: "No contás con los permisos necesarios para importar envíos.",
+                importar_envios_por_csv: "Import shipments with CSV file",
+                agrega_multiples_envios_al_sistema: "Add several shipments uploading a CSV file.",
+                ir_a_lista_de_envios: "Go to shipments dashboard",
+                importar_otro_archivo: "Import other file",
+                limpiar: "Clean",
+                validando: "Checking...",
+                validar_archivo: "Check file",
+                procesando: "Processing...",
+                confirmar_e_importar: "Confirm and import",
+
+
+
             }
     }
 };

@@ -260,7 +260,56 @@ export const es = {
                 guardar_plantilla: "Guardar Plantilla",
                 temp_activa: "Activa",
                 temp_inactiva: "Inactiva",
+            },
+            importCsvPage: {
+                archivo_valido_para_importar: "Archivo válido y listo para importar",
+                errores_en_filas: "Se encontraron errores en algunas filas",
+                error_inesperado_al_validar_archivo: "Ocurrió un error inesperado al validar el archivo",
+                importacion_finalizada: "Importación finalizada",
+                no_se_pudo_crear_envios: "No se pudo crear ningún envío",
+                importacion_fallida: "La importación falló",
+                error_de_red_al_importar: "Error de red al intentar importar los datos",
                 
+                razon_social_destinatario: "razon_social_destinatario",
+                cuit_destinatario: "cuit_destinatario",
+                descripcion: "descripcion",
+                tipo_envio: "tipo_envio",
+                restriccion: "restriccion",
+                plantilla_importacion_envios: "plantilla_importacion_envios",
+                instrucciones_de_importacion: "Instrucciones de Importación",
+                instrucciones_formato: "El archivo debe tener formato <strong>.csv</strong> (codificación UTF-8) y contener obligatoriamente las siguientes 5 columnas en la primera fila:",
+                revisar_mayusculas: "Revisar mayúsculas",
+                descargar_plantilla_vacia: "Descargar plantilla vacía",
+
+                click_para_subir_archivo: "Haz click para subir un archivo",
+                o_arrastra_y_suelta_archivo: "o arrastra y suelta tu archivo .csv aquí",
+                
+                archivo_validado_correctamente: "¡Archivo validado correctamente!",
+                formato_correcto_datos_listos: "El formato es correcto y los datos están listos para ser importados a la base de datos",
+                errores_en_el_archivo: "Se encontraron errores en el archivo",
+                fila: "Fila",
+                detalle_del_error: "Detalle del error",
+
+                envios_creados: "Envíos Creados ({{cantidad}})",
+                tracking_id: "Tracking ID",
+                destinatario: "Destinatario",
+                fallos_al_guardar: "Fallos al guardar ({{errores}})",
+                motivo_del_error: "Motivo del error",
+
+                acceso_denegado: "Acceso denegado",
+                no_contas_con_permisos_necesarios: "No contás con los permisos necesarios para importar envíos.",
+                importar_envios_por_csv: "Importar envíos por CSV",
+                agrega_multiples_envios_al_sistema: "Agrega múltiples envíos al sistema subiendo un archivo de texto delimitado por comas.",
+                ir_a_lista_de_envios: "Ir a Lista de envíos",
+                importar_otro_archivo: "Importar otro archivo",
+                limpiar: "Limpiar",
+                validando: "Validando...",
+                validar_archivo: "Validar archivo",
+                procesando: "Procesando...",
+                confirmar_e_importar: "Confirmar e importar",
+
+
+
             }
     }
 };
