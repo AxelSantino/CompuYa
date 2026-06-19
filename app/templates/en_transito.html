@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CompuYa — Tu pedido está en camino</title>
+</head>
+<body style="margin:0;padding:0;background-color:#f3f4f6;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;">
+
+<table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f3f4f6;padding:40px 16px;">
+    <tr><td align="center">
+        
+    <table width="560" cellpadding="0" cellspacing="0" style="max-width:560px;background-color:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);">
+        
+        <tr>
+        <td style="padding:40px 40px 20px;text-align:center;">
+            <img src="https://iziqikqvzfbnmuwrxuev.supabase.co/storage/v1/object/public/assets/LogoCompuYa.png" alt="CompuYa" width="180" style="display:inline-block;" />
+        </td>
+        </tr>
+
+        <tr>
+        <td style="padding:10px 40px 20px;text-align:center;">
+            <span style="display:inline-block;background-color:#fff0ea;color:#E8521A;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:6px 16px;border-radius:20px;">
+            {estado_texto}
+            </span>
+            <h1 style="margin:24px 0 8px;font-size:22px;font-weight:800;color:#111827;letter-spacing:-0.5px;">¡Tu paquete ya está en camino!</h1>
+            <p style="margin:0;font-size:15px;color:#4b5563;line-height:1.6;">Hola <strong>{nombre_cliente}</strong>, {mensaje_estado}</p>
+        </td>
+        </tr>
+
+        <tr>
+        <td style="padding:10px 40px 30px;text-align:center;">
+            <svg width="120" height="80" viewBox="0 0 120 80" xmlns="http://www.w3.org/2000/svg">
+            <rect width="120" height="80" rx="12" fill="#fff5f0"/>
+            <g transform="translate(15, 20)">
+                <rect x="10" y="5" width="45" height="25" rx="3" fill="#E8521A"/>
+                <path d="M 57,12 L 67,12 Q 72,12 75,18 L 78,25 L 78,30 L 55,30 Z" fill="#E8521A"/>
+                <rect x="62" y="15" width="8" height="8" rx="1" fill="#fff"/>
+                <circle cx="25" cy="32" r="6" fill="#111827"/>
+                <circle cx="65" cy="32" r="6" fill="#111827"/>
+                <path d="M 0,15 L 5,15 M -5,25 L 5,25" stroke="#fca5a5" stroke-width="2" stroke-linecap="round"/>
+                <line x1="0" y1="38" x2="90" y2="38" stroke="#fca5a5" stroke-width="2" stroke-dasharray="10 5"/>
+            </g>
+            </svg>
+        </td>
+        </tr>
+
+        <tr>
+        <td style="padding:0 40px;">
+            <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#fffaf8;border:2px dashed #fecbba;border-radius:12px;">
+            <tr>
+                <td style="padding:28px 20px;text-align:center;">
+                <p style="margin:0 0 8px;font-size:11px;color:#E8521A;text-transform:uppercase;letter-spacing:1.5px;font-weight:700;">PIN de Seguridad para la entrega</p>
+                <p style="margin:0;font-size:42px;font-weight:800;color:#111827;font-family:'Courier New',Courier,monospace;letter-spacing:8px;">{pin}</p>
+                <p style="margin:12px 0 0;font-size:13px;color:#6b7280;line-height:1.5;">El repartidor te pedirá este código para entregarte el paquete en mano.</p>
+                </td>
+            </tr>
+            </table>
+        </td>
+        </tr>
+
+        <tr>
+        <td style="padding:32px 40px 10px;">
+            <table width="100%" cellpadding="0" cellspacing="0">
+            <tr>
+                <td width="50%" style="padding-bottom:16px;">
+                <p style="margin:0 0 4px;font-size:12px;color:#6b7280;text-transform:uppercase;font-weight:600;letter-spacing:0.5px;">Código de Envío</p>
+                <p style="margin:0;font-size:15px;color:#111827;font-weight:700;">{codigo_envio}</p>
+                </td>
+                <td width="50%" style="padding-bottom:16px;">
+                <p style="margin:0 0 4px;font-size:12px;color:#6b7280;text-transform:uppercase;font-weight:600;letter-spacing:0.5px;">Fecha</p>
+                <p style="margin:0;font-size:15px;color:#111827;font-weight:600;">{fecha_actualizacion}</p>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" style="padding-top:16px;border-top:1px solid #f3f4f6;">
+                <p style="margin:0 0 4px;font-size:12px;color:#6b7280;text-transform:uppercase;font-weight:600;letter-spacing:0.5px;">Producto</p>
+                <p style="margin:0;font-size:15px;color:#111827;font-weight:600;">{descripcion_producto}</p>
+                </td>
+            </tr>
+            </table>
+        </td>
+        </tr>
+
+        <tr>
+        <td style="padding:32px 40px 40px;text-align:center;">
+            <a href="{link_aplicacion}" style="display:inline-block;background-color:#E8521A;color:#ffffff;text-decoration:none;font-size:15px;font-weight:600;padding:16px 36px;border-radius:8px;box-shadow:0 4px 6px -1px rgba(232, 82, 26, 0.2);">Seguir mi paquete</a>
+        </td>
+        </tr>
+
+    </table>
+    <table width="560" cellpadding="0" cellspacing="0" style="max-width:560px;">
+        <tr>
+        <td style="padding:32px 20px;text-align:center;">
+            <p style="margin:0 0 8px;font-size:13px;color:#9ca3af;">¿Necesitás ayuda? Escribinos a <a href="mailto:{email_contacto}" style="color:#E8521A;text-decoration:none;font-weight:500;">{email_contacto}</a></p>
+            <p style="margin:0;font-size:12px;color:#d1d5db;">© 2026 CompuYa Logistics. Mensaje generado automáticamente.</p>
+        </td>
+        </tr>
+    </table>
+
+    </td></tr>
+</table>
+</body>
+</html>
