@@ -42,7 +42,7 @@ export const en = {
             fecha_creacion: "Date of Creation",
             creado_por: "Created by",
             prioridad_asignada: "Priority Assigned",
-            lim_entrega: "Date limit"
+            lim_entrega: "Date limit",
         },
 
         dashboard_layout: {
@@ -117,7 +117,19 @@ export const en = {
             selecciona_un_repartidor: "Select a delivery driver to monitor their route",
             entregas_apareceran_aqui: "Deliveries will appear here once assigned",
             mi_hoja_de_ruta_optimizada: "My optimized roadmap",
-            visualizando_recorrido_repartidor: "Viewing the delivery driver's route"
+            visualizando_recorrido_repartidor: "Viewing the delivery driver's route",
+            actualizando_logistica: "Updating logistics...",
+
+            seleccionar_repartidor_primero: "Please select a delivery driver (in Monitoring by delivery driver)",
+            envio_asignado_correctamente: "Shipment assigned succesfully",
+            error_al_asignar_manualmente: "Error while assigning manually",
+            error_en_la_asignacion_masiva: "Error in bulk assignment",
+            envio_marcado_como_entregado_exitosamente: "Shipment succesfully marked as delivered.",
+            error_al_marcar_envio_entregado: "Error while marking as delivered..",
+            confirmar_asignacion_masiva: "Confirm bulk assignment",
+            pregunta_asignacion_masiva: "Do you want to automatically assign all pending shipments?",
+            confirmar_entrega: "Confirm delivery",
+            confirmar_entrega_mensaje: "Do you confirm that shipment {{id}} has been successfully delivered?",
         },
         loadingOverlay: {
             cargando: "Loading...",
