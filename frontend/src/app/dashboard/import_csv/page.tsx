@@ -172,4 +172,4 @@ const ImportCsvPage = () => {
   );
 };
 
-export default withAuth(ImportCsvPage);
+export default withAuth(ImportCsvPage, ['operador', 'supervisor']);
