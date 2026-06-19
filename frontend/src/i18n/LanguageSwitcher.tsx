@@ -3,12 +3,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BiGlobe, BiChevronDown } from 'react-icons/bi';
+import ReactCountryFlag from 'react-country-flag';
 
 // 1. DICCIONARIO CENTRALIZADO (Escalabilidad pura)
 // Si necesitas agregar un idioma nuevo, solo lo sumas a este array. El componente hace el resto.
 const LANGUAGES = [
-  { code: 'es', label: 'Español', flag: '🇪🇸' },
-  { code: 'en', label: 'English', flag: '🇺🇸' },
+  { code: 'es', label: 'Español AR', countryCode: 'AR' },
+  { code: 'en', label: 'English UK', countryCode: 'GB' },
 ];
 
 export default function LanguageSwitcher() {
@@ -16,10 +17,10 @@ export default function LanguageSwitcher() {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Identificamos el idioma actualmente activo
+  // Identifica el idioma actualmente activo
   const currentLang = LANGUAGES.find((lang) => lang.code === i18n.language) || LANGUAGES[0];
 
-  // 2. LÓGICA DE UX: Cerrar el menú si el usuario hace clic en cualquier otro lado de la pantalla
+  // Cierra el menú si el usuario hace clic en cualquier otro lado de la pantalla
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -33,28 +34,33 @@ export default function LanguageSwitcher() {
 
   const handleLanguageChange = (code: string) => {
     i18n.changeLanguage(code);
-    setIsOpen(false); // Cerramos el menú tras seleccionar
+    setIsOpen(false);
   };
 
   return (
     <div className="relative" ref={dropdownRef}>
       
       {/* =========================================
-          BOTÓN DISPARADOR (TRIGGER)
+          Botton principal
           ========================================= */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors shadow-sm focus:outline-none cursor-pointer"
         aria-label="Seleccionar idioma"
       >
-        <BiGlobe className="text-gray-500 w-5 h-5 shrink-0" />
+
+        {/* En celulares muestra solo la bandera, en PC muestra el nombre completo */}
+        <div className="flex items-center justify-center shrink-0 w-6 h-6 rounded-full overflow-hidden border border-gray-200 bg-gray-100">
+          <ReactCountryFlag 
+            countryCode={currentLang.countryCode} 
+            svg 
+            style={{ width: '1.5em', height: '1.5em', objectFit: 'cover' }} 
+            title={currentLang.label} 
+          />
+        </div>
         
-        {/* En celulares mostramos solo la bandera, en PC mostramos el nombre completo */}
         <span className="font-medium text-sm hidden sm:block whitespace-nowrap">
           {currentLang.label}
-        </span>
-        <span className="sm:hidden text-lg leading-none">
-          {currentLang.flag}
         </span>
         
         <BiChevronDown 
@@ -64,7 +70,7 @@ export default function LanguageSwitcher() {
       </button>
 
       {/* =========================================
-          MENÚ DESPLEGABLE (DROPDOWN)
+          MENÚ DESPLEGABLE
           ========================================= */}
       {isOpen && (
         <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-100 rounded-lg shadow-lg z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
@@ -81,7 +87,7 @@ export default function LanguageSwitcher() {
                         ? 'bg-orange-50 text-orange-700 font-medium' 
                         : 'text-gray-700 hover:bg-gray-50'}`}
                   >
-                    <span className="text-lg leading-none">{lang.flag}</span>
+                    <span className="text-xs leading-none">{lang.code.toLocaleUpperCase()}</span>
                     <span>{lang.label}</span>
                   </button>
                 </li>
