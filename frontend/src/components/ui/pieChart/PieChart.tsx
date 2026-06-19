@@ -19,9 +19,7 @@ interface PieChartProps {
 export const PieChart = ({ slices, title, subtitle }: PieChartProps) => {
   // Única lógica de negocio a este nivel
   const total = slices.reduce((sum, slice) => sum + slice.value, 0);
-
-  const { t } = useTranslation();
-
+  const {t} = useTranslation();
   return (
     <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200 flex flex-col h-full min-h-[360px]">
       <div className="mb-4 text-center">
@@ -32,7 +30,7 @@ export const PieChart = ({ slices, title, subtitle }: PieChartProps) => {
       <div className="flex flex-col items-center gap-6">
         {total === 0 ? (
           <div className="text-sm text-gray-500 text-center py-12 flex-grow flex items-center justify-center">
-          No hay datos para mostrar.
+          {t('metricsPage.no_hay_datos_mostrar')}
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center gap-6 flex-grow w-full">

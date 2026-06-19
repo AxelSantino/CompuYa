@@ -3,8 +3,11 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import alertasService from '@/services/alertasService';
 import { useRouter } from 'next/navigation';
+import '@/i18n/i18n';
+import { useTranslation } from 'react-i18next';
 
 export default function NotificationBell() {
+    const {t} = useTranslation();
     const { user } = useAuth();
     const router = useRouter(); 
     const [notificaciones, setNotificaciones] = useState<any[]>([]);
@@ -65,13 +68,13 @@ return (
     {isOpen && (
         <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl overflow-hidden z-50 border border-gray-200">
         <div className="py-3 px-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
-            <span className="text-sm font-bold text-gray-700">Historial de Alertas</span>
+            <span className="text-sm font-bold text-gray-700">{t('campanita.hist_alertas')}</span>
             {unreadCount > 0 && (
             <button 
                 onClick={async () => {await alertasService.marcarComoLeidas();await cargarNotificaciones(); }}
                 className="text-xs text-blue-600 hover:text-blue-800 hover:underline font-semibold focus:outline-none"
             >
-                Marcar todas como leídas
+                {t('campanita.marcar_todas_leidas')}
             </button>
             )}
         </div>
@@ -79,7 +82,7 @@ return (
         <div className="max-h-72 overflow-y-auto">
             {notificaciones.length === 0 ? (
             <div className="px-4 py-6 text-center text-sm text-gray-500">
-                No hay alertas para mostrar.
+                {t('campanita.no_hay_alertas')}
             </div>
             ) : (
             notificaciones.map((notif) => (

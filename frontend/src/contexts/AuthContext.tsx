@@ -4,6 +4,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import authService from '@/services/authService';
 import LoadingTruck from '@/components/LoadingTruck';
 import './LoadingScreen.css';
+import { useTranslation } from 'react-i18next';
 
 interface User {
   id: number;
@@ -40,6 +41,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoginLoading, setIsLoginLoading] = useState(false);
+  const {t} = useTranslation();
 
   useEffect(() => {
     const initializeAuth = async () => {
@@ -70,14 +72,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const errorData = profileError as { response?: { status?: number } };
         localStorage.removeItem('token');
         if (errorData.response?.status === 403) {
-          throw new Error('Tu cuenta está autenticada pero no tiene permisos para este sistema.');
+          throw new Error(t('loadingOverlay.cuenta_auten_sin_permis'));
         }
-        throw new Error('Error al obtener el perfil de usuario. Contacte al administrador.');
+        throw new Error(t('loadingOverlay.error_obtener_perfil'));
       }
     } catch (error) {
       const errorData = error as { response?: { status?: number } };
       if (errorData.response?.status === 401) {
-        throw new Error('Email o contraseña incorrectos.');
+        throw new Error(t('loadingOverlay.email_contra_incorr'));
       }
       throw error;
     } finally {
@@ -91,12 +93,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const isAuthenticated = !!user;
-
   if (isLoading) {
     return (
       <div className="loading-screen">
         <LoadingTruck />
-        <p>Cargando aplicación...</p>
+        <p></p>
       </div>
     );
   }

@@ -138,7 +138,7 @@ export const es = {
                 card_envios_entregados: "Envíos Entregados",
                 card_envios_cancelados: "Envíos Cancelados",
                 puntualidad_entregas: "Puntualidad de las entregas",
-                total_evaluado: "Total evaluado:",
+                total_evaluado: "Total evaluado: {{count}} envíos",
                 envios: "envíos",
                 cantidad: "Cantidad",
                 total_entregas: "Total entregas",
@@ -307,9 +307,17 @@ export const es = {
                 validar_archivo: "Validar archivo",
                 procesando: "Procesando...",
                 confirmar_e_importar: "Confirmar e importar",
-
-
-
-            }
+            },
+             campanita: {
+                hist_alertas: "Historial de Alertas",
+                marcar_todas_leidas: "Marcar todas como leídas",
+                no_hay_alertas: "No hay alertas para mostrar"
+            },
+            paginado: {
+                info: "Mostrando {{pageSize}} elementos por página · Página {{currentPage}} de {{totalPages}}",
+                elementos: "Elementos: ",
+                anterior: "Anterior",
+                siguiente: "Siguiente"
+            },
     }
 };

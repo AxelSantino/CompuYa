@@ -22,6 +22,27 @@ export const en = {
             guardando: "Saving...",
             guardar_todos_los_cambios: "Save All Changes"
         },
+        shipmentInfo: {
+            info_envio: "Shipment Information",
+            faEdit: "Edit",
+            tipo_envio: "Type of Shipment",
+            manejo_esp: "Especial Treatment",
+            ninguna: "None",
+            fragil: "Fragile",
+            valioso: "Valuable",
+            desc: "Description",
+            no_disp: "Not available",
+            id_interno: "Intern ID: ",
+            dir_no_especi: "Address not specified in profile",
+            info_dest: "Recipient Information",
+            razon_social: "Company Name",
+            rzn_social_name: "Company Name / Name",
+            direccion: "Direction",
+            fecha_creacion: "Date of Creation",
+            creado_por: "Created by",
+            prioridad_asignada: "Priority Assigned",
+            lim_entrega: "Date limit"
+            },
         dashboard_layout: {
             gestion_de_envios: "Shipment Management",
             control_logistico: "Logistics Control",
@@ -40,7 +61,9 @@ export const en = {
         dashboard_header: {
             gestion_de_envios: "Shipment Management",
             listado_y_administracion: "Listing and management of shipments of computer products registered in the system",
-            nuevo_envio: "New Shipment"
+            nuevo_envio: "New Shipment",
+            mi_dashboard_cliente: "My Shipments Dashboard",
+                listado_seguimiento: "List and track all your shipments."
         },
         shipmentFilters: {
             buscar_por_trackingID: "Search by Tracking ID",
@@ -58,7 +81,19 @@ export const en = {
             descripcion: "Description",
             tipo: "Type",
             estado: "State",
-            no_se_encontraron_envios: "No shipments were found matching the selected criteria."
+            no_se_encontraron_envios: "No shipments were found matching the selected criteria.",
+            en_sucursal: "en sucursal",
+                status: {
+                    "en sucursal": "In Branch",
+                    "en transito": "On Transit",
+                    "entregado": "Delivered",
+                    "cancelado": "Cancelled"
+                },
+                priority: {
+                    "alta": "High",
+                    "media": "Medium",
+                    "baja": "Low"
+                }
         },
         routesPage: {
             centro_de_control: "Center of logistics control",
@@ -82,7 +117,11 @@ export const en = {
             visualizando_recorrido_repartidor: "Viewing the delivery driver's route"
         },
         loadingOverlay: {
-            cargando: "Loading..."
+            cargando: "Loading...",
+            cargando_app: "Loading application...",
+            email_contra_incorr: "Email or password incorrect",
+            cuenta_auten_sin_permis: "Your account is authenticated but does not have permissions for this system.",
+            error_obtener_perfil: "Error retrieving user profile. Contact the administrator."
         },
         newShipmentPage: {
             volver: "Back",
@@ -139,7 +178,7 @@ export const en = {
                 card_envios_entregados: "Shipments delivered",
                 card_envios_cancelados: "Canceled shipments",
                 puntualidad_entregas: "On-time deliveries",
-                total_evaluado: "Total evaluated:",
+                total_evaluado: "Total evaluated: {{count}} shipments",
                 envios: "shipments",
                 cantidad: "Amount",
                 total_entregas: "Delivered amount",
@@ -150,7 +189,6 @@ export const en = {
                 export_opciones_descarga: "Download options",
                 export_paquete_completo: "Compressed file (.zip)",
                 export_incluye_todo: "Includes states, priorities and cancelations.",
-
         },
         employeesPage: {
                 cargando_nomina: "Loading employee payroll...",
@@ -310,9 +348,18 @@ export const en = {
                 validar_archivo: "Check file",
                 procesando: "Processing...",
                 confirmar_e_importar: "Confirm and import",
+            },
 
-
-
-            }
+            campanita: {
+                hist_alertas: "Alert History",
+                marcar_todas_leidas: "Mark all as read",
+                no_hay_alertas: "No alerts to show"
+            },
+            paginado: {
+                info: "Showing {{pageSize}} elements by page · Page {{currentPage}} of {{totalPages}}",
+                elementos: "Elements: ",
+                anterior: "Prior",
+                siguiente: "Next"
+            },
     }
 };
