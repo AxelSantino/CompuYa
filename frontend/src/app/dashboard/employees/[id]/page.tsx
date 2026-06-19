@@ -10,6 +10,7 @@ import { FaArrowLeft, FaUserTie, FaEnvelope, FaIdBadge, FaCalendarAlt, FaUserSla
 import { useEmployeeProfile } from './hooks/useEmployeeProfile'
 import { getRoleBadgeClasses } from '../components/employeeColumns';
 import { ConfirmActionModal } from '@/app/dashboard/users/components/ConfirmActionModal';
+import withAuth from '@/components/auth/withAuth';
 
 const DetailItem = ({ icon, label, value }: { icon: React.ReactNode, label: string, value: React.ReactNode }) => (
   <div className="flex flex-col p-4 bg-gray-50 rounded-lg border border-gray-100">
@@ -20,7 +21,7 @@ const DetailItem = ({ icon, label, value }: { icon: React.ReactNode, label: stri
   </div>
 );
 
-export default function EmployeeDetailPage({ params }: { params: Promise<{ id: string }> }) {
+function EmployeeDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
   
   const {
@@ -170,3 +171,5 @@ export default function EmployeeDetailPage({ params }: { params: Promise<{ id: s
     </DashboardLayout>
   );
 }
+
+export default withAuth(EmployeeDetailPage, ['admin']);

@@ -11,10 +11,11 @@ import { getEmployeeColumns } from './components/employeeColumns';
 import { PaginationControls } from '@/components/ui/PaginationControls';
 import '@/i18n/i18n';
 import { useTranslation } from 'react-i18next';
+import withAuth from '@/components/auth/withAuth';
 
 // Funcion principal 
 
-export default function EmployeesPage() {
+function EmployeesPage() {
   const {t} = useTranslation();
   const {
     user,
@@ -86,3 +87,5 @@ return (
     </DashboardLayout>
   );
 };
+
+export default withAuth(EmployeesPage, ['admin']);
