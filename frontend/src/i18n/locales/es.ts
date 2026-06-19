@@ -22,6 +22,7 @@ export const es = {
                 guardando: "Guardando...",
                 guardar_todos_los_cambios: "Guardar todos los cambios",
             },
+            
             shipmentInfo: {
                 info_envio: "Información del Envío",
                 faEdit: "Editar",
@@ -63,7 +64,8 @@ export const es = {
                 listado_y_administracion: "Listado y administracion de los envíos de productos informáticos registrados en el sistema",
                 nuevo_envio: "Nuevo Envío",
                 mi_dashboard_cliente: "Mi dashboard de envíos",
-                listado_seguimiento: "Listado y seguimiento de todos tus envíos"
+                listado_seguimiento: "Listado y seguimiento de todos tus envíos",
+                importacion_por_csv: "Importación por CSV"
             },
             shipmentFilters:{
                 buscar_por_trackingID: "Buscar por Tracking ID",
@@ -174,20 +176,22 @@ export const es = {
                 cargando_incidencias: "Cargando incidencias del periodo...",
                 motivos_cancelacion: "Motivos de cancelación de envíos",
                 envios_cancelados: "Envíos cancelados: ",
-                total_envios: "Total de Envíos",
-                envios_entregados: "Envíos Entregados",
-                envios_cancel: "Envíos Cancelados",
-                cargando_rendimiento: "Cargando rendimiento de entregas...",
+                card_total_envios: "Total de Envíos",
+                card_envios_entregados: "Envíos Entregados",
+                card_envios_cancelados: "Envíos Cancelados",
                 puntualidad_entregas: "Puntualidad de las entregas",
                 total_evaluado: "Total evaluado: {{count}} envíos",
-                total_entregas: "Total Entregas",
-                a_tiempo: "A Tiempo",
-                con_demora: "Con Demora",
-                error_cargar_metricas: "Error al cargar las métricas de rendimiento de entrega.",
-                piechart_cant: "Cantidad",
-                piechart_envios: "{{value}} envíos",
-                error_carg_metri: "Error al cargar las métricas de incidencias.",
-                no_hay_datos_mostrar: "No hay datos para mostrar."
+                envios: "envíos",
+                cantidad: "Cantidad",
+                total_entregas: "Total entregas",
+                a_tiempo: "A tiempo",
+                con_demora: "Con demora",
+                export_procesando: "Procesing ...",
+                export_exportar_datos: "Exportar Datos",
+                export_opciones_descarga: "Opciones de descarga",
+                export_paquete_completo: "Paquete completo (.zip)",
+                export_incluye_todo: "Incluye Estados, Prioridades y Cancelaciones consolidados.",
+
             },
             employeesPage: {
                 cargando_nomina: "Cargando nómina de empleados...",
@@ -298,9 +302,55 @@ export const es = {
                 guardar_plantilla: "Guardar Plantilla",
                 temp_activa: "Activa",
                 temp_inactiva: "Inactiva",
-                
             },
-            campanita: {
+            importCsvPage: {
+                archivo_valido_para_importar: "Archivo válido y listo para importar",
+                errores_en_filas: "Se encontraron errores en algunas filas",
+                error_inesperado_al_validar_archivo: "Ocurrió un error inesperado al validar el archivo",
+                importacion_finalizada: "Importación finalizada",
+                no_se_pudo_crear_envios: "No se pudo crear ningún envío",
+                importacion_fallida: "La importación falló",
+                error_de_red_al_importar: "Error de red al intentar importar los datos",
+                
+                razon_social_destinatario: "razon_social_destinatario",
+                cuit_destinatario: "cuit_destinatario",
+                descripcion: "descripcion",
+                tipo_envio: "tipo_envio",
+                restriccion: "restriccion",
+                plantilla_importacion_envios: "plantilla_importacion_envios",
+                instrucciones_de_importacion: "Instrucciones de Importación",
+                instrucciones_formato: "El archivo debe tener formato <strong>.csv</strong> (codificación UTF-8) y contener obligatoriamente las siguientes 5 columnas en la primera fila:",
+                revisar_mayusculas: "Revisar mayúsculas",
+                descargar_plantilla_vacia: "Descargar plantilla vacía",
+
+                click_para_subir_archivo: "Haz click para subir un archivo",
+                o_arrastra_y_suelta_archivo: "o arrastra y suelta tu archivo .csv aquí",
+                
+                archivo_validado_correctamente: "¡Archivo validado correctamente!",
+                formato_correcto_datos_listos: "El formato es correcto y los datos están listos para ser importados a la base de datos",
+                errores_en_el_archivo: "Se encontraron errores en el archivo",
+                fila: "Fila",
+                detalle_del_error: "Detalle del error",
+
+                envios_creados: "Envíos Creados ({{cantidad}})",
+                tracking_id: "Tracking ID",
+                destinatario: "Destinatario",
+                fallos_al_guardar: "Fallos al guardar ({{errores}})",
+                motivo_del_error: "Motivo del error",
+
+                acceso_denegado: "Acceso denegado",
+                no_contas_con_permisos_necesarios: "No contás con los permisos necesarios para importar envíos.",
+                importar_envios_por_csv: "Importar envíos por CSV",
+                agrega_multiples_envios_al_sistema: "Agrega múltiples envíos al sistema subiendo un archivo de texto delimitado por comas.",
+                ir_a_lista_de_envios: "Ir a Lista de envíos",
+                importar_otro_archivo: "Importar otro archivo",
+                limpiar: "Limpiar",
+                validando: "Validando...",
+                validar_archivo: "Validar archivo",
+                procesando: "Procesando...",
+                confirmar_e_importar: "Confirmar e importar",
+            },
+             campanita: {
                 hist_alertas: "Historial de Alertas",
                 marcar_todas_leidas: "Marcar todas como leídas",
                 no_hay_alertas: "No hay alertas para mostrar"
@@ -310,6 +360,6 @@ export const es = {
                 elementos: "Elementos: ",
                 anterior: "Anterior",
                 siguiente: "Siguiente"
-            }
+            },
     }
 };

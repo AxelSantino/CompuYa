@@ -57,9 +57,13 @@ export default function ShipmentMetrics({ shipments, isLoading = false, filters 
 
  return (
     <div className="mb-8">
-      {/* Header invisible / divisor */}
-      <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-gray-100">
-        <div></div>
+      {/* =========================================
+          HEADER Y BOTONERA DE ACCIONES
+          ========================================= */}
+      <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-gray-100">
+        <div>
+          {/* Espacio para un título opcional si lo necesitas en el futuro */}
+        </div>
       </div>
 
       {/* =========================================
@@ -67,21 +71,21 @@ export default function ShipmentMetrics({ shipments, isLoading = false, filters 
           ========================================= */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6 w-full">
         <MetricCard
-          title={t('metricsPage.total_envios')}
+          title={t('metricsPage.card_total_envios')}
           value={metrics.total}
           icon={<FaBox size={26} />}
           bgColor="bg-blue-50"
           textColor="text-blue-600"
         />
         <MetricCard
-          title={t('metricsPage.envios_entregados')}
+          title={t('metricsPage.card_envios_entregados')}
           value={metrics.entregado}
           icon={<FaCheckCircle size={26} />}
           bgColor="bg-green-50"
           textColor="text-green-600"
         />
         <MetricCard
-          title={t('metricsPage.envios_cancel')}
+          title={t('metricsPage.card_envios_cancelados')}
           value={metrics.cancelado}
           icon={<FaTimesCircle size={26} />}
           bgColor="bg-red-50"

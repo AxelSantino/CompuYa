@@ -29,13 +29,23 @@ export const DashboardHeader = ({ user }: { user: any }) => {
                 </p>
             </div>
             {user && user.rol !== 'cliente' && (
-                <Button
-                    variant="primary"
-                    className="w-full md:w-auto"
-                    onClick={() => router.push('/dashboard/new')}
-                >
-                    + {t('dashboard_header.nuevo_envio')}
-                </Button>
+                <div className="flex flex-col md:flex-row items-center gap-3 w-full md:w-auto">
+                    <Button
+                        variant="primary"
+                        className="w-full md:w-auto"
+                        onClick={() => router.push('/dashboard/new')}
+                    >
+                        + {t('dashboard_header.nuevo_envio')}
+                    </Button>
+
+                    <Button
+                        variant="secondary"
+                        className="w-full md:w-auto whitespace-nowrap"
+                        onClick={() => router.push('/dashboard/import_csv')}
+                    >
+                        {t('dashboard_header.importacion_por_csv')}
+                    </Button>
+                </div>
             )}
         </div>
     );

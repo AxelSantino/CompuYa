@@ -1,7 +1,9 @@
 import { PieChartLegend } from "./PieChartLegend";
 import { PieChart as RechartsPieChart, Pie, Cell, Tooltip } from 'recharts';
+
 import '@/i18n/i18n';
-import { useTranslation } from "react-i18next";
+import { useTranslation } from 'react-i18next';
+
 export interface PieSlice {
   label: string;
   value: number;
@@ -55,9 +57,9 @@ export const PieChart = ({ slices, title, subtitle }: PieChartProps) => {
                     />
                   ))}
                 </Pie>
-                {/* Tooltip flotante nativo configurado en español */}
+                {/* Tooltip flotante */}
                 <Tooltip 
-                  formatter={(value: any) => [t('metricsPage.piechart_envios', { value }), t('metricsPage.piechart_cant')]}
+                  formatter={(value: any) => [`${value} ${t('metricsPage.envios')}`, t('metricsPage.cantidad')]}
                   contentStyle={{ 
                     backgroundColor: '#fff', 
                     borderRadius: '8px', 

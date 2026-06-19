@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import metricsService from '@/services/metricsService';
 import { DateFilterParams } from '@/types/metrics';
 import '@/i18n/i18n';
@@ -11,8 +11,10 @@ export interface BarChartData {
 }
 
 export const useDeliveryMetrics = (filters?: DateFilterParams) => {
-  const [data, setData] = useState<BarChartData[]>([]);
+  // 1. Ahora guardamos los datos "crudos" en el estado, sin textos
+  const [rawCounts, setRawCounts] = useState({ onTime: 0, late: 0 });
   const [totalDeliveries, setTotalDeliveries] = useState<number>(0);
+  
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const {t} = useTranslation();
@@ -21,11 +23,8 @@ export const useDeliveryMetrics = (filters?: DateFilterParams) => {
     let isMounted = true;
 
     const fetchDeliveryData = async () => {
-      // Cláusula de guarda para evitar peticiones basura si las fechas no están listas
       if (!filters?.fecha_inicio || !filters?.fecha_fin) {
-        if (isMounted) {
-          setIsLoading(false);
-        }
+        if (isMounted) setIsLoading(false);
         return;
       }
 
@@ -33,35 +32,22 @@ export const useDeliveryMetrics = (filters?: DateFilterParams) => {
       setError(null);
 
       try {
-        // Disparamos ambas promesas en paralelo
         const [onTimeRes, lateRes] = await Promise.all([
           metricsService.getDeliveredOnTime(filters),
           metricsService.getDeliveredLate(filters),
         ]);
 
         if (isMounted) {
-          // El total de entregas bajo análisis es la suma de ambos estados analizados
-          const onTimeCount = onTimeRes.entregados_a_tiempo;
-          const lateCount = lateRes.entregados_con_demora;
-          const total = onTimeRes.total_envios;
-
-          setTotalDeliveries(total);
-
-          // Estructuramos el array plano con la nomenclatura que espera Recharts
-          setData([
-            { name: t('metricsPage.total_entregas'), value: total, color: '#3b82f6' },
-            { name: t('metricsPage.a_tiempo'), value: onTimeCount, color: '#16a34a' },
-            { name: t('metricsPage.con_demora'), value: lateCount, color: '#ef4444' }
-          ]);
+          setTotalDeliveries(onTimeRes.total_envios);
+          setRawCounts({
+            onTime: onTimeRes.entregados_a_tiempo,
+            late: lateRes.entregados_con_demora
+          });
         }
       } catch {
-        if (isMounted) {
-          setError(t('metricsPage.error_cargar_metricas'));
-        }
+        if (isMounted) setError(t('metricsPage.error_al_cargar_metricas') || 'Error al cargar las métricas');
       } finally {
-        if (isMounted) {
-          setIsLoading(false);
-        }
+        if (isMounted) setIsLoading(false);
       }
     };
 
@@ -70,7 +56,15 @@ export const useDeliveryMetrics = (filters?: DateFilterParams) => {
     return () => {
       isMounted = false;
     };
-  }, [filters?.fecha_inicio, filters?.fecha_fin]);
+  // El useEffect sigue escuchando SOLO a las fechas. ¡No hace peticiones innecesarias!
+  }, [filters?.fecha_inicio, filters?.fecha_fin]); 
+
+  // Esto se recalcula automáticamente si cambian los números O si cambia el idioma (t)
+  const data: BarChartData[] = useMemo(() => [
+    { name: t('metricsPage.total_entregas'), value: totalDeliveries, color: '#3b82f6' },
+    { name: t('metricsPage.a_tiempo'), value: rawCounts.onTime, color: '#16a34a' },
+    { name: t('metricsPage.con_demora'), value: rawCounts.late, color: '#ef4444' }
+  ], [totalDeliveries, rawCounts, t]);
 
   return { data, totalDeliveries, isLoading, error };
 };
