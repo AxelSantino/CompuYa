@@ -1,7 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import metricsService from '@/services/metricsService';
 import { DateFilterParams } from '@/types/metrics';
-
 import '@/i18n/i18n';
 import { useTranslation } from 'react-i18next';
 
@@ -18,8 +17,7 @@ export const useDeliveryMetrics = (filters?: DateFilterParams) => {
   
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-
-  const { t } = useTranslation();
+  const {t} = useTranslation();
 
   useEffect(() => {
     let isMounted = true;

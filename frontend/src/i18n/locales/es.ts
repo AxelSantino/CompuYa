@@ -22,6 +22,29 @@ export const es = {
                 guardando: "Guardando...",
                 guardar_todos_los_cambios: "Guardar todos los cambios",
             },
+            
+            shipmentInfo: {
+                info_envio: "Información del Envío",
+                faEdit: "Editar",
+                tipo_envio: "Tipo de Envío",
+                manejo_esp: "Manejo Especial",
+                ninguna: "Ninguna",
+                fragil: "Frágil",
+                valioso: "Valioso",
+                desc: "Descripción",
+                no_disp: "No disponible",
+                id_interno: "ID Interno: ",
+                dir_no_especi: "Dirección no especificada en el perfil",
+                info_dest: "Información del Destinatario",
+                razon_social: "Razón Social",
+                rzn_social_name: "Razón Social / Nombre",
+                direccion: "Dirección",
+                fecha_creacion: "Fecha de Creación",
+                creado_por: "Creado por",
+                prioridad_asignada: "Prioridad Asignada",
+                lim_entrega: "Límite de Entrega"
+
+            },
             dashboard_layout: {
                 gestion_de_envios: "Gestión de envios",
                 control_logistico: "Control logístico",
@@ -40,6 +63,8 @@ export const es = {
                 gestion_de_envios: "Gestión de envíos",
                 listado_y_administracion: "Listado y administracion de los envíos de productos informáticos registrados en el sistema",
                 nuevo_envio: "Nuevo Envío",
+                mi_dashboard_cliente: "Mi dashboard de envíos",
+                listado_seguimiento: "Listado y seguimiento de todos tus envíos",
                 importacion_por_csv: "Importación por CSV"
             },
             shipmentFilters:{
@@ -58,7 +83,19 @@ export const es = {
                 descripcion: "Descripcion",
                 tipo: "Tipo",
                 estado: "Estado",
-                no_se_encontraron_envios: "No se encontraron envios con el criterio."
+                no_se_encontraron_envios: "No se encontraron envios con el criterio.",
+                en_sucursal: "en sucursal",
+                status: {
+                    "en sucursal": "En sucursal",
+                    "en transito": "En tránsito",
+                    "entregado": "Entregado",
+                    "cancelado": "Cancelado"
+                },
+                priority: {
+                    "alta": "Alta",
+                    "media": "Media",
+                    "baja": "Baja"
+                }
             },
             routesPage: {
                 centro_de_control: "Centro de control logistico",
@@ -82,7 +119,11 @@ export const es = {
                 visualizando_recorrido_del_repartidor: "Visualizando recorrido del repartidor"
             },
             loadingOverlay: {
-                cargando: "Cargando..."
+                cargando: "Cargando...",
+                cargando_app: "Cargando aplicación...",
+                email_contra_incorr: "Email o contraseña incorrectos.",
+                cuenta_auten_sin_permis: "Tu cuenta está autenticada pero no tiene permisos para este sistema.",
+                error_obtener_perfil: "Error al obtener el perfil de usuario. Contacte al administrador."
             },
             newShipmentPage: {
                 volver: "Volver",
@@ -139,7 +180,7 @@ export const es = {
                 card_envios_entregados: "Envíos Entregados",
                 card_envios_cancelados: "Envíos Cancelados",
                 puntualidad_entregas: "Puntualidad de las entregas",
-                total_evaluado: "Total evaluado:",
+                total_evaluado: "Total evaluado: {{count}} envíos",
                 envios: "envíos",
                 cantidad: "Cantidad",
                 total_entregas: "Total entregas",
@@ -308,9 +349,17 @@ export const es = {
                 validar_archivo: "Validar archivo",
                 procesando: "Procesando...",
                 confirmar_e_importar: "Confirmar e importar",
-
-
-
-            }
+            },
+             campanita: {
+                hist_alertas: "Historial de Alertas",
+                marcar_todas_leidas: "Marcar todas como leídas",
+                no_hay_alertas: "No hay alertas para mostrar"
+            },
+            paginado: {
+                info: "Mostrando {{pageSize}} elementos por página · Página {{currentPage}} de {{totalPages}}",
+                elementos: "Elementos: ",
+                anterior: "Anterior",
+                siguiente: "Siguiente"
+            },
     }
 };

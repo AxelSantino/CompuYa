@@ -18,18 +18,24 @@ export const PRIORITY_CLASSES: Record<EnvioPrioridad, string> = {
     'baja': 'bg-green-100 text-green-800',
 };
 
-export const StatusBadge = React.memo(({ status }: { status: EnvioStatus }) => (
+export const StatusBadge = React.memo(({ status }: { status: EnvioStatus }) => {
+    const {t} = useTranslation();
+    return (
     <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full capitalize ${STATUS_CLASSES[status] || 'bg-gray-100 text-gray-800'}`}>
-        {status}
+        {t(`shipmentTable.status.${status}`)}
     </span>
-));
+    );
+});
 StatusBadge.displayName = 'StatusBadge';
 
-export const PriorityBadge = React.memo(({ priority }: { priority: EnvioPrioridad }) => (
+export const PriorityBadge = React.memo(({ priority }: { priority: EnvioPrioridad }) => {
+    const {t} = useTranslation();
+    return (
     <span className={`px-2 inline-flex text-xs leading-5 font-bold rounded-full uppercase ${PRIORITY_CLASSES[priority] || 'bg-gray-100 text-gray-800'}`}>
-        {priority}
+        {t(`shipmentTable.priority.${priority}`)}
     </span>
-));
+    );
+});
 PriorityBadge.displayName = 'PriorityBadge';
 
 export const ShipmentTable = ({ shipments }: { shipments: Envio[] }) => {
