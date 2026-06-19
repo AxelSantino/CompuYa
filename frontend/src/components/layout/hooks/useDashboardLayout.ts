@@ -5,6 +5,7 @@ import { FaRoute, FaUsers, FaHandshake, FaChartBar } from "react-icons/fa";
 import { MdNotifications } from 'react-icons/md';
 import '@/i18n/i18n';
 import { useTranslation } from 'react-i18next';
+import { useState, useCallback, useEffect } from 'react';
 
 const NAV_ITEMS = [
     { key: 'gestion_de_envios', href: '/dashboard', icon: BiCube, roles: ['supervisor', 'operador', 'visor'] },
@@ -21,6 +22,27 @@ export const useDashboardLayout = () => {
     const { user, logout, isLoading } = useAuth();
     const router = useRouter();
     const pathname = usePathname();
+
+   // INICIALIZACIÓN PEREZOSA: Le pasamos una función al useState en lugar de un valor
+    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(() => {
+    // Verificamos que estamos en el navegador (Next.js tira error si intentamos leer localStorage en el servidor)
+    if (typeof window !== 'undefined') {
+      const savedState = localStorage.getItem('sidebar_collapsed');
+      if (savedState !== null) {
+        return JSON.parse(savedState);
+      }
+    }
+    return false; // Valor por defecto si es la primera vez que entra
+  });
+
+    // Cambiar posicion del sidebar
+    const toggleSidebar = useCallback(() => {
+        setIsSidebarCollapsed((prev) => {
+            const newState = !prev;
+            localStorage.setItem('sidebar_collapsed', JSON.stringify(newState));
+            return newState;
+        });
+    }, []);
 
     const handleLogout = () => {
         logout();
@@ -51,6 +73,8 @@ export const useDashboardLayout = () => {
         pathname,
         userName: getUserName(),
         filteredNavItems,
-        handleLogout
+        handleLogout,
+        isSidebarCollapsed,
+        toggleSidebar
     };
 };

@@ -361,5 +361,9 @@ export const es = {
                 anterior: "Anterior",
                 siguiente: "Siguiente"
             },
+
+            sidebarPage: {
+                cerrar_sesion: "Cerrar sesión"
+            }
     }
 };

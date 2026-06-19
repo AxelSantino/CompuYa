@@ -353,6 +353,7 @@ export const en = {
                 confirmar_e_importar: "Confirm and import",
             },
 
+
             campanita: {
                 hist_alertas: "Alert History",
                 marcar_todas_leidas: "Mark all as read",
@@ -364,5 +365,9 @@ export const en = {
                 anterior: "Prior",
                 siguiente: "Next"
             },
+            
+            sidebarPage: {
+                cerrar_sesion: "Log out"
+            }
     }
 };
