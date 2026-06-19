@@ -138,4 +138,4 @@ const MetricsPage = () => {
   );
 };
 
-export default withAuth(MetricsPage);
+export default withAuth(MetricsPage, ['admin']);

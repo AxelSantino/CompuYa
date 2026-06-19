@@ -101,4 +101,4 @@ const NewShipmentPage = () => {
   );
 };
 
-export default withAuth(NewShipmentPage);
+export default withAuth(NewShipmentPage, ['operador', 'supervisor']);

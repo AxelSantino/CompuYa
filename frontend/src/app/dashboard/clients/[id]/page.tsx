@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { useClientProfile } from './hooks/useClientProfile';
 import { LocationManager } from '../new/components/LocationManager';
+import withAuth from '@/components/auth/withAuth';
 import { 
   FaArrowLeft, 
   FaBuilding, 
@@ -41,7 +42,7 @@ const DetailItem = ({ icon, label, value }: { icon: React.ReactNode, label: stri
   </div>
 );
 
-export default function ClientDetailPage({ params }: { params: Promise<{ id: string }> }) {
+function ClientDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
 
   const {
@@ -245,3 +246,5 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
     </DashboardLayout>
   );
 }
+
+export default withAuth(ClientDetailPage, ['admin']);

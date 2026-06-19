@@ -21,7 +21,9 @@ import { ErrorDetailModal } from './components/ErrorDetailModal';
 import '@/i18n/i18n';
 import { useTranslation } from 'react-i18next';
 
-export default function NotificationsPage() {
+import withAuth from '@/components/auth/withAuth';
+
+function NotificationsPage() {
   const {t} = useTranslation();
   const {
     activeTab,
@@ -197,3 +199,5 @@ export default function NotificationsPage() {
     </DashboardLayout>
   );
 }
+
+export default withAuth(NotificationsPage, ['admin']);
