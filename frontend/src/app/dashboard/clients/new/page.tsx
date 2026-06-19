@@ -15,7 +15,10 @@ import { ClientDetailsSection } from './components/ClientDetailsSection';
 import { LocationManager } from './components/LocationManager';
 import '@/i18n/i18n';
 import { useTranslation } from 'react-i18next';
-export default function NewClientPage() {
+import withAuth from '@/components/auth/withAuth';
+
+
+function NewClientPage() {
   const {t} = useTranslation();
   const router = useRouter();
   const { user, isLoading: isAuthLoading } = useAuth();
@@ -134,3 +137,5 @@ export default function NewClientPage() {
     </DashboardLayout>
   );
 }
+
+export default withAuth(NewClientPage, ['admin']);
