@@ -89,24 +89,24 @@ const MetricsPage = () => {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-gray-50 p-4 rounded-lg border border-gray-200 shadow-sm mb-6">
           
           {/* Controles de Fecha (Alineados a la Izquierda) */}
-          <div className="flex items-center gap-3 w-full md:w-auto">
-              <div className="flex flex-col">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 w-full md:w-auto">
+              <div className="flex flex-col w-full sm:w-auto">
                 <label className="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">{t('metricsPage.fecha_desde')}</label>
                 <input 
                   type="date" 
                   value={fechaInicio} 
                   onChange={(e) => setFechaInicio(e.target.value)}
-                  className="text-sm border border-gray-300 rounded-md px-3 py-1.5 focus:ring-orange-500 focus:border-orange-500 outline-none text-gray-700"
+                  className="text-sm border border-gray-300 rounded-md px-3 py-1.5 focus:ring-orange-500 focus:border-orange-500 outline-none text-gray-700 w-full"
                 />
               </div>
-              <span className="text-gray-300 mt-4 font-bold">-</span>
-              <div className="flex flex-col">
+              <span className="text-gray-300 hidden sm:inline mt-4 font-bold">-</span>
+              <div className="flex flex-col w-full sm:w-auto">
                 <label className="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">{t('metricsPage.fecha_hasta')}</label>
                 <input 
                   type="date" 
                   value={fechaFin} 
                   onChange={(e) => setFechaFin(e.target.value)}
-                  className="text-sm border border-gray-300 rounded-md px-3 py-1.5 focus:ring-orange-500 focus:border-orange-500 outline-none text-gray-700"
+                  className="text-sm border border-gray-300 rounded-md px-3 py-1.5 focus:ring-orange-500 focus:border-orange-500 outline-none text-gray-700 w-full"
                 />
               </div>
           </div>
