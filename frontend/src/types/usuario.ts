@@ -21,6 +21,7 @@ export interface Usuario {
   tipo: 'empleado' | 'empresa'; 
   rol: string;
   fecha: string;
+  activo: boolean;
   perfil_empleado?: PerfilEmpleado | null;
   perfil_empresa?: PerfilEmpresa | null;
 }

@@ -18,8 +18,13 @@ import { HistorialNotificacion, PlantillaCorreo } from '@/types/notificacion';
 import { NotificationFilter, FilterOption } from './components/NotificationFilter';
 
 import { ErrorDetailModal } from './components/ErrorDetailModal';
+import '@/i18n/i18n';
+import { useTranslation } from 'react-i18next';
 
-export default function NotificationsPage() {
+import withAuth from '@/components/auth/withAuth';
+
+function NotificationsPage() {
+  const {t} = useTranslation();
   const {
     activeTab,
     setActiveTab,
@@ -53,27 +58,27 @@ export default function NotificationsPage() {
 
   const historyColumns: Column<HistorialNotificacion>[] = [
     {
-      header: 'Fecha de Envío',
+      header: t('notificationsPage.fecha_envio'),
       accessor: (row) => new Date(row.fecha_envio).toLocaleString('es-AR', {
         dateStyle: 'short',
         timeStyle: 'short'
       })
     },
     {
-      header: 'Destinatario',
+      header: t('notificationsPage.dest'),
       accessor: 'destinatario_email',
       className: 'font-semibold text-gray-900'
     },
     {
-      header: 'Asunto',
+      header: t('notificationsPage.asunto'),
       accessor: 'asunto_enviado'
     },
     {
-      header: 'Canal',
+      header: t('notificationsPage.canal'),
       accessor: (row) => <span className="capitalize">{row.canal}</span>
     },
     {
-      header: 'Resultado',
+      header: t('notificationsPage.result'),
       accessor: (row) => {
         const isSuccess = row.resultado.toLowerCase() === 'exitoso';
         return (
@@ -112,11 +117,11 @@ export default function NotificationsPage() {
     <DashboardLayout>
       <div className="max-w-6xl mx-auto px-4 py-6 relative min-h-screen">
         
-        <LoadingOverlay isLoading={isLoadingTemplates} text="Cargando configuración de notificaciones..." />
+        <LoadingOverlay isLoading={isLoadingTemplates} text={t('notificationsPage.cargando_config')} />
 
         <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">Gestor de Notificaciones</h1>
-          <p className="text-gray-600 mt-1">Administra las plantillas de correo automatizadas y revisa el historial de envíos.</p>
+          <h1 className="text-2xl font-bold text-gray-900">{t('notificationsPage.titulo')}</h1>
+          <p className="text-gray-600 mt-1">{t('notificationsPage.subtitulo')}</p>
         </div>
 
         <NotificationsTabs activeTab={activeTab} setActiveTab={setActiveTab} />
@@ -126,7 +131,7 @@ export default function NotificationsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-in fade-in duration-300">
             {templates.length === 0 && !isLoadingTemplates ? (
               <div className="col-span-full flex justify-center py-12 bg-white rounded-xl border border-dashed border-gray-300">
-                <p className="text-gray-500">No hay plantillas de correo configuradas en el sistema.</p>
+                <p className="text-gray-500">{t('notificationsPage.no_hay_plantillas')}</p>
               </div>
             ) : (
               templates.map(template => (
@@ -142,16 +147,16 @@ export default function NotificationsPage() {
 
         {activeTab === 'history' && (
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden animate-in fade-in duration-300 relative min-h-[400px]">
-            <LoadingOverlay isLoading={isLoadingHistory} text="Descargando registros desde la base de datos..." />
+            <LoadingOverlay isLoading={isLoadingHistory} text={t('notificationsPage.descargando_registros')} />
             
             {!historyLoaded ? (
               <div className="flex flex-col items-center justify-center py-20 px-4 text-center h-full absolute inset-0">
                 <div className="bg-blue-50 text-blue-500 w-16 h-16 rounded-full flex items-center justify-center mb-5 shadow-sm">
                   <AiOutlineHistory size={35} />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Historial de notificaciones enviadas</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">{t('notificationsPage.hist_notis')}</h3>
                 <Button variant="primary" onClick={loadHistory} disabled={isLoadingHistory} className="shadow-md">
-                  Cargar Historial Completo
+                  {t('notificationsPage.cargar_hist_comp')}
                 </Button>
               </div>
             ) : (
@@ -166,9 +171,9 @@ export default function NotificationsPage() {
                 data={filteredHistory}
                 keyExtractor={(row) => row.id}
                 emptyMessage={
-                  filterResult !== 'Todos' 
-                    ? `No se encontraron notificaciones con estado "${filterResult}".` 
-                    : "No se encontraron notificaciones enviadas."
+                  filterResult !== t('notificationsPage.todos')
+                    ? "t('notificationsPage.no_notis_estado') ${filterResult}" 
+                    : t('notificationsPage.no_notis_enviadas')
                 }
               />
               </div>
@@ -194,3 +199,5 @@ export default function NotificationsPage() {
     </DashboardLayout>
   );
 }
+
+export default withAuth(NotificationsPage, ['admin']);

@@ -22,6 +22,11 @@ interface LeafletWaypoint {
 
 const createWaypointMarker = (i: number, waypoint: LeafletWaypoint, puntos: Waypoint[]) => {
   const punto = puntos[i];
+
+  if (!punto) {
+    return L.marker(waypoint.latLng); 
+  }
+
   const isFirst = i === 0;
   
   const icon = L.icon({

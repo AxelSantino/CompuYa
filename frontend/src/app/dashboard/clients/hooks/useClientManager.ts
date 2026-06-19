@@ -11,6 +11,8 @@ export const useClientManager = () => {
 
     const [searchTerm, setSearchTerm] = useState('');
 
+    const [statusFilter, setStatusFilter] = useState('')
+
     useEffect(() => {
         let isMounted = true;
 
@@ -50,10 +52,18 @@ export const useClientManager = () => {
             
             const razonSocial = client.perfil_empresa?.razon_social?.toLowerCase() || '';
             const cuit = client.perfil_empresa?.cuit || '';
+            const matchesSearch = razonSocial.includes(searchLower) || cuit.includes(searchLower);
+
+            let matchesStatus = true;
+            if (statusFilter === 'active') {
+                matchesStatus = client.activo === true;
+            } else if (statusFilter === 'inactive') {
+                matchesStatus = client.activo === false;
+            }
             
-            return razonSocial.includes(searchLower) || cuit.includes(searchLower);
+            return matchesSearch && matchesStatus;
         });
-    }, [clients, searchTerm]);
+    }, [clients, searchTerm, statusFilter]);
 
     const {
         currentPage,
@@ -78,6 +88,8 @@ export const useClientManager = () => {
         setCurrentPage,
         pageSize,
         setPageSize,
-        totalPages
+        totalPages, 
+        statusFilter, 
+        setStatusFilter
     };
 };

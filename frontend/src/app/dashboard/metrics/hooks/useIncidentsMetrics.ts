@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import metricsService from '@/services/metricsService';
 import { DateFilterParams } from '@/types/metrics';
 import { PieSlice } from '@/components/ui/pieChart/PieChart';
+import { useTranslation } from 'react-i18next';
 
 const INCIDENTS_COLORS = [
   '#D32F2F', // Rojo (Tailwind red-500)
@@ -18,7 +19,7 @@ export const useIncidentsMetrics = (filters?: DateFilterParams) => {
   const [total, setTotal] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-
+  const {t} = useTranslation();
   useEffect(() => {
     // Patrón para evitar fugas de memoria si el componente se desmonta antes de que la API responda
     let isMounted = true;
@@ -60,7 +61,7 @@ export const useIncidentsMetrics = (filters?: DateFilterParams) => {
         }
       } catch (err) {
         if (isMounted) {
-          setError('Error al cargar las métricas de incidencias.');
+          setError(t('metricsPage.error_carg_metri'));
         }
       } finally {
         if (isMounted) {

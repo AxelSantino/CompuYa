@@ -5,6 +5,8 @@ import dynamic from 'next/dynamic';
 import { AddressAutocomplete } from './AddressAutocomplete';
 import { DireccionNormalizada } from '@/services/usigService';
 import { Input } from '@/components/ui/Input';
+import '@/i18n/i18n';
+import { useTranslation } from 'react-i18next';
 
 // Esto apaga el Server-Side Rendering (SSR) estrictamente para el mapa,
 // evitando el colapso por la falta del objeto 'window' de Leaflet.
@@ -58,14 +60,15 @@ export const LocationManager = ({
     }
   };
 
+  const {t} = useTranslation();
   return (
     <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm mb-6">
       <h3 className="text-lg font-semibold text-gray-800 mb-6 flex items-center">
         <span className="w-1.5 h-6 bg-green-500 rounded-full mr-3"></span>
-        Ubicación Geográfica
+        {t('newClientPage.ubicacion_geo')}
       </h3>
       <p className="text-sm text-gray-500 mb-6">
-        Ingrese la dirección del cliente/destinatario y seleccione la opción mas adecuada.
+        {t('newClientPage.ingrese_dir')}
       </p>
 
       <div className="space-y-6">
@@ -81,7 +84,7 @@ export const LocationManager = ({
           
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Código Postal <span className="text-red-500">*</span>
+              {t('newClientPage.cod_postal')} <span className="text-red-500">*</span>
             </label>
             <Input
               type="text"
@@ -99,7 +102,7 @@ export const LocationManager = ({
         {selectedLocation && selectedLocation.coordenadas ? (
           <div className="animate-in fade-in slide-in-from-top-4 duration-500">
             <p className="block text-sm font-medium text-gray-700 mb-2">
-              Verificación en Mapa
+              {t('newClientPage.verificacion_mapa')}
             </p>
             {/* El padre dicta la altura y los bordes */}
             <div className="h-[450px] w-full rounded-lg overflow-hidden border border-gray-200 shadow-inner">

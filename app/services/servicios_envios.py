@@ -111,8 +111,7 @@ class EnvioService:
                 email_destinatario, 
                 nuevo_envio.razon_social_destinatario
             )
-            background_tasks.add_task(
-                crear_alerta_y_enviar_push, 
+            await crear_alerta_y_enviar_push(
                 self.db, 
                 nuevo_envio.destinatario_id, 
                 "Estamos preparando tu pedido", 
@@ -232,28 +231,36 @@ class EnvioService:
         email = await self.obtenerMailDestinatario(envio)
         if email:
             background_tasks.add_task(servicio.procesar_notificacion_estado, envio, email, envio.razon_social_destinatario)
-            background_tasks.add_task(crear_alerta_y_enviar_push, self.db, envio.destinatario_id, "Envío Entregado", f"El envío {tracking_id} ha sido entregado.",envio_id=envio.id)
-
+            await crear_alerta_y_enviar_push(self.db, envio.destinatario_id, "Envío Entregado", f"El envío {tracking_id} ha sido entregado.",envio_id=envio.id)
         return envio
 
     async def cancelar_envio(self, tracking_id: str, usuario_id: int, datos_cancelacion: CancelarEnvio, background_tasks: BackgroundTasks) -> Envio:
         envio = await self.obtener_envio_por_id(tracking_id)
-        if envio.estado == EstadoEnvio.CANCELADO or envio.estado == EstadoEnvio.ENTREGADO:
+
+        if envio.estado in [EstadoEnvio.CANCELADO, EstadoEnvio.ENTREGADO]:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"El envío no se puede cancelar ya que su estado esta {envio.estado}"
+                detail=f"El envío no se puede cancelar ya que su estado está {envio.estado}"
             )
+
         envio.estado = EstadoEnvio.CANCELADO
         envio.prioridad = "baja"
-        await self.registrar_historial(envio.id, usuario_id, EstadoEnvio.CANCELADO, datos_cancelacion.motivo)
-        await self.db.commit()
-        await self.db.refresh(envio)
 
-        servicio = NotificacionService(db=self.db)
-        email = await self.obtenerMailDestinatario(envio)
+        nuevo_historial = Historial(
+            envio_id=envio.id,
+            id_empleado=usuario_id,
+            estado=EstadoEnvio.CANCELADO,
+            motivo=datos_cancelacion.motivo
+        )
+        self.db.add(nuevo_historial)
+
+        
+        await self.db.commit()
+        email = envio.destinatario.email if envio.destinatario else None
         if email:
+            servicio = NotificacionService(db=self.db)
             background_tasks.add_task(servicio.procesar_notificacion_estado, envio, email, envio.razon_social_destinatario)
-            background_tasks.add_task(crear_alerta_y_enviar_push, self.db, envio.destinatario_id, "Envío Cancelado", f"El envío {tracking_id} fue cancelado.",envio_id=envio.id)
+            await crear_alerta_y_enviar_push(self.db, envio.destinatario_id, "Envío Cancelado", f"El envío {tracking_id} fue cancelado.", envio_id=envio.id)
         return envio
 
     async def actualizar_estado_envio(self, tracking_id: str, nuevo_estado: EstadoEnvio, usuario: Usuario, background_tasks: BackgroundTasks) -> Envio:
@@ -283,7 +290,7 @@ class EnvioService:
         email = await self.obtenerMailDestinatario(envio)
         if email:
             background_tasks.add_task(servicio.procesar_notificacion_estado, envio, email, envio.razon_social_destinatario)
-            background_tasks.add_task(crear_alerta_y_enviar_push, self.db, envio.destinatario_id, f"Estado Envío Actualizado: {nuevo_estado.value}", f"El estado del envío {tracking_id} ha sido actualizado a {nuevo_estado.value}.",envio_id=envio.id)
+            await crear_alerta_y_enviar_push(self.db, envio.destinatario_id, f"Estado del Envío Actualizado a {nuevo_estado.value}", f"El estado del envío {tracking_id} ha sido actualizado a {nuevo_estado.value}.", envio_id=envio.id) 
 
         return envio
 
@@ -364,7 +371,7 @@ class EnvioService:
         
         if email:
             background_tasks.add_task(servicio.procesar_notificacion_estado, envio, email, envio.razon_social_destinatario)
-            background_tasks.add_task(crear_alerta_y_enviar_push, self.db, envio.destinatario_id, "Envío en Tránsito", f"El envío {tracking_id} ha sido asignado a un repartidor y está en tránsito.",envio_id=envio.id)  
+            await crear_alerta_y_enviar_push(self.db, envio.destinatario_id, "Envío en Tránsito", f"El envío {tracking_id} ha sido asignado a un repartidor y está en tránsito.",envio_id=envio.id)
         return {"message": f"Envío {tracking_id} asignado manualmente al repartidor ID {id_repartidor} (Estado: EN_TRANSITO)"}
 
     async def asignar_todos_pendientes(self, background_tasks: BackgroundTasks):
@@ -416,7 +423,7 @@ class EnvioService:
             email = envio.destinatario.email if envio.destinatario else None
             if email:
                 background_tasks.add_task(servicio.procesar_notificacion_estado, envio, email, envio.razon_social_destinatario)
-                background_tasks.add_task(crear_alerta_y_enviar_push, self.db, envio.destinatario_id, "Envío en Tránsito",
+                await crear_alerta_y_enviar_push(self.db, envio.destinatario_id, "Envío en Tránsito",
                                         f"El envío {envio.tracking_id} ha sido asignado a un repartidor y está en tránsito.", envio_id=envio.id)
         return {"message": f"Se han asignado {count} envíos exitosamente de forma masiva", "asignados": count}
 

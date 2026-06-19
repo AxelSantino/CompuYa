@@ -1,4 +1,4 @@
-import api from './api'; // Asumiendo que usás una instancia configurada de Axios o Fetch
+import api from './api';
 import { IncidentReport, DateFilterParams, DeliveredLate, DeliveredOnTime } from '@/types/metrics';
 
 const metricsService = {
@@ -49,6 +49,30 @@ const metricsService = {
 
     const response = await api.get(`/reportes/tasa-entregas-con-demora${queryString}`);
 
+    return response.data;
+  },
+
+  exportStatesCsv: async (filters?: DateFilterParams): Promise<Blob> => {
+    const response = await api.get('/reportes/exportar/estados', {
+      params: filters,
+      responseType: 'blob',
+    });
+    return response.data;
+  },
+
+  exportPrioritiesCsv: async (filters?: DateFilterParams): Promise<Blob> => {
+    const response = await api.get('/reportes/exportar/prioridades', {
+      params: filters,
+      responseType: 'blob',
+    });
+    return response.data;
+  },
+
+  exportCancelationReasonsCsv: async (filters?: DateFilterParams): Promise<Blob> => {
+    const response = await api.get('/reportes/exportar/motivos-cancelacion', {
+      params: filters,
+      responseType: 'blob',
+    });
     return response.data;
   }
 

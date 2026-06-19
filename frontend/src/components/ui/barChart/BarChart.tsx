@@ -1,4 +1,6 @@
 import { BarChart as RechartsBarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell, ResponsiveContainer } from 'recharts';
+import '@/i18n/i18n';
+import { useTranslation } from 'react-i18next';
 
 export interface BarItem {
   name: string;
@@ -17,6 +19,8 @@ export const BarChart = ({ data, title, subtitle }: BarChartProps) => {
     ...item,
     fill: item.color 
   }));
+
+  const { t } = useTranslation();
 
   return (
     <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200 flex flex-col h-full min-h-[360px]">
@@ -61,7 +65,7 @@ export const BarChart = ({ data, title, subtitle }: BarChartProps) => {
                 return (
                   <div className="bg-white px-3 py-2 rounded-lg border border-gray-200 shadow-sm text-sm">
                     <span className="font-regular text-gray-900">
-                      <span style={{ color: payload[0].payload.color }} className="mr-1 text-sm leading-none">{payload[0].value} envíos</span>
+                      <span style={{ color: payload[0].payload.color }} className="mr-1 text-sm leading-none">{payload[0].value} {t('metricsPage.envios')}</span>
                       
                     </span>
                   </div>

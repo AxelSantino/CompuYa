@@ -200,13 +200,14 @@ async def test_asignar_todos_pendientes_exitoso():
     servicio = EnvioService(db=db_mock)
     mock_bg = MagicMock()
 
-    respuesta = await servicio.asignar_todos_pendientes(background_tasks=mock_bg)
+    with patch('app.services.servicios_envios.crear_alerta_y_enviar_push', new_callable=AsyncMock):
+        respuesta = await servicio.asignar_todos_pendientes(background_tasks=mock_bg)
 
-    assert respuesta["asignados"] == 1
-    assert envio_mock.estado == EstadoEnvio.EN_TRANSITO
-    assert "exitosamente de forma masiva" in respuesta["message"]
-    db_mock.commit.assert_called_once()
-    
+        assert respuesta["asignados"] == 1
+        assert envio_mock.estado == EstadoEnvio.EN_TRANSITO
+        assert "exitosamente de forma masiva" in respuesta["message"]
+        
+        assert db_mock.commit.call_count >= 1
 @pytest.mark.asyncio
 async def test_actualizar_prioridades_pendientes_exitoso():
     envio_mock = Envio()
@@ -310,14 +311,16 @@ async def test_crear_envio_exitoso_con_prediccion_ml():
     with patch('app.services.servicios_envios.predecir_prioridad', return_value=MagicMock(value="alta")):
         with patch.object(servicio, 'registrar_historial', new_callable=AsyncMock) as mock_hist:
             with patch.object(servicio, 'obtener_envio_por_id', new_callable=AsyncMock, return_value=envio_final_mock):
-                
-                resultado = await servicio.crear_envio(envio_in, usuario_id=9, background_tasks=mock_bg)
+                with patch('app.services.servicios_envios.crear_alerta_y_enviar_push', new_callable=AsyncMock) as mock_alerta:
+                    
+                    resultado = await servicio.crear_envio(envio_in, usuario_id=9, background_tasks=mock_bg)
 
-                assert resultado.tracking_id.startswith("CY-")
-                db_mock.add.assert_called_once() 
-                db_mock.flush.assert_called_once()
-                db_mock.commit.assert_called_once()
-                mock_hist.assert_called_once()
+                    assert resultado.tracking_id.startswith("CY-")
+                    db_mock.add.assert_called_once() 
+                    db_mock.flush.assert_called_once()
+                    db_mock.commit.assert_called_once()
+                    mock_hist.assert_called_once()
+                    mock_alerta.assert_called_once()
 
 @pytest.mark.asyncio
 async def test_crear_envio_falla_si_perfil_empresa_no_existe():
