@@ -116,7 +116,14 @@ export const es = {
                 selecciona_un_repartidor: "Selecciona un repartidor para monitorear su ruta",
                 entregas_apareceran_aqui: "Entregas apareceran aquí una vez asignados",
                 mi_hoja_de_ruta_optimizada: "Mi Hoja de Ruta Optimizada",
-                visualizando_recorrido_del_repartidor: "Visualizando recorrido del repartidor"
+                visualizando_recorrido_del_repartidor: "Visualizando recorrido del repartidor",
+
+                seleccionar_repartidor_primero: "Por favor, selecciona un repartidor primero (en Monitoreo por repartidor)",
+                envio_asignado_correctamente: "Envio asignado correctamente",
+                error_al_asignar_manualmente: "Error al asignar manualmente",
+                error_en_la_asignacion_masiva: "Error en la asignación masiva",
+                envio_marcado_como_entregado_exitosamente: "Envio marcado como entregado exitosamente.",
+                error_al_marcar_envio_entregado: "Error al marcar como entregado.",
             },
             loadingOverlay: {
                 cargando: "Cargando...",

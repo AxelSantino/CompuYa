@@ -4,6 +4,10 @@ import { useAuth } from '@/contexts/AuthContext';
 import shipmentService from '@/services/shipmentService';
 import api from '@/services/api';
 import { Envio } from '@/types/envio';
+import toast from 'react-hot-toast';
+
+import '@/i18n/i18n';
+import { useTranslation } from 'react-i18next';
 
 export interface Repartidor {
   id: number;
@@ -24,6 +28,8 @@ export function useRouteManagement() {
   const [isProcessing, setIsProcessing] = useState(false);
 
   const isSupervisor = user?.rol === 'supervisor';
+
+  const {t} = useTranslation();
 
   // Carga inicial de datos según el rol
   const fetchData = useCallback(async () => {
@@ -77,42 +83,52 @@ export function useRouteManagement() {
   // Funciones de acción (Handlers)
   const handleManualAssign = async (trackingId: string) => {
     if (!selectedDriverId) {
-      alert("Por favor, selecciona un repartidor primero en el menú superior.");
+      toast.error(t('routesPage.seleccionar_repartidor_primero'));
+      //alert("Por favor, selecciona un repartidor primero en el menú superior.");
       return;
     }
     setIsProcessing(true);
     try {
       await shipmentService.assignShipmentManually(trackingId, selectedDriverId);
       await fetchData();
+      toast.success(t('routesPage.envio_asignado_correctamente'))
     } catch (error) {
-      alert("Error al asignar manualmente.");
+      toast.error(t('routesPage.error_al_asignar_manualmente'));
+      //alert("Error al asignar manualmente.");
     } finally {
       setIsProcessing(false);
     }
   };
 
   const handleAssignAll = async () => {
+    // Cambiar a MODAL
     if (!confirm("¿Deseas asignar todos los envíos pendientes de forma automática?")) return;
     setIsProcessing(true);
     try {
       const res = await shipmentService.assignAllShipments();
-      alert(res.message);
+      toast.success(res.message)
+      //alert(res.message);
       await fetchData();
     } catch (error) {
-      alert("Error en la asignación masiva.");
+      toast.error(t('routesPage.error_en_la_asignacion_masiva'));
+      //alert("Error en la asignación masiva.");
     } finally {
       setIsProcessing(false);
     }
   };
 
   const handleDeliver = async (trackingId: string) => {
+    // Cambiar a MODAL
     if (!confirm(`¿Confirmas que el envío ${trackingId} ha sido entregado?`)) return;
     setIsProcessing(true);
     try {
       await shipmentService.markAsDelivered(trackingId);
       await fetchData();
+      toast.success(t('routesPage.envio_marcado_como_entregado_exitosamente'))
+
     } catch (error) {
-      alert("Error al marcar como entregado.");
+      toast.error(t('routesPage.error_al_marcar_envio_entregado'))
+      //alert("Error al marcar como entregado.");
     } finally {
       setIsProcessing(false);
     }
