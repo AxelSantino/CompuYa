@@ -11,6 +11,10 @@ export const useClientProfile = (id: string) => {
     const [isEditing, setIsEditing] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [error, setError] = useState<string | null>(null);
+
+    const [isChangingStatus, setIsChangingStatus] = useState(false);
+    const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
+    const [pendingStatus, setPendingStatus] = useState<boolean | null>(null);
     
     const [formData, setFormData] = useState({
         razon_social: '',
@@ -106,6 +110,47 @@ export const useClientProfile = (id: string) => {
         }
     };
 
+        /*
+    * FUNCION DE DESACTIVAR/ACTIVAR USUARIO
+    */
+    const handleRequestStatusChange = (isActive: boolean) => {
+        setPendingStatus(isActive); 
+        setIsStatusModalOpen(true);
+    };
+
+    const handleCloseStatusModal = () => {
+        setIsStatusModalOpen(false);
+        setPendingStatus(null);
+    };
+
+    const handleConfirmStatusChange = async () => {
+        if (!client || pendingStatus === null) {
+            return;
+        }
+
+        if (isChangingStatus) {
+            return;
+        }
+
+        setIsChangingStatus(true);
+
+        try {
+            await userService.changeUserStatus(client.id, pendingStatus);
+            toast.success(`Cliente ${pendingStatus ? 'activado' : 'desactivado'} correctamente.`)
+
+            await fetchClient();
+            handleCloseStatusModal();
+        } catch (err: any) {
+            const backendMessage = err.response?.data?.detail;
+            const errorMessage = backendMessage || 'Error al cambiar el estado del cliente.';
+
+            toast.error(errorMessage);
+            console.error('Error al cambiar estado:', err);
+        } finally {
+            setIsChangingStatus(false);
+        }
+    };
+
     return {
         router,
         client,
@@ -118,6 +163,12 @@ export const useClientProfile = (id: string) => {
         handleChange,
         handleCancelEdit,
         handleSave,
-        handleAddressUpdated
+        handleAddressUpdated,
+        isChangingStatus,
+        isStatusModalOpen,
+        pendingStatus,
+        handleRequestStatusChange,
+        handleCloseStatusModal,
+        handleConfirmStatusChange
     };
 };

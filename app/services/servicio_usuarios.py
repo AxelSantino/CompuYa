@@ -1,11 +1,11 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, or_
+from sqlalchemy import select, or_, exists
 from sqlalchemy.orm import joinedload
 from fastapi import HTTPException, status
 import httpx
-from app.models.entidades import Usuario, PerfilEmpleado, PerfilEmpresa, TipoCliente
+from app.models.entidades import Usuario, PerfilEmpleado, PerfilEmpresa, TipoCliente , AsignacionEnvio, Envio, EstadoEnvio
 from app.config import settings
-from app.models.esquemas import UsuarioRegistroEmpleado, UsuarioRegistroEmpresa
+from app.models.esquemas import UsuarioRegistroEmpleado, UsuarioRegistroEmpresa 
 
 
 class UsuarioService:
@@ -246,9 +246,47 @@ class UsuarioService:
         if usuario.activo == peticion:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"El usuario ya estÃ¡ {'activo' if peticion else 'desactivado'}"
+                detail=f"El usuario ya esta¡ {'activo' if peticion else 'desactivado'}"
             )
+        if usuario.rol == "repartidor" :
+            tiene_envios = await self.verificar_si_repartidor_tiene_envios(usuario_id)
+            if tiene_envios:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="No se puede desactivar al repartidor porque tiene envíos asignados."
+                )
+        if usuario.tipo == TipoCliente.EMPRESA:
+            tiene_envios_pendientes = await self.verificar_si_usuario_cliente_tiene_todos_envios_entregados(usuario_id)
+            if not tiene_envios_pendientes:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="No se puede desactivar al cliente porque tiene envíos pendientes."
+                )
 
         usuario.activo = peticion 
         await self.db.commit()
         return usuario 
+    
+    async def verificar_si_repartidor_tiene_envios(self, usuario_id: int) -> bool:
+        estados_activos = [EstadoEnvio.EN_SUCURSAL.value, EstadoEnvio.EN_TRANSITO.value]
+        
+        stmt = select(1).select_from(AsignacionEnvio).join(
+            Envio, AsignacionEnvio.envio_id == Envio.id
+        ).where(
+            AsignacionEnvio.id_empleado == usuario_id,
+            Envio.estado.in_(estados_activos)
+        )
+        
+        query = select(exists(stmt))
+        
+        result = await self.db.execute(query)
+        return result.scalar()
+    
+    async def verificar_si_usuario_cliente_tiene_todos_envios_entregados(self, usuario_id: int) -> bool:
+        query = select(exists().where(
+            Envio.destinatario_id == usuario_id,
+            Envio.estado != EstadoEnvio.ENTREGADO
+        ))
+        
+        result = await self.db.execute(query)
+        return not result.scalar()

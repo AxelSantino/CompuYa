@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { useClientProfile } from './hooks/useClientProfile';
 import { LocationManager } from '../new/components/LocationManager';
+import withAuth from '@/components/auth/withAuth';
 import { 
   FaArrowLeft, 
   FaBuilding, 
@@ -15,8 +16,11 @@ import {
   FaEnvelope, 
   FaCalendarAlt, 
   FaMapMarkerAlt, 
-  FaHashtag 
+  FaHashtag, 
+  FaUserSlash, 
+  FaUserCheck
 } from 'react-icons/fa';
+import { ConfirmActionModal } from '@/app/dashboard/users/components/ConfirmActionModal';
 
 // Deshabilitamos SSR para el visor de mapas en modo lectura para evitar errores con Leaflet
 const DynamicMapViewer = dynamic(() => import('../new/components/MapViewer'), {
@@ -38,7 +42,7 @@ const DetailItem = ({ icon, label, value }: { icon: React.ReactNode, label: stri
   </div>
 );
 
-export default function ClientDetailPage({ params }: { params: Promise<{ id: string }> }) {
+function ClientDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
 
   const {
@@ -53,8 +57,19 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
     handleChange,
     handleCancelEdit,
     handleSave,
-    handleAddressUpdated
+    handleAddressUpdated,
+
+    // variables para desactivar usuario con el modal
+    isChangingStatus, 
+    isStatusModalOpen, 
+    pendingStatus, 
+    handleRequestStatusChange, 
+    handleCloseStatusModal, 
+    handleConfirmStatusChange
   } = useClientProfile(resolvedParams.id);
+
+  // CAMBIAR CUANDO LA API DEVUELVA EL ESTADO DEL EMPLEADO
+  const isClientActive = client?.activo ?? true;
 
   if (error) {
     return (
@@ -108,13 +123,26 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                         {client.perfil_empresa?.razon_social}
                       </h1>
                       <p className="text-gray-500 font-medium mt-1">CUIT: {client.perfil_empresa?.cuit || 'No registrado'}</p>
+                      <span className={`text-sm font-medium ${isClientActive ? 'text-green-600' : 'text-red-600'}`}>
+                        {isClientActive ? 'Cuenta Activa' : 'Cuenta Inactiva'}
+                      </span>
                     </div>
                   </div>
                   
                   {!isEditing && (
+                    <div className="flex gap-3">
+                      <Button 
+                        variant={isClientActive ? 'danger' : 'success'}
+                        onClick={() => handleRequestStatusChange(!isClientActive)}
+                        className="flex items-center gap-2"
+                      >
+                        {isClientActive ? <FaUserSlash /> : <FaUserCheck />}
+                        {isClientActive ? 'Desactivar' : 'Activar'}
+                      </Button>   
                     <Button variant="secondary" onClick={() => setIsEditing(true)}>
                       Editar Cliente
                     </Button>
+                    </div>
                   )}
                 </div>
 
@@ -197,7 +225,26 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
             </div>
           </div>
         )}
+
+        <ConfirmActionModal
+          isOpen={isStatusModalOpen}
+          isLoading={isChangingStatus}
+          variant={pendingStatus ? 'success' : 'danger'}
+          icon={pendingStatus ? <FaUserCheck /> : <FaUserSlash />}
+          title={pendingStatus ? 'Activar Cliente' : 'Desactivar Cliente'}
+          message={
+          pendingStatus
+            ? '¿Estás seguro de que deseas reactivar a este cliente? Recuperará inmediatamente el acceso al sistema.'
+            : '¿Estás seguro de que deseas desactivar a este cliente? Ya no podrá iniciar sesión en el sistema.'
+          }
+          confirmText={pendingStatus ? 'Sí, activar' : 'Sí, desactivar'}
+          cancelText="Cancelar"
+         onClose={handleCloseStatusModal}
+         onConfirm={handleConfirmStatusChange}
+        />
       </div>
     </DashboardLayout>
   );
 }
+
+export default withAuth(ClientDetailPage, ['admin']);

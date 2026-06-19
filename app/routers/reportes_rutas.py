@@ -26,31 +26,31 @@ async def get_reporte_service(db: AsyncSession = Depends(obtener_db)) -> Servici
 @router.get("/volumen", response_model=ReporteVolumenResponse, status_code=status.HTTP_200_OK)
 async def get_reporte_volumen(
     fecha_desde: date = Query(None, description="Fecha de inicio del reporte (YYYY-MM-DD)"),
-    fecha_hasta: date = Query(None, description="Fecha de fin del reporte (YYYY-MM-DD)"),
+    fecha_fin: date = Query(None, description="Fecha de fin del reporte (YYYY-MM-DD)"),
     reporte_service: ServicioReportes = Depends(get_reporte_service)
 ):
-    return await reporte_service.obtener_reporte_volumen(fecha_desde, fecha_hasta)
+    return await reporte_service.obtener_reporte_volumen(fecha_desde, fecha_fin)
 
 @router.get("/exportar/estados", dependencies=[Depends(tiene_rol("admin"))])
 async def exportar_estados_csv(
     fecha_desde: date = Query(None, description="Fecha de inicio (YYYY-MM-DD)"),
-    fecha_hasta: date = Query(None, description="Fecha de fin (YYYY-MM-DD)"),
+    fecha_fin: date = Query(None, description="Fecha de fin (YYYY-MM-DD)"),
     reporte_service: ServicioReportes = Depends(get_reporte_service)
 ):
-    fecha_hasta = fecha_hasta or date.today()
-    fecha_desde = fecha_desde or (fecha_hasta - timedelta(days=30))
+    fecha_fin = fecha_fin or date.today()
+    fecha_desde = fecha_desde or (fecha_fin - timedelta(days=30))
     
-    if fecha_desde > fecha_hasta:
+    if fecha_desde > fecha_fin:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="La fecha de inicio no puede ser posterior a la fecha de fin."
         )
 
-    datos = await reporte_service.exportar_estado_csv(fecha_desde, fecha_hasta)
+    datos = await reporte_service.exportar_estado_csv(fecha_desde, fecha_fin)
     columnas = ["Estado", "Cantidad", "Porcentaje"]
     contenido_csv = generar_csv(datos, columnas)
     
-    filename = f"reporte_estados_{fecha_desde}_a_{fecha_hasta}.csv"
+    filename = f"reporte_estados_{fecha_desde}_a_{fecha_fin}.csv"
     return StreamingResponse(
         io.StringIO(contenido_csv),
         media_type="text/csv",
@@ -60,23 +60,23 @@ async def exportar_estados_csv(
 @router.get("/exportar/prioridades", dependencies=[Depends(tiene_rol("admin"))])
 async def exportar_prioridades_csv(
     fecha_desde: date = Query(None, description="Fecha de inicio (YYYY-MM-DD)"),
-    fecha_hasta: date = Query(None, description="Fecha de fin (YYYY-MM-DD)"),
+    fecha_fin: date = Query(None, description="Fecha de fin (YYYY-MM-DD)"),
     reporte_service: ServicioReportes = Depends(get_reporte_service)
 ):
-    fecha_hasta = fecha_hasta or date.today()
-    fecha_desde = fecha_desde or (fecha_hasta - timedelta(days=30))
+    fecha_fin = fecha_fin or date.today()
+    fecha_desde = fecha_desde or (fecha_fin - timedelta(days=30))
     
-    if fecha_desde > fecha_hasta:
+    if fecha_desde > fecha_fin:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="La fecha de inicio no puede ser posterior a la fecha de fin."
         )
 
-    datos = await reporte_service.exportar_prioridad_csv(fecha_desde, fecha_hasta)
+    datos = await reporte_service.exportar_prioridad_csv(fecha_desde, fecha_fin)
     columnas = ["Prioridad", "Cantidad", "Porcentaje"]
     contenido_csv = generar_csv(datos, columnas)
     
-    filename = f"reporte_prioridades_{fecha_desde}_a_{fecha_hasta}.csv"
+    filename = f"reporte_prioridades_{fecha_desde}_a_{fecha_fin}.csv"
     return StreamingResponse(
         io.StringIO(contenido_csv),
         media_type="text/csv",

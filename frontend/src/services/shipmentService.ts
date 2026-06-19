@@ -1,5 +1,6 @@
 import api from './api';
 import { Envio, EnvioCrear, HistorialEnvio, EnvioRespuestaDestinatario } from '@/types/envio';
+import { ValidationResponse, ConfirmImportResponse } from '@/types/importacion';
 
 const shipmentService = {
   getShipments: async (): Promise<Envio[]> => {
@@ -59,6 +60,30 @@ const shipmentService = {
 
   getRecipientByRazonSocial: async (razon_social: string): Promise<EnvioRespuestaDestinatario> => {
     const response = await api.get(`/usuarios/buscar_destinatario?razon_social=${razon_social}`);
+    return response.data;
+  },
+
+  validateCsvImport: async (file: File): Promise<ValidationResponse> => {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const response = await api.post('/envios/importar/validar', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  },
+
+  confirmCsvImport: async (file: File): Promise<ConfirmImportResponse> => {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const response = await api.post('/envios/importar/confirmar', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
     return response.data;
   }
 };
