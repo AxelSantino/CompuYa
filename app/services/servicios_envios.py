@@ -12,7 +12,7 @@ from app.ml.modelo_prioridad import predecir_prioridad
 from app.services.servicio_notificacion import NotificacionService
 from app.services.servicio_notificacion import NotificacionService
 from app.services.servicio__alertas import crear_alerta_y_enviar_push
-
+from app.utils.generadores import generar_pin_seguridad
 class EnvioService:
     def __init__(self, db: AsyncSession):
         self.db = db
