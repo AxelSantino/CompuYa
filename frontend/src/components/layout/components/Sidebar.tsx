@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { BiLogOut } from 'react-icons/bi';
+import { BiLogOut, BiX } from 'react-icons/bi';
 
 interface SidebarProps {
   user: any; 
@@ -13,25 +13,39 @@ interface SidebarProps {
     icon: React.ElementType;
   }>;
   handleLogout: () => void;
+  isOpen: boolean;
+  onClose: () => void;
 }
 
-export const Sidebar = ({ user, userName, pathname, filteredNavItems, handleLogout }: SidebarProps) => {
+export const Sidebar = ({ user, userName, pathname, filteredNavItems, handleLogout, isOpen, onClose }: SidebarProps) => {
   return (
-    <aside className="w-64 flex flex-col bg-[#1a1a1a] text-white p-4 shrink-0 shadow-xl z-10">
-      <div className="flex items-center mb-10 px-2">
-        <div className="mr-3 flex items-center justify-center">
-          <Image 
-            src="/LogoCompuYaBlanco.svg" 
-            alt="Logo CompuYa" 
-            width={72} 
-            height={72} 
-            className="object-contain drop-shadow-lg" 
-          />
+    <aside className={`fixed inset-y-0 left-0 w-64 flex flex-col bg-[#1a1a1a] text-white p-4 shrink-0 shadow-xl z-50 transition-transform duration-300 ease-in-out md:static md:translate-x-0 ${
+      isOpen ? 'translate-x-0' : '-translate-x-full'
+    }`}>
+      <div className="flex items-center justify-between mb-10 px-2">
+        <div className="flex items-center">
+          <div className="mr-3 flex items-center justify-center">
+            <Image 
+              src="/LogoCompuYaBlanco.svg" 
+              alt="Logo CompuYa" 
+              width={72} 
+              height={72} 
+              className="object-contain drop-shadow-lg" 
+            />
+          </div>
+          <h1 className="text-2xl font-bold tracking-tight mt-2">  
+            <span className="text-orange-500">Compu</span>
+            <span className="text-white">Ya</span>
+          </h1>
         </div>
-        <h1 className="text-2xl font-bold tracking-tight mt-2">  
-          <span className="text-orange-500">Compu</span>
-          <span className="text-white">Ya</span>
-        </h1>
+
+        <button 
+          onClick={onClose}
+          className="md:hidden p-1 rounded-md text-gray-400 hover:text-white hover:bg-gray-800 transition-colors focus:outline-none cursor-pointer"
+          aria-label="Cerrar menú"
+        >
+          <BiX size={28} />
+        </button>
       </div>
       
       <nav className="flex-1">
@@ -42,6 +56,7 @@ export const Sidebar = ({ user, userName, pathname, filteredNavItems, handleLogo
               <li key={item.name}>
                 <Link 
                   href={item.href}
+                  onClick={onClose} // Cerrar sidebar al hacer clic en un enlace en móvil
                   className={`flex items-center p-3 rounded-lg transition-all duration-200 group ${
                     isActive 
                       ? 'bg-orange-600 text-white shadow-lg shadow-orange-900/20' 

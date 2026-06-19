@@ -42,7 +42,7 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-gray-100 p-24">
+    <main className="flex min-h-screen flex-col items-center justify-center bg-gray-100 p-4 md:p-24">
       <div className="relative w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md text-gray-900">
         {isLoginLoading ? (
           <div className="login-overlay">

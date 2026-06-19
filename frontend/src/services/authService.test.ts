@@ -45,7 +45,7 @@ describe('authService', () => {
 
     const profile = await authService.getProfile();
 
-    expect(api.get).toHaveBeenCalledWith('/usuarios/yo');
+    expect(api.get).toHaveBeenCalledWith('/usuarios/yo', { headers: {} });
     expect(profile).toEqual(mockProfile);
   });
 });
