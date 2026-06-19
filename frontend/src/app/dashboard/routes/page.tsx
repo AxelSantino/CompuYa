@@ -13,6 +13,7 @@ import './RoutesPage.css';
 import { AccessDenied } from '@/components/ui/AccessDenied';
 import '@/i18n/i18n';
 import { useTranslation } from 'react-i18next';
+import withAuth from '@/components/auth/withAuth';
 
 const MapHojaRuta = dynamic(() => import('@/components/MapHojaRuta'), { 
   ssr: false,
@@ -34,7 +35,7 @@ interface Repartidor {
   } | null;
 }
 
-export default function RoutesPage() {
+function RoutesPage() {
   const {t} = useTranslation();
   const { user } = useAuth();
   const [shipments, setShipments] = useState<Envio[]>([]);
@@ -365,3 +366,5 @@ export default function RoutesPage() {
     </DashboardLayout>
   );
 }
+
+export default withAuth(RoutesPage, ['supervisor', 'repartidor']);
