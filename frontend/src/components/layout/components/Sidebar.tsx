@@ -94,7 +94,7 @@ export const Sidebar = ({ user, userName, pathname, filteredNavItems, handleLogo
         <button 
           onClick={handleLogout} 
           title={isCollapsed ? "Cerrar Sesión" : undefined}
-          className={`flex items-center rounded-lg hover:bg-red-900/20 hover:text-red-300 text-gray-300 transition-all duration-300 w-full group
+          className={`flex items-center rounded-lg hover:bg-red-900/20 hover:text-red-300 text-gray-300 transition-all duration-300 w-full group cursor-pointer
             ${isCollapsed ? 'justify-center p-3' : 'p-3 text-left'}`}
         >
           {/* Margen del icono animado suavemente */}
