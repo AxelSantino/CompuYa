@@ -117,6 +117,7 @@ export const es = {
                 entregas_apareceran_aqui: "Entregas apareceran aquí una vez asignados",
                 mi_hoja_de_ruta_optimizada: "Mi Hoja de Ruta Optimizada",
                 visualizando_recorrido_del_repartidor: "Visualizando recorrido del repartidor",
+                actualizando_logistica: "Actualizando logística...",
 
                 seleccionar_repartidor_primero: "Por favor, selecciona un repartidor primero (en Monitoreo por repartidor)",
                 envio_asignado_correctamente: "Envio asignado correctamente",

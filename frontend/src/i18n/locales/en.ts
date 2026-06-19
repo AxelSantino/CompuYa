@@ -118,6 +118,7 @@ export const en = {
             entregas_apareceran_aqui: "Deliveries will appear here once assigned",
             mi_hoja_de_ruta_optimizada: "My optimized roadmap",
             visualizando_recorrido_repartidor: "Viewing the delivery driver's route",
+            actualizando_logistica: "Updating logistics...",
 
             seleccionar_repartidor_primero: "Please select a delivery driver (in Monitoring by delivery driver)",
             envio_asignado_correctamente: "Shipment assigned succesfully",

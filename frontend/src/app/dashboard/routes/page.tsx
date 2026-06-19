@@ -11,6 +11,9 @@ import { RoutesHeader } from '../routes/components/RoutesHeader';
 import { SupervisorPanel } from '../routes/components/SupervisorPanel';
 import { DriverRoutePanel } from '../routes/components/DriverRoutePanel';
 
+import '@/i18n/i18n';
+import { useTranslation } from 'react-i18next';
+
 function RoutesPage() {
   const {
     user,
@@ -30,10 +33,12 @@ function RoutesPage() {
     closeModal
   } = useRouteManagement();
 
+  const {t} = useTranslation();
+
   return (
     <DashboardLayout>
       <div className="animate-in fade-in slide-in-from-bottom-2 duration-500 p-4 md:p-6">
-        <LoadingOverlay isLoading={isLoading || isProcessing} text="Actualizando logística..." />
+        <LoadingOverlay isLoading={isLoading || isProcessing} text={t('routesPage.actualizando_logistica')} />
         
         <RoutesHeader 
           showAssignButton={isSupervisor}
