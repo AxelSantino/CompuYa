@@ -54,7 +54,7 @@ export const Sidebar = ({ user, userName, pathname, filteredNavItems, handleLogo
               <li key={item.name}>
                 <Link 
                   href={item.href}
-                  title={isCollapsed ? item.name : undefined}
+                  title={isCollapsed ? item.name : 'undefined'}
                   className={`flex items-center rounded-lg transition-all duration-200 group min-h-[60px]
                     ${isCollapsed ? 'justify-center p-3' : 'p-3'}
                     ${isActive 
@@ -72,7 +72,7 @@ export const Sidebar = ({ user, userName, pathname, filteredNavItems, handleLogo
                     ${isCollapsed ? 'max-w-0 opacity-0' : 'max-w-[160px] opacity-100'}`}
                   >
                     <span className="block w-[160px] min-w-[160px] font-medium text-base leading-tight whitespace-normal">
-                      {item.name}
+                      {isCollapsed? '' : item.name}
                     </span>
                   </div>
                 </Link>
