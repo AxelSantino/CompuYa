@@ -4,6 +4,7 @@ import DashboardLayout from '@/components/layout/DashboardLayout';
 import LoadingOverlay from '@/components/LoadingOverlay';
 import withAuth from '@/components/auth/withAuth';
 import './RoutesPage.css';
+import { ConfirmModal } from '@/components/ui/ConfirmModal';
 
 import { useRouteManagement } from '../routes/hooks/useRouteManagment';
 import { RoutesHeader } from '../routes/components/RoutesHeader';
@@ -24,7 +25,9 @@ function RoutesPage() {
     mapPoints,
     handleManualAssign,
     handleAssignAll,
-    handleDeliver
+    handleDeliver,
+    modalConfig,
+    closeModal
   } = useRouteManagement();
 
   return (
@@ -64,6 +67,14 @@ function RoutesPage() {
           </div>
 
         </div>
+
+        <ConfirmModal 
+          isOpen={modalConfig.isOpen}
+          title={modalConfig.title}
+          message={modalConfig.message}
+          onConfirm={modalConfig.onConfirm}
+          onCancel={closeModal}
+        />
       </div>
     </DashboardLayout>
   );

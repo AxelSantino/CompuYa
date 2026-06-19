@@ -124,6 +124,11 @@ export const es = {
                 error_en_la_asignacion_masiva: "Error en la asignación masiva",
                 envio_marcado_como_entregado_exitosamente: "Envio marcado como entregado exitosamente.",
                 error_al_marcar_envio_entregado: "Error al marcar como entregado.",
+                confirmar_asignacion_masiva: "Confirmar asignación masiva",
+                pregunta_asignacion_masiva: "¿Deseas asignar todos los envíos pendientes de forma automática?",
+                confirmar_entrega: "Confirmar entrega",
+                confirmar_entrega_mensaje: "¿Confirmas que el envío {{id}} ha sido entregado exitosamente?",
+
             },
             loadingOverlay: {
                 cargando: "Cargando...",

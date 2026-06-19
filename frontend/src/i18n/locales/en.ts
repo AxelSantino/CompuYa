@@ -125,6 +125,10 @@ export const en = {
             error_en_la_asignacion_masiva: "Error in bulk assignment",
             envio_marcado_como_entregado_exitosamente: "Shipment succesfully marked as delivered.",
             error_al_marcar_envio_entregado: "Error while marking as delivered..",
+            confirmar_asignacion_masiva: "Confirm bulk assignment",
+            pregunta_asignacion_masiva: "Do you want to automatically assign all pending shipments?",
+            confirmar_entrega: "Confirm delivery",
+            confirmar_entrega_mensaje: "Do you confirm that shipment {{id}} has been successfully delivered?",
         },
         loadingOverlay: {
             cargando: "Loading...",

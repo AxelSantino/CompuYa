@@ -26,10 +26,19 @@ export function useRouteManagement() {
   const [selectedDriverId, setSelectedDriverId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [modalConfig, setModalConfig] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+    onConfirm: () => {},
+  });
 
   const isSupervisor = user?.rol === 'supervisor';
 
   const {t} = useTranslation();
+
+  // Función auxiliar para cerrar el modal
+  const closeModal = () => setModalConfig(prev => ({ ...prev, isOpen: false }));
 
   // Carga inicial de datos según el rol
   const fetchData = useCallback(async () => {
@@ -62,7 +71,7 @@ export function useRouteManagement() {
     setIsLoading(true);
     try {
       const driverRoute = await shipmentService.getRouteByDriverId(driverId);
-      setRoute(driverRoute);
+      setRoute(driverRoute);  
     } catch (error) {
       console.error("Error al cargar ruta del repartidor:", error);
     } finally {
@@ -100,38 +109,47 @@ export function useRouteManagement() {
     }
   };
 
-  const handleAssignAll = async () => {
-    // Cambiar a MODAL
-    if (!confirm("¿Deseas asignar todos los envíos pendientes de forma automática?")) return;
-    setIsProcessing(true);
-    try {
-      const res = await shipmentService.assignAllShipments();
-      toast.success(res.message)
-      //alert(res.message);
-      await fetchData();
-    } catch (error) {
-      toast.error(t('routesPage.error_en_la_asignacion_masiva'));
-      //alert("Error en la asignación masiva.");
-    } finally {
-      setIsProcessing(false);
-    }
+  const handleAssignAll = () => {
+    // En lugar de frenar el código con confirm(), abrimos el modal e inyectamos la lógica asíncrona
+    setModalConfig({
+      isOpen: true,
+      title: t('routesPage.confirmar_asignacion_masiva', 'Confirmar asignación masiva'),
+      message: t('routesPage.pregunta_asignacion_masiva', '¿Deseas asignar todos los envíos pendientes de forma automática?'),
+      onConfirm: async () => {
+        closeModal(); // Cerramos el modal inmediatamente al aceptar
+        setIsProcessing(true);
+        try {
+          const res = await shipmentService.assignAllShipments();
+          toast.success(res.message);
+          await fetchData();
+        } catch (error) {
+          toast.error(t('routesPage.error_en_la_asignacion_masiva'));
+        } finally {
+          setIsProcessing(false);
+        }
+      }
+    });
   };
 
-  const handleDeliver = async (trackingId: string) => {
-    // Cambiar a MODAL
-    if (!confirm(`¿Confirmas que el envío ${trackingId} ha sido entregado?`)) return;
-    setIsProcessing(true);
-    try {
-      await shipmentService.markAsDelivered(trackingId);
-      await fetchData();
-      toast.success(t('routesPage.envio_marcado_como_entregado_exitosamente'))
-
-    } catch (error) {
-      toast.error(t('routesPage.error_al_marcar_envio_entregado'))
-      //alert("Error al marcar como entregado.");
-    } finally {
-      setIsProcessing(false);
-    }
+  const handleDeliver = (trackingId: string) => {
+    setModalConfig({
+      isOpen: true,
+      title: t('routesPage.confirmar_entrega', 'Confirmar entrega'),
+      message: t('routesPage.confirmar_entrega_mensaje', { id: trackingId }),
+      onConfirm: async () => {
+        closeModal();
+        setIsProcessing(true);
+        try {
+          await shipmentService.markAsDelivered(trackingId);
+          await fetchData();
+          toast.success(t('routesPage.envio_marcado_como_entregado_exitosamente'));
+        } catch (error) {
+          toast.error(t('routesPage.error_al_marcar_envio_entregado'));
+        } finally {
+          setIsProcessing(false);
+        }
+      }
+    });
   };
 
   // Transformación de datos para la vista (Movido aquí para limpiar el componente UI)
@@ -165,6 +183,8 @@ export function useRouteManagement() {
     mapPoints,
     handleManualAssign,
     handleAssignAll,
-    handleDeliver
+    handleDeliver,
+    modalConfig,
+    closeModal
   };
 }
