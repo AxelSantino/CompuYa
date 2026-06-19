@@ -2,6 +2,8 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { BiLogOut, BiMenu } from 'react-icons/bi';
+import '@/i18n/i18n';
+import { useTranslation } from 'react-i18next';
 
 interface SidebarProps {
   user: any; 
@@ -17,6 +19,9 @@ interface SidebarProps {
 }
 
 export const Sidebar = ({ user, userName, pathname, filteredNavItems, handleLogout, isCollapsed }: SidebarProps) => {
+
+  const {t}=useTranslation();
+
   return (
     <aside className={`flex flex-col bg-[#1a1a1a] text-white shrink-0 shadow-xl z-10 transition-all duration-300 ease-in-out relative
       ${isCollapsed ? 'w-20 py-4 px-2' : 'w-64 p-4'}`}
@@ -107,7 +112,7 @@ export const Sidebar = ({ user, userName, pathname, filteredNavItems, handleLogo
             className={`font-medium text-sm whitespace-nowrap overflow-hidden transition-all duration-300 ease-in-out
               ${isCollapsed ? 'max-w-0 opacity-0' : 'max-w-[200px] opacity-100'}`}
           >
-            Cerrar Sesión
+            {t('sidebarPage.cerrar_sesion')}
           </span>
         </button>
       </div>

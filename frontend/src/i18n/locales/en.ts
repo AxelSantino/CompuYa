@@ -365,5 +365,9 @@ export const en = {
                 anterior: "Prior",
                 siguiente: "Next"
             },
+            
+            sidebarPage: {
+                cerrar_sesion: "Log out"
+            }
     }
 };
