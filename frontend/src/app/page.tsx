@@ -44,11 +44,12 @@ export default function LoginPage() {
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
         const backendMessage = err.response?.data?.detail;
-        
+
         setError(backendMessage || 'Ocurrió un error de conexión con el servidor.');
       } 
       else if (err instanceof Error) {
         setError(err.message);
+
       } 
       else {
         setError('Ocurrió un error inesperado. Por favor, intenta de nuevo.');

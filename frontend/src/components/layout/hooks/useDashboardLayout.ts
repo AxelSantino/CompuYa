@@ -5,6 +5,7 @@ import { FaRoute, FaUsers, FaHandshake, FaChartBar } from "react-icons/fa";
 import { MdNotifications } from 'react-icons/md';
 import '@/i18n/i18n';
 import { useTranslation } from 'react-i18next';
+import { useState, useCallback, useEffect } from 'react';
 
 const NAV_ITEMS = [
     { key: 'gestion_de_envios', href: '/dashboard', icon: BiCube, roles: ['supervisor', 'operador', 'visor'] },
@@ -21,6 +22,25 @@ export const useDashboardLayout = () => {
     const { user, logout, isLoading } = useAuth();
     const router = useRouter();
     const pathname = usePathname();
+
+    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false);
+
+   // Al cargar la página, leemos la memoria del navegador
+    useEffect(() => {
+        const savedState = localStorage.getItem('sidebar_collapsed');
+        if (savedState !== null) {
+            setIsSidebarCollapsed(JSON.parse(savedState));
+        }
+    }, []);
+
+    // Cambiar posicion del sidebar
+    const toggleSidebar = useCallback(() => {
+        setIsSidebarCollapsed((prev) => {
+            const newState = !prev;
+            localStorage.setItem('sidebar_collapsed', JSON.stringify(newState));
+            return newState;
+        });
+    }, []);
 
     const handleLogout = () => {
         logout();
@@ -51,6 +71,8 @@ export const useDashboardLayout = () => {
         pathname,
         userName: getUserName(),
         filteredNavItems,
-        handleLogout
+        handleLogout,
+        isSidebarCollapsed,
+        toggleSidebar
     };
 };
