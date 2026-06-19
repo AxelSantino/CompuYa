@@ -40,7 +40,8 @@ export const en = {
         dashboard_header: {
             gestion_de_envios: "Shipment Management",
             listado_y_administracion: "Listing and management of shipments of computer products registered in the system",
-            nuevo_envio: "New Shipment"
+            nuevo_envio: "New Shipment",
+            importacion_por_csv: "CSV import"
         },
         shipmentFilters: {
             buscar_por_trackingID: "Search by Tracking ID",

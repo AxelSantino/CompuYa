@@ -65,7 +65,7 @@ const ImportCsvPage = () => {
             ========================================= */}
         <div className="flex items-center gap-4 mb-6 pb-4 border-b border-gray-100">
           <button
-            onClick={() => router.push('/dashboard/envios')}
+            onClick={() => router.push('/dashboard')}
             className="text-gray-400 hover:text-orange-600 transition-colors p-2 rounded-full hover:bg-orange-50"
             title="Volver a Envíos"
           >
@@ -113,7 +113,7 @@ const ImportCsvPage = () => {
           {importResults ? (
             /* BOTONERA POST-IMPORTACIÓN */
             <>
-              <Button variant="secondary" onClick={() => router.push('/dashboard/envios')}>
+              <Button variant="secondary" onClick={() => router.push('/dashboard')}>
                 {t('importCsvPage.ir_a_lista_de_envios')}
               </Button>
               <Button variant="primary" onClick={resetProcess}>

@@ -39,7 +39,8 @@ export const es = {
             dashboard_header: {
                 gestion_de_envios: "Gestión de envíos",
                 listado_y_administracion: "Listado y administracion de los envíos de productos informáticos registrados en el sistema",
-                nuevo_envio: "Nuevo Envío"
+                nuevo_envio: "Nuevo Envío",
+                importacion_por_csv: "Importación por CSV"
             },
             shipmentFilters:{
                 buscar_por_trackingID: "Buscar por Tracking ID",
