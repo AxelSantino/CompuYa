@@ -11,10 +11,11 @@ import { AccessDenied } from '@/components/ui/AccessDenied';
 import { PaginationControls } from '@/components/ui/PaginationControls';
 import '@/i18n/i18n';
 import { useTranslation } from 'react-i18next';
+import withAuth from '@/components/auth/withAuth';
 
 // Funcion principal 
 
-export default function ClientsPage() {
+function ClientsPage() {
   const {t} = useTranslation();
   const {
     user,
@@ -81,3 +82,5 @@ return (
     </DashboardLayout>
   );
 };
+
+export default withAuth(ClientsPage, ['admin']);

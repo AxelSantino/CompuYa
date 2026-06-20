@@ -12,8 +12,9 @@ import { EmployeeDetailsSection } from './components/EmployeeDetailsSection';
 import { SuccessFeedback } from '@/components/ui/SuccessFeedback';
 import '@/i18n/i18n';
 import { useTranslation } from 'react-i18next';
+import withAuth from '@/components/auth/withAuth';
 
-export default function NewEmployeePage() {
+function NewEmployeePage() {
   const {t} = useTranslation();
   const router = useRouter();
   const { user } = useAuth();
@@ -125,3 +126,5 @@ export default function NewEmployeePage() {
     </DashboardLayout>
   );
 }
+
+export default withAuth(NewEmployeePage, ['admin']);

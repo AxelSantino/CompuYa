@@ -23,8 +23,6 @@ class ServicioRuteo:
     async def obtener_sucursal_mas_cercana(self, lat_destino: float, lon_destino: float) -> Sucursal:
         if "sucursales" in sucursales_cache:
             sucursales = sucursales_cache["sucursales"]
-            for s in sucursales:
-                self.db.add(s)
         else:
             query = select(Sucursal)
             result = await self.db.execute(query)

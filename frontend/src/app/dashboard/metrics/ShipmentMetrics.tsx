@@ -60,59 +60,52 @@ export default function ShipmentMetrics({ shipments, isLoading = false, filters 
       {/* =========================================
           HEADER Y BOTONERA DE ACCIONES
           ========================================= */}
-      <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-gray-100">
-        <div>
-          {/* Espacio para un título opcional si lo necesitas en el futuro */}
+      <div className="flex flex-col lg:flex-row gap-6 mb-8">
+        
+        {/* Gráfico de Barras (2/3 de ancho en pantallas grandes) */}
+        <div className="w-full lg:w-2/3">
+          {deliveryLoading ? (
+            <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200 flex flex-col items-center justify-center h-full min-h-[360px]">
+              <span className="animate-spin inline-block w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full mb-3"></span>
+              <span className="text-sm text-gray-400 font-medium animate-pulse">{t('metricsPage.cargando_rendimiento')}</span>
+            </div>
+          ) : deliveryError ? (
+            <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200 flex items-center justify-center text-sm font-medium text-red-500 h-full min-h-[360px] text-center px-4">
+              {deliveryError}
+            </div>
+          ) : (
+            <BarChart
+              title={t('metricsPage.puntualidad_entregas')}
+              subtitle={t('metricsPage.total_evaluado', { count: totalDeliveries })}
+              data={deliveryData}
+            />
+          )}
         </div>
-      </div>
 
-      {/* =========================================
-          FILA 1: Tarjetas de Métricas (Fila horizontal)
-          ========================================= */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6 w-full">
-        <MetricCard
-          title={t('metricsPage.card_total_envios')}
-          value={metrics.total}
-          icon={<FaBox size={26} />}
-          bgColor="bg-blue-50"
-          textColor="text-blue-600"
-        />
-        <MetricCard
-          title={t('metricsPage.card_envios_entregados')}
-          value={metrics.entregado}
-          icon={<FaCheckCircle size={26} />}
-          bgColor="bg-green-50"
-          textColor="text-green-600"
-        />
-        <MetricCard
-          title={t('metricsPage.card_envios_cancelados')}
-          value={metrics.cancelado}
-          icon={<FaTimesCircle size={26} />}
-          bgColor="bg-red-50"
-          textColor="text-red-600"
-        />
-      </div>
-
-      {/* =========================================
-          FILA 2: Gráfico de Barras (Ancho completo)
-          ========================================= */}
-      <div className="w-full mb-8">
-        {deliveryLoading ? (
-          <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200 flex flex-col items-center justify-center h-full min-h-[360px]">
-            <span className="animate-spin inline-block w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full mb-3"></span>
-            <span className="text-sm text-gray-400 font-medium animate-pulse">{t('metricsPage.cargando_rendimiento')}</span>
-          </div>
-        ) : deliveryError ? (
-          <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200 flex items-center justify-center text-sm font-medium text-red-500 h-full min-h-[360px] text-center px-4">
-            {deliveryError}
-          </div>
-        ) : (
-          <BarChart
-            title={t('metricsPage.puntualidad_entregas')}
-            subtitle={t('metricsPage.total_evaluado', { count: totalDeliveries })}
-            data={deliveryData}
+        {/* Tarjetas de Métricas (1/3 de ancho en pantallas grandes, fila en medianas, columna en móviles) */}
+        <div className="w-full lg:w-1/3 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-1 gap-6">
+          <MetricCard
+            title={t('metricsPage.card_total_envios')}
+            value={metrics.total}
+            icon={<FaBox size={26} />}
+            bgColor="bg-blue-50"
+            textColor="text-blue-600"
           />
-        )}
+          <MetricCard
+            title={t('metricsPage.card_envios_entregados')}
+            value={metrics.entregado}
+            icon={<FaCheckCircle size={26} />}
+            bgColor="bg-green-50"
+            textColor="text-green-600"
+          />
+          <MetricCard
+            title={t('metricsPage.card_envios_cancelados')}
+            value={metrics.cancelado}
+            icon={<FaTimesCircle size={26} />}
+            bgColor="bg-red-50"
+            textColor="text-red-600"
+          />
+        </div>
       </div>
 
       {/* =========================================

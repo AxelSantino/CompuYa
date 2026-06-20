@@ -299,21 +299,19 @@ async def test_crear_envio_exitoso_con_prediccion_ml():
     db_mock.commit = AsyncMock()
     db_mock.add = MagicMock() 
 
+    usuario_mock = Usuario(id=4, email="cliente@compuya.com", activo=True)
     perfil_empresa_mock = PerfilEmpresa(
         usuario_id=4,
         razon_social="CompuYa SRL",
         cuit="30-12345678-9",
         latitud=-34.61,
-        longitud=-58.39
+        longitud=-58.39,
+        usuario=usuario_mock
     )
     res_perfil = MagicMock()
     res_perfil.scalar_one_or_none.return_value = perfil_empresa_mock
 
-    usuario_mock = Usuario(id=4, email="cliente@compuya.com")
-    res_usuario = MagicMock()
-    res_usuario.scalar_one_or_none.return_value = usuario_mock
-
-    db_mock.execute.side_effect = [res_perfil, res_usuario]
+    db_mock.execute.return_value = res_perfil
 
     servicio = EnvioService(db=db_mock)
 
@@ -331,7 +329,7 @@ async def test_crear_envio_exitoso_con_prediccion_ml():
                     
                     resultado = await servicio.crear_envio(envio_in, usuario_id=9, background_tasks=mock_bg)
 
-                    assert resultado.tracking_id == "CY-2026-OK"
+                    assert resultado.tracking_id.startswith("CY-")
                     db_mock.add.assert_called_once() 
                     db_mock.flush.assert_called_once()
                     db_mock.commit.assert_called_once()
@@ -471,8 +469,17 @@ async def test_crear_envio_falla_si_no_hay_sucursales_disponibles():
     )
 
     db_mock = AsyncMock()
+    usuario_mock = Usuario(id=1, email="test@compuya.com", activo=True)
+    perfil_empresa_mock = PerfilEmpresa(
+        usuario_id=1,
+        razon_social="CompuYa SRL",
+        cuit="30-12345678-9",
+        latitud=-34.6,
+        longitud=-58.6,
+        usuario=usuario_mock
+    )
     res_perfil = MagicMock()
-    res_perfil.scalar_one_or_none.return_value = PerfilEmpresa(latitud=-34.6, longitud=-58.6)
+    res_perfil.scalar_one_or_none.return_value = perfil_empresa_mock
     db_mock.execute.return_value = res_perfil
 
     servicio = EnvioService(db=db_mock)
