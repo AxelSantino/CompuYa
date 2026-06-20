@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from email.message import EmailMessage
 import aiosmtplib
 
-from app.models.entidades import PlantillaNotificacion, HistorialNotificacion, Envio, EstadoEnvio 
+from app.models.entidades import PlantillaNotificacion, HistorialNotificacion, Envio, EstadoEnvio, Historial
 from app.config import settings
 
 logger = logging.getLogger(__name__)
@@ -31,12 +31,23 @@ class NotificacionService:
         )
         resultado = await self.db.execute(query)
         plantilla = resultado.scalars().first()
-
+        estado=envio.estado 
         if not plantilla:
-            logger.info(f"Notificación ignorada: No hay plantilla para '{envio.estado.value}'")
+            logger.info(f"Notificación ignorada: No hay plantilla para '{estado.value}'")
             return
 
         try:
+            motivo_cancelacion = ""
+
+            if envio.estado == EstadoEnvio.CANCELADO:
+                query_historial = select(Historial).where(
+                    Historial.envio_id == envio.id
+                ).order_by(Historial.fecha.desc()).limit(1)
+                
+                res_historial = await self.db.execute(query_historial)
+                ultimo_historial = res_historial.scalar_one_or_none()
+                motivo_cancelacion = ultimo_historial.motivo if ultimo_historial else "No especificado"
+
             asunto_final = f"{plantilla.asunto} #{envio.tracking_id}"
             nombre_plantilla_html = f"{envio.estado.value.lower().replace(' ', '_')}.html"
             ruta_template = os.path.join(os.path.dirname(__file__), f"../templates/{nombre_plantilla_html}")
@@ -56,7 +67,8 @@ class NotificacionService:
                 "fecha_actualizacion": datetime.now().strftime("%d/%m/%Y"),
                 "link_aplicacion": "https://logistica-compuya.onrender.com/dashboard",
                 "email_contacto": "compuyalogistica@gmail.com",
-                "pin": envio.codigo_verificacion if envio.codigo_verificacion else ""
+                "pin": envio.codigo_verificacion if envio.codigo_verificacion else "",
+                "motivo_cancelacion": motivo_cancelacion   
             }
 
             mensaje_admin_formateado = plantilla.cuerpo.format(**variables)
@@ -95,7 +107,7 @@ class NotificacionService:
             resultado_envio = "Fallido"
             motivo_del_error = str(e)
 
-        nuevo_historial = HistorialNotificacion(
+        nuevo_historial_notif = HistorialNotificacion(
             envio_id=envio.id,
             destinatario_email=email_original,
             asunto_enviado=asunto_final,
@@ -104,7 +116,7 @@ class NotificacionService:
             canal="correo",
             motivo_error=motivo_del_error
         )
-        self.db.add(nuevo_historial)
+        self.db.add(nuevo_historial_notif)
         await self.db.commit()
 
     async def obtener_historial_auditoria(self):

@@ -145,7 +145,7 @@ class EnvioRespuesta(EnvioBase):
     sucursal: Optional[SucursalRespuesta] = None
     latitud_destino: Optional[float] = None
     longitud_destino: Optional[float] = None
-    codigo_verificacion: Optional[str] = None
+#    codigo_verificacion: Optional[str] = None
     model_config = ConfigDict(from_attributes=True)
 
 class ValidarEntregaIn(BaseModel):
