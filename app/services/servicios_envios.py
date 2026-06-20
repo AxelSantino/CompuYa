@@ -13,7 +13,7 @@ from app.services.servicio_notificacion import NotificacionService
 from app.services.servicio__alertas import crear_alerta_y_enviar_push
 from app.utils.generadores import generar_pin_seguridad
 
-# --- CONSTANTES DE TEXTO PARA NOTIFICACIONES ---
+
 MENSAJES_ALERTA = {
     "PREPARANDO_TITULO": "Estamos preparando tu pedido",
     "PREPARANDO_CUERPO": "El envío {tracking_id} está siendo preparado.",
@@ -26,7 +26,7 @@ MENSAJES_ALERTA = {
     "EN_TRANSITO_TITULO": "Envío en Tránsito 🚚",
     "EN_TRANSITO_CUERPO": "El envío {tracking_id} está en camino. Tu PIN de entrega es: {pin}"
 }
-# -----------------------------------------------
+
 
 class EnvioService:
     def __init__(self, db: AsyncSession):
@@ -46,7 +46,6 @@ class EnvioService:
         return f"CY-{anio}-{caracteres}"
 
     async def crear_envio(self, envio_data: EnvioCrear, usuario_id: int, background_tasks: BackgroundTasks) -> Envio:
-        # 1. Consolidar PerfilEmpresa y Usuario en una sola consulta usando joinedload
         query = (
             select(PerfilEmpresa)
             .options(joinedload(PerfilEmpresa.usuario))
@@ -119,29 +118,41 @@ class EnvioService:
         await self.db.commit()
         await self.db.refresh(nuevo_envio)
         
+        query_final = (
+            select(Envio)
+            .options(
+                joinedload(Envio.creador).joinedload(Usuario.perfil_empleado),
+                joinedload(Envio.destinatario).joinedload(Usuario.perfil_empresa),
+                joinedload(Envio.destinatario).joinedload(Usuario.perfil_empleado),
+                joinedload(Envio.sucursal)
+            )
+            .where(Envio.id == nuevo_envio.id)
+        )
+        result_final = await self.db.execute(query_final)
+        envio_completo = result_final.unique().scalar_one()
+
         servicio_notificacion = NotificacionService(db=self.db)
     
         if email_destinatario:
             background_tasks.add_task(
                 servicio_notificacion.procesar_notificacion_estado, 
-                nuevo_envio, 
+                envio_completo, 
                 email_destinatario, 
-                nuevo_envio.razon_social_destinatario
+                envio_completo.razon_social_destinatario
             )
             
-            # Usamos tus constantes para mantener la prolijidad
             titulo = MENSAJES_ALERTA["PREPARANDO_TITULO"]
-            mensaje = MENSAJES_ALERTA["PREPARANDO_CUERPO"].format(tracking_id=tracking_id)
+            mensaje = MENSAJES_ALERTA["PREPARANDO_CUERPO"].format(tracking_id=envio_completo.tracking_id)
             
             await crear_alerta_y_enviar_push(
                 self.db, 
-                nuevo_envio.destinatario_id, 
+                envio_completo.destinatario_id, 
                 titulo, 
                 mensaje, 
-                envio_id=nuevo_envio.id
+                envio_id=envio_completo.id
             )
 
-        return nuevo_envio
+        return envio_completo
     
     def _calcular_fecha_limite(self, tipo_envio: TipoEnvio, prioridad: PrioridadEnvio) -> datetime:
         if tipo_envio == TipoEnvio.EXPRESS: 
