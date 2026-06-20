@@ -40,8 +40,11 @@ async def test_entregar_envio_funciona_si_esta_en_transito():
     envio_mock.id = 123
     envio_mock.tracking_id = "CY-2026-TEST"
     envio_mock.estado = EstadoEnvio.EN_TRANSITO
+    envio_mock.codigo_verificacion = "1234"
 
     db_mock = AsyncMock()
+    db_mock.commit = AsyncMock()
+    
     resultado_mock = MagicMock()
     resultado_mock.unique().scalar_one_or_none.return_value = envio_mock
     db_mock.execute.return_value = resultado_mock
@@ -51,15 +54,21 @@ async def test_entregar_envio_funciona_si_esta_en_transito():
     
     with patch.object(servicio, 'registrar_historial', new_callable=AsyncMock) as mock_historial:
         with patch.object(servicio, 'obtener_envio_por_id', return_value=envio_mock):
-            resultado = await servicio.entregar_envio("CY-2026-TEST", usuario_id=5, background_tasks=mock_bg)
+            resultado = await servicio.entregar_envio(
+                tracking_id="CY-2026-TEST",
+                usuario_id=5,
+                codigo_ingresado="1234",
+                background_tasks=mock_bg
+            )
+            
             assert resultado.estado == EstadoEnvio.ENTREGADO
-            mock_historial.assert_called_once_with(123, 5, EstadoEnvio.ENTREGADO)
+            assert db_mock.commit.await_count == 2
 
 @pytest.mark.asyncio
 async def test_entregar_envio_falla_si_no_esta_en_transito():
     envio_mock = Envio()
     envio_mock.tracking_id = "CY-2026-TEST"
-    envio_mock.estado = EstadoEnvio.EN_SUCURSAL
+    envio_mock.estado = EstadoEnvio.EN_SUCURSAL # Estado incorrecto
 
     db_mock = AsyncMock()
     resultado_mock = MagicMock()
@@ -70,10 +79,15 @@ async def test_entregar_envio_falla_si_no_esta_en_transito():
     mock_bg = MagicMock()
 
     with pytest.raises(HTTPException) as info_error:
-        await servicio.entregar_envio("CY-2026-TEST", usuario_id=5, background_tasks=mock_bg)
-
+        with patch.object(servicio, 'obtener_envio_por_id', return_value=envio_mock):
+            await servicio.entregar_envio(
+                tracking_id="CY-2026-TEST",
+                usuario_id=5,
+                codigo_ingresado="1234",
+                background_tasks=mock_bg
+            )
+            
     assert info_error.value.status_code == 400
-
 @pytest.mark.asyncio
 async def test_cancelar_envio_falla_si_ya_fue_entregado():
     envio_mock = Envio()

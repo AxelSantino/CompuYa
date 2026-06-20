@@ -114,7 +114,7 @@ class Envio(Base):
         "Historial", back_populates="envio", order_by="Historial.fecha.desc()")
     creador = relationship("Usuario", foreign_keys=[creado_por_id])
     destinatario = relationship("Usuario", foreign_keys=[destinatario_id])
-
+    codigo_verificacion = Column(String(4), nullable=True)
 
 class Historial(Base):
     __tablename__ = "historial"

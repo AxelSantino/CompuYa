@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status, BackgroundTasks, UploadFile, File, HTTPException
+from fastapi import APIRouter, Depends, status, BackgroundTasks, UploadFile, File, HTTPException, Body
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.session import obtener_db
 from app.services.servicios_envios import EnvioService
@@ -60,10 +60,11 @@ async def cancelar_envio(
 async def entregar_envio(
     tracking_id: str,
     background_tasks: BackgroundTasks,
+    codigo_ingresado: str = Body(..., embed=True),
     usuario_actual: Usuario = Depends(obtener_usuario_actual),
     envio_service: EnvioService = Depends(get_envio_service)
 ):
-    return await envio_service.entregar_envio(tracking_id, usuario_actual.id, background_tasks)
+    return await envio_service.entregar_envio(tracking_id, usuario_actual.id, codigo_ingresado, background_tasks)
 
 @router.post("/{tracking_id}/actualizar-estado", response_model=EnvioRespuesta, dependencies=[Depends(tiene_rol(["supervisor", "operador"]))])
 async def actualizar_estado_envio(

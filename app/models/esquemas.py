@@ -73,7 +73,6 @@ class UsuarioRespuesta(UsuarioBase):
     model_config = ConfigDict(from_attributes=True)
 
 # --- ESQUEMAS DE ENVÍO Y RUTEO ---
-
 class SucursalRespuesta(BaseModel):
     id: int
     nombre: str
@@ -81,24 +80,25 @@ class SucursalRespuesta(BaseModel):
     latitud: float
     longitud: float
     model_config = ConfigDict(from_attributes=True)
-
 class EnvioBase(BaseModel):
+
     razon_social_destinatario: str
     cuit_destinatario: str
     descripcion: str
     tipo_envio: TipoEnvio
     restriccion: RestriccionEnvio
-    
+
 class EnvioCrear(EnvioBase):
     pass
 
 class EditarEnvio(BaseModel):
+
     razon_social_destinatario: Optional[str] = None
     cuit_destinatario: Optional[str] = None
     descripcion: Optional[str] = None
     tipo_envio: Optional[TipoEnvio] = None
     restriccion: Optional[RestriccionEnvio] = None
-    
+
 class HistorialBase(BaseModel):
     envio_id: int
     id_empleado: int
@@ -110,7 +110,7 @@ class UsuarioSimple(BaseModel):
     email: EmailStr
     perfil_empleado: Optional[PerfilEmpleadoSchema] = None
     model_config = ConfigDict(from_attributes=True)
-    
+
 class HistorialRespuesta(BaseModel):
     id: int
     estado: EstadoEnvio
@@ -132,7 +132,7 @@ class EmpresaRespuesta(BaseModel):
     cod_postal: Optional[str] = None
     fecha: Optional[date] = None
     model_config = ConfigDict(from_attributes=True)
-    
+
 class EnvioRespuesta(EnvioBase):
     id: int
     tracking_id: str
@@ -141,12 +141,18 @@ class EnvioRespuesta(EnvioBase):
     fecha_creacion: datetime
     fecha_limite: Optional[datetime] = None
     creador: UsuarioSimple
-    destinatario: UsuarioRespuesta 
+    destinatario: UsuarioRespuesta
     sucursal: Optional[SucursalRespuesta] = None
     latitud_destino: Optional[float] = None
     longitud_destino: Optional[float] = None
+    codigo_verificacion: Optional[str] = None
     model_config = ConfigDict(from_attributes=True)
 
+class ValidarEntregaIn(BaseModel):
+    codigo_verificacion: str = Field(..., 
+        min_length=4, 
+        max_length=4, 
+        description="PIN de seguridad de 4 dígitos ingresado por el repartidor")
 # --- ESQUEMAS PARA NOTIFICACIONES ---
 
 class PlantillaNotificacionBase(BaseModel):
