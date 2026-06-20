@@ -4,6 +4,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import authService from '@/services/authService';
 import LoadingTruck from '@/components/LoadingTruck';
 import './LoadingScreen.css';
+import '@/i18n/i18n';
 import { useTranslation } from 'react-i18next';
 
 interface User {
