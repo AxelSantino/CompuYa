@@ -79,4 +79,4 @@ const ShipmentsPage = () => {
   );
 };
 
-export default withAuth(ShipmentsPage, ['supervisor', 'operador']);
+export default withAuth(ShipmentsPage, ['supervisor', 'operador', 'cliente', 'visor']);
