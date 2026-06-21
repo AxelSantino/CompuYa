@@ -35,16 +35,20 @@ export const LoginBranding = () => {
         {/* Textos y métricas */}
         <div className="flex flex-col flex-grow mt-8 w-full">
           <div className="w-full">
-            <h1 className="leading-[0.95] tracking-[-3px]">
-              <span className="text-white text-[68px] xl:text-[92px] font-bold">
-                CompuYa
+            <h1 className="flex flex-col">
+              {/* 1. "Compu" en blanco y "Ya" en naranja */}
+              <span className="text-[56px] xl:text-[72px] 2xl:text-[92px] font-bold leading-none tracking-[-2px]">
+                <span className="text-white">Compu</span>
+                <span className="text-[#EB6534]">Ya</span>
               </span>
-              <span className="block text-[#EB6534] text-[68px] xl:text-[92px] font-bold ml-6 xl:ml-14">
-                  {t('login.logistica_de_extremo_a_extremo')}
+              
+              {/* 2. Eslogan más chico y alineado */}
+              <span className="block text-gray-300 text-[28px] xl:text-[36px] 2xl:text-[44px] font-bold mt-1 tracking-tight">
+                {t('login.logistica_de_extremo_a_extremo')}
               </span>
             </h1>
             
-            <p className="text-gray-300 text-[18px] xl:text-[20px] max-w-[550px] mt-4 ml-2 leading-relaxed">
+            <p className="text-gray-400 text-[18px] xl:text-[20px] max-w-[550px] mt-4 ml-2 leading-relaxed">
               {t('login.controla_cada_etapa_de_tus_envios')}
             </p>
 
