@@ -13,6 +13,8 @@ export const es = {
                 logistica_de_extremo_a_extremo: "Logística de extremo a extremo",
                 controla_cada_etapa_de_tus_envios: "Controlá cada etapa de tus envíos. Desde la sucursal hasta que llega a la puerta.",
                 en_transito: "En tránsito",
+                en_sucursal: "En sucursal",
+                entregado: "Entregado",
                 envios_gestionados: "+15.000 envíos gestionados",
                 entregas_exitosas: "99.8% entregas exitosas",
 

@@ -98,9 +98,9 @@ export const LoginBranding = () => {
               <circle cx="194" cy="71" r="5" fill="#4A4B50" style={{ animation: 'dot-trigger-transit 8s linear infinite' }} />
               <circle cx="345" cy="60" r="5" fill="#4A4B50" style={{ animation: 'dot-trigger-delivery 8s linear infinite' }} />
               
-              <text x="30" y="105" textAnchor="middle" fontSize="15" fill="#EB6534" fontFamily="sans-serif" fontWeight="bold">En Sucursal</text>
-              <text x="194" y="105" textAnchor="middle" fontSize="15" fill="#88898E" fontFamily="sans-serif">En Tránsito</text>
-              <text x="345" y="95" textAnchor="middle" fontSize="15" fill="#88898E" fontFamily="sans-serif">Entregado</text>
+              <text x="30" y="105" textAnchor="middle" fontSize="15" fill="#EB6534" fontFamily="sans-serif" fontWeight="bold">{t('login.en_sucursal')}</text>
+              <text x="194" y="105" textAnchor="middle" fontSize="15" fill="#88898E" fontFamily="sans-serif">{t('login.en_transito')}</text>
+              <text x="345" y="95" textAnchor="middle" fontSize="15" fill="#88898E" fontFamily="sans-serif">{t('login.entregado')}</text>
               
               <g>
                 <animateMotion dur="8s" repeatCount="indefinite" calcMode="paced" path="M30 70 C120 20, 200 110, 345 60" />

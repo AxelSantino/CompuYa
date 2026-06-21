@@ -13,6 +13,8 @@ export const en = {
             logistica_de_extremo_a_extremo: "End-to-end logistics",
             controla_cada_etapa_de_tus_envios: "Control every stage of your shipments. From the branch to the doorstep.",
             en_transito: "In transit",
+            en_sucursal: "In Branch",
+            entregado: "Delivered",
             envios_gestionados: "+15,000 shipments managed",
             entregas_exitosas: "99.8% successful deliveries",
 
