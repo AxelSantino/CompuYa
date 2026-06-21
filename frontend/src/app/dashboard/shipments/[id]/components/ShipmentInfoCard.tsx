@@ -76,8 +76,8 @@ export const ShipmentInfoCard = ({ shipment, isEditing, formData, handleChange, 
                         <DetailItem icon={<FaCalendar />} label={t('shipmentInfo.fecha_creacion')} value={new Date(shipment.fecha_creacion).toLocaleString()} />
                         <DetailItem icon={<FaUser />} label={t('shipmentInfo.creado_por')} value={formatCreatorName()} />
                         <DetailItem icon={<FaShippingFast />} label={t('shipmentInfo.tipo_envio')} value={capitalizeFirst(shipment.tipo_envio)} />
-                        <DetailItem icon={<FaExclamationCircle />} label={t('shipmentInfo.manejo_esp')} value={capitalizeFirst(shipment.restriccion)} />
-                        <DetailItem icon={<FaCheckCircle />} label={t('shipmentInfo.prioridad_asignada')} value={capitalizeFirst(shipment.prioridad)} />
+                        <DetailItem icon={<FaExclamationCircle />} label={t('shipmentInfo.manejo_esp')} value={t(`shipmentInfo.restricciones.${shipment.restriccion}`)} />
+                        <DetailItem icon={<FaCheckCircle />} label={t('shipmentInfo.prioridad_asignada')} value={t(`shipmentInfo.prioridades.${shipment.prioridad}`)} />
                         <DetailItem icon={<FaClock />} label={t('shipmentInfo.lim_entrega')} value={deadlineDateFormated}/>
                         <div className="md:col-span-2">
                             <DetailItem icon={<FaFileAlt />} label={t('shipmentInfo.desc')} value={shipment.descripcion} />

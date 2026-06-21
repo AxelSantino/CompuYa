@@ -28,9 +28,16 @@ export const en = {
             faEdit: "Edit",
             tipo_envio: "Type of Shipment",
             manejo_esp: "Especial Treatment",
-            ninguna: "None",
-            fragil: "Fragile",
-            valioso: "Valuable",
+            restricciones: {
+                ninguna: "None",
+                fragil: "Fragile",
+                valioso: "Valuable",
+            },
+            prioridades: {
+                alta: "High",
+                media: "Medium",
+                baja: "Low"
+            },
             desc: "Description",
             no_disp: "Not available",
             id_interno: "Intern ID: ",
@@ -399,7 +406,7 @@ export const en = {
                 },
             auditoria: {
                 titulo: "State Audit",
-                operador: "Operator: ",
+                operador: "Operator: "
             }
 
     }

@@ -28,9 +28,16 @@ export const es = {
                 faEdit: "Editar",
                 tipo_envio: "Tipo de Envío",
                 manejo_esp: "Manejo Especial",
-                ninguna: "Ninguna",
-                fragil: "Frágil",
-                valioso: "Valioso",
+                restricciones: {
+                    ninguna: "Ninguna",
+                    fragil: "Frágil",
+                    valioso: "Valioso"
+                },
+                prioridades: {
+                    alta: "Alta",
+                    media: "Media",
+                    baja: "Baja"
+                },
                 desc: "Descripción",
                 no_disp: "No disponible",
                 id_interno: "ID Interno: ",
@@ -396,7 +403,7 @@ export const es = {
                 },
             auditoria: {
                 titulo: "Auditoría de Estados",
-                operador: "Operador: ",
+                operador: "Operador: "
             }
         }
     };
