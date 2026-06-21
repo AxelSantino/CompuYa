@@ -396,7 +396,11 @@ export const en = {
                 procesando: "Processing...",
                 especifique_motivo: "Specify the reason",
                 caracteres: "/255 chars."
-                }
+                },
+            auditoria: {
+                titulo: "State Audit",
+                operador: "Operator: ",
+            }
 
     }
 };

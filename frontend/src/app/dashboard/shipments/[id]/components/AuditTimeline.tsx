@@ -1,5 +1,6 @@
 import { HistorialEnvio, EnvioStatus } from '@/types/envio';
 import { FaWarehouse, FaShippingFast, FaCheckCircle, FaTimesCircle, FaBox } from 'react-icons/fa';
+import { useTranslation } from 'react-i18next';
 
 const statusConfig: Record<EnvioStatus, { icon: React.ReactNode; colors: string }> = {
     'en sucursal': { icon: <FaWarehouse />, colors: 'bg-blue-100 text-blue-800 border-blue-200' },
@@ -17,10 +18,10 @@ export const formatOperatorName = (empleado: HistorialEnvio['empleado']) => {
     };
 
 export const AuditTimeline = ({ history }: { history: HistorialEnvio[] }) => {
-
+    const {t} = useTranslation();
     return (
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-            <h2 className="px-6 py-4 bg-gray-50 border-b border-gray-100 font-semibold text-gray-700">Auditoría de Estados</h2>
+            <h2 className="px-6 py-4 bg-gray-50 border-b border-gray-100 font-semibold text-gray-700">{t('auditoria.titulo')}</h2>
             <div className="p-6">
                 <div className="relative border-l-2 border-gray-200 ml-4 space-y-8">
                     {history.map((item, index) => {
@@ -31,9 +32,9 @@ export const AuditTimeline = ({ history }: { history: HistorialEnvio[] }) => {
                                     {config.icon}
                                 </span>
                                 <div>
-                                    <h3 className="font-bold capitalize text-gray-800">{item.estado}</h3>
+                                    <h3 className="font-bold capitalize text-gray-800">{t(`shipmentTable.status.${item.estado}`)}</h3>
                                     <p className="text-xs text-gray-500 mb-1">{new Date(item.fecha).toLocaleString()}</p>
-                                    <p className="text-xs text-gray-600">Operador: {formatOperatorName(item.empleado)}</p>
+                                    <p className="text-xs text-gray-600">{t('auditoria.operador')} {formatOperatorName(item.empleado)}</p>
                                 </div>
                             </div>
                         );

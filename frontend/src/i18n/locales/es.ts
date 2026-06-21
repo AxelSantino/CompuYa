@@ -393,6 +393,10 @@ export const es = {
                 procesando: "Procesando...",
                 especifique_motivo: "Especifique el motivo",
                 caracteres: "/255 caracteres"
-                }
+                },
+            auditoria: {
+                titulo: "Auditoría de Estados",
+                operador: "Operador: ",
             }
+        }
     };
