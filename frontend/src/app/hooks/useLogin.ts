@@ -1,15 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import axios from 'axios';
-
-import '@/i18n/i18n';
-import { useTranslation } from 'react-i18next';
+import { useErrorHandler } from '@/hooks/useErrorHandler';
 
 export function useLogin() {
   const router = useRouter();
   const { login, isAuthenticated, isLoginLoading, user } = useAuth();
-  
+
+  const { parseApiError } = useErrorHandler();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -44,14 +43,8 @@ export function useLogin() {
     try {
       await login(email, password);
     } catch (err: unknown) {
-      if (axios.isAxiosError(err)) {
-        const backendMessage = err.response?.data?.detail;
-        setError(backendMessage || 'Ocurrió un error de conexión con el servidor.');
-      } else if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError('Ocurrió un error inesperado. Por favor, intenta de nuevo.');
-      }
+      const translatedMessage = parseApiError(err);
+      setError(translatedMessage);
     }
   };
 

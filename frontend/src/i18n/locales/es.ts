@@ -22,6 +22,13 @@ export const es = {
                 olvidaste_tu_contraseña: "¿Olvidaste tu contraseña?",
                 necesitas_acceso: "¿Necesitas acceso?",
                 contacta_tu_administrador: "Contactá a tu administrador para crear tu cuenta.",
+
+                errores: {
+                    cuenta_desactivada: "Tu cuenta se encuentra desactivada. Por favor, contactá a un administrador.",
+                    creedenciales_invalidas: "Email o contraseña incorrectos",
+                    conexion: "Ocurrió un error de conexión con el servidor.",
+                    inesperado: "Ocurrió un error inesperado. Por favor, intenta de nuevo.",
+                }
             },
             shipments: {
                 verificando_permisos: "Verificando permisos...",
@@ -376,11 +383,13 @@ export const es = {
                 procesando: "Procesando...",
                 confirmar_e_importar: "Confirmar e importar",
             },
-             campanita: {
+
+            campanita: {
                 hist_alertas: "Historial de Alertas",
                 marcar_todas_leidas: "Marcar todas como leídas",
                 no_hay_alertas: "No hay alertas para mostrar"
             },
+
             paginado: {
                 info: "Mostrando {{pageSize}} elementos por página · Página {{currentPage}} de {{totalPages}}",
                 elementos: "Elementos: ",
@@ -390,6 +399,11 @@ export const es = {
 
             sidebarPage: {
                 cerrar_sesion: "Cerrar sesión"
+            },
+
+            globalErrors: {
+                inesperado: "Ocurrió un error de conexión con el servidor.",
+                conexion: "Ocurrió un error inesperado. Por favor, intenta de nuevo."
             }
     }
 };

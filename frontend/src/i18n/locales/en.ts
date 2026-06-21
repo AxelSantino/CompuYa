@@ -22,6 +22,13 @@ export const en = {
             olvidaste_tu_contraseña: "Forgot your password?",
             necesitas_acceso: "Need access?",
             contacta_tu_administrador: "Contact your administrator to create your account.",
+
+            errores: {
+                cuenta_desactivada: "Your account is deactivated. Please contact an administrator.",
+                creedenciales_invalidas: "Incorrect email or password",
+                conexion: "A network error occurred with the server.",
+                inesperado: "An unexpected error occurred. Please try again.",
+            }
         },
         shipments: {
             verificando_permisos: "Checking permissions...",
@@ -378,12 +385,12 @@ export const en = {
                 confirmar_e_importar: "Confirm and import",
             },
 
-
             campanita: {
                 hist_alertas: "Alert History",
                 marcar_todas_leidas: "Mark all as read",
                 no_hay_alertas: "No alerts to show"
             },
+
             paginado: {
                 info: "Showing {{pageSize}} elements by page · Page {{currentPage}} of {{totalPages}}",
                 elementos: "Elements: ",
@@ -393,6 +400,11 @@ export const en = {
             
             sidebarPage: {
                 cerrar_sesion: "Log out"
+            },
+
+            globalErrors: {
+                inesperado: "A network error occurred with the server.",
+                conexion: "An unexpected error occurred. Please try again.",
             }
     }
 };
