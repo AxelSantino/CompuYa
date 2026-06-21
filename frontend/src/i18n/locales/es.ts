@@ -363,7 +363,7 @@ export const es = {
                 procesando: "Procesando...",
                 confirmar_e_importar: "Confirmar e importar",
             },
-             campanita: {
+            campanita: {
                 hist_alertas: "Historial de Alertas",
                 marcar_todas_leidas: "Marcar todas como leídas",
                 no_hay_alertas: "No hay alertas para mostrar"
@@ -377,6 +377,22 @@ export const es = {
 
             sidebarPage: {
                 cerrar_sesion: "Cerrar sesión"
+            },
+            cancelShipment: {
+                titulo: "Cancelar Envío",
+                descripcion: "Por favor, seleccione el motivo por el cual está cancelando este envío. Esta acción no se puede deshacer y quedará registrada en el historial.",
+                razones: {
+                    cliente_solicito: "El cliente solicitó la cancelación",
+                    direccion_invalida: "Dirección de entrega inválida",
+                    problemas_logisticos: "Problemas logísticos con el paquete",
+                    otro: "Otro/Ingresar motivo"
+                },
+                placeholder: "Describa brevemente la situación...",
+                btn_volver: "Volver",
+                btn_confirmar: "Confirmar Cancelación",
+                procesando: "Procesando...",
+                especifique_motivo: "Especifique el motivo",
+                caracteres: "/255 caracteres"
+                }
             }
-    }
-};
+    };

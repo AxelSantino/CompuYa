@@ -380,6 +380,23 @@ export const en = {
             
             sidebarPage: {
                 cerrar_sesion: "Log out"
-            }
+            },
+            cancelShipment: {
+                titulo: "Cancell Shipment",
+                descripcion: "Please select the reason why you are cancelling this shipment. This action cannot be undone and will be recorded in the history.",
+                razones: {
+                    cliente_solicito: "Client solicited cancellation",
+                    direccion_invalida: "Invalid delivery address",
+                    problemas_logisticos: "Logistical problems with the package",
+                    otro: "Other/Enter reason"
+                },
+                placeholder: "Briefly describe the situation...",
+                btn_volver: "Back",
+                btn_confirmar: "Confirm Cancellation",
+                procesando: "Processing...",
+                especifique_motivo: "Specify the reason",
+                caracteres: "/255 chars."
+                }
+
     }
 };

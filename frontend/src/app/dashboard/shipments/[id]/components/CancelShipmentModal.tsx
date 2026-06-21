@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/Button';
 import { FaTimes } from 'react-icons/fa';
+import { useTranslation } from 'react-i18next';
 
 interface CancelShipmentModalProps {
   isOpen: boolean;
@@ -9,11 +10,11 @@ interface CancelShipmentModalProps {
   isProcessing: boolean;
 }
 
-const PREDEFINED_REASONS = [
-  'El cliente solicitó la cancelación',
-  'Dirección de entrega inválida',
-  'Problemas logísticos con el paquete',
-  'Otro/Ingresar motivo'
+const REASON_KEYS = [
+  'cliente_solicito',
+  'direccion_invalida',
+  'problemas_logisticos',
+  'otro'
 ];
 
 export const CancelShipmentModal = ({ 
@@ -22,6 +23,7 @@ export const CancelShipmentModal = ({
   onConfirm, 
   isProcessing 
 }: CancelShipmentModalProps) => {
+  const { t } = useTranslation();
   const [selectedOption, setSelectedOption] = useState<string>('');
   const [customReason, setCustomReason] = useState<string>('');
 
@@ -38,7 +40,7 @@ export const CancelShipmentModal = ({
 
   const charCount = customReason.length;
     
-  const isCustomOption = selectedOption === 'Otro/Ingresar motivo';
+  const isCustomOption = selectedOption === 'otro';
 
   // Lógica de validación para habilitar/deshabilitar el botón de confirmar
     const isConfirmDisabled = 
@@ -48,7 +50,7 @@ export const CancelShipmentModal = ({
 
   const handleConfirm = () => {
     // Si eligió "Otro", mandamos el texto tipeado. Si no, mandamos la opción predefinida.
-    const finalReason = isCustomOption ? customReason.trim() : selectedOption;
+    const finalReason = isCustomOption ? customReason.trim() : t(`cancelShipment.razones.${selectedOption}`);
     onConfirm(finalReason);
   };
 
@@ -58,7 +60,7 @@ export const CancelShipmentModal = ({
         
         {/* Cabecera del Modal */}
         <div className="bg-red-50 px-6 py-4 border-b border-red-100 flex justify-between items-center">
-          <h3 className="text-lg font-bold text-red-700">Cancelar Envío</h3>
+          <h3 className="text-lg font-bold text-red-700">{t('cancelShipment.titulo')}</h3>
           <button 
             onClick={onClose} 
             disabled={isProcessing}
@@ -71,27 +73,27 @@ export const CancelShipmentModal = ({
         {/* Cuerpo del Modal */}
         <div className="p-6">
           <p className="text-sm text-gray-600 mb-4">
-            Por favor, seleccione el motivo por el cual está cancelando este envío. Esta acción no se puede deshacer y quedará registrada en el historial.
+            {t('cancelShipment.descripcion')}
           </p>
 
           <div className="space-y-3 mb-6">
-            {PREDEFINED_REASONS.map((reason) => (
+            {REASON_KEYS.map((key) => (
               <label 
-                key={reason} 
+                key={key} 
                 className={`flex items-center p-3 border rounded-lg cursor-pointer transition-colors ${
-                  selectedOption === reason ? 'border-red-500 bg-red-50' : 'border-gray-200 hover:bg-gray-50'
+                  selectedOption === key ? 'border-red-500 bg-red-50' : 'border-gray-200 hover:bg-gray-50'
                 }`}
               >
                 <input
                   type="radio"
                   name="cancelReason"
-                  value={reason}
-                  checked={selectedOption === reason}
+                  value={key}
+                  checked={selectedOption === key}
                   onChange={(e) => setSelectedOption(e.target.value)}
                   className="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300"
                   disabled={isProcessing}
                 />
-                <span className="ml-3 text-sm font-medium text-gray-700">{reason}</span>
+                <span className="ml-3 text-sm font-medium text-gray-700">{t(`cancelShipment.razones.${key}`)}</span>
               </label>
             ))}
           </div>
@@ -100,14 +102,14 @@ export const CancelShipmentModal = ({
           {isCustomOption && (
             <div className="mt-4 animate-in slide-in-from-top-2 duration-200">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Especifique el motivo <span className="text-red-500">*</span>
+                {t('cancelShipment.especifique_motivo')} <span className="text-red-500">*</span>
               </label>
               <textarea
                 value={customReason}
                 onChange={(e) => setCustomReason(e.target.value)}
                 rows={3}
                 disabled={isProcessing}
-                placeholder="Describa brevemente la situación..."
+                placeholder={t('cancelShipment.placeholder')}
                 className={`w-full rounded-md border p-3 text-sm text-gray-700 focus:outline-none focus:ring-2 transition-shadow resize-none ${
                   charCount > 255 
                     ? 'border-red-500 focus:ring-red-500' 
@@ -116,7 +118,7 @@ export const CancelShipmentModal = ({
               />
               <div className="flex justify-end mt-1">
                 <span className={`text-xs font-medium ${charCount > 255 ? 'text-red-500 animate-pulse' : 'text-gray-400'}`}>
-                  {charCount}/255 caracteres
+                  {charCount}{t('cancelShipment.caracteres')}
                 </span>
               </div>
             </div>
@@ -130,7 +132,7 @@ export const CancelShipmentModal = ({
             onClick={onClose} 
             disabled={isProcessing}
           >
-            Volver
+            {t('cancelShipment.btn_volver')}
           </Button>
           <Button 
             variant="primary" 
@@ -138,7 +140,7 @@ export const CancelShipmentModal = ({
             disabled={isConfirmDisabled}
             className="bg-red-600 hover:bg-red-700 shadow-md"
           >
-            {isProcessing ? 'Procesando...' : 'Confirmar Cancelación'}
+            {isProcessing ? t('cancelShipment.procesando') : t('cancelShipment.btn_confirmar')}
           </Button>
         </div>
       </div>
