@@ -5,6 +5,7 @@ import LoadingOverlay from '@/components/LoadingOverlay';
 import withAuth from '@/components/auth/withAuth';
 import './RoutesPage.css';
 import { ConfirmModal } from '@/components/ui/ConfirmModal';
+import { DeliveryModal } from '@/components/ui/DeliveryModal';
 
 import { useRouteManagement } from '../routes/hooks/useRouteManagment';
 import { RoutesHeader } from '../routes/components/RoutesHeader';
@@ -29,8 +30,11 @@ function RoutesPage() {
     handleManualAssign,
     handleAssignAll,
     handleDeliver,
+    handleConfirmDelivery,
     modalConfig,
-    closeModal
+    closeModal,
+    deliveryModalConfig,
+    closeDeliveryModal
   } = useRouteManagement();
 
   const {t} = useTranslation();
@@ -79,6 +83,15 @@ function RoutesPage() {
           message={modalConfig.message}
           onConfirm={modalConfig.onConfirm}
           onCancel={closeModal}
+        />
+
+        <DeliveryModal
+          isOpen={deliveryModalConfig.isOpen}
+          title={t('routesPage.confirmar_entrega', 'Confirmar entrega')}
+          message={t('routesPage.confirmar_entrega_mensaje', { id: deliveryModalConfig.trackingId })}
+          onConfirm={handleConfirmDelivery}
+          onCancel={closeDeliveryModal}
+          isProcessing={isProcessing}
         />
       </div>
     </DashboardLayout>
