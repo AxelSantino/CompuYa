@@ -8,7 +8,18 @@ export const es = {
                 password: "Contraseña",
                 iniciar_sesion: "Iniciar Sesión",
                 verificando: "Verificando...",
-                iniciando_sesion: "Iniciando sesión..."
+                iniciando_sesion: "Iniciando sesión...",
+
+                logistica_de_extremo_a_extremo: "Logística de extremo a extremo",
+                controla_cada_etapa_de_tus_envios: "Controlá cada etapa de tus envíos. Desde la sucursal hasta que llega a la puerta.",
+                en_transito: "En tránsito",
+                envios_gestionados: "+15.000 envíos gestionados",
+                entregas_exitosas: "99.8% entregas exitosas",
+
+                bienvenido: "Bienvenido",
+                olvidaste_tu_contraseña: "¿Olvidaste tu contraseña?",
+                necesitas_acceso: "¿Necesitas acceso?",
+                contacta_tu_administrador: "Contactá a tu administrador para crear tu cuenta.",
             },
             shipments: {
                 verificando_permisos: "Verificando permisos...",

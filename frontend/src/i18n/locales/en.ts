@@ -8,7 +8,18 @@ export const en = {
             password: "Password",
             iniciar_sesion: "Log in",
             verificando: "Verifying...",
-            iniciando_sesion: "Logging in..."
+            iniciando_sesion: "Logging in...",
+
+            logistica_de_extremo_a_extremo: "End-to-end logistics",
+            controla_cada_etapa_de_tus_envios: "Control every stage of your shipments. From the branch to the doorstep.",
+            en_transito: "In transit",
+            envios_gestionados: "+15,000 shipments managed",
+            entregas_exitosas: "99.8% successful deliveries",
+
+            bienvenido: "Welcome",
+            olvidaste_tu_contraseña: "Forgot your password?",
+            necesitas_acceso: "Need access?",
+            contacta_tu_administrador: "Contact your administrator to create your account.",
         },
         shipments: {
             verificando_permisos: "Checking permissions...",

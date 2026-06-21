@@ -33,7 +33,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
     <div className="flex flex-1 items-center justify-center p-6 lg:p-12 z-0">
       <div className="w-full max-w-[420px] bg-white p-8 md:p-12 rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.08)]">
         
-        <h2 className="text-[24px] font-bold text-gray-900 mb-1">Bienvenido</h2>
+        <h2 className="text-[24px] font-bold text-gray-900 mb-1">{t('login.bienvenido')}</h2>
         <p className="text-[14px] text-gray-700 font-medium mb-8">
           {t('login.subtitulo', 'Inicia sesión para continuar')}
         </p>
@@ -96,7 +96,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
 
           <div className="flex justify-end pt-1">
             <a href="#" className="text-[13px] text-[#EB6534] hover:text-[#d4562a] transition-colors font-semibold">
-              ¿Olvidaste tu contraseña?
+              {t('login.olvidaste_tu_contraseña')}
             </a>
           </div>
 
@@ -115,8 +115,8 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         </form>
 
         <p className="text-center text-[13px] text-gray-700 font-medium mt-10 leading-relaxed">
-          ¿Necesitás acceso?<br />
-          Contactá a tu administrador para crear tu cuenta.
+          {t('login.necesitas_acceso')}<br />
+          {t('login.contacta_tu_administrador')}
         </p>
       </div>
     </div>

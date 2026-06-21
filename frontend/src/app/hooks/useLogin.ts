@@ -3,6 +3,9 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import axios from 'axios';
 
+import '@/i18n/i18n';
+import { useTranslation } from 'react-i18next';
+
 export function useLogin() {
   const router = useRouter();
   const { login, isAuthenticated, isLoginLoading, user } = useAuth();

@@ -1,7 +1,13 @@
 
 import Image from 'next/image';
 
+import '@/i18n/i18n';
+import { useTranslation } from 'react-i18next';
+
 export const LoginBranding = () => {
+
+    const {t} = useTranslation();
+
   return (
     <div className="hidden lg:flex flex-col w-[60%] xl:w-[65%] relative overflow-hidden z-10 bg-gradient-to-br from-[#25272B] via-[#1E1F24] to-[#18191D]">
       
@@ -34,12 +40,12 @@ export const LoginBranding = () => {
                 CompuYa
               </span>
               <span className="block text-[#EB6534] text-[68px] xl:text-[92px] font-bold ml-6 xl:ml-14">
-                  lo mejor de Argentina 
+                  {t('login.logistica_de_extremo_a_extremo')}
               </span>
             </h1>
             
             <p className="text-gray-300 text-[20px] xl:text-[22px] max-w-[550px] mt-8 ml-2 leading-relaxed">
-              Controlá cada etapa de tus envíos. Desde la sucursal hasta que llega a la puerta.
+              {t('login.controla_cada_etapa_de_tus_envios')}
             </p>
 
             <div className="mt-20 ml-2 w-[320px] rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md p-5 shadow-2xl">
@@ -52,7 +58,7 @@ export const LoginBranding = () => {
                     CY-2026-CTJ4
                   </p>
                   <p className="text-[#EB6534] text-sm font-medium mt-0.5">
-                    En tránsito
+                    {t('login.en_transito')}
                   </p>
                 </div>
               </div>
@@ -61,11 +67,11 @@ export const LoginBranding = () => {
             <div className="mt-6 ml-4 flex items-center gap-6 text-[13px] text-gray-400 font-medium tracking-wide">
               <div className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-[#EB6534]/80"></div>
-                +15.000 envíos gestionados
+                {t('login.envios_gestionados')}
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-[#EB6534]/80"></div>
-                99.8% entregas exitosas
+                {t('login.entregas_exitosas')}
               </div>
             </div>
           </div>
