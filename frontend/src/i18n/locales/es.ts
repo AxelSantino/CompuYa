@@ -25,7 +25,7 @@ export const es = {
 
                 errores: {
                     cuenta_desactivada: "Tu cuenta se encuentra desactivada. Por favor, contactá a un administrador.",
-                    creedenciales_invalidas: "Email o contraseña incorrectos",
+                    credenciales_invalidas: "Email o contraseña incorrectos",
                     conexion: "Ocurrió un error de conexión con el servidor.",
                     inesperado: "Ocurrió un error inesperado. Por favor, intenta de nuevo.",
                 }

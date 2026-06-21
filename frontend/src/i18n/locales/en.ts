@@ -25,7 +25,7 @@ export const en = {
 
             errores: {
                 cuenta_desactivada: "Your account is deactivated. Please contact an administrator.",
-                creedenciales_invalidas: "Incorrect email or password",
+                credenciales_invalidas: "Incorrect email or password",
                 conexion: "A network error occurred with the server.",
                 inesperado: "An unexpected error occurred. Please try again.",
             }

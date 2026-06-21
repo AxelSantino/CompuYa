@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { useErrorHandler } from '@/hooks/useErrorHandler';
+import { useErrorKeyResolver } from '@/hooks/useErrorKeyResolver';
 
 export function useLogin() {
   const router = useRouter();
   const { login, isAuthenticated, isLoginLoading, user } = useAuth();
 
-  const { parseApiError } = useErrorHandler();
+  const { resolveErrorKey } = useErrorKeyResolver();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -43,8 +43,9 @@ export function useLogin() {
     try {
       await login(email, password);
     } catch (err: unknown) {
-      const translatedMessage = parseApiError(err);
-      setError(translatedMessage);
+      const errorKey = resolveErrorKey(err);
+      console.log(errorKey)
+      setError(errorKey);
     }
   };
 
