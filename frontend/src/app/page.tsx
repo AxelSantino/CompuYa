@@ -23,7 +23,7 @@ export default function LoginPage() {
 
   return (
     <main 
-      className={`relative flex min-h-screen w-full bg-[#F4F5F7] overflow-hidden transition-opacity duration-400 ease-in-out ${isExiting ? 'opacity-0' : 'opacity-100'}`}
+      className={`relative flex min-h-screen lg:h-screen w-full bg-[#F4F5F7] lg:overflow-hidden transition-opacity duration-400 ease-in-out ${isExiting ? 'opacity-0' : 'opacity-100'}`}
     >
       <div className="absolute top-6 right-6 z-50">
         <LanguageSwitcher />

@@ -19,7 +19,7 @@ export const LoginBranding = () => {
       <div className="absolute top-[-15%] right-[-10%] w-[75%] h-[130%] bg-white/[0.03] rounded-[50%]" />
       <div className="absolute bottom-[-300px] right-[-200px] w-[800px] h-[800px] rounded-full bg-white/[0.03]" />
 
-      <div className="relative z-20 flex flex-col h-full p-12 xl:p-20">
+      <div className="relative z-20 flex flex-col h-full p-8 xl:p-12">
         
         {/* Logo */}
         <div>
@@ -33,7 +33,7 @@ export const LoginBranding = () => {
         </div>
 
         {/* Textos y métricas */}
-        <div className="flex flex-col justify-center flex-grow mt-10 w-full">
+        <div className="flex flex-col flex-grow mt-8 w-full">
           <div className="w-full">
             <h1 className="leading-[0.95] tracking-[-3px]">
               <span className="text-white text-[68px] xl:text-[92px] font-bold">
@@ -44,11 +44,11 @@ export const LoginBranding = () => {
               </span>
             </h1>
             
-            <p className="text-gray-300 text-[20px] xl:text-[22px] max-w-[550px] mt-8 ml-2 leading-relaxed">
+            <p className="text-gray-300 text-[18px] xl:text-[20px] max-w-[550px] mt-4 ml-2 leading-relaxed">
               {t('login.controla_cada_etapa_de_tus_envios')}
             </p>
 
-            <div className="mt-20 ml-2 w-[320px] rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md p-5 shadow-2xl">
+            <div className="mt-8 ml-2 w-[320px] rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md p-4 shadow-2xl">
               <div className="flex gap-4 items-center">
                 <div className="h-12 w-12 rounded-full bg-[#EB6534] flex items-center justify-center text-white text-xl">
                   📦
@@ -77,14 +77,14 @@ export const LoginBranding = () => {
           </div>
 
           {/* Animación SVG */}
-          <div className="mt-12 xl:mt-16 w-full flex justify-end pr-8 xl:pr-16">
+          <div className="mt-auto pt-6 w-full flex justify-end pr-4 xl:pr-16">
             <style dangerouslySetInnerHTML={{__html: `
               @keyframes trail-grow { 0% { stroke-dashoffset: 100; } 80%, 100% { stroke-dashoffset: 0; } }
               @keyframes dot-trigger-transit { 0%, 49% { fill: #4A4B50; } 50%, 100% { fill: #EB6534; } }
               @keyframes dot-trigger-delivery { 0%, 97% { fill: #4A4B50; } 98%, 100% { fill: #EB6534; } }
             `}} />
             
-            <svg viewBox="0 0 380 140" className="w-full max-w-[680px] xl:max-w-[850px] overflow-visible">
+            <svg viewBox="0 0 380 140" className="w-full max-w-[500px] xl:max-w-[700px] 2xl:max-w-[850px] overflow-visible">
               <path d="M30 70 C120 20, 200 110, 345 60" fill="none" stroke="#4A4B50" strokeWidth="2.5" strokeLinecap="round" />
               <path d="M30 70 C120 20, 200 110, 345 60" fill="none" stroke="#EB6534" strokeWidth="3" strokeLinecap="round" pathLength="100" strokeDasharray="100" strokeDashoffset="100">
                 <animate attributeName="stroke-dashoffset" values="100;0" dur="8s" repeatCount="indefinite" calcMode="paced" />
