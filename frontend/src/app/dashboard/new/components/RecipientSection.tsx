@@ -30,7 +30,7 @@ export const RecipientSection = ({
             return <span className="text-blue-500 ml-2 text-xs animate-pulse">{t('newShipmentPage.buscando')}</span>;
         }
         if (recipientNotFound) {
-            return <span className="text-red-500 ml-2 text-xs">{t('newShipmentpage.dest_no_encontrado')}</span>;
+            return <span className="text-red-500 ml-2 text-xs">{t('newShipmentPage.dest_no_encontrado')}</span>;
         }
         if (formData.razon_social_destinatario && formData.cuit_destinatario) {
             return <span className="text-green-500 ml-2 text-xs">{t('newShipmentPage.dest_encontrado')}</span>;
