@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { FaEye, FaEyeSlash, FaEnvelope, FaLock } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
+import LoadingTruck from '@/components/LoadingTruck';
 
 interface LoginFormProps {
   email: string;
@@ -31,8 +32,17 @@ export const LoginForm: React.FC<LoginFormProps> = ({
 
   return (
     <div className="flex flex-1 items-center justify-center p-6 lg:p-12 z-0">
-      <div className="w-full max-w-[420px] bg-white p-8 md:p-12 rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.08)]">
+      <div className="relative overflow-hidden w-full max-w-[420px] bg-white p-8 md:p-12 rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.08)]">
         
+        {isLoginLoading && (
+          <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm">
+            <LoadingTruck />
+            <p className="mt-4 text-xl font-medium text-gray-800">
+              {t('login.iniciando_sesion', 'Iniciando sesión...')}
+            </p>
+          </div>
+        )}
+
         <h2 className="text-[24px] font-bold text-gray-900 mb-1">{t('login.bienvenido')}</h2>
         <p className="text-[14px] text-gray-700 font-medium mb-8">
           {t('login.subtitulo', 'Inicia sesión para continuar')}

@@ -29,13 +29,6 @@ export default function LoginPage() {
         <LanguageSwitcher />
       </div>
 
-      {isLoginLoading && !isExiting && (
-        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm">
-          <LoadingTruck />
-          <p className="mt-4 text-lg font-medium text-gray-800">{t('login.iniciando_sesion')}</p>
-        </div>
-      )}
-
       {/* Componente visual de la izquierda */}
       <LoginBranding />
 
