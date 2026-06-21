@@ -11,6 +11,7 @@ import { useEmployeeProfile } from './hooks/useEmployeeProfile'
 import { getRoleBadgeClasses } from '../components/employeeColumns';
 import { ConfirmActionModal } from '@/app/dashboard/users/components/ConfirmActionModal';
 import withAuth from '@/components/auth/withAuth';
+import { useTranslation } from 'react-i18next';
 
 const DetailItem = ({ icon, label, value }: { icon: React.ReactNode, label: string, value: React.ReactNode }) => (
   <div className="flex flex-col p-4 bg-gray-50 rounded-lg border border-gray-100">
@@ -23,7 +24,7 @@ const DetailItem = ({ icon, label, value }: { icon: React.ReactNode, label: stri
 
 function EmployeeDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
-  
+  const {t} = useTranslation();
   const {
     router, employee, isLoading, error, isEditing, setIsEditing,
     isSaving, formData, handleChange, handleCancelEdit, handleSave, 
@@ -59,7 +60,7 @@ function EmployeeDetailPage({ params }: { params: Promise<{ id: string }> }) {
             onClick={() => router.push('/dashboard/employees')} 
             className="flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-blue-600 transition-colors"
           >
-            <FaArrowLeft /> Volver a la nómina
+            <FaArrowLeft /> {t('employeeDetail.volver')}
           </button>
         </div>
 
@@ -80,7 +81,7 @@ function EmployeeDetailPage({ params }: { params: Promise<{ id: string }> }) {
                         {employee.perfil_empleado?.nombre} {employee.perfil_empleado?.apellido}
                       </h1>
                       <span className={`text-sm font-medium ${isEmployeeActive ? 'text-green-600' : 'text-red-600'}`}>
-                        {isEmployeeActive ? 'Cuenta Activa' : 'Cuenta Inactiva'}
+                        {isEmployeeActive ? t('employeeDetail.cuenta_activa') : t('employeeDetail.cuenta_inactiva')}
                       </span>
                     </div>
                   </div>
@@ -93,10 +94,10 @@ function EmployeeDetailPage({ params }: { params: Promise<{ id: string }> }) {
                        className="flex items-center gap-2"
                       >
                         {isEmployeeActive ? <FaUserSlash /> : <FaUserCheck />}
-                        {isEmployeeActive ? 'Desactivar' : 'Activar'}
+                        {isEmployeeActive ? t('employeeDetail.btn_desactivar') : t('employeeDetail.btn_activar')}
                       </Button>              
                      <Button variant="secondary" onClick={() => setIsEditing(true)}>
-                      Editar Perfil
+                      {t('employeeDetail.btn_editar')}
                     </Button>
                     </div>
                   )}
@@ -106,44 +107,44 @@ function EmployeeDetailPage({ params }: { params: Promise<{ id: string }> }) {
                   <form onSubmit={handleSave} className="space-y-6 animate-in fade-in duration-300">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-50 p-6 rounded-xl border border-gray-100">
                       <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-1">Nombre</label>
+                        <label className="block text-sm font-bold text-gray-700 mb-1">{t('employeeDetail.form.nombre')}</label>
                         <Input name="nombre" required value={formData.nombre} onChange={handleChange} disabled={isSaving} />
                       </div>
                       <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-1">Apellido</label>
+                        <label className="block text-sm font-bold text-gray-700 mb-1">{t('employeeDetail.form.apellido')}</label>
                         <Input name="apellido" required value={formData.apellido} onChange={handleChange} disabled={isSaving} />
                       </div>
                       <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-1">Correo Electrónico</label>
+                        <label className="block text-sm font-bold text-gray-700 mb-1">{t('employeeDetail.form.email')}</label>
                         <Input name="email" type="email" value={employee.email} disabled={true} className="bg-gray-100 text-gray-500 cursor-not-allowed opacity-70" />
-                        <p className="text-xs text-gray-400 mt-1">Por seguridad, el correo no se puede modificar.</p>
+                        <p className="text-xs text-gray-400 mt-1">{t('employeeDetail.form.email_bloqueado')}</p>
                       </div>
                       <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-1">Rol en el Sistema</label>
+                        <label className="block text-sm font-bold text-gray-700 mb-1">{t('employeeDetail.form.rol')}</label>
                         <Select name="rol" value={formData.rol} onChange={handleChange} disabled={isSaving}>
-                          <option value="operador">Operador</option>
-                          <option value="repartidor">Repartidor</option>
-                          <option value="supervisor">Supervisor</option>
-                          <option value="admin">Administrador</option>
+                          <option value="operador">{t('employeesPage.roles.operador')}</option>
+                          <option value="repartidor">{t('employeesPage.roles.repartidor')}</option>
+                          <option value="supervisor">{t('employeesPage.roles.supervisor')}</option>
+                          <option value="admin">{t('employeesPage.roles.admin')}</option>
                         </Select>
                       </div>
                     </div>
                     
                     <div className="flex justify-end gap-3 pt-4">
-                      <Button variant="secondary" type="button" onClick={handleCancelEdit} disabled={isSaving}>Cancelar</Button>
+                      <Button variant="secondary" type="button" onClick={handleCancelEdit} disabled={isSaving}>{t('employeeDetail.form.btn_cancelar')}</Button>
                       <Button variant="primary" type="submit" disabled={isSaving}>
-                        {isSaving ? 'Guardando...' : 'Guardar Cambios'}
+                        {isSaving ? t('employeeDetail.form.guardando') : t('employeeDetail.form.btn_guardar')}
                       </Button>
                     </div>
                   </form>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in duration-300">
-                    <DetailItem icon={<FaUserTie />} label="Nombre Completo" value={`${employee.perfil_empleado?.nombre} ${employee.perfil_empleado?.apellido}`.trim()} />
-                    <DetailItem icon={<FaIdBadge />} label="Rol Asignado" 
+                    <DetailItem icon={<FaUserTie />} label={t('employeeDetail.details.nombre_completo')} value={`${employee.perfil_empleado?.nombre} ${employee.perfil_empleado?.apellido}`.trim()} />
+                    <DetailItem icon={<FaIdBadge />} label={t('employeeDetail.details.rol_asignado')} 
                     value={<span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full capitalize  ${getRoleBadgeClasses(employee.rol)}`}>
-                        {employee.rol}</span>} />
-                    <DetailItem icon={<FaEnvelope />} label="Correo de Acceso" value={employee.email} />
-                    <DetailItem icon={<FaCalendarAlt />} label="Fecha de Registro" value={new Date(employee.fecha || '').toLocaleDateString('es-AR')} />
+                        {t(`employeesPage.roles.${employee.rol.toLowerCase()}`)}</span>} />
+                    <DetailItem icon={<FaEnvelope />} label={t('employeeDetail.details.email')} value={employee.email} />
+                    <DetailItem icon={<FaCalendarAlt />} label={t('employeeDetail.details.fecha_registro')} value={new Date(employee.fecha || '').toLocaleDateString('es-AR')} />
                   </div>
                 )}
               </div>
@@ -156,14 +157,14 @@ function EmployeeDetailPage({ params }: { params: Promise<{ id: string }> }) {
           isLoading={isChangingStatus}
           variant={pendingStatus ? 'success' : 'danger'}
           icon={pendingStatus ? <FaUserCheck /> : <FaUserSlash />}
-          title={pendingStatus ? 'Activar Empleado' : 'Desactivar Empleado'}
+          title={pendingStatus ? t('employeeDetail.modal.activar_title') : t('employeeDetail.modal.desactivar_title')}
           message={
             pendingStatus
-              ? '¿Estás seguro de que deseas reactivar a este empleado? Recuperará inmediatamente el acceso al sistema con su rol actual.'
-              : '¿Estás seguro de que deseas desactivar a este empleado? Ya no podrá iniciar sesión en el sistema, pero todo su historial de operaciones se mantendrá intacto.'
+              ? t('employeeDetail.modal.activar_msg')
+              : t('employeeDetail.modal.desactivar_msg')
           }
-          confirmText={pendingStatus ? 'Sí, activar' : 'Sí, desactivar'}
-          cancelText="Cancelar"
+          confirmText={pendingStatus ? t('employeeDetail.modal.confirm_activar') : t('employeeDetail.modal.confirm_desactivar')}
+          cancelText={t('employeeDetail.modal.cancelar')}
           onClose={handleCloseStatusModal}
           onConfirm={handleConfirmStatusChange}
         />

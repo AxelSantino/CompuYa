@@ -223,18 +223,61 @@ export const en = {
                 nombre_completo: "Full Name",
                 rol: "Role",
                 fecha_alta: "Start Date",
+                estado: "State",
                 acciones: "Actions",
                 ver_detalle: "See details",
                 placeholder_buscar_por: "Search by name, lastname or email...",
                 todos_los_roles: "All the roles",
-                rol_admin: "Administrator",
-                rol_supervisor: "Supervisor",
-                rol_operador: "Operator",
-                rol_repartidor: "Delivery Driver",
                 titulo: "Employees Management",
                 subtitulo: "Personnel administration, role assignment, and access control.",
                 nuevo_empleado: "New Employee",
-                error_cargar_lista: "Error loading employees list. Try again later."
+                error_cargar_lista: "Error loading employees list. Try again later.",
+                todos_los_estados: "All the states",
+                solo_activos: "Only Actives",
+                solo_inactivos: "Only Inactives",
+                roles:{
+                    admin: "Administrator",
+                    supervisor: "Supervisor",
+                    operador: "Operator",
+                    repartidor: "Delivery Driver"
+                },
+                status: {
+                    activo: "Active",
+                    inactivo: "Inactive"
+                }
+        },
+        employeeDetail:{
+            volver: "Back to list",
+            cuenta_activa: "Active Account",
+            cuenta_inactiva: "Inactive Account",
+            btn_desactivar: "Deactivate",
+            btn_activar: "Activate",
+            btn_editar: "Edit Profile",
+                form: {
+                    nombre: "Name",
+                    apellido: "Lastname",
+                    email: "Email",
+                    email_bloqueado: "For security reasons, the email cannot be modified.",
+                    rol: "Role in the sistem",
+                    btn_cancelar: "Cancell",
+                    btn_guardar: "Save Changes",
+                    guardando: "Saving..."
+                },
+                details: {
+                    nombre_completo: "Full Name",
+                    rol_asignado: "Assigned Role",
+                    email: "Access email",
+                    fecha_registro: "Registration Date"
+                },
+                modal: {
+                    activar_title: "Activate Employee",
+                    desactivar_title: "Deactivate Employee",
+                    activar_msg: "Are you sure you want to reactivate this employee? They will immediately regain access to the system with their current role.",
+                    desactivar_msg: "Are you sure you want to deactivate this employee? They will no longer be able to log in to the system, but their entire transaction history will remain intact.",
+                    confirm_activar: "Yes, activate",
+                    confirm_desactivar: "Yes, deactivate",
+                    cancelar: "Cancell"
+                }
         },
         newEmployeesPage: {
                 no_tienes_permisos: "You do not have permission to register new employees.",

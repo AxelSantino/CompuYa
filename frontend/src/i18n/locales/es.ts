@@ -224,18 +224,61 @@ export const es = {
                 nombre_completo: "Nombre completo",
                 rol: "Rol",
                 fecha_alta: "Fecha Alta",
+                estado: "Estado",
                 acciones: "Acciones",
                 ver_detalle: "Ver detalle",
                 placeholder_buscar_por: "Buscar por nombre, apellido o email...",
                 todos_los_roles: "Todos los roles",
-                rol_admin: "Administrador",
-                rol_supervisor: "Supervisor",
-                rol_operador: "Operador",
-                rol_repartidor: "Repartidor",
                 titulo: "Gestión de Empleados",
                 subtitulo: "Administración de personal, asignación de roles y control de accesos.",
                 nuevo_empleado: "Nuevo Empleado",
-                error_cargar_lista: "Error al cargar la lista de empleados. Intente nuevamente."
+                error_cargar_lista: "Error al cargar la lista de empleados. Intente nuevamente.",
+                todos_los_estados: "Todos los estados",
+                solo_activos: "Solo Activos",
+                solo_inactivos: "Solo Inactivos",
+                roles:{
+                    admin: "Administrador",
+                    supervisor: "Supervisor",
+                    operador: "Operador",
+                    repartidor: "Repartidor"
+                },
+                status: {
+                    activo: "Activo",
+                    inactivo: "Inactivo"
+                }
+            },
+            employeeDetail:{
+                volver: "Volver a la nómina",
+                cuenta_activa: "Cuenta Activa",
+                cuenta_inactiva: "Cuenta Inactiva",
+                btn_desactivar: "Desactivar",
+                btn_activar: "Activar",
+                btn_editar: "Editar Perfil",
+                form: {
+                    nombre: "Nombre",
+                    apellido: "Apellido",
+                    email: "Correo Electrónico",
+                    email_bloqueado: "Por seguridad, el correo no se puede modificar.",
+                    rol: "Rol en el Sistema",
+                    btn_cancelar: "Cancelar",
+                    btn_guardar: "Guardar Cambios",
+                    guardando: "Guardando..."
+                },
+                details: {
+                    nombre_completo: "Nombre Completo",
+                    rol_asignado: "Rol Asignado",
+                    email: "Correo de Acceso",
+                    fecha_registro: "Fecha de Registro"
+                },
+                modal: {
+                    activar_title: "Activar Empleado",
+                    desactivar_title: "Desactivar Empleado",
+                    activar_msg: "¿Estás seguro de que deseas reactivar a este empleado? Recuperará inmediatamente el acceso al sistema con su rol actual.",
+                    desactivar_msg: "¿Estás seguro de que deseas desactivar a este empleado? Ya no podrá iniciar sesión en el sistema, pero todo su historial de operaciones se mantendrá intacto.",
+                    confirm_activar: "Sí, activar",
+                    confirm_desactivar: "Sí, desactivar",
+                    cancelar: "Cancelar"
+                }
             },
             newEmployeesPage: {
                 no_tienes_permisos: "No tienes permisos para dar de alta nuevos empleados.",
