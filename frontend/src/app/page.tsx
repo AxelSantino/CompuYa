@@ -102,15 +102,15 @@ export default function LoginPage() {
             <div className="w-full">
               <h1 className="leading-[0.95] tracking-[-3px]">
                 <span className="text-white text-[68px] xl:text-[92px] font-bold">
-                  Gestión logística
+                  CompuYa
                 </span>
                 <span className="block text-[#EB6534] text-[68px] xl:text-[92px] font-bold ml-6 xl:ml-14">
-                  en tiempo real.
+                    lo mejor de Argentina 
                 </span>
               </h1>
               
               <p className="text-gray-300 text-[20px] xl:text-[22px] max-w-[550px] mt-8 ml-2 leading-relaxed">
-                Controlá cada etapa de tus envíos. Desde la sucursal hasta que llega a la puerta, con precisión total.
+                Controlá cada etapa de tus envíos. Desde la sucursal hasta que llega a la puerta.
               </p>
 
               <div className="mt-20 ml-2 w-[320px] rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md p-5 shadow-2xl">
@@ -146,8 +146,8 @@ export default function LoginPage() {
                 @keyframes trail-grow { 0% { stroke-dashoffset: 100; } 80%, 100% { stroke-dashoffset: 0; } }
                 /* El nodo se prende en naranja al pasar el 50% del tiempo (segundo 4) */
                 @keyframes dot-trigger-transit { 0%, 49% { fill: #4A4B50; } 50%, 100% { fill: #EB6534; } }
-                /* El nodo final se prende al pasar el 80% del tiempo (segundo 6.4) */
-                @keyframes dot-trigger-delivery { 0%, 79% { fill: #4A4B50; } 80%, 100% { fill: #EB6534; } }
+                /* El nodo final se prende al pasar el 98% del tiempo, justo cuando llega el camión */
+                @keyframes dot-trigger-delivery { 0%, 97% { fill: #4A4B50; } 98%, 100% { fill: #EB6534; } }
               `}} />
               
               <svg viewBox="0 0 380 140" className="w-full max-w-[680px] xl:max-w-[850px] overflow-visible">
@@ -216,12 +216,11 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* ── PANEL DERECHO CLARO (El login pasa a tomar el resto del ancho y se centra) ── */}
       <div className="flex flex-1 items-center justify-center p-6 lg:p-12 z-0">
         
         <div className="w-full max-w-[420px] bg-white p-8 md:p-12 rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.08)]">
           
-          <h2 className="text-[24px] font-bold text-gray-900 mb-1">Bienvenido de vuelta</h2>
+          <h2 className="text-[24px] font-bold text-gray-900 mb-1">Bienvenido </h2>
           <p className="text-[14px] text-gray-700 font-medium mb-8">{t('login.subtitulo', 'Inicia sesión para continuar')}</p>
 
           <form className="space-y-6" onSubmit={handleLogin}>
