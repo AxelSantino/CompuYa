@@ -90,22 +90,85 @@ export const LoginBranding = () => {
             `}} />
             
             <svg viewBox="0 0 380 140" className="w-full max-w-[500px] xl:max-w-[700px] 2xl:max-w-[850px] overflow-visible">
-              <path d="M30 70 C120 20, 200 110, 345 60" fill="none" stroke="#4A4B50" strokeWidth="2.5" strokeLinecap="round" />
-              <path d="M30 70 C120 20, 200 110, 345 60" fill="none" stroke="#EB6534" strokeWidth="3" strokeLinecap="round" pathLength="100" strokeDasharray="100" strokeDashoffset="100">
-                <animate attributeName="stroke-dashoffset" values="100;0" dur="8s" repeatCount="indefinite" calcMode="paced" />
+              
+              {/* Filtro nativo SVG para el brillo, compatible con Safari/iOS */}
+              <defs>
+                <filter id="orange-glow" x="-50%" y="-50%" width="200%" height="200%">
+                  <feGaussianBlur stdDeviation="3" result="blur" />
+                  <feMerge>
+                    <feMergeNode in="blur" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
+              </defs>
+
+              {/* Estilos con keyframes sincronizados */}
+              <style dangerouslySetInnerHTML={{__html: `
+                @keyframes trail-grow { 0% { stroke-dashoffset: 100; } 80%, 100% { stroke-dashoffset: 0; } }
+                @keyframes dot-trigger-transit { 0%, 54% { fill: #4A4B50; } 55%, 100% { fill: #EB6534; } }
+                @keyframes dot-trigger-delivery { 0%, 97% { fill: #4A4B50; } 98%, 100% { fill: #EB6534; } }
+                @keyframes text-trigger-transit { 0%, 54% { fill: #88898E; } 55%, 100% { fill: #EB6534; } }
+                @keyframes text-trigger-delivery { 0%, 97% { fill: #88898E; } 98%, 100% { fill: #EB6534; } }
+              `}} />
+
+              {/* Línea de ruta base (gris) */}
+              <path 
+                d="M30 70 C120 20, 200 110, 345 60" 
+                fill="none" 
+                stroke="#4A4B50" 
+                strokeWidth="2.5" 
+                strokeLinecap="round" 
+              />
+              
+              {/* Línea de progreso animada (naranja) */}
+              <path 
+                d="M30 70 C120 20, 200 110, 345 60" 
+                fill="none" 
+                stroke="#EB6534" 
+                strokeWidth="3" 
+                strokeLinecap="round" 
+                pathLength="100" 
+                strokeDasharray="100" 
+                strokeDashoffset="100"
+              >
+                <animate 
+                  attributeName="stroke-dashoffset" 
+                  values="100;0" 
+                  dur="8s" 
+                  repeatCount="indefinite" 
+                  calcMode="paced" 
+                />
               </path>
         
+              {/* Nodos interactivos */}
               <circle cx="30" cy="70" r="6" fill="#EB6534" />
               <circle cx="194" cy="71" r="5" fill="#4A4B50" style={{ animation: 'dot-trigger-transit 8s linear infinite' }} />
               <circle cx="345" cy="60" r="5" fill="#4A4B50" style={{ animation: 'dot-trigger-delivery 8s linear infinite' }} />
               
-              <text x="30" y="105" textAnchor="middle" fontSize="15" fill="#EB6534" fontFamily="sans-serif" fontWeight="bold">{t('login.en_sucursal')}</text>
-              <text x="194" y="105" textAnchor="middle" fontSize="15" fill="#88898E" fontFamily="sans-serif">{t('login.en_transito')}</text>
-              <text x="345" y="95" textAnchor="middle" fontSize="15" fill="#88898E" fontFamily="sans-serif">{t('login.entregado')}</text>
+              {/* Textos sincronizados */}
+              <text x="30" y="105" textAnchor="middle" fontSize="15" fill="#EB6534" fontFamily="sans-serif" fontWeight="bold">
+                {t('login.en_sucursal')}
+              </text>
+              <text x="194" y="105" textAnchor="middle" fontSize="15" fill="#88898E" fontFamily="sans-serif" fontWeight="bold" style={{ animation: 'text-trigger-transit 8s linear infinite' }}>
+                {t('login.en_transito')}
+              </text>
+              <text x="345" y="95" textAnchor="middle" fontSize="15" fill="#88898E" fontFamily="sans-serif" fontWeight="bold" style={{ animation: 'text-trigger-delivery 8s linear infinite' }}>
+                {t('login.entregado')}
+              </text>
               
+              {/* Grupo del camión en movimiento */}
               <g>
-                <animateMotion dur="8s" repeatCount="indefinite" calcMode="paced" path="M30 70 C120 20, 200 110, 345 60" />
-                <circle cx="0" cy="0" r="20" fill="#EB6534" opacity="0.25" className="blur-[3px]" />
+                <animateMotion 
+                  dur="8s" 
+                  repeatCount="indefinite" 
+                  calcMode="paced" 
+                  path="M30 70 C120 20, 200 110, 345 60" 
+                />
+                
+                {/* Aura de luz con el filtro nativo aplicado */}
+                {/* <circle cx="0" cy="0" r="20" fill="#EB6534" opacity="0.25" filter="url(#orange-glow)" /> */}
+                
+                {/* Dibujo del camión */}
                 <g transform="translate(-32, -42) scale(0.85)">
                   <rect x="12" y="30" width="26" height="22" rx="2" fill="white"/>
                   <line x1="16" y1="41" x2="34" y2="41" stroke="#e0e0e0" strokeWidth="1"/>

@@ -104,11 +104,13 @@ export const LoginForm: React.FC<LoginFormProps> = ({
             </div>
           </div>
 
+          {/* }
           <div className="flex justify-end pt-1">
             <a href="#" className="text-[13px] text-[#EB6534] hover:text-[#d4562a] transition-colors font-semibold">
               {t('login.olvidaste_tu_contraseña')}
             </a>
           </div>
+          */}
 
           {error && <p className="text-sm text-red-500 font-medium">{t(error)}</p>}
 

@@ -3,7 +3,6 @@
 import '@/i18n/i18n';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from '@/i18n/LanguageSwitcher';
-import LoadingTruck from '@/components/LoadingTruck';
 
 import { useLogin } from './hooks/useLogin';
 import { LoginBranding } from './components/LoginBranding';
