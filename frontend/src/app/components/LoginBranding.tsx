@@ -3,6 +3,7 @@ import Image from 'next/image';
 
 import '@/i18n/i18n';
 import { useTranslation } from 'react-i18next';
+import { FaBox } from 'react-icons/fa'; 
 
 export const LoginBranding = () => {
 
@@ -55,7 +56,7 @@ export const LoginBranding = () => {
             <div className="mt-8 ml-2 w-[320px] rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md p-4 shadow-2xl">
               <div className="flex gap-4 items-center">
                 <div className="h-12 w-12 rounded-full bg-[#EB6534] flex items-center justify-center text-white text-xl">
-                  📦
+                  <FaBox className="text-lg" />
                 </div>
                 <div>
                   <p className="text-white font-semibold tracking-wide">
