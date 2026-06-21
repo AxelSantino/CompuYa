@@ -77,7 +77,7 @@ export const DriverRoutePanel: React.FC<DriverRoutePanelProps> = ({
                     <div className="flex items-center gap-2">
                       <p className="font-bold text-gray-800 text-sm">{e.tracking_id}</p>
                       <span className={`text-[10px] uppercase px-1.5 py-0.5 rounded border font-bold ${PRIORITY_TAG_CLASSES[e.prioridad] || 'bg-gray-100 text-gray-600'}`}>
-                        {e.prioridad}
+                        {t(`routesPage.prioridades.${e.prioridad}`)}
                       </span>
                     </div>
                     <p className="text-xs text-gray-500 flex items-center gap-1">

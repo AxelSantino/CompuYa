@@ -125,7 +125,6 @@ export const es = {
                 mi_hoja_de_ruta_optimizada: "Mi Hoja de Ruta Optimizada",
                 visualizando_recorrido_del_repartidor: "Visualizando recorrido del repartidor",
                 actualizando_logistica: "Actualizando logística...",
-
                 seleccionar_repartidor_primero: "Por favor, selecciona un repartidor primero (en Monitoreo por repartidor)",
                 envio_asignado_correctamente: "Envio asignado correctamente",
                 error_al_asignar_manualmente: "Error al asignar manualmente",
@@ -136,6 +135,12 @@ export const es = {
                 pregunta_asignacion_masiva: "¿Deseas asignar todos los envíos pendientes de forma automática?",
                 confirmar_entrega: "Confirmar entrega",
                 confirmar_entrega_mensaje: "¿Confirmas que el envío {{id}} ha sido entregado exitosamente?",
+                limpiar_filtro: "x Limpiar filtro / Ver pendientes",
+                prioridades: {
+                    alta: "Alta",
+                    media: "Media",
+                    baja: "Baja"
+                }
 
             },
             loadingOverlay: {

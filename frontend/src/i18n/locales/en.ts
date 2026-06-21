@@ -124,9 +124,8 @@ export const en = {
             selecciona_un_repartidor: "Select a delivery driver to monitor their route",
             entregas_apareceran_aqui: "Deliveries will appear here once assigned",
             mi_hoja_de_ruta_optimizada: "My optimized roadmap",
-            visualizando_recorrido_repartidor: "Viewing the delivery driver's route",
+            visualizando_recorrido_del_repartidor: "Viewing the delivery driver's route",
             actualizando_logistica: "Updating logistics...",
-
             seleccionar_repartidor_primero: "Please select a delivery driver (in Monitoring by delivery driver)",
             envio_asignado_correctamente: "Shipment assigned succesfully",
             error_al_asignar_manualmente: "Error while assigning manually",
@@ -137,6 +136,12 @@ export const en = {
             pregunta_asignacion_masiva: "Do you want to automatically assign all pending shipments?",
             confirmar_entrega: "Confirm delivery",
             confirmar_entrega_mensaje: "Do you confirm that shipment {{id}} has been successfully delivered?",
+            limpiar_filtro: "x Clean filter / See pendings",
+            prioridades: {
+                alta: "High",
+                media: "Medium",
+                baja: "Low"
+            }
         },
         loadingOverlay: {
             cargando: "Loading...",
