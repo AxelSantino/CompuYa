@@ -41,13 +41,13 @@ export const getClientColumns = (t: any): Column<Usuario>[] => [
     }
   },
   {
-      header: 'Estado',
+      header: t('employeesPage.estado'),
       accessor: (row) => {
         const isActive = row.activo ?? false; 
         
         return (
           <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadgeClasses(isActive)}`}>
-            {isActive ? 'Activo' : 'Inactivo'}
+            {isActive ? t('employeesPage.status.activo') : t('employeesPage.status.inactivo')}
           </span>
         );
       }

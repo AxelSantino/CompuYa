@@ -316,6 +316,47 @@ export const en = {
                 nuevo_cliente: "New Client",
                 
         },
+        clientDetail: {
+                volver: "Return to clients list",
+                cuenta_activa: "Inactive Account",
+                cuenta_inactiva: "Active Account",
+                btn_desactivar: "Deactivate",
+                btn_activar: "Activate",
+                btn_editar: "Edit Client",
+                datos_empresa: "Company Data",
+                form: {
+                    razon_social: "Company Name",
+                    email: "Email",
+                    email_bloqueado: "For security reasons, the email cannot be modified.",
+                    btn_cancelar: "Cancell",
+                    btn_guardar: "Save All Changes",
+                    guardando: "Saving..."
+                },
+                details: {
+                    razon_social: "Company Name",
+                    cuit: "CUIT Fiscal",
+                    email: "Email",
+                    fecha_alta: "Registration Date",
+                    cod_postal: "Zip code",
+                    direccion: "Address",
+                    no_registrado: "Not registered",
+                    no_asignado: "Not assigned",
+                    no_especificada: "Not especified"
+                },
+                mapa: {
+                    titulo: "Location on the map",
+                    no_coordenadas: "This company does not have registered geolocation coordinates."
+                },
+                modal: {
+                    activar_title: "Activate Client",
+                    desactivar_title: "Deactivate Client",
+                    activar_msg: "Are you sure you want to reactivate this client? They will regain access to the system immediately.",
+                    desactivar_msg: "Are you sure you want to deactivate this client? You will no longer be able to log in to the system.",
+                    confirm_activar: "Yes, activate",
+                    confirm_desactivar: "Yes, deactivate",
+                    cancelar: "Cancell"
+                }
+    },
         newClientPage: {
                 no_tienes_permisos: "You do not have permission to register new clients/recipients.",
                 registro_exitoso: "¡Successful Registration!",

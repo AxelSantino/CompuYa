@@ -316,6 +316,47 @@ export const es = {
                 subtitulo: "Administración, alta y seguimiento de clientes (destinatarios).",
                 nuevo_cliente: "Nuevo Cliente"
             },
+            clientDetail: {
+                volver: "Volver al listado de clientes",
+                cuenta_activa: "Cuenta Activa",
+                cuenta_inactiva: "Cuenta Inactiva",
+                btn_desactivar: "Desactivar",
+                btn_activar: "Activar",
+                btn_editar: "Editar Cliente",
+                datos_empresa: "Datos de la Empresa",
+                form: {
+                    razon_social: "Razón Social",
+                    email: "Correo Electrónico",
+                    email_bloqueado: "Por seguridad, el correo no se puede modificar.",
+                    btn_cancelar: "Cancelar",
+                    btn_guardar: "Guardar Todos los Cambios",
+                    guardando: "Guardando..."
+                },
+                details: {
+                    razon_social: "Razón Social",
+                    cuit: "CUIT Fiscal",
+                    email: "Correo electrónico",
+                    fecha_alta: "Fecha de Alta",
+                    cod_postal: "Código Postal",
+                    direccion: "Dirección",
+                    no_registrado: "No registrado",
+                    no_asignado: "No asignado",
+                    no_especificada: "No especificada"
+                },
+                mapa: {
+                    titulo: "Ubicación en el mapa",
+                    no_coordenadas: "Esta empresa no cuenta con coordenadas de geolocalización registradas."
+                },
+                modal: {
+                    activar_title: "Activar Cliente",
+                    desactivar_title: "Desactivar Cliente",
+                    activar_msg: "¿Estás seguro de que deseas reactivar a este cliente? Recuperará inmediatamente el acceso al sistema.",
+                    desactivar_msg: "¿Estás seguro de que deseas desactivar a este cliente? Ya no podrá iniciar sesión en el sistema.",
+                    confirm_activar: "Sí, activar",
+                    confirm_desactivar: "Sí, desactivar",
+                    cancelar: "Cancelar"
+                }
+    },
             newClientPage: {
                 no_tienes_permisos: "No tienes permisos para dar de alta nuevos clientes/destinatarios.",
                 registro_exitoso: "¡Registro Exitoso!",
