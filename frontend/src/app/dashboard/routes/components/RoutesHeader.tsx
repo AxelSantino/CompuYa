@@ -23,9 +23,9 @@ export const RoutesHeader: React.FC<RoutesHeaderProps> = ({
     <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
       <div>
         <h1 className="text-3xl font-extrabold text-gray-900 flex items-center gap-3">
-          <FaRoute className="text-blue-600" /> {t('routesPage.centro_de_control')}
+          <FaRoute aria-hidden="true" className="text-blue-600" /> {t('routesPage.centro_de_control')}
         </h1>
-        <p className="text-gray-500 mt-1">{t('routesPage.gestion_de_asignaciones')}</p>
+        <p className="text-gray-600 mt-1">{t('routesPage.gestion_de_asignaciones')}</p>
       </div>
       
       {showAssignButton && pendingCount > 0 && (
@@ -34,10 +34,11 @@ export const RoutesHeader: React.FC<RoutesHeaderProps> = ({
           variant="primary"
           onClick={onAssignAll}
           disabled={isProcessing}
+          aria-busy={isProcessing}
           className="px-6 py-3 rounded-xl font-bold gap-2 shadow-lg shadow-blue-200"
         >
-          <FaSync className={isProcessing ? "animate-spin" : ""} /> 
-          {t('routesPage.asignar_todo')} ({pendingCount})
+          <FaSync aria-hidden="true" className={isProcessing ? "animate-spin" : ""} /> 
+          {t('routesPage.asignar_todo', { count: pendingCount })}
         </Button>
       )}
     </header>

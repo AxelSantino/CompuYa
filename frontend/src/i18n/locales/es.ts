@@ -127,7 +127,7 @@ export const es = {
             routesPage: {
                 centro_de_control: "Centro de control logistico",
                 gestion_de_asignaciones: "Gestion de asignaciones masivas y monitoreo de rutas en tiempo real",
-                asignar_todo: "Asignar Todo",
+                asignar_todo: "Asignar Todo ({{count}})",
                 monitoreo_por_repartidor: "Monitoreo por repartidor",
                 envios_en_sucursal: "Envíos en Sucursal",
                 pendientes: "pendientes",

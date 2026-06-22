@@ -128,7 +128,7 @@ export const en = {
         routesPage: {
             centro_de_control: "Center of logistics control",
             gestion_de_asignaciones: "Mass assignment management and real-time route monitoring",
-            asignar_todo: "Assign all",
+            asignar_todo: "Assign all ({{count}})",
             monitoreo_por_repartidor: "Monitoring by delivery driver",
             envios_en_sucursal: "Shipments in Branch",
             pendientes: "pending",
