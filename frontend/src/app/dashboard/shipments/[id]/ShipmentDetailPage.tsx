@@ -18,8 +18,8 @@ import withAuth from '@/components/auth/withAuth';
 
 const DetailItem = React.memo(({ icon, label, value }: { icon?: React.ReactNode, label: string, value: React.ReactNode }) => (
   <div>
-    <h3 className="text-xs text-gray-500 flex items-center gap-2">
-      {icon && <span className="text-gray-400">{icon}</span>}
+    <h3 className="text-xs text-gray-600 flex items-center gap-2">
+      {icon && <span aria-hidden="true" className="text-gray-600">{icon}</span>} 
       {label}
     </h3>
     <p className="font-medium text-gray-800">{value}</p>
@@ -47,8 +47,8 @@ function ShipmentDetailPage() {
         <LoadingOverlay isLoading={isBusy} text={loadingText} />
         
         <div className="flex justify-between items-center mb-4">
-          <button onClick={() => router.back()} className="back-button">
-            <FaArrowLeft /> {t('shipments.volver_al_listado')}
+          <button onClick={() => router.back()} className="back-button cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 rounded">
+            <FaArrowLeft aria-hidden="true" /> {t('shipments.volver_al_listado')}
           </button>
           
           {user?.rol === 'supervisor' && shipment && shipment.estado !== 'cancelado' && shipment.estado !== 'entregado' && (
@@ -57,7 +57,7 @@ function ShipmentDetailPage() {
               className="cancel-button"
               disabled={isProcessing}
             >
-              <FaTimesCircle /> {t('shipments.cancelar_envio')}
+              <FaTimesCircle aria-hidden="true" /> {t('shipments.cancelar_envio')}
             </button>
           )}
         </div>
@@ -104,7 +104,7 @@ function ShipmentDetailPage() {
           </>
         )}
 
-        {error && !isLoading && <div className="text-center py-10 text-red-500 font-medium">{error}</div>}
+        {error && !isLoading && <div role="alert" className="text-center py-10 text-red-500 font-medium">{error}</div>}
 
         <CancelShipmentModal 
           isOpen={isCancelModalOpen}
