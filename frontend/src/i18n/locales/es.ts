@@ -100,7 +100,8 @@ export const es = {
                 en_sucursal: "En sucursal",
                 en_transito: "En transito",
                 entregado: "Entregado",
-                cancelado: "Cancelado"
+                cancelado: "Cancelado",
+                filtrar_por_estado: "Filtrar por estado",
             },
             shipmentTable: {
                 trackingID: "Tracking ID",

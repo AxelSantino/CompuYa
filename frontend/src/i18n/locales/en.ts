@@ -101,7 +101,8 @@ export const en = {
             en_sucursal: "In Branch",
             en_transito: "In Transit",
             entregado: "Delivered",
-            cancelado: "Cancelled"
+            cancelado: "Cancelled",
+            filtrar_por_estado: "Filter by state",
         },
         shipmentTable: {
             trackingID: "Tracking ID",

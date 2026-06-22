@@ -17,6 +17,7 @@ export const ShipmentFilters = ({ searchTerm, setSearchTerm, statusFilter, setSt
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4 text-gray-800">
             <div className="w-full md:w-1/3 text-gray-800">
                 <Input
+                    aria-label={t('shipmentFilters.buscar_por_trackingID')}
                     placeholder={t('shipmentFilters.buscar_por_trackingID')}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -25,6 +26,7 @@ export const ShipmentFilters = ({ searchTerm, setSearchTerm, statusFilter, setSt
             </div>
             <div className="w-full md:w-auto">
                 <Select 
+                    aria-label={t('shipmentFilters.filtrar_por_estado')}
                     value={statusFilter} 
                     onChange={(e) => setStatusFilter(e.target.value as EnvioStatus | '')}
                     className="w-full md:w-40"
