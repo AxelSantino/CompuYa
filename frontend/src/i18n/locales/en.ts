@@ -77,7 +77,11 @@ export const en = {
             no_especificado: "Not specificied",
             na: "N/A",
 
-            error_cargar_info: "Error while loading shipment info."
+            error_cargar_info: "Error while loading shipment info.",
+            cancelacion_exitosa: "The shipment has been successfully canceled.",
+            error_cancelar_envio: "An error occurred while canceling a shipment.",
+            actualizacion_exitosa: "Shipment updated successfully.",
+            error_actualizar_envio: "An error occurred while updating the shipment."
         },
 
         dashboard_layout: {
