@@ -501,6 +501,7 @@ export const en = {
             globalErrors: {
                 inesperado: "A network error occurred with the server.",
                 conexion: "An unexpected error occurred. Please try again.",
+            },
               
             cancelShipment: {
                 titulo: "Cancell Shipment",

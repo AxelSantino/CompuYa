@@ -500,6 +500,9 @@ export const es = {
             globalErrors: {
                 inesperado: "Ocurrió un error de conexión con el servidor.",
                 conexion: "Ocurrió un error inesperado. Por favor, intenta de nuevo."
+
+            },
+            
             cancelShipment: {
                 titulo: "Cancelar Envío",
                 descripcion: "Por favor, seleccione el motivo por el cual está cancelando este envío. Esta acción no se puede deshacer y quedará registrada en el historial.",
