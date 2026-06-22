@@ -529,6 +529,8 @@ export const en = {
                 validar_archivo: "Check file",
                 procesando: "Processing...",
                 confirmar_e_importar: "Confirm and import",
+
+                volver_a_envios: "Return to dashboard",
             },
 
             campanita: {

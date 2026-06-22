@@ -529,6 +529,8 @@ export const es = {
                 validar_archivo: "Validar archivo",
                 procesando: "Procesando...",
                 confirmar_e_importar: "Confirmar e importar",
+
+                volver_a_envios: "Volver a envíos",
             },
 
             campanita: {
