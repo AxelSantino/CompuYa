@@ -148,6 +148,7 @@ export const en = {
             actualizando_logistica: "Updating logistics...",
             seleccionar_repartidor_primero: "Please select a delivery driver (in Monitoring by delivery driver)",
             envio_asignado_correctamente: "Shipment assigned succesfully",
+            asignacion_masiva_exitosa: "Successfully assigned {{count}} shipments in bulk.",
             error_al_asignar_manualmente: "Error while assigning manually",
             error_en_la_asignacion_masiva: "Error in bulk assignment",
             envio_marcado_como_entregado_exitosamente: "Shipment succesfully marked as delivered.",
@@ -173,6 +174,10 @@ export const en = {
 
             errores: {
                 pin_invalido: "Invalid PIN. Check code with client.",
+                envio_cancelado: "The shipment cannot be delivered because its status is canceled",
+                envio_en_sucursal: "The shipment cannot be delivered because its status is at the branch",
+                no_hay_repartidores: "No drivers were found in the system.",
+                no_hay_envios_pendientes: "There are no pending shipments at the branch",
             }
         },
         loadingOverlay: {

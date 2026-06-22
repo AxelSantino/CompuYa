@@ -127,7 +127,8 @@ export function useRouteManagement() {
         setIsProcessing(true);
         try {
           const res = await shipmentService.assignAllShipments();
-          toast.success(res.message);
+
+          toast.success(t('routesPage.asignacion_masiva_exitosa', { count: res.asignados }));
           await fetchData();
         } catch (error) {
           toast.error(t('routesPage.error_en_la_asignacion_masiva'));
