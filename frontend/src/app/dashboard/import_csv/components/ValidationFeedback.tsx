@@ -20,8 +20,8 @@ export const ValidationFeedback = ({ generalError, validationErrors, isSuccess }
   
     if (isSuccess) {
     return (
-      <div className="bg-green-50 border border-green-200 rounded-lg p-4 flex items-start gap-3 mb-6">
-        <FaCheckCircle className="text-green-500 mt-0.5" size={20} />
+      <div role="alert" className="bg-green-50 border border-green-200 rounded-lg p-4 flex items-start gap-3 mb-6">
+        <FaCheckCircle aria-hidden="true" className="text-green-500 mt-0.5" size={20} />
         <div>
           <h4 className="text-green-800 font-bold">{t('importCsvPage.archivo_validado_correctamente')}</h4>
           <p className="text-green-700 text-sm">{t('importCsvPage.formato_correcto_datos_listos')}</p>
@@ -32,9 +32,9 @@ export const ValidationFeedback = ({ generalError, validationErrors, isSuccess }
 
   if (generalError || validationErrors.length > 0) {
     return (
-      <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+      <div role="alert" className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
         <div className="flex items-center gap-2 text-red-800 font-bold mb-3">
-          <FaExclamationTriangle />
+          <FaExclamationTriangle aria-hidden="true" />
           <h4>{t('importCsvPage.errores_en_el_archivo')}</h4>
         </div>
         
@@ -43,7 +43,13 @@ export const ValidationFeedback = ({ generalError, validationErrors, isSuccess }
         )}
 
         {validationErrors.length > 0 && (
-          <div className="max-h-60 overflow-y-auto">
+          <div 
+            // 2. a11y: Permite a los usuarios de teclado enfocar el div para hacer scroll
+            tabIndex={0}
+            // 3. a11y: Etiqueta para que el lector avise de qué trata este contenedor
+            aria-label={t('importCsvPage.lista_errores_validacion', 'Lista de errores de validación')}
+            className="max-h-60 overflow-y-auto focus:outline-none focus:ring-2 focus:ring-red-500 rounded"
+          >
             <table className="w-full text-sm text-left">
               <thead className="bg-red-100 text-red-800 sticky top-0">
                 <tr>
