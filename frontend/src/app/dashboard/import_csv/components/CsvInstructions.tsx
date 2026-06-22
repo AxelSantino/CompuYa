@@ -9,6 +9,9 @@ import { useTranslation, Trans } from 'react-i18next';
 */
 
 export const CsvInstructions = () => {
+
+  const {t} = useTranslation();
+
   const handleDownloadTemplate = () => {
     // Generamos el CSV vacío solo con las cabeceras requeridas por el backend
     const headers = "razon_social_destinatario,cuit_destinatario,descripcion,tipo_envio,restriccion\n";
@@ -21,12 +24,10 @@ export const CsvInstructions = () => {
     URL.revokeObjectURL(url);
   };
 
-  const {t} = useTranslation();
-
   return (
     <div className="bg-blue-50 border border-blue-100 rounded-lg p-5 mb-6">
       <div className="flex items-center gap-2 text-blue-800 font-bold mb-3">
-        <FaInfoCircle size={18} />
+        <FaInfoCircle aria-hidden="true" size={18} />
         <h3>{t('importCsvPage.instrucciones_de_importacion')}</h3>
       </div>
       
@@ -44,8 +45,18 @@ export const CsvInstructions = () => {
           <li><code className="bg-blue-100 px-1 py-0.5 rounded">descripcion</code></li>
         </ul>
         <ul className="list-disc list-inside space-y-1">
-          <li><code className="bg-blue-100 px-1 py-0.5 rounded">tipo_envio</code> ({t('importCsvPage.revisar_mayusculas')})</li>
-          <li><code className="bg-blue-100 px-1 py-0.5 rounded">restriccion</code> ({t('importCsvPage.revisar_mayusculas')})</li>
+          <li>
+            <code className="bg-blue-100 px-1 py-0.5 rounded">tipo_envio</code> 
+            <span className="text-blue-700">
+              ({t('importCsvPage.valores_tipo_envio', 'solo permite: "normal" o "express"')})
+            </span>
+          </li>
+          <li>
+            <code className="bg-blue-100 px-1 py-0.5 rounded">restriccion</code> 
+            <span className="text-blue-700">
+            ({t('importCsvPage.valores_restriccion', 'solo permite: "ninguna", "fragil" o "valioso"')})
+            </span>
+          </li>
         </ul>
       </div>
 
@@ -53,7 +64,7 @@ export const CsvInstructions = () => {
         onClick={handleDownloadTemplate}
         className="flex items-center gap-2 text-sm bg-white text-blue-700 hover:bg-blue-100 border border-blue-200 px-4 py-2 rounded-md transition-colors font-medium"
       >
-        <FaDownload />
+        <FaDownload aria-hidden="true" />
         {t('importCsvPage.descargar_plantilla_vacia')}
       </button>
     </div>

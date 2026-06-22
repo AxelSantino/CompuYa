@@ -502,6 +502,8 @@ export const en = {
                 instrucciones_formato: "File must be in <strong>.csv</strong> format (UTF-8 encoding) and contains the following 5 columns in the first row:",
                 revisar_mayusculas: "Check capital letters",
                 descargar_plantilla_vacia: "Download empty template",
+                valores_tipo_envio: 'Only admits: "normal" o "express',
+                valores_restriccion: 'Only admits: "ninguna, "fragil" o "valioso"',
 
                 click_para_subir_archivo: "Click and upload file",
                 o_arrastra_y_suelta_archivo: "or drop your .csv file here",

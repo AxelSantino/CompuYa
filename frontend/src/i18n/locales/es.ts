@@ -502,6 +502,8 @@ export const es = {
                 instrucciones_formato: "El archivo debe tener formato <strong>.csv</strong> (codificación UTF-8) y contener obligatoriamente las siguientes 5 columnas en la primera fila:",
                 revisar_mayusculas: "Revisar mayúsculas",
                 descargar_plantilla_vacia: "Descargar plantilla vacía",
+                valores_tipo_envio: 'Solo permite: "normal" o "express',
+                valores_restriccion: 'Solo permite: "ninguna, "fragil" o "valioso"',
 
                 click_para_subir_archivo: "Haz click para subir un archivo",
                 o_arrastra_y_suelta_archivo: "o arrastra y suelta tu archivo .csv aquí",
