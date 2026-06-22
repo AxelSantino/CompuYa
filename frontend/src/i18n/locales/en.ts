@@ -235,7 +235,11 @@ export const en = {
             valioso: "Valuable",
             requerimientos_especiales: "Special transport requirements",
             fecha_limite_entrega: "Delivery deadline",
-            plazo_maximo_entrega: "Maximum delivery time"
+            plazo_maximo_entrega: "Maximum delivery time",
+            tipos: {
+                normal: "Standard",
+                expres: "Express",
+            }
         },
         metricsPage: {
                 metricas_envios: "Shipments Metrics",

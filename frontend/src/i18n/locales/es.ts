@@ -222,7 +222,11 @@ export const es = {
                 dest_encontrado: "Destinatario encontrado",
                 datos_destinatario: "Datos del Destinatario",
                 razon_nombre_comp: "Razón Social / Nombre Completo",
-                cuit_destinatario: "CUIT/CUIL del Destinatario"
+                cuit_destinatario: "CUIT/CUIL del Destinatario",
+
+                envio_creado_exitosamente: "¡Envío creado exitosamente!",
+                envio_exito_mensaje: "El envío ha sido registrado en el sistema y se le asignó el siguiente tracking ID:",
+                volver_gestion: "Volver a la Gestión de Envíos"
             },
             componentDetailsSection: {
                 detalles_del_componente: "Detalles del Componente y Envío",
@@ -236,7 +240,11 @@ export const es = {
                 valioso: "Valioso",
                 requerimientos_especiales: "Requerimientos especiales para el transporte.",
                 fecha_limite_entrega: "Fecha limite de entrega",
-                plazo_maximo_entrega: "Plazo maximo de entrega"
+                plazo_maximo_entrega: "Plazo maximo de entrega",
+                tipos: {
+                    normal: "Normal",
+                    expres: "Express",
+                }
             },
             metricsPage: {
                 metricas_envios: "Métricas de Envíos",
