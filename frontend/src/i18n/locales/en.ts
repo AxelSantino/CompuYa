@@ -131,6 +131,7 @@ export const en = {
                     "normal": "Standard",
                     "express": "Express"
                 },
+            error_al_cargar_envios: "Error while loading shipments. Please, try again later.",
         },
         routesPage: {
             centro_de_control: "Center of logistics control",

@@ -130,6 +130,7 @@ export const es = {
                     "normal": "Normal",
                     "express": "Express"
                 },
+                error_al_cargar_envios: "Error al cargar los envíos. Por favor, intenta de nuevo más tarde.",
             },
             routesPage: {
                 centro_de_control: "Centro de control logistico",
