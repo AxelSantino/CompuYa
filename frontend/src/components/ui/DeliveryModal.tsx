@@ -5,6 +5,8 @@ import { FaKey } from 'react-icons/fa';
 import '@/i18n/i18n';
 import { useTranslation } from 'react-i18next';
 
+import { useFocusTrap } from '@/hooks/useFocusTrap';
+
 interface DeliveryModalProps {
   isOpen: boolean;
   title: string;
@@ -33,57 +35,23 @@ export const DeliveryModal: React.FC<DeliveryModalProps> = ({
 
   const {t} = useTranslation();
 
+  // CUSTOM HOOK PARA ATRAPAR EL TAB
+  useFocusTrap({ 
+    isOpen, 
+    onClose: onCancel, 
+    modalRef, 
+    isProcessing 
+  });
+
   confirmText = t('routesPage.delivery_modal.confirmar_entrega');
   cancelText = t('routesPage.delivery_modal.cancelar');
 
-  // Resetear el código cuando el modal se abre/cierra y manejar
-  // el efecto de que el tab no se escape del modal
-useEffect(() => {
+  // Solo conservamos el useEffect encargado de limpiar el input visualmente
+  useEffect(() => {
     if (isOpen) {
       setCode('');
-      
-      const handleKeyDown = (e: KeyboardEvent) => {
-        // Cerrar con Escape
-        if (e.key === 'Escape' && !isProcessing) {
-          onCancel();
-          return;
-        }
-
-        // Trampa de foco con Tabulador
-        if (e.key === 'Tab' && modalRef.current) {
-          const focusableElements = modalRef.current.querySelectorAll<HTMLElement>(
-            'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
-          );
-          
-          if (focusableElements.length > 0) {
-            const firstElement = focusableElements[0];
-            const lastElement = focusableElements[focusableElements.length - 1];
-
-            if (e.shiftKey) { // Shift + Tab (hacia atrás)
-              if (document.activeElement === firstElement) {
-                lastElement.focus();
-                e.preventDefault();
-              }
-            } else { // Solo Tab (hacia adelante)
-              if (document.activeElement === lastElement) {
-                firstElement.focus();
-                e.preventDefault();
-              }
-            }
-          }
-        }
-      };
-
-      document.addEventListener('keydown', handleKeyDown);
-      // Evitar que el fondo haga scroll (buena práctica UX/a11y)
-      document.body.style.overflow = 'hidden';
-
-      return () => {
-        document.removeEventListener('keydown', handleKeyDown);
-        document.body.style.overflow = 'unset';
-      };
     }
-  }, [isOpen, isProcessing, onCancel]);
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
