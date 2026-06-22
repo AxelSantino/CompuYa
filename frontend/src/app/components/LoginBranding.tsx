@@ -83,12 +83,6 @@ export const LoginBranding = () => {
 
           {/* Animación SVG */}
           <div className="mt-auto pt-6 w-full flex justify-end pr-4 xl:pr-16">
-            <style dangerouslySetInnerHTML={{__html: `
-              @keyframes trail-grow { 0% { stroke-dashoffset: 100; } 80%, 100% { stroke-dashoffset: 0; } }
-              @keyframes dot-trigger-transit { 0%, 49% { fill: #4A4B50; } 50%, 100% { fill: #EB6534; } }
-              @keyframes dot-trigger-delivery { 0%, 97% { fill: #4A4B50; } 98%, 100% { fill: #EB6534; } }
-            `}} />
-            
             <svg viewBox="0 0 380 140" className="w-full max-w-[500px] xl:max-w-[700px] 2xl:max-w-[850px] overflow-visible">
               
               {/* Filtro nativo SVG para el brillo, compatible con Safari/iOS */}
@@ -101,15 +95,6 @@ export const LoginBranding = () => {
                   </feMerge>
                 </filter>
               </defs>
-
-              {/* Estilos con keyframes sincronizados */}
-              <style dangerouslySetInnerHTML={{__html: `
-                @keyframes trail-grow { 0% { stroke-dashoffset: 100; } 80%, 100% { stroke-dashoffset: 0; } }
-                @keyframes dot-trigger-transit { 0%, 54% { fill: #4A4B50; } 55%, 100% { fill: #EB6534; } }
-                @keyframes dot-trigger-delivery { 0%, 97% { fill: #4A4B50; } 98%, 100% { fill: #EB6534; } }
-                @keyframes text-trigger-transit { 0%, 54% { fill: #88898E; } 55%, 100% { fill: #EB6534; } }
-                @keyframes text-trigger-delivery { 0%, 97% { fill: #88898E; } 98%, 100% { fill: #EB6534; } }
-              `}} />
 
               {/* Línea de ruta base (gris) */}
               <path 
@@ -139,21 +124,31 @@ export const LoginBranding = () => {
                   calcMode="paced" 
                 />
               </path>
-        
-              {/* Nodos interactivos */}
+
+              {/* Nodos interactivos con animación SMIL nativa */}
               <circle cx="30" cy="70" r="6" fill="#EB6534" />
-              <circle cx="194" cy="71" r="5" fill="#4A4B50" style={{ animation: 'dot-trigger-transit 8s linear infinite' }} />
-              <circle cx="345" cy="60" r="5" fill="#4A4B50" style={{ animation: 'dot-trigger-delivery 8s linear infinite' }} />
               
-              {/* Textos sincronizados */}
+              <circle cx="194" cy="71" r="5" fill="#4A4B50">
+                <animate attributeName="fill" values="#4A4B50;#4A4B50;#EB6534;#EB6534" keyTimes="0;0.54;0.55;1" dur="8s" repeatCount="indefinite" />
+              </circle>
+              
+              <circle cx="345" cy="60" r="5" fill="#4A4B50">
+                <animate attributeName="fill" values="#4A4B50;#4A4B50;#EB6534;#EB6534" keyTimes="0;0.97;0.98;1" dur="8s" repeatCount="indefinite" />
+              </circle>
+              
+              {/* Textos sincronizados con animación SMIL nativa */}
               <text x="30" y="105" textAnchor="middle" fontSize="15" fill="#EB6534" fontFamily="sans-serif" fontWeight="bold">
                 {t('login.en_sucursal')}
               </text>
-              <text x="194" y="105" textAnchor="middle" fontSize="15" fill="#88898E" fontFamily="sans-serif" fontWeight="bold" style={{ animation: 'text-trigger-transit 8s linear infinite' }}>
+              
+              <text x="194" y="105" textAnchor="middle" fontSize="15" fill="#88898E" fontFamily="sans-serif" fontWeight="bold">
                 {t('login.en_transito')}
+                <animate attributeName="fill" values="#88898E;#88898E;#EB6534;#EB6534" keyTimes="0;0.54;0.55;1" dur="8s" repeatCount="indefinite" />
               </text>
-              <text x="345" y="95" textAnchor="middle" fontSize="15" fill="#88898E" fontFamily="sans-serif" fontWeight="bold" style={{ animation: 'text-trigger-delivery 8s linear infinite' }}>
+              
+              <text x="345" y="95" textAnchor="middle" fontSize="15" fill="#88898E" fontFamily="sans-serif" fontWeight="bold">
                 {t('login.entregado')}
+                <animate attributeName="fill" values="#88898E;#88898E;#EB6534;#EB6534" keyTimes="0;0.97;0.98;1" dur="8s" repeatCount="indefinite" />
               </text>
               
               {/* Grupo del camión en movimiento */}
@@ -165,8 +160,9 @@ export const LoginBranding = () => {
                   path="M30 70 C120 20, 200 110, 345 60" 
                 />
                 
-                {/* Aura de luz con el filtro nativo aplicado */}
-                {/* <circle cx="0" cy="0" r="20" fill="#EB6534" opacity="0.25" filter="url(#orange-glow)" /> */}
+                {/* Aura de luz con el filtro nativo aplicado 
+                <circle cx="0" cy="0" r="20" fill="#EB6534" opacity="0.25" filter="url(#orange-glow)" />
+                */}
                 
                 {/* Dibujo del camión */}
                 <g transform="translate(-32, -42) scale(0.85)">

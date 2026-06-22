@@ -68,7 +68,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder={t('login.placeholder_email', 'tu@email.com')}
                 disabled={isLoginLoading}
-                className="pl-11 w-full h-12 bg-white border-gray-300 text-gray-900 placeholder-gray-400 focus:border-[#EB6534] focus:ring-1 focus:ring-[#EB6534] transition-colors rounded-xl text-[14px]"
+                className="pl-11 w-full h-12 bg-white border-gray-300 text-gray-900 placeholder-gray-400 focus:ring-1 focus:ring-[#EB6534] transition-colors rounded-xl text-[14px]"
               />
             </div>
           </div>
@@ -91,13 +91,14 @@ export const LoginForm: React.FC<LoginFormProps> = ({
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
                 disabled={isLoginLoading}
-                className="pl-11 pr-12 w-full h-12 bg-white border-gray-200 text-gray-900 placeholder-gray-400 focus:border-[#EB6534] focus:ring-1 focus:ring-[#EB6534] transition-colors rounded-xl text-[14px]"
+                className="pl-11 pr-12 w-full h-12 bg-white border-gray-200 text-gray-900 placeholder-gray-400 focus:ring-1 focus:ring-[#EB6534] transition-colors rounded-xl text-[14px]"
               />
               <button
                 type="button"
                 onClick={togglePasswordVisibility}
                 className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-500 hover:text-gray-700 transition-colors cursor-pointer"
                 disabled={isLoginLoading}
+                aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
               >
                 {showPassword ? <FaEyeSlash size={16} /> : <FaEye size={16} />}
               </button>
