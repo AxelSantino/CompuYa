@@ -22,7 +22,14 @@ export function useErrorTranslator() {
     }
     
     if (error instanceof Error) {
-      return error.message;
+      // Si se ejecuta esta rama es porque ocurrio un error nativo y no prveniente de la API
+      const errorMessage = error.message;
+
+      // Buscamos si el error esta en nuestras claves
+      if (errorMessage && GLOBAL_BACKEND_ERROR_MAP[errorMessage as keyof typeof GLOBAL_BACKEND_ERROR_MAP]) {
+          return GLOBAL_BACKEND_ERROR_MAP[errorMessage as keyof typeof GLOBAL_BACKEND_ERROR_MAP];
+      }
+      return errorMessage;
     }
     
     // Traducimos el error por defecto

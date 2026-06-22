@@ -127,7 +127,7 @@ export const es = {
             routesPage: {
                 centro_de_control: "Centro de control logistico",
                 gestion_de_asignaciones: "Gestion de asignaciones masivas y monitoreo de rutas en tiempo real",
-                asignar_todo: "Asignar Todo",
+                asignar_todo: "Asignar Todo ({{count}})",
                 monitoreo_por_repartidor: "Monitoreo por repartidor",
                 envios_en_sucursal: "Envíos en Sucursal",
                 pendientes: "pendientes",
@@ -148,6 +148,7 @@ export const es = {
                 seleccionar_repartidor_primero: "Por favor, selecciona un repartidor primero (en Monitoreo por repartidor)",
                 envio_asignado_correctamente: "Envio asignado correctamente",
                 error_al_asignar_manualmente: "Error al asignar manualmente",
+                asignacion_masiva_exitosa: "Se han asignado {{count}} envíos exitosamente de forma masiva.",
                 error_en_la_asignacion_masiva: "Error en la asignación masiva",
                 envio_marcado_como_entregado_exitosamente: "Envio marcado como entregado exitosamente.",
                 error_al_marcar_envio_entregado: "Error al marcar como entregado.",
@@ -156,10 +157,27 @@ export const es = {
                 confirmar_entrega: "Confirmar entrega",
                 confirmar_entrega_mensaje: "¿Confirmas que el envío {{id}} ha sido entregado exitosamente?",
                 limpiar_filtro: "x Limpiar filtro / Ver pendientes",
+                cargando_mapa_ruta: "Cargando mapa de ruta...",
                 prioridades: {
                     alta: "Alta",
                     media: "Media",
                     baja: "Baja"
+                },
+
+                delivery_modal: {
+                    pin_de_seguridad: "Pin de seguridad",
+                    confirmar_entrega: "Confirmar entrega",
+                    confirmar: "Confirmar",
+                    cancelar: "Cancelar",
+                    procesando: "Procesando..."
+                },
+
+                errores: {
+                    pin_invalido: "PIN inválido. Verifique el código con el cliente",
+                    envio_cancelado: "El envío no se puede entregar ya que su estado esta cancelado",
+                    envio_en_sucursal: "El envío no se puede entregar ya que su estado esta en sucursal",
+                    no_hay_repartidores: "No se encontraron repartidores en el sistema.",
+                    no_hay_envios_pendientes: "No hay envíos pendientes en sucursal",
                 }
 
             },
