@@ -1,7 +1,6 @@
 import React from 'react';
 import { FaUserTie, FaMagic, FaWarehouse } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
-import { Select } from '@/components/ui/Select';
 import { Button } from '@/components/ui/Button';
 import { Envio } from '@/types/envio';
 import { Repartidor } from '../hooks/useRouteManagment';
@@ -37,6 +36,7 @@ export const SupervisorPanel: React.FC<SupervisorPanelProps> = ({
         </div>
         <div className="p-5">
           <select 
+            aria-label={t('routesPage.seleccionar_repartidor_para_ver_ruta')}
             className="w-full bg-white text-gray-900 border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-medium outline-none transition-all cursor-pointer"
             value={selectedDriverId || ''}
             onChange={(e) => onSelectDriver(e.target.value ? Number(e.target.value) : null)}
@@ -53,7 +53,7 @@ export const SupervisorPanel: React.FC<SupervisorPanelProps> = ({
             <button 
               onClick={() => onSelectDriver(null)}
               // Ajustamos también el botón de limpiar para que combine sobre el fondo blanco
-              className="mt-3 text-sm text-blue-600 hover:text-blue-800 font-medium transition-colors cursor-pointer"
+              className="mt-3 text-sm text-blue-600 hover:text-blue-800 font-medium transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 rounded px-1"
             >
               {t('routesPage.limpiar_filtro')}
             </button>
@@ -86,18 +86,19 @@ export const SupervisorPanel: React.FC<SupervisorPanelProps> = ({
                       <div className="flex items-center gap-2">
                         <p className="font-bold text-gray-800">{s.tracking_id}</p>
                         <span className={`text-[10px] uppercase px-1.5 py-0.5 rounded border font-bold ${PRIORITY_TAG_CLASSES[s.prioridad] || 'bg-gray-100 text-gray-600'}`}>
-                          {s.prioridad}
+                          {t(`routesPage.prioridades.${s.prioridad.toLowerCase()}`, s.prioridad)}
                         </span>
                       </div>
-                      <p className="text-xs text-gray-500 truncate max-w-[150px]">{s.destinatario.perfil_empresa?.razon_social}</p>
+                      <p className="text-xs text-gray-600 truncate max-w-[150px]">{s.destinatario.perfil_empresa?.razon_social}</p>
                     </div>
                     {/* Reemplazo de .btn-assign */}
                     <Button 
                       variant="primary" 
                       onClick={() => onManualAssign(s.tracking_id)}
+                      aria-label={`${t('routesPage.faMagic_asignar')} ${s.tracking_id}`}
                       className="gap-1 text-xs py-1.5 px-3 group-hover:scale-105"
                     >
-                      <FaMagic /> {t('routesPage.faMagic_asignar')}
+                      <FaMagic aria-hidden="true"/> {t('routesPage.faMagic_asignar')}
                     </Button>
                   </div>
                 </li>
