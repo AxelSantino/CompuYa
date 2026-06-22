@@ -14,8 +14,6 @@ export const ROUTES_ERRORS: Record<string, string> = {
   "El envío no se puede entregar ya que su estado esta en sucursal": "routesPage.errores.envio_en_sucursal",
   "No se encontraron repartidores en el sistema.": "routesPage.errores.no_hay_repartidores",
   "No hay envíos pendientes en sucursal": "routesPage.errores.no_hay_envios_pendientes",
-  
-  
 }
 
 // Si mañana agregas envíos, sumarías algo como SHIPMENT_ERRORS aquí.

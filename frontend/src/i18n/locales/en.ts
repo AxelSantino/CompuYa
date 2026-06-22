@@ -75,7 +75,9 @@ export const en = {
             prioridad_asignada: "Priority Assigned",
             lim_entrega: "Date limit",
             no_especificado: "Not specificied",
-            na: "N/A"
+            na: "N/A",
+
+            error_cargar_info: "Error while loading shipment info."
         },
 
         dashboard_layout: {

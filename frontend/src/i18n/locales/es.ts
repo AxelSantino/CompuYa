@@ -137,6 +137,13 @@ export const es = {
                     "express": "Express"
                 },
                 error_al_cargar_envios: "Error al cargar los envíos. Por favor, intenta de nuevo más tarde.",
+                
+                error_cargar_info: "No se pudo cargar información del envío.",
+                cancelacion_exitosa: "El envío ha sido cancelado exitosamente.",
+                error_cancelar_envio: "Ocurrió un error al cancelar un envío.",
+                actualizacion_exitosa: "Envio actualizado correctamente.",
+                error_actualizar_envio: "Ocurrió un error al actualizar el envío."
+
             },
             routesPage: {
                 centro_de_control: "Centro de control logistico",

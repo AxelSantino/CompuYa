@@ -4,11 +4,18 @@ import { useAuth } from '@/contexts/AuthContext';
 import shipmentService from '@/services/shipmentService';
 import { Envio, HistorialEnvio } from '@/types/envio';
 import toast from 'react-hot-toast';
+import '@/i18n/i18n';
+import { useTranslation } from 'react-i18next';
+import { useErrorTranslator } from '@/hooks/useErrorTranslator';
 
 export const useShipmentDetail = () => {
     const router = useRouter();
     const params = useParams();
     const { user } = useAuth();
+
+    // Multilenguaje
+    const { t } = useTranslation();
+    const { translateError } = useErrorTranslator();
 
     // Normalizar ID
     const id = Array.isArray(params.id) ? params.id[0] : params.id;
@@ -52,12 +59,12 @@ export const useShipmentDetail = () => {
             if (historyData) {
                 setHistory(historyData);
             }
-        } catch {
-            setError('No se pudo cargar la información del envío.');
+        } catch (err: unknown) {
+            setError(translateError(err, 'shipmentDetail.error_cargar_info'));
         } finally {
             setIsLoading(false);
         }
-    }, [id, user]);
+    }, [id, user, translateError]);
 
     // Efecto inicial
     useEffect(() => {
@@ -88,19 +95,9 @@ export const useShipmentDetail = () => {
             await shipmentService.cancelShipment(shipment.tracking_id, motivo);
             await fetchData();
             setIsCancelModalOpen(false);
-            toast.success('El envío ha sido cancelado exitosamente');
+            toast.success(t('shipmentInfo.cancelacion_exitosa', 'El envío ha sido cancelado exitosamente'));
         } catch (err: unknown) {
-            const errorData = err as { response?: { data?: { detail?: string } } };
-            const detail = errorData.response?.data?.detail;
-
-            if (Array.isArray(detail)) {
-                const mensajeError = detail.map(d => `'${d.loc[d.loc.length - 1]}': ${d.msg}`).join(', ');
-                toast.error(`Error de validación: ${mensajeError}`);
-            } else if (typeof detail === 'string') {
-                toast.error(detail);
-            } else {
-                toast.error('Ocurrió un error al cancelar el envío.');
-            }
+            toast.error(translateError(err, 'shipmentInfo.error_cancelar_envio'));
         } finally {
             setIsProcessing(false);
         }
@@ -140,9 +137,9 @@ export const useShipmentDetail = () => {
             await shipmentService.updateShipment(shipment.tracking_id, formData);
             await fetchData();
             setIsEditing(false);
+            toast.success(t('shipmentInfo.actualizacion_exitosa', 'Envío actualizado correctamente'));
         } catch (err: unknown) {
-            const errorResponse = err as { response?: { data?: { detail?: string } } };
-            setError(errorResponse.response?.data?.detail || 'Error al actualizar el envío.');
+            setError(translateError(err, 'shipmentInfo.error_actualizar_envio'));
         } finally { 
             setIsSaving(false); 
         }
