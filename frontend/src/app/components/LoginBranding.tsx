@@ -83,7 +83,7 @@ export const LoginBranding = () => {
 
           {/* Animación SVG */}
           <div className="mt-auto pt-6 w-full flex justify-end pr-4 xl:pr-16">
-            <svg viewBox="0 0 380 140" className="w-full max-w-[500px] xl:max-w-[700px] 2xl:max-w-[850px] overflow-visible">
+            <svg aria-hidden="true" viewBox="0 0 380 140" className="w-full max-w-[500px] xl:max-w-[700px] 2xl:max-w-[850px] overflow-visible">
               
               {/* Filtro nativo SVG para el brillo, compatible con Safari/iOS */}
               <defs>

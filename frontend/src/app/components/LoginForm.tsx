@@ -113,7 +113,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           </div>
           */}
 
-          {error && <p className="text-sm text-red-500 font-medium">{t(error)}</p>}
+          {error && <p role="alert" className="text-sm text-red-600 font-medium">{t(error)}</p>}
 
           <Button 
             type="submit" 
