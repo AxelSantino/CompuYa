@@ -15,6 +15,7 @@ import { CancelShipmentModal } from './components/CancelShipmentModal';
 import '@/i18n/i18n';
 import { useTranslation } from 'react-i18next';
 import withAuth from '@/components/auth/withAuth';
+import { BackButton } from '@/components/ui/BackButton';
 
 const DetailItem = React.memo(({ icon, label, value }: { icon?: React.ReactNode, label: string, value: React.ReactNode }) => (
   <div>
@@ -47,9 +48,7 @@ function ShipmentDetailPage() {
         <LoadingOverlay isLoading={isBusy} text={loadingText} />
         
         <div className="flex justify-between items-center mb-4">
-          <button onClick={() => router.back()} className="back-button cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded">
-            <FaArrowLeft aria-hidden="true" /> {t('shipments.volver_al_listado')}
-          </button>
+          <BackButton label={t('shipments.volver_al_listado')} />
           
           {user?.rol === 'supervisor' && shipment && shipment.estado !== 'cancelado' && shipment.estado !== 'entregado' && (
             <button 

@@ -317,7 +317,7 @@ export const en = {
                     email: "Email",
                     email_bloqueado: "For security reasons, the email cannot be modified.",
                     rol: "Role in the sistem",
-                    btn_cancelar: "Cancell",
+                    btn_cancelar: "Cancel",
                     btn_guardar: "Save Changes",
                     guardando: "Saving..."
                 },
@@ -334,7 +334,7 @@ export const en = {
                     desactivar_msg: "Are you sure you want to deactivate this employee? They will no longer be able to log in to the system, but their entire transaction history will remain intact.",
                     confirm_activar: "Yes, activate",
                     confirm_desactivar: "Yes, deactivate",
-                    cancelar: "Cancell"
+                    cancelar: "Cancel"
                 }
         },
         newEmployeesPage: {
@@ -346,7 +346,7 @@ export const en = {
                 volver_nomina: "Return to payroll",
                 registrar_emp: "Register New Employee",
                 crea_nueva_cuenta: "Create a new login account and assign an operational role within the system.",
-                boton_cancelar: "Cancell",
+                boton_cancelar: "Cancel",
                 registrando: "Registering...",
                 registrar_empleado: "Register Employee",
                 campos_obligatorios: "The fields with (*) are obligatory",
@@ -386,7 +386,7 @@ export const en = {
                     razon_social: "Company Name",
                     email: "Email",
                     email_bloqueado: "For security reasons, the email cannot be modified.",
-                    btn_cancelar: "Cancell",
+                    btn_cancelar: "Cancel",
                     btn_guardar: "Save All Changes",
                     guardando: "Saving..."
                 },
@@ -412,7 +412,7 @@ export const en = {
                     desactivar_msg: "Are you sure you want to deactivate this client? You will no longer be able to log in to the system.",
                     confirm_activar: "Yes, activate",
                     confirm_desactivar: "Yes, deactivate",
-                    cancelar: "Cancell"
+                    cancelar: "Cancel"
                 }
     },
         newClientPage: {
@@ -424,7 +424,7 @@ export const en = {
                 volver_nomina: "Return to Customer List",
                 registrar_nuevo_cliente: "Register New Client",
                 nueva_cuenta_corporativa: "Create a new corporate account and set its tax location for logistics operations.",
-                boton_cancelar: "Cancell",
+                boton_cancelar: "Cancel",
                 registrando: "Registering...",
                 registrar_cliente: "Register Client",
                 campos_obligatorios: "The fields with (*) are obligatory",
@@ -464,7 +464,7 @@ export const en = {
                 podes_usar: "You can use",
                 el_sistema_las_reemplazara: "The system will automatically replace them with the actual shipment data.",
                 plant_activa: "Active Template (Send automatically when the event occurs)",
-                boton_cancelar: "Cancell",
+                boton_cancelar: "Cancel",
                 guardando: "Saving...",
                 guardar_plantilla: "Save Template",
                 temp_activa: "Active",
@@ -543,7 +543,7 @@ export const en = {
             },
               
             cancelShipment: {
-                titulo: "Cancell Shipment",
+                titulo: "Cancel Shipment",
                 descripcion: "Please select the reason why you are cancelling this shipment. This action cannot be undone and will be recorded in the history.",
                 razones: {
                     cliente_solicito: "Client solicited cancellation",
