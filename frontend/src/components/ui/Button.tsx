@@ -1,7 +1,7 @@
 import React from 'react';
 
 type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
-  variant?: 'primary' | 'secondary' | 'danger' | 'success';
+  variant?: 'primary' | 'secondary' | 'danger' | 'success' | 'brand';
 };
 
 const VARIANT_CLASSES = {
@@ -13,6 +13,8 @@ const VARIANT_CLASSES = {
     'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500 shadow-sm cursor-pointer',
   success: 
     'bg-green-600 text-white hover:bg-green-700 focus:ring-green-500 shadow-sm cursor-pointer',
+  brand:
+    'bg-[#EB6534] text-white hover:bg-[#d4562a] focus:ring-[#EB6534] shadow-sm cursor-pointer',
 };
 
 const Button = React.memo(React.forwardRef<HTMLButtonElement, ButtonProps>(

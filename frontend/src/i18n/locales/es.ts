@@ -8,7 +8,27 @@ export const es = {
                 password: "Contraseña",
                 iniciar_sesion: "Iniciar Sesión",
                 verificando: "Verificando...",
-                iniciando_sesion: "Iniciando sesión..."
+                iniciando_sesion: "Iniciando sesión...",
+
+                logistica_de_extremo_a_extremo: "Logística de extremo a extremo",
+                controla_cada_etapa_de_tus_envios: "Controlá cada etapa de tus envíos. Desde la sucursal hasta que llega a la puerta.",
+                en_transito: "En tránsito",
+                en_sucursal: "En sucursal",
+                entregado: "Entregado",
+                envios_gestionados: "+15.000 envíos gestionados",
+                entregas_exitosas: "99.8% entregas exitosas",
+
+                bienvenido: "Bienvenido",
+                olvidaste_tu_contraseña: "¿Olvidaste tu contraseña?",
+                necesitas_acceso: "¿Necesitas acceso?",
+                contacta_tu_administrador: "Contactá a tu administrador para crear tu cuenta.",
+
+                errores: {
+                    cuenta_desactivada: "Tu cuenta se encuentra desactivada. Por favor, contactá a un administrador.",
+                    credenciales_invalidas: "Email o contraseña incorrectos",
+                    conexion: "Ocurrió un error de conexión con el servidor.",
+                    inesperado: "Ocurrió un error inesperado. Por favor, intenta de nuevo.",
+                }
             },
             shipments: {
                 verificando_permisos: "Verificando permisos...",
@@ -459,11 +479,13 @@ export const es = {
                 procesando: "Procesando...",
                 confirmar_e_importar: "Confirmar e importar",
             },
+
             campanita: {
                 hist_alertas: "Historial de Alertas",
                 marcar_todas_leidas: "Marcar todas como leídas",
                 no_hay_alertas: "No hay alertas para mostrar"
             },
+
             paginado: {
                 info: "Mostrando {{pageSize}} elementos por página · Página {{currentPage}} de {{totalPages}}",
                 elementos: "Elementos: ",
@@ -474,6 +496,10 @@ export const es = {
             sidebarPage: {
                 cerrar_sesion: "Cerrar sesión"
             },
+
+            globalErrors: {
+                inesperado: "Ocurrió un error de conexión con el servidor.",
+                conexion: "Ocurrió un error inesperado. Por favor, intenta de nuevo."
             cancelShipment: {
                 titulo: "Cancelar Envío",
                 descripcion: "Por favor, seleccione el motivo por el cual está cancelando este envío. Esta acción no se puede deshacer y quedará registrada en el historial.",
