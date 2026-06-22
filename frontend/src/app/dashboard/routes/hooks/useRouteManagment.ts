@@ -9,6 +9,8 @@ import toast from 'react-hot-toast';
 import '@/i18n/i18n';
 import { useTranslation } from 'react-i18next';
 
+import { useErrorTranslator } from '@/hooks/useErrorTranslator';
+
 export interface Repartidor {
   id: number;
   email: string;
@@ -40,6 +42,7 @@ export function useRouteManagement() {
   const isSupervisor = user?.rol === 'supervisor';
 
   const {t} = useTranslation();
+  const { translateError } = useErrorTranslator();
 
   // Función auxiliar para cerrar el modal
   const closeModal = () => setModalConfig(prev => ({ ...prev, isOpen: false }));
@@ -152,9 +155,8 @@ export function useRouteManagement() {
       await shipmentService.markAsDelivered(trackingId, code);
       await fetchData();
       toast.success(t('routesPage.envio_marcado_como_entregado_exitosamente'));
-    } catch (error: any) {
-      const errorMessage = error.response?.data?.detail || t('routesPage.error_al_marcar_envio_entregado');
-      toast.error(errorMessage);
+    } catch (error: unknown) {
+      toast.error(translateError(error, 'routesPage.error_al_marcar_envio_entregado'));
     } finally {
       setIsProcessing(false);
     }

@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Button } from './Button';
 import { FaKey } from 'react-icons/fa';
 
+import '@/i18n/i18n';
+import { useTranslation } from 'react-i18next';
+
 interface DeliveryModalProps {
   isOpen: boolean;
   title: string;
@@ -17,13 +20,18 @@ export const DeliveryModal: React.FC<DeliveryModalProps> = ({
   isOpen,
   title,
   message,
-  confirmText = 'Confirmar Entrega',
-  cancelText = 'Cancelar',
+  confirmText,
+  cancelText,
   onConfirm,
   onCancel,
   isProcessing = false,
 }) => {
   const [code, setCode] = useState('');
+
+  const {t} = useTranslation();
+
+  confirmText = t('routesPage.delivery_modal.confirmar_entrega');
+  cancelText = t('routesPage.delivery_modal.cancelar');
 
   // Resetear el código cuando el modal se abre/cierra
   useEffect(() => {
@@ -57,8 +65,8 @@ export const DeliveryModal: React.FC<DeliveryModalProps> = ({
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
-              PIN de Seguridad
+            <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-2">
+              {t('routesPage.delivery_modal.pin_de_seguridad')}
             </label>
             <input
               type="text"
@@ -89,7 +97,7 @@ export const DeliveryModal: React.FC<DeliveryModalProps> = ({
               disabled={isProcessing || code.trim().length === 0}
               className="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-medium shadow-lg shadow-blue-500/20 active:scale-95 transition-all flex items-center gap-2"
             >
-              {isProcessing ? 'Procesando...' : confirmText}
+              {isProcessing ? t('routesPage.delivery_modal.procesando') : confirmText}
             </Button>
           </div>
         </form>

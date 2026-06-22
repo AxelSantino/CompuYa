@@ -161,6 +161,17 @@ export const en = {
                 alta: "High",
                 media: "Medium",
                 baja: "Low"
+            },
+
+            delivery_modal: {
+                pin_de_seguridad: "Security PIN",
+                confirmar_entrega: "Confirm delivery",
+                cancelar: "Cancel",
+                procesando: "Procesing..."
+            },
+
+            errores: {
+                pin_invalido: "Invalid PIN. Check code with client.",
             }
         },
         loadingOverlay: {

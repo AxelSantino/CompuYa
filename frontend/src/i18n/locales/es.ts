@@ -160,6 +160,17 @@ export const es = {
                     alta: "Alta",
                     media: "Media",
                     baja: "Baja"
+                },
+
+                delivery_modal: {
+                    pin_de_seguridad: "Pin de seguridad",
+                    confirmar_entrega: "Confirmar entrega",
+                    cancelar: "Cancelar",
+                    procesando: "Procesando..."
+                },
+
+                errores: {
+                    pin_invalido: "PIN inválido. Verifique el código con el cliente",
                 }
 
             },
