@@ -118,8 +118,8 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           <Button 
             type="submit" 
             disabled={isLoginLoading}
-            style={{ backgroundColor: '#EB6534' }}
-            className="w-full h-12 text-white font-semibold rounded-xl mt-4 flex items-center justify-center gap-2 transition-colors shadow-none text-[15px] hover:bg-[#d4562a] !bg-[#EB6534]"
+            variant="brand"
+            className="w-full h-12 rounded-xl mt-4 flex items-center justify-center gap-2 shadow-none text-[15px]"
           >
             {isLoginLoading ? t('login.verificando', 'Verificando...') : (
               <>{t('login.iniciar_sesion', 'Iniciar Sesión')}</>
