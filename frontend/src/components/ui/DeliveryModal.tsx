@@ -94,7 +94,7 @@ export const DeliveryModal: React.FC<DeliveryModalProps> = ({
             <input
               id="pin-input"
               type="text"
-              maxLength={6}
+              maxLength={4}
               value={code}
               onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))} // Solo permite números
               className="w-full text-center text-3xl font-bold tracking-[0.5em] pl-[0.5em] py-3.5 border-2 border-gray-200 rounded-xl focus:border-blue-600 focus:ring-2 focus:ring-blue-100 focus:outline-none transition-all uppercase placeholder-gray-400 bg-gray-50/50"
