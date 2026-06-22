@@ -65,7 +65,6 @@ export const DeliveryModal: React.FC<DeliveryModalProps> = ({
   return (
     // Backdrop con aria-hidden para que el lector no lo lea
     <div 
-    aria-hidden="true"
     className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
     >
       {/* Contenedor del Modal con roles ARIA y ref para mantener el tab */}
