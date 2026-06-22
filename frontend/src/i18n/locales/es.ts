@@ -226,7 +226,9 @@ export const es = {
 
                 envio_creado_exitosamente: "¡Envío creado exitosamente!",
                 envio_exito_mensaje: "El envío ha sido registrado en el sistema y se le asignó el siguiente tracking ID:",
-                volver_gestion: "Volver a la Gestión de Envíos"
+                volver_gestion: "Volver a la Gestión de Envíos",
+                placeholder_razon_social: "Ej. TechStore Argentina S.A. o Juan Pérez",
+                placeholder_cuit: "Ej. 30123456789 (CUIT) o 20123456789 (CUIL)"
             },
             componentDetailsSection: {
                 detalles_del_componente: "Detalles del Componente y Envío",
