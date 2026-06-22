@@ -535,7 +535,11 @@ export const es = {
                 btn_confirmar: "Confirmar Cancelación",
                 procesando: "Procesando...",
                 especifique_motivo: "Especifique el motivo",
-                caracteres: "/255 caracteres"
+                caracteres: "/255 caracteres",
+                no_se_pudo_cargar_info: "No se pudo cargar la información del envío.",
+                envio_cancelado: "El envío ha sido cancelado exitosamente",
+                ocurrio_error: "Ocurrió un erro al cancelar el envío.",
+                error_actualizar: "Error al actualizar el envío."
                 },
             auditoria: {
                 titulo: "Auditoría de Estados",

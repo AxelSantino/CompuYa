@@ -4,11 +4,13 @@ import { useAuth } from '@/contexts/AuthContext';
 import shipmentService from '@/services/shipmentService';
 import { Envio, HistorialEnvio } from '@/types/envio';
 import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 
 export const useShipmentDetail = () => {
     const router = useRouter();
     const params = useParams();
     const { user } = useAuth();
+    const {t} = useTranslation();
 
     // Normalizar ID
     const id = Array.isArray(params.id) ? params.id[0] : params.id;
@@ -53,7 +55,7 @@ export const useShipmentDetail = () => {
                 setHistory(historyData);
             }
         } catch {
-            setError('No se pudo cargar la información del envío.');
+            setError(t('cancelShipment.no_se_pudo_cargar_info'));
         } finally {
             setIsLoading(false);
         }
@@ -88,7 +90,7 @@ export const useShipmentDetail = () => {
             await shipmentService.cancelShipment(shipment.tracking_id, motivo);
             await fetchData();
             setIsCancelModalOpen(false);
-            toast.success('El envío ha sido cancelado exitosamente');
+            toast.success(t('cancelShipment.envio_cancelado'));
         } catch (err: unknown) {
             const errorData = err as { response?: { data?: { detail?: string } } };
             const detail = errorData.response?.data?.detail;
@@ -99,7 +101,7 @@ export const useShipmentDetail = () => {
             } else if (typeof detail === 'string') {
                 toast.error(detail);
             } else {
-                toast.error('Ocurrió un error al cancelar el envío.');
+                toast.error(t('cancelShipment.ocurrio_error'));
             }
         } finally {
             setIsProcessing(false);
@@ -142,7 +144,7 @@ export const useShipmentDetail = () => {
             setIsEditing(false);
         } catch (err: unknown) {
             const errorResponse = err as { response?: { data?: { detail?: string } } };
-            setError(errorResponse.response?.data?.detail || 'Error al actualizar el envío.');
+            setError(errorResponse.response?.data?.detail || t('cancelShipment.error_actualizar'));
         } finally { 
             setIsSaving(false); 
         }

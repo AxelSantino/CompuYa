@@ -535,7 +535,11 @@ export const en = {
                 btn_confirmar: "Confirm Cancellation",
                 procesando: "Processing...",
                 especifique_motivo: "Specify the reason",
-                caracteres: "/255 chars."
+                caracteres: "/255 chars.",
+                no_se_pudo_cargar_info: "The shipment information could not be loaded.",
+                envio_cancelado: "The shipment has been successfully cancelled",
+                ocurrio_error: "An error occurred while cancelling the shipment.",
+                error_actualizar: "Error updating the shipment."
                 },
               
             auditoria: {
