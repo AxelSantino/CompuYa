@@ -13,13 +13,15 @@ export const STATUS_CLASSES: Record<EnvioStatus, string> = {
 };
 
 export const PRIORITY_CLASSES: Record<EnvioPrioridad, string> = {
-    'alta': 'bg-orange-600 text-white',
+    //'alta': 'bg-orange-600 text-white',
+    'alta': 'bg-orange-100 text-orange-700',
     'media': 'bg-blue-100 text-blue-800',
     'baja': 'bg-green-100 text-green-800',
 };
 
 export const StatusBadge = React.memo(({ status }: { status: EnvioStatus }) => {
     const {t} = useTranslation();
+    
     return (
     <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full capitalize ${STATUS_CLASSES[status] || 'bg-gray-100 text-gray-800'}`}>
         {t(`shipmentTable.status.${status}`)}
@@ -42,7 +44,10 @@ export const ShipmentTable = ({ shipments }: { shipments: Envio[] }) => {
     const {t} = useTranslation();
     return (
         <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
+            <table 
+                aria-label={t('shipmentTable.titulo_tabla', 'Tabla de envíos')}
+                className="min-w-full divide-y divide-gray-200"
+            >
                 <thead className="bg-gray-50 border-b border-gray-200">
                     <tr>
                         <th className="px-6 py-3 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">{t('shipmentTable.trackingID')}</th>
@@ -58,7 +63,11 @@ export const ShipmentTable = ({ shipments }: { shipments: Envio[] }) => {
                     {shipments.map((shipment) => (
                         <tr key={shipment.tracking_id} className="hover:bg-gray-50 transition-colors">
                             <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-orange-700">
-                                <Link href={`/dashboard/shipments/${shipment.tracking_id}`} className="hover:underline">
+                                <Link 
+                                    href={`/dashboard/shipments/${shipment.tracking_id}`} 
+                                    className="hover:underline"
+                                    aria-label={`${t('shipmentTable.ver_detalles', 'Ver detalles del envío')} ${shipment.tracking_id}`}
+                                >
                                     {shipment.tracking_id}
                                 </Link>
                             </td>
@@ -73,7 +82,7 @@ export const ShipmentTable = ({ shipments }: { shipments: Envio[] }) => {
                                 <div className="text-xs text-gray-600 font-semibold">CUIT: {shipment.cuit_destinatario}</div>
                             </td>
                             <td className="px-6 py-4 text-sm text-gray-700 max-w-xs truncate">{shipment.descripcion}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 capitalize font-medium">{shipment.tipo_envio}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 capitalize font-medium">{t(`shipmentTable.tipo_envio.${shipment.tipo_envio.toLowerCase()}`, shipment.tipo_envio)}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm">
                                 <StatusBadge status={shipment.estado} />
                             </td>

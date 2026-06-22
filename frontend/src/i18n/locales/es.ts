@@ -105,6 +105,7 @@ export const es = {
             },
             shipmentTable: {
                 trackingID: "Tracking ID",
+                titulo_tabla: "Tabla de envíos",
                 prioridad: "Prioridad",
                 fecha_de_creacion: "Fecha de creacion",
                 destinatario: "Destinatario",
@@ -113,6 +114,7 @@ export const es = {
                 estado: "Estado",
                 no_se_encontraron_envios: "No se encontraron envios con el criterio.",
                 en_sucursal: "en sucursal",
+                ver_detalles: "Ver detalles del envío",
                 status: {
                     "en sucursal": "En sucursal",
                     "en transito": "En tránsito",
@@ -123,7 +125,11 @@ export const es = {
                     "alta": "Alta",
                     "media": "Media",
                     "baja": "Baja"
-                }
+                },
+                tipo_envio: {
+                    "normal": "Normal",
+                    "express": "Express"
+                },
             },
             routesPage: {
                 centro_de_control: "Centro de control logistico",
