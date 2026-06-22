@@ -516,7 +516,8 @@ export const en = {
                 info: "Showing {{pageSize}} elements by page · Page {{currentPage}} of {{totalPages}}",
                 elementos: "Elements: ",
                 anterior: "Prior",
-                siguiente: "Next"
+                siguiente: "Next",
+                navegacion_aria: "Page navigation",
             },
             
             sidebarPage: {

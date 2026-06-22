@@ -515,7 +515,8 @@ export const es = {
                 info: "Mostrando {{pageSize}} elementos por página · Página {{currentPage}} de {{totalPages}}",
                 elementos: "Elementos: ",
                 anterior: "Anterior",
-                siguiente: "Siguiente"
+                siguiente: "Siguiente",
+                navegacion_aria: "Navegación de páginas",
             },
 
             sidebarPage: {
