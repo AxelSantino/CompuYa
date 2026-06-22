@@ -166,6 +166,7 @@ export const en = {
             delivery_modal: {
                 pin_de_seguridad: "Security PIN",
                 confirmar_entrega: "Confirm delivery",
+                confirmar: "Confirm",
                 cancelar: "Cancel",
                 procesando: "Procesing..."
             },
