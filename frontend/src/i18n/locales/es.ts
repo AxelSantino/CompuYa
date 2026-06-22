@@ -75,6 +75,7 @@ export const es = {
                 prioridad_asignada: "Prioridad Asignada",
                 lim_entrega: "Límite de Entrega",
                 no_especificado: "No especificado",
+                na: "N/A",
 
             },
             dashboard_layout: {
