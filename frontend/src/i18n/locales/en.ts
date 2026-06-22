@@ -158,6 +158,7 @@ export const en = {
             confirmar_entrega: "Confirm delivery",
             confirmar_entrega_mensaje: "Do you confirm that shipment {{id}} has been successfully delivered?",
             limpiar_filtro: "x Clean filter / See pendings",
+            cargando_mapa_ruta: "Loading roadmap...",
             prioridades: {
                 alta: "High",
                 media: "Medium",

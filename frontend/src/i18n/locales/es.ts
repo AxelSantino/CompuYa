@@ -157,6 +157,7 @@ export const es = {
                 confirmar_entrega: "Confirmar entrega",
                 confirmar_entrega_mensaje: "¿Confirmas que el envío {{id}} ha sido entregado exitosamente?",
                 limpiar_filtro: "x Limpiar filtro / Ver pendientes",
+                cargando_mapa_ruta: "Cargando mapa de ruta...",
                 prioridades: {
                     alta: "Alta",
                     media: "Media",
