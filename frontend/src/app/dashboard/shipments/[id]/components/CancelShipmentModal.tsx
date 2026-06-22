@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/Button';
 import { FaTimes } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
+import { useFocusTrap } from '@/hooks/useFocusTrap';
 
 interface CancelShipmentModalProps {
   isOpen: boolean;
@@ -27,6 +28,8 @@ export const CancelShipmentModal = ({
   const [selectedOption, setSelectedOption] = useState<string>('');
   const [customReason, setCustomReason] = useState<string>('');
 
+  const modalRef = useRef<HTMLDivElement>(null);
+
   // Limpiamos los campos cada vez que el modal se abre para evitar datos "fantasma"
   useEffect(() => {
     if (isOpen) {
@@ -34,6 +37,13 @@ export const CancelShipmentModal = ({
       setCustomReason('');
     }
   }, [isOpen]);
+
+  // Trampa de foco para atrapar el Tab dentro del modal
+  useFocusTrap({
+    isOpen,
+    onClose,
+    modalRef
+  });
 
   // Si el modal está cerrado, no renderizamos nada (ahorra recursos)
   if (!isOpen) return null;
@@ -56,7 +66,14 @@ export const CancelShipmentModal = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden relative animate-in fade-in zoom-in duration-200">
+      {/* Contenedor principal con Roles ARIA de diálogo */}
+      <div 
+        ref={modalRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="cancel-modal-title"
+        aria-describedby="cancel-modal-description"
+        className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden relative animate-in fade-in zoom-in duration-200">
         
         {/* Cabecera del Modal */}
         <div className="bg-red-50 px-6 py-4 border-b border-red-100 flex justify-between items-center">
@@ -64,9 +81,10 @@ export const CancelShipmentModal = ({
           <button 
             onClick={onClose} 
             disabled={isProcessing}
-            className="text-red-400 hover:text-red-700 transition-colors"
+            aria-label={t('cancelShipment.cerrar_modal', 'Cerrar modal de cancelación')}
+            className="text-red-500 hover:text-red-800 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 rounded p-1"
           >
-            <FaTimes size={18} />
+            <FaTimes aria-hidden="true" size={18} />
           </button>
         </div>
 
@@ -76,7 +94,9 @@ export const CancelShipmentModal = ({
             {t('cancelShipment.descripcion')}
           </p>
 
-          <div className="space-y-3 mb-6">
+          <fieldset className="space-y-3 mb-6">
+            <legend className="sr-only">{t('cancelShipment.seleccione_motivo', 'Seleccione un motivo')}</legend>
+            
             {REASON_KEYS.map((key) => (
               <label 
                 key={key} 
@@ -96,15 +116,16 @@ export const CancelShipmentModal = ({
                 <span className="ml-3 text-sm font-medium text-gray-700">{t(`cancelShipment.razones.${key}`)}</span>
               </label>
             ))}
-          </div>
+          </fieldset>
 
         {/* Textarea Condicional para "Otro" */}
           {isCustomOption && (
             <div className="mt-4 animate-in slide-in-from-top-2 duration-200">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                {t('cancelShipment.especifique_motivo')} <span className="text-red-500">*</span>
+              <label htmlFor="customReason" className="block text-sm font-medium text-gray-700 mb-2">
+                {t('cancelShipment.especifique_motivo')} <span aria-hidden="true" className="text-red-500">*</span>
               </label>
               <textarea
+                id="customReason"
                 value={customReason}
                 onChange={(e) => setCustomReason(e.target.value)}
                 rows={3}
@@ -117,7 +138,9 @@ export const CancelShipmentModal = ({
                 }`}
               />
               <div className="flex justify-end mt-1">
-                <span className={`text-xs font-medium ${charCount > 255 ? 'text-red-500 animate-pulse' : 'text-gray-400'}`}>
+                <span
+                  aria-live="polite" 
+                  className={`text-xs font-medium ${charCount > 255 ? 'text-red-500 animate-pulse' : 'text-gray-500'}`}>
                   {charCount}{t('cancelShipment.caracteres')}
                 </span>
               </div>
@@ -131,6 +154,7 @@ export const CancelShipmentModal = ({
             variant="secondary" 
             onClick={onClose} 
             disabled={isProcessing}
+            autoFocus
           >
             {t('cancelShipment.btn_volver')}
           </Button>

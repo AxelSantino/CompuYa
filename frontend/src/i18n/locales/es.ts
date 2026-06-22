@@ -550,7 +550,9 @@ export const es = {
                 btn_confirmar: "Confirmar Cancelación",
                 procesando: "Procesando...",
                 especifique_motivo: "Especifique el motivo",
-                caracteres: "/255 caracteres"
+                caracteres: "/255 caracteres",
+                cerrar_modal: "Cerrar modal de cancelación",
+                seleccione_un_motivo: "Seleccione un motivo",
                 },
             auditoria: {
                 titulo: "Auditoría de Estados",

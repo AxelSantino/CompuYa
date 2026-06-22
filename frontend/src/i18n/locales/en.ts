@@ -550,7 +550,9 @@ export const en = {
                 btn_confirmar: "Confirm Cancellation",
                 procesando: "Processing...",
                 especifique_motivo: "Specify the reason",
-                caracteres: "/255 chars."
+                caracteres: "/255 chars.",
+                cerrar_modal: "Close cancelation modal",
+                seleccione_un_motivo: "Select a reason",
                 },
               
             auditoria: {
