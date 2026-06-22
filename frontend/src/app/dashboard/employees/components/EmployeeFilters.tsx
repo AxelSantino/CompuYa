@@ -38,10 +38,10 @@ export const EmployeeFilters = ({
           className="w-full md:w-48 capitalize"
         >
           <option value="">{t('employeesPage.todos_los_roles')}</option>
-          <option value="admin">{t('employeesPage.rol_admin')}</option>
-          <option value="supervisor">{t('employeesPage.rol_supervisor')}</option>
-          <option value="operador">{t('employeesPage.rol_operador')}</option>
-          <option value="repartidor">{t('employeesPage.rol_repartidor')}</option>
+          <option value="admin">{t('employeesPage.roles.admin')}</option>
+          <option value="supervisor">{t('employeesPage.roles.supervisor')}</option>
+          <option value="operador">{t('employeesPage.roles.operador')}</option>
+          <option value="repartidor">{t('employeesPage.roles.repartidor')}</option>
         </Select>
 
         <Select 
@@ -49,9 +49,9 @@ export const EmployeeFilters = ({
           onChange={(e) => setStatusFilter(e.target.value)}
           className="w-full md:w-48"
         >
-          <option value="">Todos los estados</option>
-          <option value="active">Solo Activos</option>
-          <option value="inactive">Solo Inactivos</option>
+          <option value="">{t('employeesPage.todos_los_estados')}</option>
+          <option value="active">{t('employeesPage.solo_activos')}</option>
+          <option value="inactive">{t('employeesPage.solo_inactivos')}</option>
         </Select>
       </div>
     </div>

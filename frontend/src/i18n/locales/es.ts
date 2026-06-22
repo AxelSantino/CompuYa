@@ -48,9 +48,16 @@ export const es = {
                 faEdit: "Editar",
                 tipo_envio: "Tipo de Envío",
                 manejo_esp: "Manejo Especial",
-                ninguna: "Ninguna",
-                fragil: "Frágil",
-                valioso: "Valioso",
+                restricciones: {
+                    ninguna: "Ninguna",
+                    fragil: "Frágil",
+                    valioso: "Valioso"
+                },
+                prioridades: {
+                    alta: "Alta",
+                    media: "Media",
+                    baja: "Baja"
+                },
                 desc: "Descripción",
                 no_disp: "No disponible",
                 id_interno: "ID Interno: ",
@@ -138,7 +145,6 @@ export const es = {
                 mi_hoja_de_ruta_optimizada: "Mi Hoja de Ruta Optimizada",
                 visualizando_recorrido_del_repartidor: "Visualizando recorrido del repartidor",
                 actualizando_logistica: "Actualizando logística...",
-
                 seleccionar_repartidor_primero: "Por favor, selecciona un repartidor primero (en Monitoreo por repartidor)",
                 envio_asignado_correctamente: "Envio asignado correctamente",
                 error_al_asignar_manualmente: "Error al asignar manualmente",
@@ -149,6 +155,12 @@ export const es = {
                 pregunta_asignacion_masiva: "¿Deseas asignar todos los envíos pendientes de forma automática?",
                 confirmar_entrega: "Confirmar entrega",
                 confirmar_entrega_mensaje: "¿Confirmas que el envío {{id}} ha sido entregado exitosamente?",
+                limpiar_filtro: "x Limpiar filtro / Ver pendientes",
+                prioridades: {
+                    alta: "Alta",
+                    media: "Media",
+                    baja: "Baja"
+                }
 
             },
             loadingOverlay: {
@@ -232,18 +244,61 @@ export const es = {
                 nombre_completo: "Nombre completo",
                 rol: "Rol",
                 fecha_alta: "Fecha Alta",
+                estado: "Estado",
                 acciones: "Acciones",
                 ver_detalle: "Ver detalle",
                 placeholder_buscar_por: "Buscar por nombre, apellido o email...",
                 todos_los_roles: "Todos los roles",
-                rol_admin: "Administrador",
-                rol_supervisor: "Supervisor",
-                rol_operador: "Operador",
-                rol_repartidor: "Repartidor",
                 titulo: "Gestión de Empleados",
                 subtitulo: "Administración de personal, asignación de roles y control de accesos.",
                 nuevo_empleado: "Nuevo Empleado",
-                error_cargar_lista: "Error al cargar la lista de empleados. Intente nuevamente."
+                error_cargar_lista: "Error al cargar la lista de empleados. Intente nuevamente.",
+                todos_los_estados: "Todos los estados",
+                solo_activos: "Solo Activos",
+                solo_inactivos: "Solo Inactivos",
+                roles:{
+                    admin: "Administrador",
+                    supervisor: "Supervisor",
+                    operador: "Operador",
+                    repartidor: "Repartidor"
+                },
+                status: {
+                    activo: "Activo",
+                    inactivo: "Inactivo"
+                }
+            },
+            employeeDetail:{
+                volver: "Volver a la nómina",
+                cuenta_activa: "Cuenta Activa",
+                cuenta_inactiva: "Cuenta Inactiva",
+                btn_desactivar: "Desactivar",
+                btn_activar: "Activar",
+                btn_editar: "Editar Perfil",
+                form: {
+                    nombre: "Nombre",
+                    apellido: "Apellido",
+                    email: "Correo Electrónico",
+                    email_bloqueado: "Por seguridad, el correo no se puede modificar.",
+                    rol: "Rol en el Sistema",
+                    btn_cancelar: "Cancelar",
+                    btn_guardar: "Guardar Cambios",
+                    guardando: "Guardando..."
+                },
+                details: {
+                    nombre_completo: "Nombre Completo",
+                    rol_asignado: "Rol Asignado",
+                    email: "Correo de Acceso",
+                    fecha_registro: "Fecha de Registro"
+                },
+                modal: {
+                    activar_title: "Activar Empleado",
+                    desactivar_title: "Desactivar Empleado",
+                    activar_msg: "¿Estás seguro de que deseas reactivar a este empleado? Recuperará inmediatamente el acceso al sistema con su rol actual.",
+                    desactivar_msg: "¿Estás seguro de que deseas desactivar a este empleado? Ya no podrá iniciar sesión en el sistema, pero todo su historial de operaciones se mantendrá intacto.",
+                    confirm_activar: "Sí, activar",
+                    confirm_desactivar: "Sí, desactivar",
+                    cancelar: "Cancelar"
+                }
             },
             newEmployeesPage: {
                 no_tienes_permisos: "No tienes permisos para dar de alta nuevos empleados.",
@@ -281,6 +336,47 @@ export const es = {
                 subtitulo: "Administración, alta y seguimiento de clientes (destinatarios).",
                 nuevo_cliente: "Nuevo Cliente"
             },
+            clientDetail: {
+                volver: "Volver al listado de clientes",
+                cuenta_activa: "Cuenta Activa",
+                cuenta_inactiva: "Cuenta Inactiva",
+                btn_desactivar: "Desactivar",
+                btn_activar: "Activar",
+                btn_editar: "Editar Cliente",
+                datos_empresa: "Datos de la Empresa",
+                form: {
+                    razon_social: "Razón Social",
+                    email: "Correo Electrónico",
+                    email_bloqueado: "Por seguridad, el correo no se puede modificar.",
+                    btn_cancelar: "Cancelar",
+                    btn_guardar: "Guardar Todos los Cambios",
+                    guardando: "Guardando..."
+                },
+                details: {
+                    razon_social: "Razón Social",
+                    cuit: "CUIT Fiscal",
+                    email: "Correo electrónico",
+                    fecha_alta: "Fecha de Alta",
+                    cod_postal: "Código Postal",
+                    direccion: "Dirección",
+                    no_registrado: "No registrado",
+                    no_asignado: "No asignado",
+                    no_especificada: "No especificada"
+                },
+                mapa: {
+                    titulo: "Ubicación en el mapa",
+                    no_coordenadas: "Esta empresa no cuenta con coordenadas de geolocalización registradas."
+                },
+                modal: {
+                    activar_title: "Activar Cliente",
+                    desactivar_title: "Desactivar Cliente",
+                    activar_msg: "¿Estás seguro de que deseas reactivar a este cliente? Recuperará inmediatamente el acceso al sistema.",
+                    desactivar_msg: "¿Estás seguro de que deseas desactivar a este cliente? Ya no podrá iniciar sesión en el sistema.",
+                    confirm_activar: "Sí, activar",
+                    confirm_desactivar: "Sí, desactivar",
+                    cancelar: "Cancelar"
+                }
+    },
             newClientPage: {
                 no_tienes_permisos: "No tienes permisos para dar de alta nuevos clientes/destinatarios.",
                 registro_exitoso: "¡Registro Exitoso!",
@@ -404,6 +500,25 @@ export const es = {
             globalErrors: {
                 inesperado: "Ocurrió un error de conexión con el servidor.",
                 conexion: "Ocurrió un error inesperado. Por favor, intenta de nuevo."
+            cancelShipment: {
+                titulo: "Cancelar Envío",
+                descripcion: "Por favor, seleccione el motivo por el cual está cancelando este envío. Esta acción no se puede deshacer y quedará registrada en el historial.",
+                razones: {
+                    cliente_solicito: "El cliente solicitó la cancelación",
+                    direccion_invalida: "Dirección de entrega inválida",
+                    problemas_logisticos: "Problemas logísticos con el paquete",
+                    otro: "Otro/Ingresar motivo"
+                },
+                placeholder: "Describa brevemente la situación...",
+                btn_volver: "Volver",
+                btn_confirmar: "Confirmar Cancelación",
+                procesando: "Procesando...",
+                especifique_motivo: "Especifique el motivo",
+                caracteres: "/255 caracteres"
+                },
+            auditoria: {
+                titulo: "Auditoría de Estados",
+                operador: "Operador: "
             }
-    }
-};
+        }
+    };

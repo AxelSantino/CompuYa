@@ -48,9 +48,16 @@ export const en = {
             faEdit: "Edit",
             tipo_envio: "Type of Shipment",
             manejo_esp: "Especial Treatment",
-            ninguna: "None",
-            fragil: "Fragile",
-            valioso: "Valuable",
+            restricciones: {
+                ninguna: "None",
+                fragil: "Fragile",
+                valioso: "Valuable",
+            },
+            prioridades: {
+                alta: "High",
+                media: "Medium",
+                baja: "Low"
+            },
             desc: "Description",
             no_disp: "Not available",
             id_interno: "Intern ID: ",
@@ -137,9 +144,8 @@ export const en = {
             selecciona_un_repartidor: "Select a delivery driver to monitor their route",
             entregas_apareceran_aqui: "Deliveries will appear here once assigned",
             mi_hoja_de_ruta_optimizada: "My optimized roadmap",
-            visualizando_recorrido_repartidor: "Viewing the delivery driver's route",
+            visualizando_recorrido_del_repartidor: "Viewing the delivery driver's route",
             actualizando_logistica: "Updating logistics...",
-
             seleccionar_repartidor_primero: "Please select a delivery driver (in Monitoring by delivery driver)",
             envio_asignado_correctamente: "Shipment assigned succesfully",
             error_al_asignar_manualmente: "Error while assigning manually",
@@ -150,6 +156,12 @@ export const en = {
             pregunta_asignacion_masiva: "Do you want to automatically assign all pending shipments?",
             confirmar_entrega: "Confirm delivery",
             confirmar_entrega_mensaje: "Do you confirm that shipment {{id}} has been successfully delivered?",
+            limpiar_filtro: "x Clean filter / See pendings",
+            prioridades: {
+                alta: "High",
+                media: "Medium",
+                baja: "Low"
+            }
         },
         loadingOverlay: {
             cargando: "Loading...",
@@ -231,18 +243,61 @@ export const en = {
                 nombre_completo: "Full Name",
                 rol: "Role",
                 fecha_alta: "Start Date",
+                estado: "State",
                 acciones: "Actions",
                 ver_detalle: "See details",
                 placeholder_buscar_por: "Search by name, lastname or email...",
                 todos_los_roles: "All the roles",
-                rol_admin: "Administrator",
-                rol_supervisor: "Supervisor",
-                rol_operador: "Operator",
-                rol_repartidor: "Delivery Driver",
                 titulo: "Employees Management",
                 subtitulo: "Personnel administration, role assignment, and access control.",
                 nuevo_empleado: "New Employee",
-                error_cargar_lista: "Error loading employees list. Try again later."
+                error_cargar_lista: "Error loading employees list. Try again later.",
+                todos_los_estados: "All the states",
+                solo_activos: "Only Actives",
+                solo_inactivos: "Only Inactives",
+                roles:{
+                    admin: "Administrator",
+                    supervisor: "Supervisor",
+                    operador: "Operator",
+                    repartidor: "Delivery Driver"
+                },
+                status: {
+                    activo: "Active",
+                    inactivo: "Inactive"
+                }
+        },
+        employeeDetail:{
+            volver: "Back to list",
+            cuenta_activa: "Active Account",
+            cuenta_inactiva: "Inactive Account",
+            btn_desactivar: "Deactivate",
+            btn_activar: "Activate",
+            btn_editar: "Edit Profile",
+                form: {
+                    nombre: "Name",
+                    apellido: "Lastname",
+                    email: "Email",
+                    email_bloqueado: "For security reasons, the email cannot be modified.",
+                    rol: "Role in the sistem",
+                    btn_cancelar: "Cancell",
+                    btn_guardar: "Save Changes",
+                    guardando: "Saving..."
+                },
+                details: {
+                    nombre_completo: "Full Name",
+                    rol_asignado: "Assigned Role",
+                    email: "Access email",
+                    fecha_registro: "Registration Date"
+                },
+                modal: {
+                    activar_title: "Activate Employee",
+                    desactivar_title: "Deactivate Employee",
+                    activar_msg: "Are you sure you want to reactivate this employee? They will immediately regain access to the system with their current role.",
+                    desactivar_msg: "Are you sure you want to deactivate this employee? They will no longer be able to log in to the system, but their entire transaction history will remain intact.",
+                    confirm_activar: "Yes, activate",
+                    confirm_desactivar: "Yes, deactivate",
+                    cancelar: "Cancell"
+                }
         },
         newEmployeesPage: {
                 no_tienes_permisos: "You do not have permission to register new employees.",
@@ -281,6 +336,47 @@ export const en = {
                 nuevo_cliente: "New Client",
                 
         },
+        clientDetail: {
+                volver: "Return to clients list",
+                cuenta_activa: "Inactive Account",
+                cuenta_inactiva: "Active Account",
+                btn_desactivar: "Deactivate",
+                btn_activar: "Activate",
+                btn_editar: "Edit Client",
+                datos_empresa: "Company Data",
+                form: {
+                    razon_social: "Company Name",
+                    email: "Email",
+                    email_bloqueado: "For security reasons, the email cannot be modified.",
+                    btn_cancelar: "Cancell",
+                    btn_guardar: "Save All Changes",
+                    guardando: "Saving..."
+                },
+                details: {
+                    razon_social: "Company Name",
+                    cuit: "CUIT Fiscal",
+                    email: "Email",
+                    fecha_alta: "Registration Date",
+                    cod_postal: "Zip code",
+                    direccion: "Address",
+                    no_registrado: "Not registered",
+                    no_asignado: "Not assigned",
+                    no_especificada: "Not especified"
+                },
+                mapa: {
+                    titulo: "Location on the map",
+                    no_coordenadas: "This company does not have registered geolocation coordinates."
+                },
+                modal: {
+                    activar_title: "Activate Client",
+                    desactivar_title: "Deactivate Client",
+                    activar_msg: "Are you sure you want to reactivate this client? They will regain access to the system immediately.",
+                    desactivar_msg: "Are you sure you want to deactivate this client? You will no longer be able to log in to the system.",
+                    confirm_activar: "Yes, activate",
+                    confirm_desactivar: "Yes, deactivate",
+                    cancelar: "Cancell"
+                }
+    },
         newClientPage: {
                 no_tienes_permisos: "You do not have permission to register new clients/recipients.",
                 registro_exitoso: "¡Successful Registration!",
@@ -405,6 +501,28 @@ export const en = {
             globalErrors: {
                 inesperado: "A network error occurred with the server.",
                 conexion: "An unexpected error occurred. Please try again.",
+              
+            cancelShipment: {
+                titulo: "Cancell Shipment",
+                descripcion: "Please select the reason why you are cancelling this shipment. This action cannot be undone and will be recorded in the history.",
+                razones: {
+                    cliente_solicito: "Client solicited cancellation",
+                    direccion_invalida: "Invalid delivery address",
+                    problemas_logisticos: "Logistical problems with the package",
+                    otro: "Other/Enter reason"
+                },
+                placeholder: "Briefly describe the situation...",
+                btn_volver: "Back",
+                btn_confirmar: "Confirm Cancellation",
+                procesando: "Processing...",
+                especifique_motivo: "Specify the reason",
+                caracteres: "/255 chars."
+                },
+              
+            auditoria: {
+                titulo: "State Audit",
+                operador: "Operator: "
             }
+
     }
 };

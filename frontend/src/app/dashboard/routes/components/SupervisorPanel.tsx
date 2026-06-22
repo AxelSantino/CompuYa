@@ -55,7 +55,7 @@ export const SupervisorPanel: React.FC<SupervisorPanelProps> = ({
               // Ajustamos también el botón de limpiar para que combine sobre el fondo blanco
               className="mt-3 text-sm text-blue-600 hover:text-blue-800 font-medium transition-colors cursor-pointer"
             >
-              × Limpiar filtro / Ver pendientes
+              {t('routesPage.limpiar_filtro')}
             </button>
           )}
         </div>

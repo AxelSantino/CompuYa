@@ -33,9 +33,9 @@ export const ClientFilters = ({
           onChange={(e) => setStatusFilter(e.target.value)}
           className="w-full md:w-48"
         >
-          <option value="">Todos los estados</option>
-          <option value="active">Solo Activos</option>
-          <option value="inactive">Solo Inactivos</option>
+          <option value="">{t('employeesPage.todos_los_estados')}</option>
+          <option value="active">{t('employeesPage.solo_activos')}</option>
+          <option value="inactive">{t('employeesPage.solo_inactivos')}</option>
         </Select>
       </div>
     </div>

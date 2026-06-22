@@ -53,8 +53,8 @@ const shipmentService = {
     return response.data;
   },
 
-  markAsDelivered: async (id: string): Promise<Envio> => {
-    const response = await api.post(`/envios/${id}/entregar`);
+  markAsDelivered: async (id: string, codigo_ingresado: string): Promise<Envio> => {
+    const response = await api.post(`/envios/${id}/entregar`, { codigo_ingresado });
     return response.data;
   },
 

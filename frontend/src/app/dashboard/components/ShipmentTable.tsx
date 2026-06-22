@@ -82,7 +82,7 @@ export const ShipmentTable = ({ shipments }: { shipments: Envio[] }) => {
                     {shipments.length === 0 && (
                         <tr>
                             <td colSpan={7} className="px-6 py-8 text-center text-sm text-gray-500">
-                                {t('shipmentTable.no_se_encontraro_envios')}
+                                {t('shipmentTable.no_se_encontraron_envios')}
                             </td>
                         </tr>
                     )}

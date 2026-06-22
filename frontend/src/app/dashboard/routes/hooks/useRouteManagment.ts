@@ -32,6 +32,10 @@ export function useRouteManagement() {
     message: '',
     onConfirm: () => {},
   });
+  const [deliveryModalConfig, setDeliveryModalConfig] = useState({
+    isOpen: false,
+    trackingId: '',
+  });
 
   const isSupervisor = user?.rol === 'supervisor';
 
@@ -131,25 +135,29 @@ export function useRouteManagement() {
     });
   };
 
+  const closeDeliveryModal = () => setDeliveryModalConfig({ isOpen: false, trackingId: '' });
+
   const handleDeliver = (trackingId: string) => {
-    setModalConfig({
+    setDeliveryModalConfig({
       isOpen: true,
-      title: t('routesPage.confirmar_entrega', 'Confirmar entrega'),
-      message: t('routesPage.confirmar_entrega_mensaje', { id: trackingId }),
-      onConfirm: async () => {
-        closeModal();
-        setIsProcessing(true);
-        try {
-          await shipmentService.markAsDelivered(trackingId);
-          await fetchData();
-          toast.success(t('routesPage.envio_marcado_como_entregado_exitosamente'));
-        } catch (error) {
-          toast.error(t('routesPage.error_al_marcar_envio_entregado'));
-        } finally {
-          setIsProcessing(false);
-        }
-      }
+      trackingId,
     });
+  };
+
+  const handleConfirmDelivery = async (code: string) => {
+    const trackingId = deliveryModalConfig.trackingId;
+    closeDeliveryModal();
+    setIsProcessing(true);
+    try {
+      await shipmentService.markAsDelivered(trackingId, code);
+      await fetchData();
+      toast.success(t('routesPage.envio_marcado_como_entregado_exitosamente'));
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.detail || t('routesPage.error_al_marcar_envio_entregado');
+      toast.error(errorMessage);
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   // Transformación de datos para la vista (Movido aquí para limpiar el componente UI)
@@ -184,7 +192,10 @@ export function useRouteManagement() {
     handleManualAssign,
     handleAssignAll,
     handleDeliver,
+    handleConfirmDelivery,
     modalConfig,
-    closeModal
+    closeModal,
+    deliveryModalConfig,
+    closeDeliveryModal
   };
 }
