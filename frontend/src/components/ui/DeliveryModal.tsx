@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Button } from './Button';
 import { FaKey } from 'react-icons/fa';
 
@@ -28,17 +28,62 @@ export const DeliveryModal: React.FC<DeliveryModalProps> = ({
 }) => {
   const [code, setCode] = useState('');
 
+  // Referencia para atrapar el tab dentro del modal
+  const modalRef = useRef<HTMLDivElement>(null);
+
   const {t} = useTranslation();
 
   confirmText = t('routesPage.delivery_modal.confirmar_entrega');
   cancelText = t('routesPage.delivery_modal.cancelar');
 
-  // Resetear el código cuando el modal se abre/cierra
-  useEffect(() => {
+  // Resetear el código cuando el modal se abre/cierra y manejar
+  // el efecto de que el tab no se escape del modal
+useEffect(() => {
     if (isOpen) {
       setCode('');
+      
+      const handleKeyDown = (e: KeyboardEvent) => {
+        // Cerrar con Escape
+        if (e.key === 'Escape' && !isProcessing) {
+          onCancel();
+          return;
+        }
+
+        // Trampa de foco con Tabulador
+        if (e.key === 'Tab' && modalRef.current) {
+          const focusableElements = modalRef.current.querySelectorAll<HTMLElement>(
+            'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+          );
+          
+          if (focusableElements.length > 0) {
+            const firstElement = focusableElements[0];
+            const lastElement = focusableElements[focusableElements.length - 1];
+
+            if (e.shiftKey) { // Shift + Tab (hacia atrás)
+              if (document.activeElement === firstElement) {
+                lastElement.focus();
+                e.preventDefault();
+              }
+            } else { // Solo Tab (hacia adelante)
+              if (document.activeElement === lastElement) {
+                firstElement.focus();
+                e.preventDefault();
+              }
+            }
+          }
+        }
+      };
+
+      document.addEventListener('keydown', handleKeyDown);
+      // Evitar que el fondo haga scroll (buena práctica UX/a11y)
+      document.body.style.overflow = 'hidden';
+
+      return () => {
+        document.removeEventListener('keydown', handleKeyDown);
+        document.body.style.overflow = 'unset';
+      };
     }
-  }, [isOpen]);
+  }, [isOpen, isProcessing, onCancel]);
 
   if (!isOpen) return null;
 
@@ -50,30 +95,41 @@ export const DeliveryModal: React.FC<DeliveryModalProps> = ({
   };
 
   return (
-    // Backdrop
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-      {/* Contenedor del Modal */}
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 mx-4 animate-in zoom-in-95 duration-200 border border-gray-100">
+    // Backdrop con aria-hidden para que el lector no lo lea
+    <div 
+    aria-hidden="true"
+    className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
+    >
+      {/* Contenedor del Modal con roles ARIA y ref para mantener el tab */}
+      <div 
+      ref={modalRef}
+      role="dialog"
+      aria-modal="true" 
+      aria-labelledby="modal-title"
+      aria-describedby="modal-description"
+      className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 mx-4 animate-in zoom-in-95 duration-200 border border-gray-100"
+      >
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 text-lg">
+          <div aria-hidden="true" className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 text-lg">
             <FaKey />
           </div>
-          <h3 className="text-xl font-bold text-gray-950">{title}</h3>
+          <h3 id="modal-title" className="text-xl font-bold text-gray-950">{title}</h3>
         </div>
 
-        <p className="text-gray-600 text-sm mb-5 leading-relaxed">{message}</p>
+        <p id="modal-description" className="text-gray-600 text-sm mb-5 leading-relaxed">{message}</p>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-2">
+            <label htmlFor="pin-input" className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-2">
               {t('routesPage.delivery_modal.pin_de_seguridad')}
             </label>
             <input
+              id="pin-input"
               type="text"
               maxLength={6}
               value={code}
               onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))} // Solo permite números
-              className="w-full text-center text-3xl font-bold tracking-[0.5em] pl-[0.5em] py-3.5 border-2 border-gray-200 rounded-xl focus:border-blue-600 focus:ring-2 focus:ring-blue-100 focus:outline-none transition-all uppercase placeholder-gray-300 bg-gray-50/50"
+              className="w-full text-center text-3xl font-bold tracking-[0.5em] pl-[0.5em] py-3.5 border-2 border-gray-200 rounded-xl focus:border-blue-600 focus:ring-2 focus:ring-blue-100 focus:outline-none transition-all uppercase placeholder-gray-400 bg-gray-50/50"
               placeholder="0000"
               disabled={isProcessing}
               autoFocus
