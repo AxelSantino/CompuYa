@@ -227,7 +227,9 @@ export const en = {
             envio_exito_mensaje: "The shipment has been registered in the system and assigned the following tracking ID:",
             volver_gestion: "Back to Shipment Management",
             placeholder_razon_social: "e.g., TechStore Argentina S.A. or John Doe",
-            placeholder_cuit: "e.g., 30123456789 (CUIT) or 20123456789 (CUIL)"
+            placeholder_cuit: "e.g., 30123456789 (CUIT) or 20123456789 (CUIL)",
+
+            error_crear_envio: "Error while creatin shipment. Please, check data and try again.",
         },
         componentDetailsSection: {
             detalles_del_componente: "Details of the component and shipment",
