@@ -47,7 +47,7 @@ function ShipmentDetailPage() {
         <LoadingOverlay isLoading={isBusy} text={loadingText} />
         
         <div className="flex justify-between items-center mb-4">
-          <button onClick={() => router.back()} className="back-button cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 rounded">
+          <button onClick={() => router.back()} className="back-button cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded">
             <FaArrowLeft aria-hidden="true" /> {t('shipments.volver_al_listado')}
           </button>
           

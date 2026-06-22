@@ -58,6 +58,10 @@ export const es = {
                     media: "Media",
                     baja: "Baja"
                 },
+                tipo: {
+                    "normal": "Normal",
+                    "express": "Express"
+                },
                 desc: "Descripción",
                 no_disp: "No disponible",
                 id_interno: "ID Interno: ",
@@ -69,7 +73,8 @@ export const es = {
                 fecha_creacion: "Fecha de Creación",
                 creado_por: "Creado por",
                 prioridad_asignada: "Prioridad Asignada",
-                lim_entrega: "Límite de Entrega"
+                lim_entrega: "Límite de Entrega",
+                no_especificado: "No especificado",
 
             },
             dashboard_layout: {

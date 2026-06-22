@@ -58,6 +58,10 @@ export const en = {
                 media: "Medium",
                 baja: "Low"
             },
+            tipo: {
+                "normal": "Standard",
+                "express": "Express"
+            },
             desc: "Description",
             no_disp: "Not available",
             id_interno: "Intern ID: ",
@@ -70,6 +74,7 @@ export const en = {
             creado_por: "Created by",
             prioridad_asignada: "Priority Assigned",
             lim_entrega: "Date limit",
+            no_especificado: "Not specificied",
         },
 
         dashboard_layout: {
