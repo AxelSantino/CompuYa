@@ -540,7 +540,10 @@ export const en = {
                 filtro_exitoso: "Sucess",
                 filtro_fallido: "Faillure",
 
-                aria_cerrar_modal: "Close modal"
+                aria_cerrar_modal: "Close modal",
+
+                detalle_error: "Faillure detail",
+                boton_cerrar: "Close",
             },
 
             importCsvPage: {

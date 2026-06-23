@@ -542,7 +542,10 @@ export const es = {
                 filtro_exitoso: "Exitoso",
                 filtro_fallido: "Fallido",
 
-                aria_cerrar_modal: "Cerrar modal"
+                aria_cerrar_modal: "Cerrar modal",
+
+                detalle_error: "Detalle del Error",
+                boton_cerrar: "Cerrar",
             },
             importCsvPage: {
                 archivo_valido_para_importar: "Archivo válido y listo para importar",
