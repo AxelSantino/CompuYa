@@ -145,9 +145,16 @@ class EnvioRespuesta(EnvioBase):
     sucursal: Optional[SucursalRespuesta] = None
     latitud_destino: Optional[float] = None
     longitud_destino: Optional[float] = None
-#    codigo_verificacion: Optional[str] = None
+
     model_config = ConfigDict(from_attributes=True)
 
+class PinRespuesta(BaseModel):
+    codigo_verificacion: str = Field(
+        ..., 
+        description="PIN de seguridad de 4 dígitos para la entrega"
+    )
+    model_config = ConfigDict(from_attributes=True)
+    
 class ValidarEntregaIn(BaseModel):
     codigo_verificacion: str = Field(..., 
         min_length=4, 

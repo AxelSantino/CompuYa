@@ -6,7 +6,7 @@ from sqlalchemy.orm import selectinload, joinedload
 from sqlalchemy import select, func
 from fastapi import HTTPException, status, BackgroundTasks
 from app.models.entidades import AsignacionEnvio, Envio, PrioridadEnvio, TipoEnvio, Usuario, TipoCliente, EstadoEnvio, Historial, PerfilEmpresa
-from app.models.esquemas import EnvioCrear, EditarEnvio, CancelarEnvio
+from app.models.esquemas import EnvioCrear, EditarEnvio, CancelarEnvio, PinRespuesta
 from app.services.servicio_ruteo import ServicioRuteo
 from app.ml.modelo_prioridad import predecir_prioridad
 from app.services.servicio_notificacion import NotificacionService
@@ -557,3 +557,17 @@ class EnvioService:
             lon_actual = proximo.longitud_destino
 
         return ruta_ordenada
+    
+    async def obtener_codigo_pin(self, tracking_id: str , usuario_actual: Usuario):
+        envio = await self.obtener_envio_por_id(tracking_id)
+        if not envio:
+            raise ValueError("Envío no encontrado")
+        
+        if envio.estado != EstadoEnvio.EN_TRANSITO:
+
+            raise ValueError("El PIN solo está disponible para envíos en tránsito")
+        
+        if usuario_actual.rol == "cliente":
+            if envio.destinatario_id != usuario_actual.id:
+                    raise ValueError("No tenés permiso para ver el PIN de este envío")
+        return envio.codigo_verificacion
