@@ -65,7 +65,7 @@ class NotificacionService:
                 "codigo_envio": envio.tracking_id,
                 "descripcion_producto": envio.descripcion or "Envío LogiTrack",
                 "fecha_actualizacion": datetime.now().strftime("%d/%m/%Y"),
-                "link_aplicacion": "https://logistica-compuya.onrender.com/dashboard",
+                "link_aplicacion": "https://compuyalogistica.onrender.com/",
                 "email_contacto": "compuyalogistica@gmail.com",
                 "pin": envio.codigo_verificacion if envio.codigo_verificacion else "",
                 "motivo_cancelacion": motivo_cancelacion   
