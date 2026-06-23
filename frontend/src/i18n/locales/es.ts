@@ -96,7 +96,11 @@ export const es = {
                 metricas: "Metricas",
                 empleados: "Empleados",
                 clientes: "Clientes",
-                notificaciones: "Notificaciones"
+                notificaciones: "Notificaciones",
+
+                expandir_menu: "Expandir menú",
+                contraer_menu: "Contraer menú",
+                abrir_menu: "Abrir menú",
             },
             dashboard_header: {
                 gestion_de_envios: "Gestión de envíos",
@@ -630,7 +634,10 @@ export const es = {
             campanita: {
                 hist_alertas: "Historial de Alertas",
                 marcar_todas_leidas: "Marcar todas como leídas",
-                no_hay_alertas: "No hay alertas para mostrar"
+                no_hay_alertas: "No hay alertas para mostrar",
+
+                aria_abrir_notificaciones: "Abrir notificaciones",
+                aria_no_leidas: "{{count}} notificaciones no leídas",
             },
 
             paginado: {
@@ -642,7 +649,14 @@ export const es = {
             },
 
             sidebarPage: {
-                cerrar_sesion: "Cerrar sesión"
+                cerrar_sesion: "Cerrar sesión",
+                cerrar_menu: "Cerrar menú",
+                roles: {
+                    admin: "Administrador",
+                    operador: "Operador",
+                    repartidor: "Repartidor",
+                    cliente: "Cliente"
+                }
             },
 
             globalErrors: {
@@ -676,6 +690,11 @@ export const es = {
             modal: {
                 confirmar: "Confirmar",
                 cancelar: "Cancelar",
+            },
+
+            
+            languageSwitcher: {
+                seleccionar_idioma: "Seleccionar idioma"
             }
         }
     };

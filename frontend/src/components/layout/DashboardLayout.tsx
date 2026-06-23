@@ -71,6 +71,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         <div 
           className="fixed inset-0 bg-black/50 z-40 md:hidden transition-opacity duration-300"
           onClick={() => setIsSidebarOpen(false)}
+          // a11y: Ocultamos el backdrop puramente visual de los lectores de pantalla
+          aria-hidden="true"
         />
       )}
 
@@ -94,18 +96,26 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
             {/* Botón Desktop (se oculta en móvil) */}
             <button 
               onClick={toggleSidebar}
-              className="hidden md:block p-2 -ml-2 rounded-md text-gray-500 hover:text-orange-600 hover:bg-orange-50 transition-colors focus:outline-none cursor-pointer"
-              title={isSidebarCollapsed ? "Expandir menú" : "Contraer menú"}
+              // a11y: Se agrega focus-visible para navegación por teclado
+              className="hidden md:block p-2 -ml-2 rounded-md text-gray-500 hover:text-orange-600 hover:bg-orange-50 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 cursor-pointer"
+              // i18n & a11y: Se usa aria-label y textos traducidos
+              aria-label={isSidebarCollapsed ? t('dashboard_layout.expandir_menu', 'Expandir menú') : t('dashboard_layout.contraer_menu', 'Contraer menú')}
+              aria-expanded={!isSidebarCollapsed}
             >
-              <BiMenu size={24} />
+              {/* a11y: Icono silenciado */}
+              <BiMenu aria-hidden="true" size={24} />
             </button>
             {/* Botón Móvil (se oculta en desktop) */}
             <button
               onClick={() => setIsSidebarOpen(true)}
-              className="md:hidden p-2 -ml-2 rounded-md text-gray-600 hover:text-orange-600 hover:bg-orange-50 transition-colors focus:outline-none cursor-pointer"
-              aria-label="Abrir menú"
+              // a11y: Se agrega focus-visible para navegación por teclado
+              className="md:hidden p-2 -ml-2 rounded-md text-gray-600 hover:text-orange-600 hover:bg-orange-50 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 cursor-pointer"
+              // i18n & a11y: aria-label traducido
+              aria-label={t('dashboard_layout.abrir_menu', 'Abrir menú')}
+              aria-expanded={isSidebarOpen}
             >
-              <BiMenu size={26} />
+              {/* a11y: Icono silenciado */}
+              <BiMenu aria-hidden="true" size={26} />
             </button>
           </div> 
           

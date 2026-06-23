@@ -62,10 +62,12 @@ export const Sidebar = ({
         {/* Botón de cerrar solo visible en móvil */}
         <button 
           onClick={onClose}
-          className="md:hidden p-1 rounded-md text-gray-400 hover:text-white hover:bg-gray-800 transition-colors focus:outline-none cursor-pointer"
-          aria-label="Cerrar menú"
+          // a11y: Traducción del aria-label y mejora del foco para teclado
+          aria-label={t('sidebarPage.cerrar_menu', 'Cerrar menú')}
+          className="md:hidden p-1 rounded-md text-gray-400 hover:text-white hover:bg-gray-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 cursor-pointer"
         >
-          <BiX size={28} />
+          {/* a11y: Icono silenciado */}
+          <BiX aria-hidden="true" size={28} />
         </button>
       </div>
       
@@ -80,7 +82,8 @@ export const Sidebar = ({
                   href={item.href}
                   onClick={onClose} // Cerrar sidebar al hacer clic en un enlace en móvil
                   title={isCollapsed ? item.name : undefined}
-                  className={`flex items-center rounded-lg transition-all duration-200 group min-h-[60px]
+                  // a11y: Añadido focus-visible adaptado a dark mode
+                  className={`flex items-center rounded-lg transition-all duration-200 group min-h-[60px] focus:outline-none focus-visible:ring-2 focus-visible:ring-white-500 focus-visible:ring-inset
                     ${isCollapsed ? 'md:justify-center p-3' : 'p-3'}
                     ${isActive 
                       ? 'bg-orange-600 text-white shadow-lg shadow-orange-900/20' 
@@ -88,6 +91,8 @@ export const Sidebar = ({
                     }`}
                 >
                   <item.icon 
+                    // a11y: Silenciamos los iconos decorativos para lectores de pantalla
+                    aria-hidden="true"
                     className={`w-6 h-6 flex-shrink-0 transition-all duration-300
                       ${isCollapsed ? 'md:mr-0 mr-3' : 'mr-3'}
                       ${isActive ? 'text-white drop-shadow-md' : 'text-gray-400 group-hover:text-gray-100'}`} 
@@ -111,7 +116,10 @@ export const Sidebar = ({
       <div className={`mt-auto border-t border-gray-800 pt-6 ${isCollapsed ? 'md:px-0 px-2' : 'px-2'}`}>
         {user && (
           <div className={`flex items-center mb-4 ${isCollapsed ? 'md:justify-center' : ''}`}>
-            <div className={`w-10 h-10 bg-gradient-to-tr from-gray-700 to-gray-600 rounded-full flex items-center justify-center font-bold border border-gray-700 shrink-0
+            <div 
+              // a11y: aria-hidden para que el lector no lea las iniciales redundantes si ya lee el nombre
+              aria-hidden="true"
+              className={`w-10 h-10 bg-gradient-to-tr from-gray-700 to-gray-600 rounded-full flex items-center justify-center font-bold border border-gray-700 shrink-0
               ${isCollapsed ? 'md:mr-0 mr-3' : 'mr-3'}`}
             >
               {userName[0].toUpperCase()}
@@ -122,28 +130,34 @@ export const Sidebar = ({
               ${isCollapsed ? 'md:max-w-0 md:opacity-0' : 'max-w-[200px] opacity-100'}`}
             >
               <p className="font-semibold truncate leading-none mb-1">{userName}</p>
-              <p className="text-xs text-gray-300 capitalize font-medium">{user.rol}</p>
+              {/* i18n: Implementación dinámica de roles provenientes del backend */}
+              <p className="text-xs text-gray-300 capitalize font-medium">
+                {t(`sidebarPage.roles.${user.rol.toLowerCase()}`, user.rol) as string}
+              </p>
             </div>
           </div>
         )}
         
         <button 
           onClick={handleLogout} 
-          title={isCollapsed ? "Cerrar Sesión" : undefined}
-          className={`flex items-center rounded-lg hover:bg-red-900/20 hover:text-red-300 text-gray-300 transition-all duration-300 w-full group cursor-pointer
+          // i18n: Extraemos el tooltip title a i18n
+          title={isCollapsed ? t('sidebarPage.cerrar_sesion', 'Cerrar Sesión') : undefined}
+          // a11y: Foco de teclado ajustado al esquema de colores (red-500)
+          className={`flex items-center rounded-lg hover:bg-red-900/20 hover:text-red-300 text-gray-300 transition-all duration-300 w-full group cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500
             ${isCollapsed ? 'md:justify-center p-3' : 'p-3 text-left'}`}
         >
-          {/* Margen del icono animado suavemente */}
-          <BiLogOut className={`w-5 h-5 flex-shrink-0 text-gray-400 group-hover:text-red-400 transition-all duration-300
+          {/* a11y: Icono silenciado */}
+          <BiLogOut 
+            aria-hidden="true"
+            className={`w-5 h-5 flex-shrink-0 text-gray-400 group-hover:text-red-400 transition-all duration-300
             ${isCollapsed ? 'md:mr-0 mr-3' : 'mr-3'}`} 
           />
           
-          {/* Animación de max-width */}
           <span 
             className={`font-medium text-sm whitespace-nowrap overflow-hidden transition-all duration-300 ease-in-out
               ${isCollapsed ? 'md:max-w-0 md:opacity-0' : 'max-w-[200px] opacity-100'}`}
           >
-            {t('sidebarPage.cerrar_sesion')}
+            {t('sidebarPage.cerrar_sesion', 'Cerrar Sesión')}
           </span>
         </button>
       </div>
