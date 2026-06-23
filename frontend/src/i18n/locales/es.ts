@@ -468,7 +468,9 @@ export const es = {
                 dir_fiscal: "Dirección Fiscal",
                 placeholder_email: "usuario@ejemplo.com",
                 error_ubicacion_requerida: "Por favor, busque y seleccione una ubicación geográfica válida en el mapa antes de continuar.",
-                error_registrar_cliente: "Ocurrió un error al intentar registrar la empresa. Verifica los datos e intenta nuevamente."
+                error_registrar_cliente: "Ocurrió un error al intentar registrar la empresa. Verifica los datos e intenta nuevamente.",
+                placeholder_razon_social: "Ej. Logística Sur S.A.",
+                placeholder_cuit: "Ej. 30-12345678-9",
             },
             notificationsPage: {
                 fecha_envio: "Fecha de Envío",
