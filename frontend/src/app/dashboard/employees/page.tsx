@@ -16,7 +16,7 @@ import withAuth from '@/components/auth/withAuth';
 // Funcion principal 
 
 function EmployeesPage() {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   const {
     user,
     searchTerm,
@@ -35,15 +35,15 @@ function EmployeesPage() {
     setStatusFilter
   } = useEmployeeManager();
 
-if (!user || user.rol !== 'admin') {
-  return (
-    <DashboardLayout>
-      <AccessDenied />
-    </DashboardLayout>
-  );
-}
+  if (!user || user.rol !== 'admin') {
+    return (
+      <DashboardLayout>
+        <AccessDenied />
+      </DashboardLayout>
+    );
+  }
 
-return (
+  return (
     <DashboardLayout>
       <div className="relative bg-white p-4 md:p-6 rounded-lg shadow-md">
         <LoadingOverlay isLoading={isLoading} text={t('employeesPage.cargando_nomina')} />
@@ -60,7 +60,12 @@ return (
         />
 
         {error && (
-          <div className="py-8 text-center text-red-500 font-medium bg-red-50 rounded-md">
+          <div 
+            // a11y: Rol de alerta para que el lector de pantalla lo anuncie de inmediato
+            role="alert"
+            // Contraste mejorado de red-500 a red-600
+            className="py-8 text-center text-red-600 font-medium bg-red-50 rounded-md"
+          >
             {error}
           </div>
         )}
