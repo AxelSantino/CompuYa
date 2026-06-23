@@ -634,7 +634,10 @@ export const es = {
             campanita: {
                 hist_alertas: "Historial de Alertas",
                 marcar_todas_leidas: "Marcar todas como leídas",
-                no_hay_alertas: "No hay alertas para mostrar"
+                no_hay_alertas: "No hay alertas para mostrar",
+
+                aria_abrir_notificaciones: "Abrir notificaciones",
+                aria_no_leidas: "{{count}} notificaciones no leídas",
             },
 
             paginado: {
