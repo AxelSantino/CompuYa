@@ -287,6 +287,7 @@ export const es = {
                 export_opciones_descarga: "Opciones de descarga",
                 export_paquete_completo: "Paquete completo (.zip)",
                 export_incluye_todo: "Incluye Estados, Prioridades y Cancelaciones consolidados.",
+                categoria: "Categoria",
 
             },
             employeesPage: {

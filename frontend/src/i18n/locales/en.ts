@@ -286,6 +286,7 @@ export const en = {
                 export_opciones_descarga: "Download options",
                 export_paquete_completo: "Compressed file (.zip)",
                 export_incluye_todo: "Includes states, priorities and cancelations.",
+                categoria: "Category",
         },
         employeesPage: {
                 cargando_nomina: "Loading employee payroll...",
