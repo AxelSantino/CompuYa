@@ -48,6 +48,10 @@ app.include_router(reportes_rutas.router)
 app.include_router(plantillas_rutas.router)
 app.include_router(alertas_rutas.router)
 
+@app.get("/ping", include_in_schema=False)
+async def ping():
+    return {"status": "ok"}
+
 @app.get("/")
 async def root():
     return {
