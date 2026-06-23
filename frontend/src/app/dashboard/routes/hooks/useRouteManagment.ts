@@ -107,6 +107,7 @@ export function useRouteManagement() {
     try {
       await shipmentService.assignShipmentManually(trackingId, selectedDriverId);
       await fetchData();
+      await loadDriverRoute(selectedDriverId);
       toast.success(t('routesPage.envio_asignado_correctamente'))
     } catch (error) {
       toast.error(t('routesPage.error_al_asignar_manualmente'));
