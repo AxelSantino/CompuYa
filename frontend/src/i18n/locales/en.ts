@@ -539,6 +539,8 @@ export const en = {
                 filtro_todos: "All",
                 filtro_exitoso: "Sucess",
                 filtro_fallido: "Faillure",
+
+                aria_cerrar_modal: "Close modal"
             },
 
             importCsvPage: {

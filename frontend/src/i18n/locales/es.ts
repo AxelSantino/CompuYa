@@ -541,6 +541,8 @@ export const es = {
                 filtro_todos: "Todos",
                 filtro_exitoso: "Exitoso",
                 filtro_fallido: "Fallido",
+
+                aria_cerrar_modal: "Cerrar modal"
             },
             importCsvPage: {
                 archivo_valido_para_importar: "Archivo válido y listo para importar",
