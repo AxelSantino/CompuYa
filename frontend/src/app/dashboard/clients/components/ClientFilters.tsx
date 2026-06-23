@@ -16,11 +16,14 @@ export const ClientFilters = ({
   statusFilter,
   setStatusFilter
 }: ClientFiltersProps) => {
-  const {t} = useTranslation();
-    return (
+  const { t } = useTranslation();
+  
+  return (
     <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 text-gray-800">
       <div className="w-full md:w-1/3">
         <Input
+          // a11y: Etiqueta invisible obligatoria para que el lector sepa qué busca
+          aria-label={t('clientsPage.aria_buscar_clientes')}
           placeholder={t('clientsPage.placeholder_buscar_por')}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
@@ -29,10 +32,13 @@ export const ClientFilters = ({
       </div>
       <div className="w-full md:w-auto">
         <Select 
+          // a11y: Etiqueta invisible para el filtro de estados
+          aria-label={t('clientsPage.aria_filtrar_por_estado')}
           value={statusFilter} 
           onChange={(e) => setStatusFilter(e.target.value)}
           className="w-full md:w-48"
         >
+          {/* Reutilización inteligente del namespace de empleados */}
           <option value="">{t('employeesPage.todos_los_estados')}</option>
           <option value="active">{t('employeesPage.solo_activos')}</option>
           <option value="inactive">{t('employeesPage.solo_inactivos')}</option>
