@@ -444,7 +444,15 @@ export const es = {
                     confirm_activar: "Sí, activar",
                     confirm_desactivar: "Sí, desactivar",
                     cancelar: "Cancelar"
-                }
+                },
+
+                error_no_es_cliente: "El usuario solicitado no corresponde a un cliente.",
+                error_cargar_info: "No se pudo cargar la información del cliente.",
+                success_actualizado: "Información de la empresa actualizada.",
+                error_guardar_cambios: "Error al guardar los cambios del cliente.",
+                success_activado: "Cliente activado correctamente.",
+                success_desactivado: "Cliente desactivado correctamente.",
+                error_cambiar_estado: "Error al cambiar el estado del cliente.",
     },
             newClientPage: {
                 no_tienes_permisos: "No tienes permisos para dar de alta nuevos clientes/destinatarios.",

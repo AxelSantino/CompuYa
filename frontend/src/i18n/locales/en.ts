@@ -443,7 +443,15 @@ export const en = {
                     confirm_activar: "Yes, activate",
                     confirm_desactivar: "Yes, deactivate",
                     cancelar: "Cancel"
-                }
+                },
+
+                error_no_es_cliente: "El usuario solicitado no corresponde a un cliente.",
+                error_cargar_info: "No se pudo cargar la información del cliente.",
+                success_actualizado: "Información de la empresa actualizada.",
+                error_guardar_cambios: "Error al guardar los cambios del cliente.",
+                success_activado: "Cliente activado correctamente.",
+                success_desactivado: "Cliente desactivado correctamente.",
+                error_cambiar_estado: "Error al cambiar el estado del cliente.",
     },
         newClientPage: {
                 no_tienes_permisos: "You do not have permission to register new clients/recipients.",
