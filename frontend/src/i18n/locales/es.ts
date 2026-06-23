@@ -382,7 +382,9 @@ export const es = {
                 rol_operador: "Operador",
                 rol_repartidor: "Repartidor",
                 placeholder_nombre: "Ej: Juan",
-                placeholder_apellido: "Ej: Perez"
+                placeholder_apellido: "Ej: Perez",
+                error_seleccionar_rol: "Por favor, selecciona un rol para el empleado.",
+                error_registrar_empleado: "Ocurrió un error al intentar registrar el empleado. Verifica los datos e intenta nuevamente."
             },
             clientsPage: {
                 cargando_lista_clientes: "Cargando lista de clientes...",
