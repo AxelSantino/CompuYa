@@ -461,7 +461,8 @@ export const es = {
                 ingrese_dir: "Ingrese la dirección del cliente/destinatario y seleccione la opción mas adecuada.",
                 cod_postal: "Código Postal",
                 verificacion_mapa: "Verificación en Mapa",
-                dir_fiscal: "Dirección Fiscal"
+                dir_fiscal: "Dirección Fiscal",
+                placeholder_email: "usuario@ejemplo.com",
             },
             notificationsPage: {
                 fecha_envio: "Fecha de Envío",

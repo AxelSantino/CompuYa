@@ -460,7 +460,8 @@ export const en = {
                 ingrese_dir: "Enter the customer/recipient address and select the most appropriate option.",
                 cod_postal: "Zip Code",
                 verificacion_mapa: "Map Verification",
-                dir_fiscal: "Tax Address"
+                dir_fiscal: "Tax Address",
+                placeholder_email: "user@example.com",
             },
         notificationsPage: {
                 fecha_envio: "Shipment Date",
