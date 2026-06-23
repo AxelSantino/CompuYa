@@ -546,7 +546,10 @@ export const en = {
                 boton_cerrar: "Close",
 
                 aria_tabs_navegacion: "Notifications navigation",
-                aria_disparador: "Trigger:"
+                aria_disparador: "Trigger:",
+
+                resultado_exitoso: "Success",
+                resultado_fallido: "Faillure"
             },
 
             importCsvPage: {

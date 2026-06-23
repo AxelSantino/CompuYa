@@ -548,7 +548,10 @@ export const es = {
                 boton_cerrar: "Cerrar",
 
                 aria_tabs_navegacion: "Navegación de notificaciones",
-                aria_disparador: "Disparador:"
+                aria_disparador: "Disparador:",
+
+                resultado_exitoso: "Exitoso",
+                resultado_fallido: "Fallido",
             },
             importCsvPage: {
                 archivo_valido_para_importar: "Archivo válido y listo para importar",

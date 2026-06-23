@@ -78,23 +78,27 @@ function NotificationsPage() {
     {
       header: t('notificationsPage.result'),
       accessor: (row) => {
+        // Tu lógica actual para saber si fue exitoso o no
         const isSuccess = row.resultado.toLowerCase() === 'exitoso';
+        
         return (
           <div className="flex items-center gap-2">
             <span className={`px-2 py-1 rounded-full text-xs font-bold ${
               isSuccess ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
             }`}>
-              {row.resultado}
+              {/* Interceptamos el string del backend y lo pasamos por el traductor */}
+              {isSuccess 
+                ? t('notificationsPage.resultado_exitoso', 'Exitoso') 
+                : t('notificationsPage.resultado_fallido', 'Fallido')
+              }
             </span>
             {!isSuccess && row.motivo_error && (
               <button 
                 onClick={() => setErrorModal({ isOpen: true, message: row.motivo_error || t('notificationsPage.error_desconocido') })}
-                // a11y: Contraste subido a red-600 y foco por teclado explícito con focus-visible
                 className="text-red-600 transition-transform hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 rounded-full"
                 title={t('notificationsPage.aria_ver_error')}
                 aria-label={t('notificationsPage.aria_ver_error')}
               >
-                {/* a11y: Silenciamos el icono decorativo */}
                 <FaInfoCircle aria-hidden="true" size={16} />
               </button>
             )}
