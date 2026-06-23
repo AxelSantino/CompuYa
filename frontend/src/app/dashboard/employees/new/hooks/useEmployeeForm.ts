@@ -2,10 +2,17 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import userService from '@/services/userService';
 import { RegistroEmpleado, Usuario } from '@/types/usuario';
+// 1. Importamos i18n y nuestro manejador global de errores
+import { useTranslation } from 'react-i18next';
+import { useErrorTranslator } from '@/hooks/useErrorTranslator';
 
 export const useEmployeeForm = () => {
   const router = useRouter();
   
+  // 2. Instanciamos los hooks
+  const { t } = useTranslation();
+  const { translateError } = useErrorTranslator();
+
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [createdEmployee, setCreatedEmployee] = useState<Usuario | null>(null);
@@ -38,7 +45,8 @@ export const useEmployeeForm = () => {
     setError(null);
 
     if (!formData.rol) {
-      setError('Por favor, selecciona un rol para el empleado.');
+      // i18n: Pasamos el error de validación local por el traductor
+      setError(t('newEmployeesPage.error_seleccionar_rol', 'Por favor, selecciona un rol para el empleado.'));
       setIsLoading(false);
       return;
     }
@@ -46,11 +54,10 @@ export const useEmployeeForm = () => {
     try {
       const response = await userService.createEmployee(formData);
       setCreatedEmployee(response);
-    } catch (err: any) {
+    } catch (err) {
       console.error('Error al registrar empleado:', err);
-      // Extraemos el mensaje de error de Axios si existe, sino usamos uno genérico
-      const errorMessage = err.response?.data?.detail || 'Ocurrió un error al intentar registrar el empleado. Verifica los datos e intenta nuevamente.';
-      setError(errorMessage);
+      // Arquitectura: Delegamos el error crudo al traductor global con su respectiva clave de fallback
+      setError(translateError(err, 'newEmployeesPage.error_registrar_empleado'));
     } finally {
       setIsLoading(false);
     }

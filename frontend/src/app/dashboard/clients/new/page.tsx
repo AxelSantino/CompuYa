@@ -7,6 +7,8 @@ import LoadingOverlay from '@/components/LoadingOverlay';
 import { AccessDenied } from '@/components/ui/AccessDenied';
 import { useAuth } from '@/contexts/AuthContext';
 import { SuccessFeedback } from '@/components/ui/SuccessFeedback';
+// 1. Importamos tu componente reutilizable
+import { BackButton } from '@/components/ui/BackButton';
 
 // Importamos nuestro Hook y las 3 secciones visuales
 import { useClientForm } from './hooks/useClientForm';
@@ -17,9 +19,8 @@ import '@/i18n/i18n';
 import { useTranslation } from 'react-i18next';
 import withAuth from '@/components/auth/withAuth';
 
-
 function NewClientPage() {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   const router = useRouter();
   const { user, isLoading: isAuthLoading } = useAuth();
   
@@ -65,18 +66,16 @@ function NewClientPage() {
       <div className="max-w-4xl mx-auto px-4 py-4 md:py-6">
         
         {/* Navegación y Encabezado */}
-        <button 
-          type="button"
-          onClick={() => router.back()} 
-          className="flex items-center text-sm text-gray-500 hover:text-gray-800 transition-colors mb-6 group"
-        >
-          <span className="mr-1 group-hover:-translate-x-1 transition-transform inline-block">←</span> 
-          {t('newClientPage.volver_nomina')}
-        </button>
+        {/* a11y & DRY: Implementación de BackButton */}
+        <BackButton 
+          label={t('newClientPage.volver_nomina')} 
+          className="mb-6"
+        />
         
-        <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-1">
+        {/* a11y: Corregido de h2 a h1 para jerarquía correcta */}
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-1">
           {t('newClientPage.registrar_nuevo_cliente')}
-        </h2>
+        </h1>
         <p className="text-gray-600 mb-8">
           {t('newClientPage.nueva_cuenta_corporativa')}
         </p>
@@ -103,7 +102,11 @@ function NewClientPage() {
           />
 
           {error && (
-            <div className="p-4 bg-red-50 border border-red-100 rounded-lg text-red-700 text-sm animate-pulse">
+            <div 
+              // a11y: Rol de alerta para interrumpir y avisar al lector de pantalla
+              role="alert" 
+              className="p-4 bg-red-50 border border-red-100 rounded-lg text-red-700 text-sm animate-pulse"
+            >
               {error}
             </div>
           )}
@@ -128,7 +131,8 @@ function NewClientPage() {
             </Button>
           </div>
           
-          <p className="text-xs text-center text-gray-400 pb-8 mt-4">
+          {/* a11y: Contraste de gray-400 subido a gray-500 para cumplir norma WCAG */}
+          <p className="text-xs text-center text-gray-500 pb-8 mt-4">
             {t('newClientPage.campos_obligatorios')}
           </p>
           

@@ -26,10 +26,37 @@ export const BarChart = ({ data, title, subtitle }: BarChartProps) => {
     <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200 flex flex-col h-full min-h-[360px]">
       <div className="mb-6 border-b border-gray-100 pb-4">
         <h2 className="text-xl font-bold text-gray-900">{title}</h2>
-        <h3 className="text-base text-gray-900">{subtitle}</h3>
+        {/* Contraste mejorado a gray-600 para jerarquía visual */}
+        <h3 className="text-base text-gray-600">{subtitle}</h3>
       </div>
 
-      <div className="w-full flex-grow min-h-[260px]">
+      {/* ================================================================
+        a11y: PATRÓN DE DATOS OCULTOS (Screen Reader Only)
+        Los usuarios con vista ven el gráfico interactivo.
+        Los usuarios ciegos "leen" esta tabla estructurada.
+        ================================================================
+      */}
+      <div className="sr-only">
+        <table aria-label={`Datos de ${title}`}>
+          <thead>
+            <tr>
+              <th scope="col">{t('metricsPage.categoria', 'Categoría')}</th>
+              <th scope="col">{t('metricsPage.cantidad', 'Cantidad')}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.map((item, index) => (
+              <tr key={`sr-row-${index}`}>
+                <td>{item.name}</td>
+                <td>{item.value}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* a11y: Silenciamos visualmente el contenedor del gráfico interactivo */}
+      <div aria-hidden="true" className="w-full flex-grow min-h-[260px]">
         <ResponsiveContainer width="100%" height={260}>
           {/* 1. Declaramos el layout como vertical */}
           <RechartsBarChart
@@ -43,7 +70,8 @@ export const BarChart = ({ data, title, subtitle }: BarChartProps) => {
             {/* 2. El Eje X ahora es el que maneja los NÚMEROS */}
             <XAxis 
               type="number" 
-              tick={{ fill: '#9ca3af', fontSize: 12 }}
+              // Contraste mejorado de #9ca3af (gray-400) a #6b7280 (gray-500)
+              tick={{ fill: '#6b7280', fontSize: 12 }}
               axisLine={{ stroke: '#e5e7eb' }}
               tickLine={false}
             />
@@ -66,7 +94,6 @@ export const BarChart = ({ data, title, subtitle }: BarChartProps) => {
                   <div className="bg-white px-3 py-2 rounded-lg border border-gray-200 shadow-sm text-sm">
                     <span className="font-regular text-gray-900">
                       <span style={{ color: payload[0].payload.color }} className="mr-1 text-sm leading-none">{payload[0].value} {t('metricsPage.envios')}</span>
-                      
                     </span>
                   </div>
                 );

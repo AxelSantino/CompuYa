@@ -2,10 +2,17 @@ import { useState, useEffect, useCallback } from 'react';
 import notificationService from '@/services/notificationService';
 import { HistorialNotificacion, PlantillaCorreo } from '@/types/notificacion';
 import toast from 'react-hot-toast';
+// 1. Importamos las herramientas de i18n y manejo de errores globales
+import { useTranslation } from 'react-i18next';
+import { useErrorTranslator } from '@/hooks/useErrorTranslator';
 
 export type TabType = 'templates' | 'history';
 
 export const useNotifications = () => {
+    // 2. Instanciamos los hooks
+    const { t } = useTranslation();
+    const { translateError } = useErrorTranslator();
+
     const [activeTab, setActiveTab] = useState<TabType>('templates');
 
     const [templates, setTemplates] = useState<PlantillaCorreo[]>([]);
@@ -24,12 +31,14 @@ export const useNotifications = () => {
             const data = await notificationService.getPlantillas();
             setTemplates(data);
         } catch (error) {
-            toast.error('Error al cargar las templates de correo.');
+            // Arquitectura: Delegamos la interpretación del error a nuestra función centralizada
+            toast.error(translateError(error, 'notificationsPage.error_cargar_templates'));
             console.error(error);
         } finally {
             setIsLoadingTemplates(false);
         }
-    }, []);
+    // 3. React Hook Rules: Agregamos translateError a las dependencias
+    }, [translateError]);
 
     useEffect(() => {
         loadTemplates();
@@ -42,9 +51,11 @@ export const useNotifications = () => {
             const data = await notificationService.getHistorial();
             setHistory(data);
             setHistoryLoaded(true);
-            toast.success('Historial cargado exitosamente.');
+            // i18n: Pasamos el mensaje de éxito por el traductor
+            toast.success(t('notificationsPage.success_historial_cargado', 'Historial cargado exitosamente.'));
         } catch (error) {
-            toast.error('Error al descargar el historial de notificaciones.');
+            // Arquitectura: Delegamos el error
+            toast.error(translateError(error, 'notificationsPage.error_descargar_historial'));
             console.error(error);
         } finally {
             setIsLoadingHistory(false);
@@ -59,10 +70,12 @@ export const useNotifications = () => {
             
             setTemplates(prev => prev.map(p => p.id === data.id ? data : p));
             
-            toast.success('Plantilla actualizada correctamente.');
+            // i18n: Pasamos el mensaje de éxito por el traductor
+            toast.success(t('notificationsPage.success_plantilla_actualizada', 'Plantilla actualizada correctamente.'));
             return true;
         } catch (error) {
-            toast.error('Error al intentar guardar los cambios de la plantilla.');
+            // Arquitectura: Delegamos el error
+            toast.error(translateError(error, 'notificationsPage.error_guardar_plantilla'));
             console.error(error);
             return false;
         } finally {

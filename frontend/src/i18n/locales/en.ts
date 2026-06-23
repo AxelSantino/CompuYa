@@ -267,10 +267,10 @@ export const en = {
                 alta: "High",
                 media: "Medium",
                 baja: "Low",
-                envios_en_sistema: "Shipments in the system: ",
+                envios_en_sistema: "Shipments in the system: {{count}}",
                 cargando_incidencias: "Loading incidents for the period...",
                 motivos_cancelacion: "Reasons for shipment cancellation",
-                envios_cancelados: "Shipments cancelled: ",
+                envios_cancelados: "Shipments cancelled: {{count}}",
                 card_total_envios: "Shipments amount",
                 card_envios_entregados: "Shipments delivered",
                 card_envios_cancelados: "Canceled shipments",
@@ -282,10 +282,15 @@ export const en = {
                 a_tiempo: "On time",
                 con_demora: "Delayed",
                 export_procesando: "Procesing ...",
+                export_generando_reportes: "Generating reports, please wait...",
+                export_exito: "Reports generated succesfully",
+                export_error: "Faillure while generating reports",
                 export_exportar_datos: "Export data",
                 export_opciones_descarga: "Download options",
                 export_paquete_completo: "Compressed file (.zip)",
                 export_incluye_todo: "Includes states, priorities and cancelations.",
+                categoria: "Category",
+                seleccione_rango_fechas: "Please select a complete date range to view the incidents.",
         },
         employeesPage: {
                 cargando_nomina: "Loading employee payroll...",
@@ -314,7 +319,10 @@ export const en = {
                 status: {
                     activo: "Active",
                     inactivo: "Inactive"
-                }
+                },
+                 aria_buscar_empleados: "Search employee by name or mail",
+                aria_filtrar_por_rol: "Filter by role",
+                aria_filtrar_por_estado: "Filter by state",
         },
         employeeDetail:{
             volver: "Back to list",
@@ -347,7 +355,16 @@ export const en = {
                     confirm_activar: "Yes, activate",
                     confirm_desactivar: "Yes, deactivate",
                     cancelar: "Cancel"
-                }
+                },
+                volver_listado: "Return to payroll",
+                cargando_perfil: "Loading employee profile...",
+
+                error_cargar_info: "Employee information could not be loaded.",
+                success_actualizado: "Profile successfully updated.",
+                error_guardar_cambios: "Error while saving changes.",
+                success_activado: "Employee succesfully activated.",
+                success_desactivado: "Employee successfully deactivated.",
+                error_cambiar_estado: "Error while saving employee status.",
         },
         newEmployeesPage: {
                 no_tienes_permisos: "You do not have permission to register new employees.",
@@ -370,7 +387,11 @@ export const en = {
                 rol_admin: "Administrator",
                 rol_supervisor: "Supervisor",
                 rol_operador: "Operator",
-                rol_repartidor: "Delivery Driver"
+                rol_repartidor: "Delivery Driver",
+                placeholder_nombre: "E.g.: John",
+                placeholder_apellido: "E.g.: Phillips",
+                error_seleccionar_rol: "Please select a role for the employee.",
+                error_registrar_empleado: "An error occurred while trying to register the employee. Please verify the information and try again."
         },
         clientsPage: {
                 cargando_lista_clientes: "Loading clients list...",
@@ -384,15 +405,20 @@ export const en = {
                 titulo: "Clients Management",
                 subtitulo: "Administration, registration and monitoring of clients (recipients).",
                 nuevo_cliente: "New Client",
+                aria_buscar_clientes: "Search clients",
+                aria_filtrar_por_estado: "Filter by state",
+                error_cargar_clientes: "Faillure while loading clients, try again"
                 
         },
         clientDetail: {
                 volver: "Return to clients list",
-                cuenta_activa: "Inactive Account",
-                cuenta_inactiva: "Active Account",
+                cuenta_activa: "Active Account",
+                cuenta_inactiva: "Inactive Account",
                 btn_desactivar: "Deactivate",
                 btn_activar: "Activate",
                 btn_editar: "Edit Client",
+                cargando_ficha: "Loading company data...",
+                no_registrado: "Unregistered",
                 datos_empresa: "Company Data",
                 form: {
                     razon_social: "Company Name",
@@ -414,6 +440,7 @@ export const en = {
                     no_especificada: "Not especified"
                 },
                 mapa: {
+                    cargando: "Loading location on the map...",
                     titulo: "Location on the map",
                     no_coordenadas: "This company does not have registered geolocation coordinates."
                 },
@@ -425,7 +452,15 @@ export const en = {
                     confirm_activar: "Yes, activate",
                     confirm_desactivar: "Yes, deactivate",
                     cancelar: "Cancel"
-                }
+                },
+
+                error_no_es_cliente: "The requested user does not correspond to a client.",
+                error_cargar_info: "Customer information could not be loaded.",
+                success_actualizado: "Updated company information.",
+                error_guardar_cambios: "Error while saving customer changes.",
+                success_activado: "Customer succesfully activated.",
+                success_desactivado: "Client successfully deactivated.",
+                error_cambiar_estado: "Error while saving customer state.",
     },
         newClientPage: {
                 no_tienes_permisos: "You do not have permission to register new clients/recipients.",
@@ -449,7 +484,14 @@ export const en = {
                 ingrese_dir: "Enter the customer/recipient address and select the most appropriate option.",
                 cod_postal: "Zip Code",
                 verificacion_mapa: "Map Verification",
-                dir_fiscal: "Tax Address"
+                dir_fiscal: "Tax Address",
+                placeholder_email: "user@example.com",
+                error_ubicacion_requerida: "Please search for and select a valid geographic location on the map before continuing.",
+                error_registrar_cliente: "An error occurred while trying to register the company. Please verify the information and try again.",
+                placeholder_razon_social: "Ej. Logística Sur S.A.",
+                placeholder_cuit: "Ej. 30-12345678-9",
+                cargando_visor: "Cargando visor...",
+                placeholder_cod_postal: "Ej. 1615",
             },
         notificationsPage: {
                 fecha_envio: "Shipment Date",
@@ -481,6 +523,37 @@ export const en = {
                 guardar_plantilla: "Save Template",
                 temp_activa: "Active",
                 temp_inactiva: "Inactive",
+
+                error_desconocido: "Unknown error",
+                aria_ver_error: "Click to see error detail",
+
+                error_cargar_templates: "Error al cargar las templates de correo.",
+                success_historial_cargado: "History succesfully loaded.",
+                error_descargar_historial: "Error while downloading notifications history.",
+                success_plantilla_actualizada: "Template succesfully updated",
+                error_guardar_plantilla: "Error while attempting saving template changes.",
+
+                mostrando: "Viewing",
+                registros: "records",
+                filtrar_por_resultado: "Filter by result:",
+                filtro_todos: "All",
+                filtro_exitoso: "Sucess",
+                filtro_fallido: "Faillure",
+
+                aria_cerrar_modal: "Close modal",
+
+                detalle_error: "Faillure detail",
+                boton_cerrar: "Close",
+
+                aria_tabs_navegacion: "Notifications navigation",
+                aria_disparador: "Trigger:",
+
+                resultado_exitoso: "Success",
+                resultado_fallido: "Faillure",
+
+                canales: {
+                    correo: "Email"
+                }
             },
 
             importCsvPage: {
@@ -523,7 +596,7 @@ export const en = {
                 lista_errores_guardado: "List of issues while saving shipments",
 
                 acceso_denegado: "Denied Access",
-                no_contas_con_permisos_necesarios: "No contás con los permisos necesarios para importar envíos.",
+                no_contas_con_permisos_necesarios: "You do not have the necessary permits to import shipments.",
                 importar_envios_por_csv: "Import shipments with CSV file",
                 agrega_multiples_envios_al_sistema: "Add several shipments uploading a CSV file.",
                 ir_a_lista_de_envios: "Go to shipments dashboard",
@@ -598,6 +671,11 @@ export const en = {
             auditoria: {
                 titulo: "State Audit",
                 operador: "Operator: "
+            },
+
+            modal: {
+                confirmar: "Confirm",
+                cancelar: "Cancel",
             }
 
     }

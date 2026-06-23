@@ -19,22 +19,51 @@ interface PieChartProps {
 export const PieChart = ({ slices, title, subtitle }: PieChartProps) => {
   // Única lógica de negocio a este nivel
   const total = slices.reduce((sum, slice) => sum + slice.value, 0);
-  const {t} = useTranslation();
+  const { t } = useTranslation();
+  
   return (
     <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200 flex flex-col h-full min-h-[360px]">
       <div className="mb-4 text-center">
         <h2 className="text-xl font-bold text-gray-900">{title}</h2>
-        <h3 className="text-base text-gray-900">{subtitle}</h3>
+        {/* Contraste y jerarquía mejorados (de 900 a 600) */}
+        <h3 className="text-base text-gray-600">{subtitle}</h3>
       </div>
       
+      {/* ================================================================
+        a11y: PATRÓN DE DATOS OCULTOS (Screen Reader Only)
+        Los usuarios con vista ven el gráfico interactivo.
+        Los usuarios ciegos "leen" esta tabla estructurada.
+        ================================================================
+      */}
+      <div className="sr-only">
+        <table aria-label={`Datos de ${title}`}>
+          <thead>
+            <tr>
+              <th scope="col">{t('metricsPage.categoria', 'Categoría')}</th>
+              <th scope="col">{t('metricsPage.cantidad')}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {slices.map((slice, index) => (
+              <tr key={`sr-row-${index}`}>
+                <td>{slice.label}</td>
+                <td>{slice.value}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
       <div className="flex flex-col items-center gap-6">
         {total === 0 ? (
-          <div className="text-sm text-gray-500 text-center py-12 flex-grow flex items-center justify-center">
-          {t('metricsPage.no_hay_datos_mostrar')}
+          // Contraste mejorado a gray-600
+          <div className="text-sm text-gray-600 text-center py-12 flex-grow flex items-center justify-center">
+            {t('metricsPage.no_hay_datos_mostrar')}
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center gap-6 flex-grow w-full">
-            <div className="w-[240px] h-[240px] relative flex items-center justify-center">
+            {/* a11y: Silenciamos visualmente el contenedor del gráfico interactivo */}
+            <div aria-hidden="true" className="w-[240px] h-[240px] relative flex items-center justify-center">
             
               <RechartsPieChart width={240} height={240}>
                 <Pie
@@ -69,9 +98,9 @@ export const PieChart = ({ slices, title, subtitle }: PieChartProps) => {
                 />
               </RechartsPieChart>
             
-          </div>
+            </div>
             <PieChartLegend slices={slices} total={total} />
-        </div>
+          </div>
         )}
       </div>
     </div>

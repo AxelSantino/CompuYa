@@ -3,9 +3,17 @@ import { Usuario } from '@/types/usuario';
 import userService from '@/services/userService';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
+// 1. Importamos las herramientas de i18n y manejo de errores
+import { useTranslation } from 'react-i18next';
+import { useErrorTranslator } from '@/hooks/useErrorTranslator';
 
 export const useClientProfile = (id: string) => {
     const router = useRouter();
+    
+    // 2. Instanciamos los hooks
+    const { t } = useTranslation();
+    const { translateError } = useErrorTranslator();
+
     const [client, setClient] = useState<Usuario | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isEditing, setIsEditing] = useState(false);
@@ -30,7 +38,8 @@ export const useClientProfile = (id: string) => {
             const data = await userService.getUserById(Number(id));
             
             if (data.tipo !== 'empresa') {
-                setError('El usuario solicitado no corresponde a un cliente.');
+                // i18n: Pasado por el traductor
+                setError(t('clientDetail.error_no_es_cliente', 'El usuario solicitado no corresponde a un cliente.'));
                 return;
             }
 
@@ -44,11 +53,13 @@ export const useClientProfile = (id: string) => {
             });
             setError(null);
         } catch (err) {
-            setError('No se pudo cargar la información del cliente.');
+            // Arquitectura: Delegamos al traductor de errores
+            setError(translateError(err, 'clientDetail.error_cargar_info'));
         } finally {
             setIsLoading(false);
         }
-    }, [id]);
+    // Añadimos t y translateError a las dependencias del useCallback
+    }, [id, t, translateError]);
 
     useEffect(() => {
         if (id) fetchClient();
@@ -99,18 +110,20 @@ export const useClientProfile = (id: string) => {
 
             await userService.updateUser(client.id, payload);
             
-            toast.success('Información de la empresa actualizada.');
+            // i18n: Pasado por el traductor
+            toast.success(t('clientDetail.success_actualizado', 'Información de la empresa actualizada.'));
             setIsEditing(false);
             await fetchClient();
         } catch (error) {
-            toast.error('Error al guardar los cambios del cliente.');
+            // Arquitectura: Manejo centralizado de errores para el toast
+            toast.error(translateError(error, 'clientDetail.error_guardar_cambios'));
             console.error(error);
         } finally {
             setIsSaving(false);
         }
     };
 
-        /*
+    /*
     * FUNCION DE DESACTIVAR/ACTIVAR USUARIO
     */
     const handleRequestStatusChange = (isActive: boolean) => {
@@ -136,15 +149,19 @@ export const useClientProfile = (id: string) => {
 
         try {
             await userService.changeUserStatus(client.id, pendingStatus);
-            toast.success(`Cliente ${pendingStatus ? 'activado' : 'desactivado'} correctamente.`)
+            
+            // i18n: Mensajes separados en lugar de concatenados para mejor traducción
+            const successMsg = pendingStatus 
+              ? t('clientDetail.success_activado', 'Cliente activado correctamente.') 
+              : t('clientDetail.success_desactivado', 'Cliente desactivado correctamente.');
+            
+            toast.success(successMsg);
 
             await fetchClient();
             handleCloseStatusModal();
-        } catch (err: any) {
-            const backendMessage = err.response?.data?.detail;
-            const errorMessage = backendMessage || 'Error al cambiar el estado del cliente.';
-
-            toast.error(errorMessage);
+        } catch (err) {
+            // Arquitectura: Quitamos la extracción manual y usamos el traductor
+            toast.error(translateError(err, 'clientDetail.error_cambiar_estado'));
             console.error('Error al cambiar estado:', err);
         } finally {
             setIsChangingStatus(false);

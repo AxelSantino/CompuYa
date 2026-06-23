@@ -268,10 +268,10 @@ export const es = {
                 alta: "Alta",
                 media: "Media",
                 baja: "Baja",
-                envios_en_sistema: "Envíos en el sistema: ",
+                envios_en_sistema: "Envíos en el sistema: {{count}}",
                 cargando_incidencias: "Cargando incidencias del periodo...",
                 motivos_cancelacion: "Motivos de cancelación de envíos",
-                envios_cancelados: "Envíos cancelados: ",
+                envios_cancelados: "Envíos cancelados: {{count}}",
                 card_total_envios: "Total de Envíos",
                 card_envios_entregados: "Envíos Entregados",
                 card_envios_cancelados: "Envíos Cancelados",
@@ -283,10 +283,15 @@ export const es = {
                 a_tiempo: "A tiempo",
                 con_demora: "Con demora",
                 export_procesando: "Procesing ...",
+                export_generando_reportes: "Generando reportes, por favor espera...",
+                export_exito: "Reportes exportados correctamente",
+                export_error: "Ocurrió un error al descargar los reportes",
                 export_exportar_datos: "Exportar Datos",
                 export_opciones_descarga: "Opciones de descarga",
                 export_paquete_completo: "Paquete completo (.zip)",
                 export_incluye_todo: "Incluye Estados, Prioridades y Cancelaciones consolidados.",
+                categoria: "Categoria",
+                seleccione_rango_fechas: "Seleccione un rango de fechas completo para ver las incidencias.",
 
             },
             employeesPage: {
@@ -316,7 +321,10 @@ export const es = {
                 status: {
                     activo: "Activo",
                     inactivo: "Inactivo"
-                }
+                },
+                aria_buscar_empleados: "Buscar empleados por nombre o email",
+                aria_filtrar_por_rol: "Filtrar por rol",
+                aria_filtrar_por_estado: "Filtrar por estado",
             },
             employeeDetail:{
                 volver: "Volver a la nómina",
@@ -349,7 +357,16 @@ export const es = {
                     confirm_activar: "Sí, activar",
                     confirm_desactivar: "Sí, desactivar",
                     cancelar: "Cancelar"
-                }
+                },
+                volver_listado: "Volver al listado",
+
+                cargando_perfil: "Cargando perfil del empleado...",
+                error_cargar_info: "No se pudo cargar la información del empleado.",
+                success_actualizado: "Perfil actualizado correctamente.",
+                error_guardar_cambios: "Error al guardar los cambios.",
+                success_activado: "Empleado activado correctamente.",
+                success_desactivado: "Empleado desactivado correctamente.",
+                error_cambiar_estado: "Error al cambiar el estado del empleado.",
             },
             newEmployeesPage: {
                 no_tienes_permisos: "No tienes permisos para dar de alta nuevos empleados.",
@@ -372,7 +389,11 @@ export const es = {
                 rol_admin: "Administrador",
                 rol_supervisor: "Supervisor",
                 rol_operador: "Operador",
-                rol_repartidor: "Repartidor"
+                rol_repartidor: "Repartidor",
+                placeholder_nombre: "Ej: Juan",
+                placeholder_apellido: "Ej: Perez",
+                error_seleccionar_rol: "Por favor, selecciona un rol para el empleado.",
+                error_registrar_empleado: "Ocurrió un error al intentar registrar el empleado. Verifica los datos e intenta nuevamente."
             },
             clientsPage: {
                 cargando_lista_clientes: "Cargando lista de clientes...",
@@ -385,13 +406,18 @@ export const es = {
                 placeholder_buscar_por: "Buscar por Razón social o CUIT...",
                 titulo: "Gestión de Clientes",
                 subtitulo: "Administración, alta y seguimiento de clientes (destinatarios).",
-                nuevo_cliente: "Nuevo Cliente"
+                nuevo_cliente: "Nuevo Cliente",
+                aria_buscar_clientes: "Buscar clientes",
+                aria_filtrar_por_estado: "Filtrar por estado",
+                error_cargar_clientes: "Error al cargar la lista de clientes, intente nuevamente"
             },
             clientDetail: {
                 volver: "Volver al listado de clientes",
                 cuenta_activa: "Cuenta Activa",
                 cuenta_inactiva: "Cuenta Inactiva",
                 btn_desactivar: "Desactivar",
+                cargando_ficha: "Cargando ficha del cliente...",
+                no_registrado: "No registrado",
                 btn_activar: "Activar",
                 btn_editar: "Editar Cliente",
                 datos_empresa: "Datos de la Empresa",
@@ -415,6 +441,7 @@ export const es = {
                     no_especificada: "No especificada"
                 },
                 mapa: {
+                    cargando: "Cargando mapa de ubicación...",
                     titulo: "Ubicación en el mapa",
                     no_coordenadas: "Esta empresa no cuenta con coordenadas de geolocalización registradas."
                 },
@@ -426,7 +453,15 @@ export const es = {
                     confirm_activar: "Sí, activar",
                     confirm_desactivar: "Sí, desactivar",
                     cancelar: "Cancelar"
-                }
+                },
+
+                error_no_es_cliente: "El usuario solicitado no corresponde a un cliente.",
+                error_cargar_info: "No se pudo cargar la información del cliente.",
+                success_actualizado: "Información de la empresa actualizada.",
+                error_guardar_cambios: "Error al guardar los cambios del cliente.",
+                success_activado: "Cliente activado correctamente.",
+                success_desactivado: "Cliente desactivado correctamente.",
+                error_cambiar_estado: "Error al cambiar el estado del cliente.",
     },
             newClientPage: {
                 no_tienes_permisos: "No tienes permisos para dar de alta nuevos clientes/destinatarios.",
@@ -450,7 +485,14 @@ export const es = {
                 ingrese_dir: "Ingrese la dirección del cliente/destinatario y seleccione la opción mas adecuada.",
                 cod_postal: "Código Postal",
                 verificacion_mapa: "Verificación en Mapa",
-                dir_fiscal: "Dirección Fiscal"
+                dir_fiscal: "Dirección Fiscal",
+                placeholder_email: "usuario@ejemplo.com",
+                error_ubicacion_requerida: "Por favor, busque y seleccione una ubicación geográfica válida en el mapa antes de continuar.",
+                error_registrar_cliente: "Ocurrió un error al intentar registrar la empresa. Verifica los datos e intenta nuevamente.",
+                placeholder_razon_social: "Ej. Logística Sur S.A.",
+                placeholder_cuit: "Ej. 30-12345678-9",
+                cargando_visor: "Cargando visor...",
+                placeholder_cod_postal: "Ej. 1615",
             },
             notificationsPage: {
                 fecha_envio: "Fecha de Envío",
@@ -482,6 +524,38 @@ export const es = {
                 guardar_plantilla: "Guardar Plantilla",
                 temp_activa: "Activa",
                 temp_inactiva: "Inactiva",
+
+                error_desconocido: "Error desconocido",
+                aria_ver_error: "Hacer clic para ver el detalle del error",
+
+                error_cargar_templates: "Error al cargar las templates de correo.",
+                success_historial_cargado: "Historial cargado exitosamente.",
+                error_descargar_historial: "Error al descargar el historial de notificaciones.",
+                success_plantilla_actualizada: "Plantilla actualizada correctamente.",
+                error_guardar_plantilla: "Error al intentar guardar los cambios de la plantilla.",
+
+                
+                mostrando: "Mostrando",
+                registros: "registros",
+                filtrar_por_resultado: "Filtrar por resultado:",
+                filtro_todos: "Todos",
+                filtro_exitoso: "Exitoso",
+                filtro_fallido: "Fallido",
+
+                aria_cerrar_modal: "Cerrar modal",
+
+                detalle_error: "Detalle del Error",
+                boton_cerrar: "Cerrar",
+
+                aria_tabs_navegacion: "Navegación de notificaciones",
+                aria_disparador: "Disparador:",
+
+                resultado_exitoso: "Exitoso",
+                resultado_fallido: "Fallido",
+
+                canales: {
+                    correo: "Correo"
+                }
             },
             importCsvPage: {
                 archivo_valido_para_importar: "Archivo válido y listo para importar",
@@ -598,6 +672,10 @@ export const es = {
             auditoria: {
                 titulo: "Auditoría de Estados",
                 operador: "Operador: "
+            },
+            modal: {
+                confirmar: "Confirmar",
+                cancelar: "Cancelar",
             }
         }
     };

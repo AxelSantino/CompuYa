@@ -6,7 +6,9 @@ import LoadingOverlay from '@/components/LoadingOverlay';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
-import { FaArrowLeft, FaUserTie, FaEnvelope, FaIdBadge, FaCalendarAlt, FaUserSlash, FaUserCheck } from 'react-icons/fa';
+// 1. Importamos BackButton
+import { BackButton } from '@/components/ui/BackButton';
+import { FaUserTie, FaEnvelope, FaIdBadge, FaCalendarAlt, FaUserSlash, FaUserCheck } from 'react-icons/fa';
 import { useEmployeeProfile } from './hooks/useEmployeeProfile'
 import { getRoleBadgeClasses } from '../components/employeeColumns';
 import { ConfirmActionModal } from '@/app/dashboard/users/components/ConfirmActionModal';
@@ -16,7 +18,8 @@ import { useTranslation } from 'react-i18next';
 const DetailItem = ({ icon, label, value }: { icon: React.ReactNode, label: string, value: React.ReactNode }) => (
   <div className="flex flex-col p-4 bg-gray-50 rounded-lg border border-gray-100">
     <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1 flex items-center gap-2">
-      <span className="text-gray-400">{icon}</span> {label}
+      {/* a11y: Ocultamos el icono para lectores de pantalla */}
+      <span aria-hidden="true" className="text-gray-400">{icon}</span> {label}
     </h4>
     <p className="text-sm font-medium text-gray-900 ml-6">{value}</p>
   </div>
@@ -24,21 +27,24 @@ const DetailItem = ({ icon, label, value }: { icon: React.ReactNode, label: stri
 
 function EmployeeDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   const {
     router, employee, isLoading, error, isEditing, setIsEditing,
     isSaving, formData, handleChange, handleCancelEdit, handleSave, 
-    // variables para desactivar usuario con el modal
     isChangingStatus, isStatusModalOpen, pendingStatus, handleRequestStatusChange, handleCloseStatusModal, handleConfirmStatusChange
   } = useEmployeeProfile(resolvedParams.id);
 
   if (error) {
     return (
       <DashboardLayout>
-        <div className="p-6 text-center text-red-500 font-medium">
+        {/* a11y: Rol de alerta y contraste a red-600 */}
+        <div role="alert" className="p-6 text-center text-red-600 font-medium">
           {error}
           <div className="mt-4">
-            <Button variant="secondary" onClick={() => router.push('/dashboard/employees')}>Volver al listado</Button>
+            <Button variant="secondary" onClick={() => router.push('/dashboard/employees')}>
+              {/* i18n: Pasado por el traductor */}
+              {t('employeeDetail.volver_listado', 'Volver al listado')}
+            </Button>
           </div>
         </div>
       </DashboardLayout>
@@ -47,22 +53,19 @@ function EmployeeDetailPage({ params }: { params: Promise<{ id: string }> }) {
 
   const iniciales = employee ? `${employee.perfil_empleado?.nombre?.charAt(0) || ''}${employee.perfil_empleado?.apellido?.charAt(0) || ''}`.toUpperCase() : '👤';
 
-  // CAMBIAR CUANDO LA API DEVUELVA EL ESTADO DEL EMPLEADO
   const isEmployeeActive = employee?.activo ?? true;
 
   return (
     <DashboardLayout>
       <div className="p-4 md:p-6 relative min-h-screen">
-        <LoadingOverlay isLoading={isLoading} text="Cargando perfil del empleado..." />
+        {/* i18n: Pasado por el traductor */}
+        <LoadingOverlay isLoading={isLoading} text={t('employeeDetail.cargando_perfil', 'Cargando perfil del empleado...')} />
 
-        <div className="mb-6">
-          <button 
-            onClick={() => router.push('/dashboard/employees')} 
-            className="flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-blue-600 transition-colors"
-          >
-            <FaArrowLeft /> {t('employeeDetail.volver')}
-          </button>
-        </div>
+        {/* 2. a11y & DRY: Implementación de BackButton */}
+        <BackButton 
+          label={t('employeeDetail.volver')} 
+          className="mb-6"
+        />
 
         {employee && (
           <div className="max-w-3xl mx-auto">
@@ -91,14 +94,17 @@ function EmployeeDetailPage({ params }: { params: Promise<{ id: string }> }) {
                       <Button 
                         variant={isEmployeeActive ? 'danger' : 'success'}
                         onClick={() => handleRequestStatusChange(!isEmployeeActive)}
-                       className="flex items-center gap-2"
+                        className="flex items-center gap-2"
                       >
-                        {isEmployeeActive ? <FaUserSlash /> : <FaUserCheck />}
+                        {/* a11y: Silenciamos los iconos decorativos */}
+                        <span aria-hidden="true">
+                          {isEmployeeActive ? <FaUserSlash /> : <FaUserCheck />}
+                        </span>
                         {isEmployeeActive ? t('employeeDetail.btn_desactivar') : t('employeeDetail.btn_activar')}
                       </Button>              
-                     <Button variant="secondary" onClick={() => setIsEditing(true)}>
-                      {t('employeeDetail.btn_editar')}
-                    </Button>
+                      <Button variant="secondary" onClick={() => setIsEditing(true)}>
+                        {t('employeeDetail.btn_editar')}
+                      </Button>
                     </div>
                   )}
                 </div>
@@ -107,21 +113,26 @@ function EmployeeDetailPage({ params }: { params: Promise<{ id: string }> }) {
                   <form onSubmit={handleSave} className="space-y-6 animate-in fade-in duration-300">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-50 p-6 rounded-xl border border-gray-100">
                       <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-1">{t('employeeDetail.form.nombre')}</label>
-                        <Input name="nombre" required value={formData.nombre} onChange={handleChange} disabled={isSaving} />
+                        {/* a11y: Vinculamos label e input */}
+                        <label htmlFor="nombre" className="block text-sm font-bold text-gray-700 mb-1">{t('employeeDetail.form.nombre')}</label>
+                        <Input id="nombre" name="nombre" required value={formData.nombre} onChange={handleChange} disabled={isSaving} />
                       </div>
                       <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-1">{t('employeeDetail.form.apellido')}</label>
-                        <Input name="apellido" required value={formData.apellido} onChange={handleChange} disabled={isSaving} />
+                        {/* a11y: Vinculamos label e input */}
+                        <label htmlFor="apellido" className="block text-sm font-bold text-gray-700 mb-1">{t('employeeDetail.form.apellido')}</label>
+                        <Input id="apellido" name="apellido" required value={formData.apellido} onChange={handleChange} disabled={isSaving} />
                       </div>
                       <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-1">{t('employeeDetail.form.email')}</label>
-                        <Input name="email" type="email" value={employee.email} disabled={true} className="bg-gray-100 text-gray-500 cursor-not-allowed opacity-70" />
-                        <p className="text-xs text-gray-400 mt-1">{t('employeeDetail.form.email_bloqueado')}</p>
+                        {/* a11y: Vinculamos label e input */}
+                        <label htmlFor="email" className="block text-sm font-bold text-gray-700 mb-1">{t('employeeDetail.form.email')}</label>
+                        <Input id="email" name="email" type="email" value={employee.email} disabled={true} className="bg-gray-100 text-gray-500 cursor-not-allowed opacity-70" />
+                        {/* a11y: Contraste mejorado a gray-500 */}
+                        <p className="text-xs text-gray-500 mt-1">{t('employeeDetail.form.email_bloqueado')}</p>
                       </div>
                       <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-1">{t('employeeDetail.form.rol')}</label>
-                        <Select name="rol" value={formData.rol} onChange={handleChange} disabled={isSaving}>
+                        {/* a11y: Vinculamos label y select */}
+                        <label htmlFor="rol" className="block text-sm font-bold text-gray-700 mb-1">{t('employeeDetail.form.rol')}</label>
+                        <Select id="rol" name="rol" value={formData.rol} onChange={handleChange} disabled={isSaving}>
                           <option value="operador">{t('employeesPage.roles.operador')}</option>
                           <option value="repartidor">{t('employeesPage.roles.repartidor')}</option>
                           <option value="supervisor">{t('employeesPage.roles.supervisor')}</option>
@@ -156,7 +167,8 @@ function EmployeeDetailPage({ params }: { params: Promise<{ id: string }> }) {
           isOpen={isStatusModalOpen}
           isLoading={isChangingStatus}
           variant={pendingStatus ? 'success' : 'danger'}
-          icon={pendingStatus ? <FaUserCheck /> : <FaUserSlash />}
+          // a11y: Silenciamos los iconos decorativos
+          icon={pendingStatus ? <FaUserCheck aria-hidden="true" /> : <FaUserSlash aria-hidden="true" />}
           title={pendingStatus ? t('employeeDetail.modal.activar_title') : t('employeeDetail.modal.desactivar_title')}
           message={
             pendingStatus

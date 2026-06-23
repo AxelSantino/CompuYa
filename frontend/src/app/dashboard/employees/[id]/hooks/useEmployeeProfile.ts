@@ -3,9 +3,17 @@ import { Usuario } from '@/types/usuario';
 import userService from '@/services/userService';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
+// 1. Importamos las herramientas de i18n y manejo de errores
+import { useTranslation } from 'react-i18next';
+import { useErrorTranslator } from '@/hooks/useErrorTranslator';
 
 export const useEmployeeProfile = (id: string) => {
     const router = useRouter();
+    
+    // 2. Instanciamos los hooks
+    const { t } = useTranslation();
+    const { translateError } = useErrorTranslator();
+
     const [employee, setEmployee] = useState<Usuario | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isEditing, setIsEditing] = useState(false);
@@ -34,11 +42,13 @@ export const useEmployeeProfile = (id: string) => {
             });
             setError(null);
         } catch (err) {
-            setError('No se pudo cargar la información del empleado.');
+            // Arquitectura: Delegamos al traductor de errores
+            setError(translateError(err, 'employeeDetail.error_cargar_info'));
         } finally {
             setIsLoading(false);
         }
-    }, [id]);
+    // Añadimos t y translateError a las dependencias
+    }, [id, t, translateError]);
 
     useEffect(() => {
         if (id) fetchEmployee();
@@ -74,11 +84,13 @@ export const useEmployeeProfile = (id: string) => {
 
             await userService.updateUser(employee.id, payload);
             
-            toast.success('Perfil actualizado correctamente.');
+            // i18n: Pasado por el traductor
+            toast.success(t('employeeDetail.success_actualizado', 'Perfil actualizado correctamente.'));
             setIsEditing(false);
             await fetchEmployee();
         } catch (error) {
-            toast.error('Error al guardar los cambios.');
+            // Arquitectura: Manejo centralizado de errores para el toast
+            toast.error(translateError(error, 'employeeDetail.error_guardar_cambios'));
             console.error('Error de payload:', error);
         } finally {
             setIsSaving(false);
@@ -112,15 +124,19 @@ export const useEmployeeProfile = (id: string) => {
 
         try {
             await userService.changeUserStatus(employee.id, pendingStatus);
-            toast.success(`Empleado ${pendingStatus ? 'activado' : 'desactivado'} correctamente.`)
+            
+            // i18n: Mensajes separados para una correcta traducción
+            const successMsg = pendingStatus 
+              ? t('employeeDetail.success_activado', 'Empleado activado correctamente.') 
+              : t('employeeDetail.success_desactivado', 'Empleado desactivado correctamente.');
+            
+            toast.success(successMsg);
 
             await fetchEmployee();
             handleCloseStatusModal();
-        } catch (err: any) {
-            const backendMessage = err.response?.data?.detail;
-            const errorMessage = backendMessage || 'Error al cambiar el estado del empleado.';
-
-            toast.error(errorMessage);
+        } catch (err) {
+            // Arquitectura: Quitamos la extracción manual y usamos el traductor
+            toast.error(translateError(err, 'employeeDetail.error_cambiar_estado'));
             console.error('Error al cambiar estado:', err);
         } finally {
             setIsChangingStatus(false);

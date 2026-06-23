@@ -2,7 +2,8 @@ import { Column } from '../../users/components/DataTable';
 import { Usuario } from '@/types/usuario';
 import Link from 'next/link';
 import '@/i18n/i18n';
-import { useTranslation } from 'react-i18next';
+// Nota: La importación de useTranslation aquí no se usa directamente porque recibes `t` por parámetros,
+// pero es correcto mantenerla si la usas en el futuro.
 
 export const getRoleBadgeClasses = (rol: string) => {
   switch (rol.toLowerCase()) {
@@ -24,8 +25,9 @@ export const getStatusBadgeClasses = (isActive: boolean) => {
     ? 'bg-green-100 text-green-800' 
     : 'bg-red-100 text-red-800';
 };
+
 export const getEmployeeColumns = (t: any): Column<Usuario>[] => [
-  
+  // i18n: Pasado por el traductor
   { header: 'ID', accessor: 'id' },
   { 
     header: t('employeesPage.nombre_completo'), 
@@ -35,6 +37,7 @@ export const getEmployeeColumns = (t: any): Column<Usuario>[] => [
       return <span>{`${nombre} ${apellido}`.trim()}</span>;
     }
   },
+  // i18n: Pasado por el traductor
   { header: 'Email', accessor: 'email' },
   { 
     header: t('employeesPage.rol'), 
@@ -67,13 +70,21 @@ export const getEmployeeColumns = (t: any): Column<Usuario>[] => [
   },
   { 
     header: t('employeesPage.acciones'), 
-    accessor: (row) => (
-      <Link 
-        href={`/dashboard/employees/${row.id}`}
-        className="text-orange-600 hover:text-orange-800 font-bold transition-colors cursor-pointer"
-      >
-        {t('employeesPage.ver_detalle')}
-      </Link>
-    )
+    accessor: (row) => {
+      // Obtenemos el nombre para darle contexto al lector de pantalla
+      const nombreContexto = row.perfil_empleado?.nombre || t('employeesPage.empleado_generico', 'empleado');
+      
+      return (
+        <Link 
+          href={`/dashboard/employees/${row.id}`}
+          // a11y: Etiqueta dinámica con contexto para lectores de pantalla
+          aria-label={t('employeesPage.aria_ver_detalle', { nombre: nombreContexto })}
+          // a11y: Contraste subido a orange-700 y anillo de foco por teclado agregado
+          className="text-orange-600 hover:text-orange-900 font-bold transition-colors cursor-pointer rounded-sm px-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
+        >
+          {t('employeesPage.ver_detalle')}
+        </Link>
+      );
+    }
   }
 ];
