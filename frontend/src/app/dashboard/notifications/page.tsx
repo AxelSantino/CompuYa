@@ -71,9 +71,14 @@ function NotificationsPage() {
       header: t('notificationsPage.asunto'),
       accessor: 'asunto_enviado'
     },
-    {
+{
       header: t('notificationsPage.canal'),
-      accessor: (row) => <span className="capitalize">{row.canal}</span>
+      accessor: (row) => (
+        <span className="capitalize">
+          {/* i18n: Interceptamos el canal dinámicamente y usamos el string original como fallback por si el backend envía un canal nuevo no mapeado */}
+          {t(`notificationsPage.canales.${row.canal.toLowerCase()}`, row.canal)}
+        </span>
+      )
     },
     {
       header: t('notificationsPage.result'),

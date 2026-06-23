@@ -552,6 +552,10 @@ export const es = {
 
                 resultado_exitoso: "Exitoso",
                 resultado_fallido: "Fallido",
+
+                canales: {
+                    correo: "Correo"
+                }
             },
             importCsvPage: {
                 archivo_valido_para_importar: "Archivo válido y listo para importar",

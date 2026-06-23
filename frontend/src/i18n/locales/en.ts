@@ -549,7 +549,11 @@ export const en = {
                 aria_disparador: "Trigger:",
 
                 resultado_exitoso: "Success",
-                resultado_fallido: "Faillure"
+                resultado_fallido: "Faillure",
+
+                canales: {
+                    correo: "Email"
+                }
             },
 
             importCsvPage: {
