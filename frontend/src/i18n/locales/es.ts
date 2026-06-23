@@ -524,6 +524,9 @@ export const es = {
                 guardar_plantilla: "Guardar Plantilla",
                 temp_activa: "Activa",
                 temp_inactiva: "Inactiva",
+
+                error_desconocido: "Error desconocido",
+                aria_ver_error: "Hacer clic para ver el detalle del error",
             },
             importCsvPage: {
                 archivo_valido_para_importar: "Archivo válido y listo para importar",

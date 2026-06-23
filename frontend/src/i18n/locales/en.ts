@@ -523,6 +523,9 @@ export const en = {
                 guardar_plantilla: "Save Template",
                 temp_activa: "Active",
                 temp_inactiva: "Inactive",
+
+                error_desconocido: "Unknown error",
+                aria_ver_error: "Click to see error detail",
             },
 
             importCsvPage: {

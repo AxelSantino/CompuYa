@@ -24,7 +24,7 @@ import { useTranslation } from 'react-i18next';
 import withAuth from '@/components/auth/withAuth';
 
 function NotificationsPage() {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   const {
     activeTab,
     setActiveTab,
@@ -44,7 +44,6 @@ function NotificationsPage() {
 
   const [filterResult, setFilterResult] = useState<FilterOption>('Todos');
 
-  
   const handleEditClick = (template: PlantillaCorreo) => {
     setSelectedTemplate(template);
     setIsModalOpen(true);
@@ -54,7 +53,6 @@ function NotificationsPage() {
     setIsModalOpen(false);
     setTimeout(() => setSelectedTemplate(null), 200);
   };
-
 
   const historyColumns: Column<HistorialNotificacion>[] = [
     {
@@ -90,11 +88,14 @@ function NotificationsPage() {
             </span>
             {!isSuccess && row.motivo_error && (
               <button 
-                onClick={() => setErrorModal({ isOpen: true, message: row.motivo_error || 'Error desconocido' })}
-                className="text-red-500 transition-transform hover:scale-110 focus:outline-none"
-                title="Hacer clic para ver el detalle del error"
+                onClick={() => setErrorModal({ isOpen: true, message: row.motivo_error || t('notificationsPage.error_desconocido') })}
+                // a11y: Contraste subido a red-600 y foco por teclado explícito con focus-visible
+                className="text-red-600 transition-transform hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 rounded-full"
+                title={t('notificationsPage.aria_ver_error')}
+                aria-label={t('notificationsPage.aria_ver_error')}
               >
-                <FaInfoCircle size={16} />
+                {/* a11y: Silenciamos el icono decorativo */}
+                <FaInfoCircle aria-hidden="true" size={16} />
               </button>
             )}
           </div>
@@ -126,7 +127,6 @@ function NotificationsPage() {
 
         <NotificationsTabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
-
         {activeTab === 'templates' && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-in fade-in duration-300">
             {templates.length === 0 && !isLoadingTemplates ? (
@@ -152,7 +152,8 @@ function NotificationsPage() {
             {!historyLoaded ? (
               <div className="flex flex-col items-center justify-center py-20 px-4 text-center h-full absolute inset-0">
                 <div className="bg-blue-50 text-blue-500 w-16 h-16 rounded-full flex items-center justify-center mb-5 shadow-sm">
-                  <AiOutlineHistory size={35} />
+                  {/* a11y: Silenciamos el icono decorativo */}
+                  <AiOutlineHistory aria-hidden="true" size={35} />
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-2">{t('notificationsPage.hist_notis')}</h3>
                 <Button variant="primary" onClick={loadHistory} disabled={isLoadingHistory} className="shadow-md">
@@ -161,21 +162,22 @@ function NotificationsPage() {
               </div>
             ) : (
               <div>
-              <NotificationFilter 
-                filterResult={filterResult}
-                onFilterChange={setFilterResult}
-                totalCount={filteredHistory.length}
-              />
-              <DataTable
-                columns={historyColumns}
-                data={filteredHistory}
-                keyExtractor={(row) => row.id}
-                emptyMessage={
-                  filterResult !== t('notificationsPage.todos')
-                    ? "t('notificationsPage.no_notis_estado') ${filterResult}" 
-                    : t('notificationsPage.no_notis_enviadas')
-                }
-              />
+                <NotificationFilter 
+                  filterResult={filterResult}
+                  onFilterChange={setFilterResult}
+                  totalCount={filteredHistory.length}
+                />
+                <DataTable
+                  columns={historyColumns}
+                  data={filteredHistory}
+                  keyExtractor={(row) => row.id}
+                  emptyMessage={
+                    filterResult !== 'Todos'
+                      // Bug resuelto: Sintaxis correcta de template literal de JS
+                      ? `${t('notificationsPage.no_notis_estado')} ${filterResult}` 
+                      : t('notificationsPage.no_notis_enviadas')
+                  }
+                />
               </div>
             )}
           </div>
