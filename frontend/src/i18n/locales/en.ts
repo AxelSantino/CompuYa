@@ -319,7 +319,10 @@ export const en = {
                 status: {
                     activo: "Active",
                     inactivo: "Inactive"
-                }
+                },
+                 aria_buscar_empleados: "Search employee by name or mail",
+                aria_filtrar_por_rol: "Filter by role",
+                aria_filtrar_por_estado: "Filter by state",
         },
         employeeDetail:{
             volver: "Back to list",

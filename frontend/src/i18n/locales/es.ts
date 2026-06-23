@@ -321,7 +321,10 @@ export const es = {
                 status: {
                     activo: "Activo",
                     inactivo: "Inactivo"
-                }
+                },
+                aria_buscar_empleados: "Buscar empleados por nombre o email",
+                aria_filtrar_por_rol: "Filtrar por rol",
+                aria_filtrar_por_estado: "Filtrar por estado",
             },
             employeeDetail:{
                 volver: "Volver a la nómina",
