@@ -18,6 +18,7 @@ export default function NotificationBell() {
     } = useNotificationBell();
 
     const dropdownRef = useRef<HTMLDivElement>(null);
+    const buttonRef = useRef<HTMLButtonElement>(null);
 
     // UX: Cierra el menú si se hace clic afuera
     useEffect(() => {
@@ -30,28 +31,74 @@ export default function NotificationBell() {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [isOpen, closeDropdown]);
 
+    // a11y: Mueve el foco al primer elemento apenas se abre la campanita
+    useEffect(() => {
+        if (isOpen) {
+            setTimeout(() => {
+                const focusableElements = Array.from(
+                    dropdownRef.current?.querySelectorAll<HTMLElement>('li[tabindex="-1"], button.marcar-leidas') || []
+                );
+                focusableElements[0]?.focus();
+            }, 10);
+        }
+    }, [isOpen]);
+
+    // Controlador maestro de navegación por teclado y scroll
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (!isOpen) return;
+
+        if (e.key === 'Escape') {
+            closeDropdown();
+            buttonRef.current?.focus();
+            return;
+        }
+
+        if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+            e.preventDefault(); // CLAVE: Evita el scroll de la página de fondo
+
+            const focusableElements = Array.from(
+                dropdownRef.current?.querySelectorAll<HTMLElement>('li[tabindex="-1"], button.marcar-leidas') || []
+            );
+            
+            if (!focusableElements.length) return;
+
+            const currentIndex = focusableElements.indexOf(document.activeElement as HTMLElement);
+            let nextIndex = 0;
+
+            if (e.key === 'ArrowDown') {
+                nextIndex = currentIndex === focusableElements.length - 1 ? 0 : currentIndex + 1;
+            } else if (e.key === 'ArrowUp') {
+                nextIndex = currentIndex <= 0 ? focusableElements.length - 1 : currentIndex - 1;
+            }
+
+            // Al enfocar el elemento, el navegador hace scroll automáticamente hacia él
+            focusableElements[nextIndex]?.focus();
+        }
+    };
+
     if (!user || user.rol !== 'cliente') return null;
 
     return (
-        <div className="relative" ref={dropdownRef}>
+        <div 
+            className="relative" 
+            ref={dropdownRef}
+            onKeyDown={handleKeyDown} // Atrapamos el teclado en todo el contenedor
+        >
             <button 
+                ref={buttonRef}
                 onClick={toggleDropdown} 
-                // a11y: Foco de teclado y estilos consistentes
                 className="relative p-2 text-gray-600 hover:text-orange-600 hover:bg-orange-50 rounded-md transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 cursor-pointer"
                 aria-label={t('campanita.aria_abrir_notificaciones', 'Abrir notificaciones')}
                 aria-haspopup="dialog"
                 aria-expanded={isOpen}
             >
-                {/* a11y: Icono silenciado */}
                 <BiBell aria-hidden="true" size={24} />
                 
                 {unreadCount > 0 && (
                     <span 
-                        // a11y: El aria-label indica el contexto completo del número
                         aria-label={t('campanita.aria_no_leidas', '{{count}} notificaciones no leídas', { count: unreadCount })}
                         className="absolute top-1 right-1 inline-flex items-center justify-center min-w-[18px] h-[18px] text-[10px] font-bold text-white transform bg-red-600 rounded-full px-1"
                     >
-                        {/* Mejora UX: Límite visual si hay más de 99 */}
                         {unreadCount > 99 ? '99+' : unreadCount}
                     </span>
                 )}
@@ -68,36 +115,31 @@ export default function NotificationBell() {
                         {unreadCount > 0 && (
                             <button 
                                 onClick={handleMarcarTodasLeidas} 
-                                // a11y: Foco por teclado ajustado
-                                className="text-xs text-blue-600 hover:text-blue-800 hover:underline font-semibold focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-sm cursor-pointer"
+                                className="marcar-leidas text-xs text-blue-600 hover:text-blue-800 hover:underline font-semibold focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-sm"
                             >
                                 {t('campanita.marcar_todas_leidas')}
                             </button>
                         )}
                     </div>
 
-                    <div className="max-h-72 overflow-y-auto">
+                    {/* overscroll-contain evita que la página baje al llegar al final de la lista con el mouse */}
+                    <div className="max-h-72 overflow-y-auto overscroll-contain">
                         {notificaciones.length === 0 ? (
-                            <div 
-                                // a11y: Avisa sutilmente si la lista se vacía dinámicamente
-                                aria-live="polite" 
-                                className="px-4 py-8 text-center text-sm text-gray-500"
-                            >
+                            <div aria-live="polite" className="px-4 py-8 text-center text-sm text-gray-500">
                                 {t('campanita.no_hay_alertas')}
                             </div>
                         ) : (
-                            // a11y: Transformado en una lista real semántica
                             <ul className="m-0 p-0 list-none flex flex-col">
                                 {notificaciones.map((notif, index) => (
                                     <li 
-                                        // Anti-patrón resuelto: No usar Math.random. Usar el ID, o el índice como último recurso
                                         key={notif.id || `fallback-id-${index}`} 
-                                        className={`px-4 py-3 border-b border-gray-100 transition-colors ${!notif.leida ? 'bg-blue-50/50' : 'bg-white'}`}
+                                        // CLAVE: Permite recibir el foco programáticamente para que el navegador haga scroll solo
+                                        tabIndex={-1} 
+                                        className={`px-4 py-3 border-b border-gray-100 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-orange-500 ${!notif.leida ? 'bg-blue-50/50' : 'bg-white'}`}
                                     >
                                         <p className="text-sm font-semibold text-gray-800">{notif.titulo}</p>
                                         <p className="text-xs text-gray-600 mt-1">{notif.mensaje}</p>
                                         <span className="text-[10px] text-gray-500 mt-2 block">
-                                            {/* i18n: Fecha dinámica según el idioma del contexto */}
                                             {new Date(notif.fecha_creacion || new Date()).toLocaleDateString(i18n.language, { month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' })}
                                         </span>
                                     </li>
