@@ -519,6 +519,8 @@ export const en = {
                 destinatario: "Recipient",
                 fallos_al_guardar: "Issues while saving ({{errores}})",
                 motivo_del_error: "Issue reason",
+                lista_envios_creados: "List of shipments created succesfully",
+                lista_errores_guardado: "List of issues while saving shipments",
 
                 acceso_denegado: "Denied Access",
                 no_contas_con_permisos_necesarios: "No contás con los permisos necesarios para importar envíos.",
@@ -533,6 +535,22 @@ export const en = {
                 confirmar_e_importar: "Confirm and import",
 
                 volver_a_envios: "Return to dashboard",
+
+                backend: {
+                    err_extension_invalida: "The file must have a .csv extension",
+                    err_codificacion_invalida: "The file must have UTF-8 encoding",
+                    err_columnas_faltantes: "Required columns are missing from the header",
+                    err_tipo_envio_invalido: "Invalid shipping type (must be 'normal' or 'express')",
+                    err_restriccion_invalida: "Invalid restriction (must be 'fragil', 'valioso', or 'ninguna')",
+                    validacion_exitosa: "File successfully validated and ready to import",
+                    importacion_completada: "Process completed. Shipments created successfully.",
+                    err_validacion_filas_fallida: "Validation errors were found in the data",
+                    err_importacion_fallida_completamente: "Could not create any shipment. All rows failed.",
+                    err_insercion_bd_fallida: "Internal error saving the shipment to the database",
+                    err_destinatario_no_encontrado: "The recipient company does not exist or has no profile configured",
+                    err_destinatario_inactivo: "The recipient company is inactive or has no associated user",
+                    err_sin_sucursal_disponible: "No branch is available in the area to assign the shipment",
+                },
             },
 
             campanita: {

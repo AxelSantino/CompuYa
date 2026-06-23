@@ -519,6 +519,8 @@ export const es = {
                 destinatario: "Destinatario",
                 fallos_al_guardar: "Fallos al guardar ({{errores}})",
                 motivo_del_error: "Motivo del error",
+                lista_envios_creados: "Lista de envíos creados exitosamente",
+                lista_errores_guardado: "Lista de errores al intentar guardar",
 
                 acceso_denegado: "Acceso denegado",
                 no_contas_con_permisos_necesarios: "No contás con los permisos necesarios para importar envíos.",
@@ -533,6 +535,22 @@ export const es = {
                 confirmar_e_importar: "Confirmar e importar",
 
                 volver_a_envios: "Volver a envíos",
+
+                backend: {
+                    err_extension_invalida: "El archivo debe tener extensión .csv",
+                    err_codificacion_invalida: "El archivo debe tener codificación UTF-8",
+                    err_columnas_faltantes: "Faltan columnas requeridas en la cabecera",
+                    err_tipo_envio_invalido: "Tipo de envío no válido (debe ser 'normal' o 'express')",
+                    err_restriccion_invalida: "Restricción no válida (debe ser 'fragil', 'valioso' o 'ninguna')",
+                    validacion_exitosa: "Archivo validado correctamente y listo para importar",
+                    importacion_completada: "Proceso completado. Envíos creados con éxito.",
+                    err_validacion_filas_fallida: "Se encontraron errores de validación en los datos",
+                    err_importacion_fallida_completamente: "No se pudo crear ningún envío. Todas las filas fallaron.",
+                    err_insercion_bd_fallida: "Error interno al guardar en base de datos",
+                    err_destinatario_no_encontrado: "La empresa destinataria no existe o no tiene perfil configurado",
+                    err_destinatario_inactivo: "La empresa destinataria está desactivada o no tiene usuario asociado",
+                    err_sin_sucursal_disponible: "No hay sucursales disponibles en la zona para asignar el envío",
+                },
             },
 
             campanita: {
