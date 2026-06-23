@@ -56,7 +56,7 @@ return (
         />
 
         {error && (
-          <div className="py-8 text-center text-red-500 font-medium bg-red-50 rounded-md">
+          <div role="alert" className="py-8 text-center text-red-600 font-medium bg-red-50 rounded-md">
             {error}
           </div>
         )}
