@@ -12,10 +12,10 @@ export const useShipmentDetail = () => {
     const router = useRouter();
     const params = useParams();
     const { user } = useAuth();
-    const {t} = useTranslation();
+    
 
     // Multilenguaje
-    const { t } = useTranslation();
+    const {t} = useTranslation();
     const { translateError } = useErrorTranslator();
 
     // Normalizar ID
