@@ -3,6 +3,8 @@ import userService from '@/services/userService';
 import { Usuario } from '@/types/usuario';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePagination } from '@/hooks/usePagination';
+import { useTranslation } from 'react-i18next';
+import { useErrorTranslator } from '@/hooks/useErrorTranslator';
 
 export const useClientManager = () => {
     const [clients, setClients] = useState<Usuario[]>([]);
@@ -12,6 +14,9 @@ export const useClientManager = () => {
     const [searchTerm, setSearchTerm] = useState('');
 
     const [statusFilter, setStatusFilter] = useState('')
+
+    const { t } = useTranslation();
+    const { translateError } = useErrorTranslator();
 
     useEffect(() => {
         let isMounted = true;
@@ -29,7 +34,7 @@ export const useClientManager = () => {
                 }
             } catch (err) {
                 if (isMounted) {
-                    setError('Error al cargar la lista de clientes. Intente nuevamente.');
+                    setError(translateError(err, 'clientsPage.error_cargar_clientes'));
                 }
             } finally {
                 if (isMounted) {

@@ -392,6 +392,9 @@ export const en = {
                 titulo: "Clients Management",
                 subtitulo: "Administration, registration and monitoring of clients (recipients).",
                 nuevo_cliente: "New Client",
+                aria_buscar_clientes: "Search clients",
+                aria_filtrar_por_estado: "Filter by state",
+                error_cargar_clientes: "Faillure while loading clients, try again"
                 
         },
         clientDetail: {

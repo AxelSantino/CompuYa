@@ -393,7 +393,10 @@ export const es = {
                 placeholder_buscar_por: "Buscar por Razón social o CUIT...",
                 titulo: "Gestión de Clientes",
                 subtitulo: "Administración, alta y seguimiento de clientes (destinatarios).",
-                nuevo_cliente: "Nuevo Cliente"
+                nuevo_cliente: "Nuevo Cliente",
+                aria_buscar_clientes: "Buscar clientes",
+                aria_filtrar_por_estado: "Filtrar por estado",
+                error_cargar_clientes: "Error al cargar la lista de clientes, intente nuevamente"
             },
             clientDetail: {
                 volver: "Volver al listado de clientes",
