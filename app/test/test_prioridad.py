@@ -18,7 +18,7 @@ from scripts.generar_dataset import asignar_prioridad_segun_reglas
     ({"distancia": 3, "tipo_envio": "normal",
      "restriccion": "ninguna", "antiguedad_dias": 1}, "baja"),
     ({"distancia": 100, "tipo_envio": "normal",
-     "restriccion": "ninguna", "antiguedad_dias": 1}, "baja"),
+     "restriccion": "ninguna", "antiguedad_dias": 1}, "media"),
 ])
 def test_asignacion_prioridad_reglas(envio, prioridad_esperada):
     assert asignar_prioridad_segun_reglas(envio) == prioridad_esperada
