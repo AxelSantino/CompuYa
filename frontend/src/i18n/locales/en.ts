@@ -76,6 +76,8 @@ export const en = {
             lim_entrega: "Date limit",
             no_especificado: "Not specificied",
             na: "N/A",
+            codigo_validacion: "Validation PIN",
+            no_disponible: "Not available",
 
             error_cargar_info: "Error while loading shipment info.",
             cancelacion_exitosa: "The shipment has been successfully canceled.",

@@ -1,9 +1,14 @@
 import { Select } from '@/components/ui/Select';
-import { FaBox, FaEdit, FaCalendar, FaUser, FaShippingFast, FaExclamationCircle, FaCheckCircle, FaFileAlt, FaClock } from 'react-icons/fa';
+import { 
+    FaBox, FaEdit, FaCalendar, FaUser, FaShippingFast, 
+    FaExclamationCircle, FaCheckCircle, FaFileAlt, FaClock, 
+    FaKey // Fase 4: Nuevo ícono para el PIN
+} from 'react-icons/fa';
 import '@/i18n/i18n';
 import { useTranslation } from 'react-i18next';
 import { Envio } from '@/types/envio';
 
+// Fase 4: Agregamos las nuevas props a la interfaz
 interface ShipmentInfoCardProps {
     shipment: Envio;
     isEditing: boolean;
@@ -12,9 +17,9 @@ interface ShipmentInfoCardProps {
     isSaving: boolean;
     canEdit: boolean;
     onEditClick: () => void;
+    validationPin?: string | null;
+    userRol?: string;
 }
-
-
 
 export const DetailItem = ({ icon, label, value }: { icon?: React.ReactNode, label: string, value: React.ReactNode }) => (
     <div>
@@ -26,8 +31,13 @@ export const DetailItem = ({ icon, label, value }: { icon?: React.ReactNode, lab
     </div>
 );
 
-export const ShipmentInfoCard = ({ shipment, isEditing, formData, handleChange, isSaving, canEdit, onEditClick }: any) => {
-    const {t} = useTranslation();
+// Fase 4: Reemplazamos el ": any" por la interfaz correcta
+export const ShipmentInfoCard = ({ 
+    shipment, isEditing, formData, handleChange, isSaving, 
+    canEdit, onEditClick, validationPin, userRol 
+}: ShipmentInfoCardProps) => {
+    
+    const { t } = useTranslation();
 
     const capitalizeFirst = (text: string | null | undefined) => {
         if (!text) return t('shipmentInfo.no_especificado');
@@ -39,7 +49,7 @@ export const ShipmentInfoCard = ({ shipment, isEditing, formData, handleChange, 
         if (perfil?.nombre) {
             return capitalizeFirst(perfil.nombre) + ' ' + capitalizeFirst(perfil.apellido);
         }
-        return shipment.creador.email;
+        return shipment.creador?.email || t('shipmentInfo.no_especificado');
     };
 
     const deadlineDateFormated = shipment.fecha_limite
@@ -63,7 +73,8 @@ export const ShipmentInfoCard = ({ shipment, isEditing, formData, handleChange, 
                     <button 
                         type="button" 
                         onClick={onEditClick} 
-                        className="text-sm bg-white border border-gray-200 hover:bg-gray-100 px-3 py-1 rounded-md font-medium flex items-center gap-2 transition-colors text-gray-700 shadow-sm"
+                        // a11y: Agregamos focus-visible para navegación por teclado
+                        className="text-sm bg-white border border-gray-200 hover:bg-gray-100 px-3 py-1 rounded-md font-medium flex items-center gap-2 transition-colors text-gray-700 shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
                     >
                         <FaEdit aria-hidden="true" /> 
                         {t('shipmentInfo.faEdit')}
@@ -83,7 +94,7 @@ export const ShipmentInfoCard = ({ shipment, isEditing, formData, handleChange, 
                                 </Select>
                             </div>
                             <div>
-                                <label className="block text-xs font-bold text-gray-700 mb-1">{t('shipmentInfo.manejo_esp')}</label>
+                                <label htmlFor="restriccion" className="block text-xs font-bold text-gray-700 mb-1">{t('shipmentInfo.manejo_esp')}</label>
                                 <Select id="restriccion" name="restriccion" value={formData.restriccion} onChange={handleChange} disabled={isSaving}>
                                     <option value="ninguna">{t('shipmentInfo.restricciones.ninguna')}</option>
                                     <option value="fragil">{t('shipmentInfo.restricciones.fragil')}</option>
@@ -100,7 +111,7 @@ export const ShipmentInfoCard = ({ shipment, isEditing, formData, handleChange, 
                                 onChange={handleChange} 
                                 rows={3} 
                                 disabled={isSaving} 
-                                className="w-full rounded-md border border-gray-300 p-3 text-sm text-gray-900 focus:ring-2 focus:ring-blue-500" 
+                                className="w-full rounded-md border border-gray-300 p-3 text-sm text-gray-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500" 
                                 required 
                             />
                         </div>
@@ -108,11 +119,36 @@ export const ShipmentInfoCard = ({ shipment, isEditing, formData, handleChange, 
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <DetailItem icon={<FaCalendar />} label={t('shipmentInfo.fecha_creacion')} value={new Date(shipment.fecha_creacion).toLocaleString()} />
-                        <DetailItem icon={<FaUser />} label={t('shipmentInfo.creado_por')} value={formatCreatorName()} />
+                        
+                        {/* Fase 4: Ocultamos "Creado por" si el usuario es cliente */}
+                        {userRol !== 'cliente' && (
+                            <DetailItem icon={<FaUser />} label={t('shipmentInfo.creado_por')} value={formatCreatorName()} />
+                        )}
+                        
                         <DetailItem icon={<FaShippingFast />} label={t('shipmentInfo.tipo_envio')} value={t(`shipmentInfo.tipo.${shipment.tipo_envio}`)} />
                         <DetailItem icon={<FaExclamationCircle />} label={t('shipmentInfo.manejo_esp')} value={t(`shipmentInfo.restricciones.${safeRestriccion}`)} />
                         <DetailItem icon={<FaCheckCircle />} label={t('shipmentInfo.prioridad_asignada')} value={t(`shipmentInfo.prioridades.${safePrioridad}`)} />
                         <DetailItem icon={<FaClock />} label={t('shipmentInfo.lim_entrega')} value={deadlineDateFormated}/>
+                        
+                        {/* Fase 4: Mostramos el PIN de validación SOLO si es cliente */}
+                        {userRol === 'cliente' && (
+                            <DetailItem 
+                                icon={<FaKey />} 
+                                label={t('shipmentInfo.codigo_validacion', 'Código de validación')} 
+                                value={
+                                    validationPin ? (
+                                        <span className="font-mono text-lg font-bold text-blue-600 tracking-widest bg-blue-50 px-2 py-0.5 rounded border border-blue-100">
+                                            {validationPin}
+                                        </span>
+                                    ) : (
+                                        <span className="text-gray-500 italic">
+                                            {t('shipmentInfo.no_disponible', 'No disponible')}
+                                        </span>
+                                    )
+                                } 
+                            />
+                        )}
+
                         <div className="md:col-span-2">
                             <DetailItem icon={<FaFileAlt />} label={t('shipmentInfo.desc')} value={shipment.descripcion} />
                         </div>
