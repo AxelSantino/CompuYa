@@ -407,6 +407,8 @@ export const es = {
                 cuenta_activa: "Cuenta Activa",
                 cuenta_inactiva: "Cuenta Inactiva",
                 btn_desactivar: "Desactivar",
+                cargando_ficha: "Cargando ficha del cliente...",
+                no_registrado: "No registrado",
                 btn_activar: "Activar",
                 btn_editar: "Editar Cliente",
                 datos_empresa: "Datos de la Empresa",
@@ -430,6 +432,7 @@ export const es = {
                     no_especificada: "No especificada"
                 },
                 mapa: {
+                    cargando: "Cargando mapa de ubicación...",
                     titulo: "Ubicación en el mapa",
                     no_coordenadas: "Esta empresa no cuenta con coordenadas de geolocalización registradas."
                 },

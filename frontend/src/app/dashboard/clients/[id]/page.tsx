@@ -9,8 +9,9 @@ import { Input } from '@/components/ui/Input';
 import { useClientProfile } from './hooks/useClientProfile';
 import { LocationManager } from '../new/components/LocationManager';
 import withAuth from '@/components/auth/withAuth';
+// Importamos BackButton
+import { BackButton } from '@/components/ui/BackButton';
 import { 
-  FaArrowLeft, 
   FaBuilding, 
   FaIdCard, 
   FaEnvelope, 
@@ -22,21 +23,31 @@ import {
 } from 'react-icons/fa';
 import { ConfirmActionModal } from '@/app/dashboard/users/components/ConfirmActionModal';
 import { useTranslation } from 'react-i18next';
+
+// 1. i18n & a11y: Componente SSR Loader con traducción y mejor contraste
+const MapLoader = () => {
+  const { t } = useTranslation();
+  return (
+    <div className="w-full h-[300px] bg-gray-50 rounded-lg border border-gray-200 flex items-center justify-center">
+      <span className="text-gray-500 font-medium animate-pulse">
+        {t('clientDetail.mapa.cargando', 'Cargando mapa de ubicación...')}
+      </span>
+    </div>
+  );
+};
+
 // Deshabilitamos SSR para el visor de mapas en modo lectura para evitar errores con Leaflet
 const DynamicMapViewer = dynamic(() => import('../new/components/MapViewer'), {
   ssr: false,
-  loading: () => (
-    <div className="w-full h-[300px] bg-gray-50 rounded-lg border border-gray-200 flex items-center justify-center">
-      <span className="text-gray-400 font-medium animate-pulse">Cargando mapa de ubicación...</span>
-    </div>
-  )
+  loading: () => <MapLoader />
 });
 
 // Componente Interno para mostrar los datos de lectura prolijamente
 const DetailItem = ({ icon, label, value }: { icon: React.ReactNode, label: string, value: React.ReactNode }) => (
   <div className="flex flex-col p-4 bg-gray-50 rounded-lg border border-gray-100">
     <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1 flex items-center gap-2">
-      <span className="text-gray-400">{icon}</span> {label}
+      {/* a11y: Ocultamos el icono para lectores de pantalla */}
+      <span aria-hidden="true" className="text-gray-400">{icon}</span> {label}
     </h4>
     <p className="text-sm font-medium text-gray-900 ml-6 break-words">{value}</p>
   </div>
@@ -44,7 +55,7 @@ const DetailItem = ({ icon, label, value }: { icon: React.ReactNode, label: stri
 
 function ClientDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   const {
     router,
     client,
@@ -68,13 +79,13 @@ function ClientDetailPage({ params }: { params: Promise<{ id: string }> }) {
     handleConfirmStatusChange
   } = useClientProfile(resolvedParams.id);
 
-  // CAMBIAR CUANDO LA API DEVUELVA EL ESTADO DEL EMPLEADO
   const isClientActive = client?.activo ?? true;
 
   if (error) {
     return (
       <DashboardLayout>
-        <div className="p-6 text-center text-red-500 font-medium">
+        {/* a11y: Rol de alerta y contraste a red-600 */}
+        <div role="alert" className="p-6 text-center text-red-600 font-medium">
           {error}
           <div className="mt-4">
             <Button variant="secondary" onClick={() => router.push('/dashboard/clients')}>
@@ -94,17 +105,14 @@ function ClientDetailPage({ params }: { params: Promise<{ id: string }> }) {
   return (
     <DashboardLayout>
       <div className="p-4 md:p-6 relative min-h-screen">
-        <LoadingOverlay isLoading={isLoading} text="Cargando ficha del cliente..." />
+        {/* i18n: Texto duro extraído */}
+        <LoadingOverlay isLoading={isLoading} text={t('clientDetail.cargando_ficha', 'Cargando ficha del cliente...')} />
 
-        {/* Botón de navegación superior */}
-        <div className="mb-6">
-          <button 
-            onClick={() => router.push('/dashboard/clients')} 
-            className="flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-orange-600 transition-colors cursor-pointer"
-          >
-            <FaArrowLeft /> {t('clientDetail.volver')}
-          </button>
-        </div>
+        {/* Botón de navegación superior delegado al BackButton */}
+        <BackButton 
+          label={t('clientDetail.volver')} 
+          className="mb-6"
+        />
 
         {client && (
           <div className="max-w-5xl mx-auto">
@@ -122,7 +130,9 @@ function ClientDetailPage({ params }: { params: Promise<{ id: string }> }) {
                       <h1 className="text-2xl font-bold text-gray-900 capitalize">
                         {client.perfil_empresa?.razon_social}
                       </h1>
-                      <p className="text-gray-500 font-medium mt-1">CUIT: {client.perfil_empresa?.cuit || 'No registrado'}</p>
+                      <p className="text-gray-500 font-medium mt-1">
+                        CUIT: {client.perfil_empresa?.cuit || t('clientDetail.no_registrado', 'No registrado')}
+                      </p>
                       <span className={`text-sm font-medium ${isClientActive ? 'text-green-600' : 'text-red-600'}`}>
                         {isClientActive ? t('clientDetail.cuenta_activa') : t('clientDetail.cuenta_inactiva')}
                       </span>
@@ -136,8 +146,12 @@ function ClientDetailPage({ params }: { params: Promise<{ id: string }> }) {
                         onClick={() => handleRequestStatusChange(!isClientActive)}
                         className="flex items-center gap-2"
                       >
-                        {isClientActive ? <FaUserSlash /> : <FaUserCheck />}
-                        {isClientActive ? t('clientDetail.btn_desactivar') : t('clientDetail.btn_editar')}
+                        {/* a11y: Ocultamos icono decorativo */}
+                        <span aria-hidden="true">
+                          {isClientActive ? <FaUserSlash /> : <FaUserCheck />}
+                        </span>
+                        {/* Bug resuelto: Si está inactivo, el botón dice Activar, no Editar */}
+                        {isClientActive ? t('clientDetail.btn_desactivar') : t('clientDetail.btn_activar', 'Activar')}
                       </Button>   
                     <Button variant="secondary" onClick={() => setIsEditing(true)}>
                       {t('clientDetail.btn_editar')}
@@ -154,13 +168,16 @@ function ClientDetailPage({ params }: { params: Promise<{ id: string }> }) {
                       
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                          <label className="block text-sm font-bold text-gray-700 mb-1">{t('clientDetail.form.razon_social')}</label>
-                          <Input name="razon_social" required value={formData.razon_social} onChange={handleChange} disabled={isSaving} />
+                          {/* a11y: Vinculamos label e input */}
+                          <label htmlFor="razon_social" className="block text-sm font-bold text-gray-700 mb-1">{t('clientDetail.form.razon_social')}</label>
+                          <Input id="razon_social" name="razon_social" required value={formData.razon_social} onChange={handleChange} disabled={isSaving} />
                         </div>
                         <div>
-                          <label className="block text-sm font-bold text-gray-700 mb-1">{t('clientDetail.form.email')}</label>
-                          <Input name="email" type="email" value={client.email} disabled={true} className="bg-gray-100 text-gray-500 cursor-not-allowed opacity-70" />
-                          <p className="text-xs text-gray-400 mt-1">{t('clientDetail.form.email_bloqueado')}</p>
+                          {/* a11y: Vinculamos label e input */}
+                          <label htmlFor="email" className="block text-sm font-bold text-gray-700 mb-1">{t('clientDetail.form.email')}</label>
+                          <Input id="email" name="email" type="email" value={client.email} disabled={true} className="bg-gray-200 text-gray-500 cursor-not-allowed opacity-70" />
+                          {/* a11y: Contraste mejorado a gray-500 */}
+                          <p className="text-xs text-gray-500 mt-1">{t('clientDetail.form.email_bloqueado')}</p>
                         </div>
                       </div>
                     </div>
@@ -199,7 +216,7 @@ function ClientDetailPage({ params }: { params: Promise<{ id: string }> }) {
 
                     <div className="flex flex-col pt-2">
                       <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3 flex items-center gap-2">
-                        <FaMapMarkerAlt className="text-green-500" /> {t('clientDetail.mapa.titulo')}
+                        <FaMapMarkerAlt aria-hidden="true" className="text-green-500" /> {t('clientDetail.mapa.titulo')}
                       </h4>
                       
                       {client.perfil_empresa?.latitud && client.perfil_empresa?.longitud ? (
@@ -211,9 +228,8 @@ function ClientDetailPage({ params }: { params: Promise<{ id: string }> }) {
                           />
                         </div>
                       ) : (
-                        /* Si no hay mapa, se achicael alto del mensaje vacío para que no ocupe tanto espacio */
-                        <div className="w-full h-[200px] bg-gray-50 rounded-lg border border-dashed border-gray-300 flex flex-col items-center justify-center text-gray-400 p-4 text-center text-sm transition-all">
-                          <FaMapMarkerAlt className="text-gray-300 text-3xl mb-2" />
+                        <div className="w-full h-[200px] bg-gray-50 rounded-lg border border-dashed border-gray-300 flex flex-col items-center justify-center text-gray-500 p-4 text-center text-sm transition-all">
+                          <FaMapMarkerAlt aria-hidden="true" className="text-gray-300 text-3xl mb-2" />
                           <p>{t('clientDetail.mapa.no_coordenadas')}</p>
                         </div>
                       )}
@@ -230,7 +246,7 @@ function ClientDetailPage({ params }: { params: Promise<{ id: string }> }) {
           isOpen={isStatusModalOpen}
           isLoading={isChangingStatus}
           variant={pendingStatus ? 'success' : 'danger'}
-          icon={pendingStatus ? <FaUserCheck /> : <FaUserSlash />}
+          icon={pendingStatus ? <FaUserCheck aria-hidden="true" /> : <FaUserSlash aria-hidden="true" />}
           title={pendingStatus ? t('clientDetail.modal.activar_title') : t('clientDetail.modal.desactivar_title')}
           message={
           pendingStatus

@@ -403,11 +403,13 @@ export const en = {
         },
         clientDetail: {
                 volver: "Return to clients list",
-                cuenta_activa: "Inactive Account",
-                cuenta_inactiva: "Active Account",
+                cuenta_activa: "Active Account",
+                cuenta_inactiva: "Inactive Account",
                 btn_desactivar: "Deactivate",
                 btn_activar: "Activate",
                 btn_editar: "Edit Client",
+                cargando_ficha: "Cargando ficha del cliente...",
+                no_registrado: "No registrado",
                 datos_empresa: "Company Data",
                 form: {
                     razon_social: "Company Name",
@@ -429,6 +431,7 @@ export const en = {
                     no_especificada: "Not especified"
                 },
                 mapa: {
+                    cargando: "Cargando mapa de ubicación...",
                     titulo: "Location on the map",
                     no_coordenadas: "This company does not have registered geolocation coordinates."
                 },
