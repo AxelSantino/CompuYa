@@ -687,6 +687,10 @@ export const en = {
             modal: {
                 confirmar: "Confirm",
                 cancelar: "Cancel",
+            },
+
+            languageSwitcher: {
+                seleccionar_idioma: "Select language"
             }
 
     }
