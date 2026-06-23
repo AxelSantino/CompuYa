@@ -357,7 +357,9 @@ export const es = {
                     confirm_activar: "Sí, activar",
                     confirm_desactivar: "Sí, desactivar",
                     cancelar: "Cancelar"
-                }
+                },
+                volver_listado: "Volver al listado",
+                cargando_perfil: "Cargando perfil del empleado...",
             },
             newEmployeesPage: {
                 no_tienes_permisos: "No tienes permisos para dar de alta nuevos empleados.",

@@ -355,7 +355,9 @@ export const en = {
                     confirm_activar: "Yes, activate",
                     confirm_desactivar: "Yes, deactivate",
                     cancelar: "Cancel"
-                }
+                },
+                volver_listado: "Return to payroll",
+                cargando_perfil: "Loading employee profile...",
         },
         newEmployeesPage: {
                 no_tienes_permisos: "You do not have permission to register new employees.",
