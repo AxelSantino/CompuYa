@@ -96,7 +96,11 @@ export const es = {
                 metricas: "Metricas",
                 empleados: "Empleados",
                 clientes: "Clientes",
-                notificaciones: "Notificaciones"
+                notificaciones: "Notificaciones",
+
+                expandir_menu: "Expandir menú",
+                contraer_menu: "Contraer menú",
+                abrir_menu: "Abrir menú",
             },
             dashboard_header: {
                 gestion_de_envios: "Gestión de envíos",
