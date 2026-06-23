@@ -645,7 +645,14 @@ export const en = {
             },
             
             sidebarPage: {
-                cerrar_sesion: "Log out"
+                cerrar_sesion: "Log out",
+                cerrar_menu: "Close menu",
+                roles: {
+                    admin: "Administrator",
+                    operador: "Operator",
+                    repartidor: "Delivery Driver",
+                    cliente: "Customer"
+                }
             },
 
             globalErrors: {

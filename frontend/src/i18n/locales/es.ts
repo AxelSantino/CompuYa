@@ -646,7 +646,14 @@ export const es = {
             },
 
             sidebarPage: {
-                cerrar_sesion: "Cerrar sesión"
+                cerrar_sesion: "Cerrar sesión",
+                cerrar_menu: "Cerrar menú",
+                roles: {
+                    admin: "Administrador",
+                    operador: "Operador",
+                    repartidor: "Repartidor",
+                    cliente: "Cliente"
+                }
             },
 
             globalErrors: {
