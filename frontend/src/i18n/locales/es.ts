@@ -547,7 +547,8 @@ export const es = {
                 detalle_error: "Detalle del Error",
                 boton_cerrar: "Cerrar",
 
-                aria_tabs_navegacion: "Navegación de notificaciones"
+                aria_tabs_navegacion: "Navegación de notificaciones",
+                aria_disparador: "Disparador:"
             },
             importCsvPage: {
                 archivo_valido_para_importar: "Archivo válido y listo para importar",

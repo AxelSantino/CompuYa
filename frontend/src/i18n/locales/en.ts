@@ -545,7 +545,8 @@ export const en = {
                 detalle_error: "Faillure detail",
                 boton_cerrar: "Close",
 
-                aria_tabs_navegacion: "Notifications navigation"
+                aria_tabs_navegacion: "Notifications navigation",
+                aria_disparador: "Trigger:"
             },
 
             importCsvPage: {
