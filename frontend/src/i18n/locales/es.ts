@@ -359,7 +359,14 @@ export const es = {
                     cancelar: "Cancelar"
                 },
                 volver_listado: "Volver al listado",
+
                 cargando_perfil: "Cargando perfil del empleado...",
+                error_cargar_info: "No se pudo cargar la información del empleado.",
+                success_actualizado: "Perfil actualizado correctamente.",
+                error_guardar_cambios: "Error al guardar los cambios.",
+                success_activado: "Empleado activado correctamente.",
+                success_desactivado: "Empleado desactivado correctamente.",
+                error_cambiar_estado: "Error al cambiar el estado del empleado.",
             },
             newEmployeesPage: {
                 no_tienes_permisos: "No tienes permisos para dar de alta nuevos empleados.",

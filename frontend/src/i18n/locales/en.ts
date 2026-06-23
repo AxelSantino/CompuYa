@@ -358,6 +358,13 @@ export const en = {
                 },
                 volver_listado: "Return to payroll",
                 cargando_perfil: "Loading employee profile...",
+
+                error_cargar_info: "Employee information could not be loaded.",
+                success_actualizado: "Profile successfully updated.",
+                error_guardar_cambios: "Error while saving changes.",
+                success_activado: "Employee succesfully activated.",
+                success_desactivado: "Employee successfully deactivated.",
+                error_cambiar_estado: "Error while saving employee status.",
         },
         newEmployeesPage: {
                 no_tienes_permisos: "You do not have permission to register new employees.",
