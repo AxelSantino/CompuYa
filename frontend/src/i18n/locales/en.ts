@@ -287,6 +287,7 @@ export const en = {
                 export_paquete_completo: "Compressed file (.zip)",
                 export_incluye_todo: "Includes states, priorities and cancelations.",
                 categoria: "Category",
+                seleccione_rango_fechas: "Please select a complete date range to view the incidents.",
         },
         employeesPage: {
                 cargando_nomina: "Loading employee payroll...",

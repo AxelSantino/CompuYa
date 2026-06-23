@@ -288,6 +288,7 @@ export const es = {
                 export_paquete_completo: "Paquete completo (.zip)",
                 export_incluye_todo: "Incluye Estados, Prioridades y Cancelaciones consolidados.",
                 categoria: "Categoria",
+                seleccione_rango_fechas: "Seleccione un rango de fechas completo para ver las incidencias.",
 
             },
             employeesPage: {

@@ -3,6 +3,8 @@ import metricsService from '@/services/metricsService';
 import { DateFilterParams } from '@/types/metrics';
 import { PieSlice } from '@/components/ui/pieChart/PieChart';
 import { useTranslation } from 'react-i18next';
+// 1. Importamos nuestra arquitectura centralizada de errores
+import { useErrorTranslator } from '@/hooks/useErrorTranslator';
 
 const INCIDENTS_COLORS = [
   '#D32F2F', // Rojo (Tailwind red-500)
@@ -19,7 +21,11 @@ export const useIncidentsMetrics = (filters?: DateFilterParams) => {
   const [total, setTotal] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const {t} = useTranslation();
+  
+  const { t } = useTranslation();
+  // 2. Instanciamos el traductor de errores
+  const { translateError } = useErrorTranslator();
+
   useEffect(() => {
     // Patrón para evitar fugas de memoria si el componente se desmonta antes de que la API responda
     let isMounted = true;
@@ -27,7 +33,8 @@ export const useIncidentsMetrics = (filters?: DateFilterParams) => {
     const fetchIncidents = async () => {
       if (!filters?.fecha_inicio || !filters?.fecha_fin) {
         if (isMounted) {
-          setError('Seleccione un rango de fechas completo para ver las incidencias.');
+          // 3. i18n: Extraemos el texto duro a una clave de traducción (con fallback por si aún no la agregas al JSON)
+          setError(t('metricsPage.seleccione_rango_fechas', 'Seleccione un rango de fechas completo para ver las incidencias.'));
           setIsLoading(false);
           setSlices([]);
         }
@@ -61,7 +68,8 @@ export const useIncidentsMetrics = (filters?: DateFilterParams) => {
         }
       } catch (err) {
         if (isMounted) {
-          setError(t('metricsPage.error_carg_metri'));
+          // 4. Arquitectura: Delegamos el error crudo al traductor
+          setError(translateError(err, 'metricsPage.error_carg_metri'));
         }
       } finally {
         if (isMounted) {
@@ -75,7 +83,8 @@ export const useIncidentsMetrics = (filters?: DateFilterParams) => {
     return () => {
       isMounted = false;
     };
-  }, [filters?.fecha_inicio, filters?.fecha_fin]);
+  // 5. Agregamos las funciones de hooks a las dependencias por buenas prácticas
+  }, [filters?.fecha_inicio, filters?.fecha_fin, t, translateError]);
 
   return { slices, total, isLoading, error };
 };
