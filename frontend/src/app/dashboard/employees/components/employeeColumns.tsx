@@ -80,7 +80,7 @@ export const getEmployeeColumns = (t: any): Column<Usuario>[] => [
           // a11y: Etiqueta dinámica con contexto para lectores de pantalla
           aria-label={t('employeesPage.aria_ver_detalle', { nombre: nombreContexto })}
           // a11y: Contraste subido a orange-700 y anillo de foco por teclado agregado
-          className="text-orange-700 hover:text-orange-900 font-bold transition-colors cursor-pointer rounded-sm px-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
+          className="text-orange-600 hover:text-orange-900 font-bold transition-colors cursor-pointer rounded-sm px-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
         >
           {t('employeesPage.ver_detalle')}
         </Link>
