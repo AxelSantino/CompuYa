@@ -37,11 +37,11 @@ export const FileDropzone = ({ onFileSelect, selectedFile, disabled = false }: F
       <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 flex items-center justify-between shadow-sm mb-6">
         <div className="flex items-center gap-4">
           <div className="bg-orange-100 p-3 rounded-full text-orange-600">
-            <FaFileCsv size={24} />
+            <FaFileCsv aria-hidden="true" size={24} />
           </div>
           <div>
             <p className="font-semibold text-gray-800">{selectedFile.name}</p>
-            <p className="text-xs text-gray-500">{(selectedFile.size / 1024).toFixed(2)} KB</p>
+            <p className="text-xs text-gray-600">{(selectedFile.size / 1024).toFixed(2)} KB</p>
           </div>
         </div>
       </div>
@@ -50,8 +50,17 @@ export const FileDropzone = ({ onFileSelect, selectedFile, disabled = false }: F
 
   return (
     <div 
+      role="button"
+      tabIndex={disabled ? -1 : 0}
       onClick={() => !disabled && fileInputRef.current?.click()}
-      className={`border-2 border-dashed rounded-xl p-10 text-center cursor-pointer transition-colors mb-6
+      onKeyDown={(e) => {
+        // Simulamos el click cuando el usuario presiona Enter o Espacio
+        if (!disabled && (e.key === 'Enter' || e.key === ' ')) {
+          e.preventDefault();
+          fileInputRef.current?.click();
+        }
+      }}
+      className={`border-2 border-dashed rounded-xl p-10 text-center cursor-pointer transition-colors mb-6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:border-transparent
         ${disabled ? 'bg-gray-50 border-gray-200 opacity-60 cursor-not-allowed' : 'bg-white border-orange-300 hover:bg-orange-50 hover:border-orange-500'}`}
     >
       <input 
@@ -62,9 +71,9 @@ export const FileDropzone = ({ onFileSelect, selectedFile, disabled = false }: F
         onChange={handleFileChange}
         disabled={disabled}
       />
-      <FaCloudUploadAlt size={48} className="mx-auto text-orange-400 mb-4" />
+      <FaCloudUploadAlt aria-hidden="true" size={48} className="mx-auto text-orange-400 mb-4" />
       <h3 className="text-lg font-semibold text-gray-700 mb-1">{t('importCsvPage.click_para_subir_archivo')}</h3>
-      <p className="text-sm text-gray-500">{t('importCsvPage.o_arrastra_y_suelta_archivo')}</p>
+      <p className="text-sm text-gray-600">{t('importCsvPage.o_arrastra_y_suelta_archivo')}</p>
     </div>
   );
 };

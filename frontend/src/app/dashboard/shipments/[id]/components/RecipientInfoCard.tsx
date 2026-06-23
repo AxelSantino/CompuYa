@@ -2,8 +2,17 @@ import { Input } from '@/components/ui/Input';
 import { FaBuilding, FaMapMarkerAlt } from 'react-icons/fa';
 import { DetailItem } from './ShipmentInfoCard';
 import { useTranslation } from 'react-i18next';
+import { Envio } from '@/types/envio';
 
-export const RecipientInfoCard = ({ shipment, isEditing, formData, handleChange, isSaving }: any) => {
+interface RecipientInfoCardProps {
+    shipment: Envio;
+    isEditing: boolean;
+    formData: any; 
+    handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    isSaving: boolean;
+}
+
+export const RecipientInfoCard = ({ shipment, isEditing, formData, handleChange, isSaving }: RecipientInfoCardProps) => {
     const {t} = useTranslation();
     const formatAddress = () => {
         const perfil = shipment.destinatario?.perfil_empresa;
@@ -17,7 +26,7 @@ export const RecipientInfoCard = ({ shipment, isEditing, formData, handleChange,
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
             <div className="px-6 py-4 bg-gray-50 border-b border-gray-100 flex items-center">
                 <span className="font-semibold text-gray-700 flex items-center gap-2">
-                    <FaBuilding className="text-blue-600"/> {t('shipmentInfo.info_dest')}
+                    <FaBuilding aria-hidden="true" className="text-blue-600"/> {t('shipmentInfo.info_dest')}
                 </span>
             </div>
             
@@ -26,8 +35,12 @@ export const RecipientInfoCard = ({ shipment, isEditing, formData, handleChange,
                     <div className="space-y-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label className="block text-xs font-bold text-gray-700 mb-1">{t('shipmentInfo.razon_social')}</label>
+                                <label 
+                                    htmlFor="razon_social_destinatario"
+                                    className="block text-xs font-bold text-gray-700 mb-1"
+                                >{t('shipmentInfo.razon_social')}</label>
                                 <Input 
+                                    id="razon_social_destinatario"
                                     name="razon_social_destinatario" 
                                     value={formData.razon_social_destinatario} 
                                     onChange={handleChange} 
@@ -36,8 +49,14 @@ export const RecipientInfoCard = ({ shipment, isEditing, formData, handleChange,
                                 />
                             </div>
                             <div>
-                                <label className="block text-xs font-bold text-gray-700 mb-1">CUIT / CUIL</label>
+                                <label 
+                                    htmlFor="cuit_destinatario" 
+                                    className="block text-xs font-bold text-gray-700 mb-1"
+                                >
+                                    CUIT / CUIL
+                                </label>
                                 <Input 
+                                    id="cuit_destinatario"
                                     name="cuit_destinatario" 
                                     value={formData.cuit_destinatario} 
                                     onChange={handleChange} 
@@ -55,7 +74,7 @@ export const RecipientInfoCard = ({ shipment, isEditing, formData, handleChange,
                         />
                         <DetailItem 
                             label="CUIT/CUIL" 
-                            value={shipment.cuit_destinatario || shipment.destinatario?.perfil_empresa?.cuit || 'N/A'} 
+                            value={shipment.cuit_destinatario || shipment.destinatario?.perfil_empresa?.cuit || t('shipmentInfo.na')} 
                         />
                         <div className="md:col-span-2">
                             <DetailItem 

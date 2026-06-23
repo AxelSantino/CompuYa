@@ -6,6 +6,7 @@ import { ValidationError, ConfirmImportResponse } from '@/types/importacion';
 
 import '@/i18n/i18n';
 import { useTranslation } from 'react-i18next';
+import { useCsvErrorResolver } from '@/hooks/useCsvErrorResolver';
 
 /*
     Este Custom Hook es el "cerebro" de la operación. 
@@ -26,6 +27,8 @@ export const useCsvImport = () => {
   const [validationSuccess, setValidationSuccess] = useState<boolean>(false);
 
   const {t} = useTranslation();
+
+  const { processCsvError } = useCsvErrorResolver();
 
   // Seleccionar Archivo
   const handleFileSelect = useCallback((selectedFile: File) => {
@@ -49,30 +52,28 @@ export const useCsvImport = () => {
     try {
       const response = await shipmentService.validateCsvImport(file);
       setValidationSuccess(true);
-      toast.success(response.mensaje || t('importCsvPage.archivo_valido_para_importar'));
+      
+      const successMsg = response.mensaje ? t(`importCsvPage.backend.${response.mensaje}`, response.mensaje) : t('importCsvPage.archivo_valido_para_importar');
+      toast.success(successMsg);
+      
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response?.data?.detail) {
-        const detail = error.response.data.detail;
-        
-        // FastAPI a veces devuelve un string plano (ej: "Faltan columnas") 
-        if (typeof detail === 'string') {
-          setGeneralError(detail);
-          toast.error(detail);
-        } 
-        // Y otras veces devuelve un objeto estructurado con las filas (ej: errores de Enum)
-        else if (detail.errores) {
-          setValidationErrors(detail.errores);
+      // 3. MAGIA: Delegamos el error al resolver
+      const { 
+        generalError: errorMsg, 
+        validationErrors: rowErrors, 
+        hasRowErrors } = processCsvError(error, 'importCsvPage.error_inesperado_al_validar_archivo');
+      
+      setGeneralError(errorMsg);
+      if (hasRowErrors) {
+          setValidationErrors(rowErrors);
           toast.error(t('importCsvPage.errores_en_filas'));
-        }
       } else {
-        const fallbackError = t('importCsvPage.error_inesperado_al_validar_archivo');
-        setGeneralError(fallbackError);
-        toast.error(fallbackError);
+          toast.error(errorMsg || t('importCsvPage.error_inesperado_al_validar_archivo'));
       }
     } finally {
       setIsValidating(false);
     }
-  }, [file]);
+  }, [file, t, processCsvError]);
 
   // Accion: Confirmar e Importar
   const confirmImport = useCallback(async () => {
@@ -83,33 +84,43 @@ export const useCsvImport = () => {
 
     try {
       const response = await shipmentService.confirmCsvImport(file);
-      setImportResults(response);
+      
+      const translatedPartialErrors = response.errores ? response.errores.map((err: any) => ({
+          ...err,
+          error: t(`importCsvPage.backend.${err.error}`, err.error)
+      })) : [];
+
+      setImportResults({
+        ...response,
+        errores: translatedPartialErrors, // Reemplazamos el array crudo por el traducido
+        mensaje: response.mensaje 
+            ? t(`importCsvPage.backend.${response.mensaje}`, response.mensaje) 
+            : t('importCsvPage.importacion_finalizada')
+      });
+      
       toast.success(t('importCsvPage.importacion_finalizada'));
+      
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response?.data?.detail) {
-        const detail = error.response.data.detail;
-        
-        if (typeof detail === 'string') {
-          setGeneralError(detail);
-          toast.error(detail);
-        } else if (detail.errores) {
-          // Si fallaron TODAS las filas, FastAPI devuelve 400. Mapeamos eso a nuestro estado.
+      // 3. MAGIA: Reutilizamos el mismo resolver exacto para el otro endpoint
+      const { generalError: errorMsg, 
+        validationErrors: rowErrors, 
+        hasRowErrors } = processCsvError(error, 'importCsvPage.error_de_red_al_importar');
+      
+      if (hasRowErrors) {
           setImportResults({
-            mensaje: detail.mensaje || t('importCsvPage.no_se_pudo_crear_envios'),
-            creados: [],
-            errores: detail.errores
+              mensaje: errorMsg || t('importCsvPage.no_se_pudo_crear_envios'),
+              creados: [],
+              errores: rowErrors // Ya vienen traducidos del resolver
           });
           toast.error(t('importCsvPage.importacion_fallida'));
-        }
       } else {
-        const fallbackError = t('importCsvPage.error_de_red_al_importar');
-        setGeneralError(fallbackError);
-        toast.error(fallbackError);
+          setGeneralError(errorMsg);
+          toast.error(errorMsg || t('importCsvPage.error_de_red_al_importar'));
       }
     } finally {
       setIsImporting(false);
     }
-  }, [file]);
+  }, [file, t, processCsvError]);
 
   // Accion: Reiniciar todo (Botón Cancelar)
   const resetProcess = useCallback(() => {

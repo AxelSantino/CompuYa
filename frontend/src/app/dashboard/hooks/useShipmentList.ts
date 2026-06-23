@@ -4,6 +4,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import shipmentService from '@/services/shipmentService';
 import { Envio, EnvioStatus } from '@/types/envio';
 import { usePagination } from '@/hooks/usePagination';
+import '@/i18n/i18n';
+import { useTranslation } from 'react-i18next';
 
 export const useShipmentList = () => {
     const router = useRouter();
@@ -18,6 +20,7 @@ export const useShipmentList = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
+    const{t}=useTranslation();
 
     // 1. Control de Acceso (Redirección de seguridad)
     useEffect(() => {
@@ -44,7 +47,7 @@ export const useShipmentList = () => {
                     }
                 } catch {
                     if (isMounted) {
-                        setError('Error al cargar los envíos. Por favor, intenta de nuevo más tarde.');
+                        setError(t('shipmentTable.error_al_cargar_envios'));
                     }
                 } finally {
                     if (isMounted) {

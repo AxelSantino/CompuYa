@@ -10,6 +10,7 @@ import { useAuth } from '@/contexts/AuthContext';
 
 // Componentes UI Genéricos
 import { Button } from '@/components/ui/Button';
+import { BackButton } from '@/components/ui/BackButton';
 
 // Hook
 import { useCsvImport } from '@/app/dashboard/import_csv/hooks/useCsvImport';
@@ -48,9 +49,9 @@ const ImportCsvPage = () => {
   if (!user || !['operador', 'supervisor'].includes(user.rol)) {
     return (
       <DashboardLayout>
-        <div className="py-16 text-center text-gray-700 bg-white rounded-lg shadow-sm border border-gray-200">
+        <div role="alert" className="py-16 text-center bg-white rounded-lg shadow-sm border border-gray-200">
           <p className="text-xl font-bold text-red-600 mb-2">{t('importCsvPage.acceso_denegado')}</p>
-          <p className="text-gray-500">{t('importCsvPage.no_contas_con_permisos_necesarios')}</p>
+          <p className="text-gray-600">{t('importCsvPage.no_contas_con_permisos_necesarios')}</p>
         </div>
       </DashboardLayout>
     );
@@ -64,16 +65,15 @@ const ImportCsvPage = () => {
             1. HEADER Y NAVEGACIÓN
             ========================================= */}
         <div className="flex items-center gap-4 mb-6 pb-4 border-b border-gray-100">
-          <button
+          <BackButton 
+            label="" // Si no quieres que diga "Volver", puedes dejarlo vacío o pasarle un label oculto visualmente. Asumiré que lo usaremos solo como ícono aquí, o le agregamos el texto.
             onClick={() => router.push('/dashboard')}
-            className="text-gray-400 hover:text-orange-600 transition-colors p-2 rounded-full hover:bg-orange-50"
-            title="Volver a Envíos"
-          >
-            <FaArrowLeft size={20} />
-          </button>
+            title={t('importCsvPage.volver_a_envios', 'Volver a Envíos')}
+            className="self-start mt-1"
+          />
           <div>
-            <h2 className="text-2xl font-bold text-gray-800">{t('importCsvPage.importar_envios_por_csv')}</h2>
-            <p className="text-sm text-gray-500 mt-1">
+            <h1 className="text-2xl font-bold text-gray-800">{t('importCsvPage.importar_envios_por_csv')}</h1>
+            <p className="text-sm text-gray-600 mt-1">
               {t('importCsvPage.agrega_multiples_envios_al_sistema')}
             </p>
           </div>
@@ -113,10 +113,10 @@ const ImportCsvPage = () => {
           {importResults ? (
             /* BOTONERA POST-IMPORTACIÓN */
             <>
-              <Button variant="secondary" onClick={() => router.push('/dashboard')}>
+              <Button className="w-full sm:w-auto" variant="secondary" onClick={() => router.push('/dashboard')}>
                 {t('importCsvPage.ir_a_lista_de_envios')}
               </Button>
-              <Button variant="primary" onClick={resetProcess}>
+              <Button className="w-full sm:w-auto" variant="primary" onClick={resetProcess}>
                 {t('importCsvPage.importar_otro_archivo')}
               </Button>
             </>
@@ -124,6 +124,7 @@ const ImportCsvPage = () => {
             /* BOTONERA DURANTE EL PROCESO */
             <>
               <Button
+                className="w-full sm:w-auto"
                 variant="secondary"
                 onClick={resetProcess}
                 disabled={isValidating || isImporting || !file}
@@ -134,13 +135,15 @@ const ImportCsvPage = () => {
               {/* Lógica condicional: Validar (Azul) vs Confirmar (Verde) */}
               {!validationSuccess ? (
                 <Button
+                  className="w-full sm:w-auto"
                   variant="primary"
                   onClick={validateFile}
                   disabled={!file || isValidating}
+                  aria-busy={isValidating}
                 >
                   {isValidating ? (
-                    <span className="flex items-center gap-2">
-                      <span className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full"></span>
+                    <span className="flex items-center justify-center gap-2">
+                      <span aria-hidden="true" className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full"></span>
                       {t('importCsvPage.validando')}
                     </span>
                   ) : (
@@ -149,13 +152,16 @@ const ImportCsvPage = () => {
                 </Button>
               ) : (
                 <Button
+                  className="w-full sm:w-auto"
                   variant="success"
                   onClick={confirmImport}
                   disabled={isImporting}
+                  aria-busy={isImporting} 
                 >
                   {isImporting ? (
-                    <span className="flex items-center gap-2">
-                      <span className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full"></span>
+                    <span className="flex items-center justify-center gap-2">
+                      {/* 6. a11y: Spinner oculto */}
+                      <span aria-hidden="true" className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full"></span>
                       {t('importCsvPage.procesando')}
                     </span>
                   ) : (

@@ -58,6 +58,10 @@ export const es = {
                     media: "Media",
                     baja: "Baja"
                 },
+                tipo: {
+                    "normal": "Normal",
+                    "express": "Express"
+                },
                 desc: "Descripción",
                 no_disp: "No disponible",
                 id_interno: "ID Interno: ",
@@ -69,7 +73,15 @@ export const es = {
                 fecha_creacion: "Fecha de Creación",
                 creado_por: "Creado por",
                 prioridad_asignada: "Prioridad Asignada",
-                lim_entrega: "Límite de Entrega"
+                lim_entrega: "Límite de Entrega",
+                no_especificado: "No especificado",
+                na: "N/A",
+
+                error_cargar_info: "No se pudo cargar información del envío.",
+                cancelacion_exitosa: "El envío ha sido cancelado exitosamente.",
+                error_cancelar_envio: "Ocurrió un error al cancelar un envío.",
+                actualizacion_exitosa: "Envio actualizado correctamente.",
+                error_actualizar_envio: "Ocurrió un error al actualizar el envío."
 
             },
             dashboard_layout: {
@@ -100,10 +112,12 @@ export const es = {
                 en_sucursal: "En sucursal",
                 en_transito: "En transito",
                 entregado: "Entregado",
-                cancelado: "Cancelado"
+                cancelado: "Cancelado",
+                filtrar_por_estado: "Filtrar por estado",
             },
             shipmentTable: {
                 trackingID: "Tracking ID",
+                titulo_tabla: "Tabla de envíos",
                 prioridad: "Prioridad",
                 fecha_de_creacion: "Fecha de creacion",
                 destinatario: "Destinatario",
@@ -112,6 +126,7 @@ export const es = {
                 estado: "Estado",
                 no_se_encontraron_envios: "No se encontraron envios con el criterio.",
                 en_sucursal: "en sucursal",
+                ver_detalles: "Ver detalles del envío",
                 status: {
                     "en sucursal": "En sucursal",
                     "en transito": "En tránsito",
@@ -122,7 +137,13 @@ export const es = {
                     "alta": "Alta",
                     "media": "Media",
                     "baja": "Baja"
-                }
+                },
+                tipo_envio: {
+                    "normal": "Normal",
+                    "express": "Express"
+                },
+                error_al_cargar_envios: "Error al cargar los envíos. Por favor, intenta de nuevo más tarde.",
+
             },
             routesPage: {
                 centro_de_control: "Centro de control logistico",
@@ -201,7 +222,15 @@ export const es = {
                 dest_encontrado: "Destinatario encontrado",
                 datos_destinatario: "Datos del Destinatario",
                 razon_nombre_comp: "Razón Social / Nombre Completo",
-                cuit_destinatario: "CUIT/CUIL del Destinatario"
+                cuit_destinatario: "CUIT/CUIL del Destinatario",
+
+                envio_creado_exitosamente: "¡Envío creado exitosamente!",
+                envio_exito_mensaje: "El envío ha sido registrado en el sistema y se le asignó el siguiente tracking ID:",
+                volver_gestion: "Volver a la Gestión de Envíos",
+                placeholder_razon_social: "Ej. TechStore Argentina S.A. o Juan Pérez",
+                placeholder_cuit: "Ej. 30123456789 (CUIT) o 20123456789 (CUIL)",
+
+                error_crear_envio: "Error al crear el envío. Por favor, revisa los datos e intenta de nuevo.",
             },
             componentDetailsSection: {
                 detalles_del_componente: "Detalles del Componente y Envío",
@@ -215,7 +244,11 @@ export const es = {
                 valioso: "Valioso",
                 requerimientos_especiales: "Requerimientos especiales para el transporte.",
                 fecha_limite_entrega: "Fecha limite de entrega",
-                plazo_maximo_entrega: "Plazo maximo de entrega"
+                plazo_maximo_entrega: "Plazo maximo de entrega",
+                tipos: {
+                    normal: "Normal",
+                    expres: "Express",
+                }
             },
             metricsPage: {
                 metricas_envios: "Métricas de Envíos",
@@ -469,6 +502,8 @@ export const es = {
                 instrucciones_formato: "El archivo debe tener formato <strong>.csv</strong> (codificación UTF-8) y contener obligatoriamente las siguientes 5 columnas en la primera fila:",
                 revisar_mayusculas: "Revisar mayúsculas",
                 descargar_plantilla_vacia: "Descargar plantilla vacía",
+                valores_tipo_envio: 'Solo permite: "normal" o "express',
+                valores_restriccion: 'Solo permite: "ninguna, "fragil" o "valioso"',
 
                 click_para_subir_archivo: "Haz click para subir un archivo",
                 o_arrastra_y_suelta_archivo: "o arrastra y suelta tu archivo .csv aquí",
@@ -484,6 +519,8 @@ export const es = {
                 destinatario: "Destinatario",
                 fallos_al_guardar: "Fallos al guardar ({{errores}})",
                 motivo_del_error: "Motivo del error",
+                lista_envios_creados: "Lista de envíos creados exitosamente",
+                lista_errores_guardado: "Lista de errores al intentar guardar",
 
                 acceso_denegado: "Acceso denegado",
                 no_contas_con_permisos_necesarios: "No contás con los permisos necesarios para importar envíos.",
@@ -496,6 +533,24 @@ export const es = {
                 validar_archivo: "Validar archivo",
                 procesando: "Procesando...",
                 confirmar_e_importar: "Confirmar e importar",
+
+                volver_a_envios: "Volver a envíos",
+
+                backend: {
+                    err_extension_invalida: "El archivo debe tener extensión .csv",
+                    err_codificacion_invalida: "El archivo debe tener codificación UTF-8",
+                    err_columnas_faltantes: "Faltan columnas requeridas en la cabecera",
+                    err_tipo_envio_invalido: "Tipo de envío no válido (debe ser 'normal' o 'express')",
+                    err_restriccion_invalida: "Restricción no válida (debe ser 'fragil', 'valioso' o 'ninguna')",
+                    validacion_exitosa: "Archivo validado correctamente y listo para importar",
+                    importacion_completada: "Proceso completado. Envíos creados con éxito.",
+                    err_validacion_filas_fallida: "Se encontraron errores de validación en los datos",
+                    err_importacion_fallida_completamente: "No se pudo crear ningún envío. Todas las filas fallaron.",
+                    err_insercion_bd_fallida: "Error interno al guardar en base de datos",
+                    err_destinatario_no_encontrado: "La empresa destinataria no existe o no tiene perfil configurado",
+                    err_destinatario_inactivo: "La empresa destinataria está desactivada o no tiene usuario asociado",
+                    err_sin_sucursal_disponible: "No hay sucursales disponibles en la zona para asignar el envío",
+                },
             },
 
             campanita: {
@@ -508,7 +563,8 @@ export const es = {
                 info: "Mostrando {{pageSize}} elementos por página · Página {{currentPage}} de {{totalPages}}",
                 elementos: "Elementos: ",
                 anterior: "Anterior",
-                siguiente: "Siguiente"
+                siguiente: "Siguiente",
+                navegacion_aria: "Navegación de páginas",
             },
 
             sidebarPage: {
@@ -536,10 +592,8 @@ export const es = {
                 procesando: "Procesando...",
                 especifique_motivo: "Especifique el motivo",
                 caracteres: "/255 caracteres",
-                no_se_pudo_cargar_info: "No se pudo cargar la información del envío.",
-                envio_cancelado: "El envío ha sido cancelado exitosamente",
-                ocurrio_error: "Ocurrió un erro al cancelar el envío.",
-                error_actualizar: "Error al actualizar el envío."
+                cerrar_modal: "Cerrar modal de cancelación",
+                seleccione_un_motivo: "Seleccione un motivo",
                 },
             auditoria: {
                 titulo: "Auditoría de Estados",

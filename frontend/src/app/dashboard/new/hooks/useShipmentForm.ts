@@ -3,8 +3,13 @@ import { useRouter } from 'next/navigation';
 import shipmentService from '@/services/shipmentService';
 import { EnvioCrear } from '@/types/envio';
 
+import '@/i18n/i18n';
+import { useErrorTranslator } from '@/hooks/useErrorTranslator';
+
 export const useShipmentForm = () => {
     const router = useRouter();
+
+    const { translateError } = useErrorTranslator();
 
     // Tipos del formulario declarados en types/envio.ts
     const [formData, setFormData] = useState<EnvioCrear>({
@@ -44,18 +49,7 @@ export const useShipmentForm = () => {
             const newShipment = await shipmentService.createShipment(formData);
             setCreatedTrackingId(newShipment.tracking_id);
         } catch (err: unknown) {
-            const errorResponse = err as { response?: { data?: { detail?: string | any[] } } };
-            let errorMessage = 'Error al crear el envío. Por favor, revisa los datos e intenta de nuevo.';
-            
-            const detail = errorResponse.response?.data?.detail;
-            if (detail) {
-                if (typeof detail === 'string') {
-                    errorMessage = detail;
-                } else if (Array.isArray(detail)) {
-                    errorMessage = detail[0]?.msg || errorMessage;
-                }
-            }
-            setError(errorMessage);
+            setError(translateError(err, 'newShipmentPage.error_crear_envio'));
         } finally {
             setIsLoading(false);
         }

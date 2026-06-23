@@ -21,8 +21,11 @@ export const PaginationControls = ({
 }: PaginationControlsProps) => {
   const {t} = useTranslation();
   return (
-    <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-      <div className="text-sm text-gray-600">
+    <nav 
+      aria-label={t('paginado.navegacion_aria', 'Navegación de páginas')}
+      className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
+    >
+      <div className="text-sm text-gray-700">
         {t('paginado.info', { 
         pageSize: pageSize, 
         currentPage: currentPage, 
@@ -48,19 +51,18 @@ export const PaginationControls = ({
         <div className="inline-flex overflow-hidden rounded-md border border-gray-200 shadow-sm">
           <button
             type="button"
-            className={`px-3 py-2 text-sm font-medium ${currentPage === 1 ? 'cursor-not-allowed bg-gray-100 text-gray-400' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
+            className={`px-3 py-2 text-sm font-medium  ${currentPage === 1 ? 'cursor-not-allowed bg-gray-100 text-gray-400' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
             onClick={() => onPageChange(Math.max(1, currentPage - 1))}
             disabled={currentPage === 1}
           >
             {t('paginado.anterior')}
           </button>
-          <button
-            type="button"
-            className="px-3 py-2 text-sm font-medium bg-white text-gray-700 border-l border-r border-gray-200"
-            disabled
+          <span
+            aria-current="page"
+            className="px-3 py-2 text-sm font-medium bg-white text-gray-700 border-l border-r border-gray-200 flex items-center justify-center pointer-events-none"
           >
             {currentPage} / {totalPages}
-          </button>
+          </span>
           <button
             type="button"
             className={`px-3 py-2 text-sm font-medium ${currentPage === totalPages ? 'cursor-not-allowed bg-gray-100 text-gray-400' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
@@ -71,6 +73,6 @@ export const PaginationControls = ({
           </button>
         </div>
       </div>
-    </div>
+    </nav>
   );
 };

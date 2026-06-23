@@ -58,6 +58,10 @@ export const en = {
                 media: "Medium",
                 baja: "Low"
             },
+            tipo: {
+                "normal": "Standard",
+                "express": "Express"
+            },
             desc: "Description",
             no_disp: "Not available",
             id_interno: "Intern ID: ",
@@ -66,10 +70,18 @@ export const en = {
             razon_social: "Company Name",
             rzn_social_name: "Company Name / Name",
             direccion: "Direction",
-            fecha_creacion: "Date of Creation",
+            fecha_creacion: "Creation date",
             creado_por: "Created by",
             prioridad_asignada: "Priority Assigned",
             lim_entrega: "Date limit",
+            no_especificado: "Not specificied",
+            na: "N/A",
+
+            error_cargar_info: "Error while loading shipment info.",
+            cancelacion_exitosa: "The shipment has been successfully canceled.",
+            error_cancelar_envio: "An error occurred while canceling a shipment.",
+            actualizacion_exitosa: "Shipment updated successfully.",
+            error_actualizar_envio: "An error occurred while updating the shipment."
         },
 
         dashboard_layout: {
@@ -101,18 +113,21 @@ export const en = {
             en_sucursal: "In Branch",
             en_transito: "In Transit",
             entregado: "Delivered",
-            cancelado: "Cancelled"
+            cancelado: "Cancelled",
+            filtrar_por_estado: "Filter by state",
         },
         shipmentTable: {
             trackingID: "Tracking ID",
+            titulo_tabla: "Shipment Table",
             prioridad: "Priority",
-            fecha_de_creacion: "Date of creation",
+            fecha_de_creacion: "Creation date",
             destinatario: "Destinatary",
             descripcion: "Description",
             tipo: "Type",
             estado: "State",
             no_se_encontraron_envios: "No shipments were found matching the selected criteria.",
             en_sucursal: "en sucursal",
+            ver_detalles: "View shipment details",
                 status: {
                     "en sucursal": "In Branch",
                     "en transito": "On Transit",
@@ -123,7 +138,12 @@ export const en = {
                     "alta": "High",
                     "media": "Medium",
                     "baja": "Low"
-                }
+                },
+                tipo_envio: {
+                    "normal": "Standard",
+                    "express": "Express"
+                },
+            error_al_cargar_envios: "Error while loading shipments. Please, try again later.",
         },
         routesPage: {
             centro_de_control: "Center of logistics control",
@@ -201,7 +221,15 @@ export const en = {
             dest_encontrado: "Recipient found",
             datos_destinatario: "Recipient Details",
             razon_nombre_comp: "Company Name / Full Name",
-            cuit_destinatario: "CUIT/CUIL of Recipient"
+            cuit_destinatario: "CUIT/CUIL of Recipient",
+
+            envio_creado_exitosamente: "Shipment created successfully!",
+            envio_exito_mensaje: "The shipment has been registered in the system and assigned the following tracking ID:",
+            volver_gestion: "Back to Shipment Management",
+            placeholder_razon_social: "e.g., TechStore Argentina S.A. or John Doe",
+            placeholder_cuit: "e.g., 30123456789 (CUIT) or 20123456789 (CUIL)",
+
+            error_crear_envio: "Error while creatin shipment. Please, check data and try again.",
         },
         componentDetailsSection: {
             detalles_del_componente: "Details of the component and shipment",
@@ -215,7 +243,11 @@ export const en = {
             valioso: "Valuable",
             requerimientos_especiales: "Special transport requirements",
             fecha_limite_entrega: "Delivery deadline",
-            plazo_maximo_entrega: "Maximum delivery time"
+            plazo_maximo_entrega: "Maximum delivery time",
+            tipos: {
+                normal: "Standard",
+                expres: "Express",
+            }
         },
         metricsPage: {
                 metricas_envios: "Shipments Metrics",
@@ -297,7 +329,7 @@ export const en = {
                     email: "Email",
                     email_bloqueado: "For security reasons, the email cannot be modified.",
                     rol: "Role in the sistem",
-                    btn_cancelar: "Cancell",
+                    btn_cancelar: "Cancel",
                     btn_guardar: "Save Changes",
                     guardando: "Saving..."
                 },
@@ -314,7 +346,7 @@ export const en = {
                     desactivar_msg: "Are you sure you want to deactivate this employee? They will no longer be able to log in to the system, but their entire transaction history will remain intact.",
                     confirm_activar: "Yes, activate",
                     confirm_desactivar: "Yes, deactivate",
-                    cancelar: "Cancell"
+                    cancelar: "Cancel"
                 }
         },
         newEmployeesPage: {
@@ -326,7 +358,7 @@ export const en = {
                 volver_nomina: "Return to payroll",
                 registrar_emp: "Register New Employee",
                 crea_nueva_cuenta: "Create a new login account and assign an operational role within the system.",
-                boton_cancelar: "Cancell",
+                boton_cancelar: "Cancel",
                 registrando: "Registering...",
                 registrar_empleado: "Register Employee",
                 campos_obligatorios: "The fields with (*) are obligatory",
@@ -366,7 +398,7 @@ export const en = {
                     razon_social: "Company Name",
                     email: "Email",
                     email_bloqueado: "For security reasons, the email cannot be modified.",
-                    btn_cancelar: "Cancell",
+                    btn_cancelar: "Cancel",
                     btn_guardar: "Save All Changes",
                     guardando: "Saving..."
                 },
@@ -392,7 +424,7 @@ export const en = {
                     desactivar_msg: "Are you sure you want to deactivate this client? You will no longer be able to log in to the system.",
                     confirm_activar: "Yes, activate",
                     confirm_desactivar: "Yes, deactivate",
-                    cancelar: "Cancell"
+                    cancelar: "Cancel"
                 }
     },
         newClientPage: {
@@ -404,7 +436,7 @@ export const en = {
                 volver_nomina: "Return to Customer List",
                 registrar_nuevo_cliente: "Register New Client",
                 nueva_cuenta_corporativa: "Create a new corporate account and set its tax location for logistics operations.",
-                boton_cancelar: "Cancell",
+                boton_cancelar: "Cancel",
                 registrando: "Registering...",
                 registrar_cliente: "Register Client",
                 campos_obligatorios: "The fields with (*) are obligatory",
@@ -444,7 +476,7 @@ export const en = {
                 podes_usar: "You can use",
                 el_sistema_las_reemplazara: "The system will automatically replace them with the actual shipment data.",
                 plant_activa: "Active Template (Send automatically when the event occurs)",
-                boton_cancelar: "Cancell",
+                boton_cancelar: "Cancel",
                 guardando: "Saving...",
                 guardar_plantilla: "Save Template",
                 temp_activa: "Active",
@@ -470,6 +502,8 @@ export const en = {
                 instrucciones_formato: "File must be in <strong>.csv</strong> format (UTF-8 encoding) and contains the following 5 columns in the first row:",
                 revisar_mayusculas: "Check capital letters",
                 descargar_plantilla_vacia: "Download empty template",
+                valores_tipo_envio: 'Only admits: "normal" o "express',
+                valores_restriccion: 'Only admits: "ninguna, "fragil" o "valioso"',
 
                 click_para_subir_archivo: "Click and upload file",
                 o_arrastra_y_suelta_archivo: "or drop your .csv file here",
@@ -485,6 +519,8 @@ export const en = {
                 destinatario: "Recipient",
                 fallos_al_guardar: "Issues while saving ({{errores}})",
                 motivo_del_error: "Issue reason",
+                lista_envios_creados: "List of shipments created succesfully",
+                lista_errores_guardado: "List of issues while saving shipments",
 
                 acceso_denegado: "Denied Access",
                 no_contas_con_permisos_necesarios: "No contás con los permisos necesarios para importar envíos.",
@@ -497,6 +533,24 @@ export const en = {
                 validar_archivo: "Check file",
                 procesando: "Processing...",
                 confirmar_e_importar: "Confirm and import",
+
+                volver_a_envios: "Return to dashboard",
+
+                backend: {
+                    err_extension_invalida: "The file must have a .csv extension",
+                    err_codificacion_invalida: "The file must have UTF-8 encoding",
+                    err_columnas_faltantes: "Required columns are missing from the header",
+                    err_tipo_envio_invalido: "Invalid shipping type (must be 'normal' or 'express')",
+                    err_restriccion_invalida: "Invalid restriction (must be 'fragil', 'valioso', or 'ninguna')",
+                    validacion_exitosa: "File successfully validated and ready to import",
+                    importacion_completada: "Process completed. Shipments created successfully.",
+                    err_validacion_filas_fallida: "Validation errors were found in the data",
+                    err_importacion_fallida_completamente: "Could not create any shipment. All rows failed.",
+                    err_insercion_bd_fallida: "Internal error saving the shipment to the database",
+                    err_destinatario_no_encontrado: "The recipient company does not exist or has no profile configured",
+                    err_destinatario_inactivo: "The recipient company is inactive or has no associated user",
+                    err_sin_sucursal_disponible: "No branch is available in the area to assign the shipment",
+                },
             },
 
             campanita: {
@@ -509,7 +563,8 @@ export const en = {
                 info: "Showing {{pageSize}} elements by page · Page {{currentPage}} of {{totalPages}}",
                 elementos: "Elements: ",
                 anterior: "Prior",
-                siguiente: "Next"
+                siguiente: "Next",
+                navegacion_aria: "Page navigation",
             },
             
             sidebarPage: {
@@ -522,7 +577,7 @@ export const en = {
             },
               
             cancelShipment: {
-                titulo: "Cancell Shipment",
+                titulo: "Cancel Shipment",
                 descripcion: "Please select the reason why you are cancelling this shipment. This action cannot be undone and will be recorded in the history.",
                 razones: {
                     cliente_solicito: "Client solicited cancellation",
@@ -536,10 +591,8 @@ export const en = {
                 procesando: "Processing...",
                 especifique_motivo: "Specify the reason",
                 caracteres: "/255 chars.",
-                no_se_pudo_cargar_info: "The shipment information could not be loaded.",
-                envio_cancelado: "The shipment has been successfully cancelled",
-                ocurrio_error: "An error occurred while cancelling the shipment.",
-                error_actualizar: "Error updating the shipment."
+                cerrar_modal: "Close cancelation modal",
+                seleccione_un_motivo: "Select a reason",
                 },
               
             auditoria: {

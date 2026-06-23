@@ -124,30 +124,28 @@ async def importar_validar(
     envio_service: EnvioService = Depends(get_envio_service)
 ):
     if not file.filename.endswith(".csv"):
-        raise HTTPException(status_code=400, detail="El archivo debe ser un archivo CSV")
+        raise HTTPException(status_code=400, detail="err_extension_invalida")
     contents = await file.read()
     try:
         decoded = contents.decode("utf-8")
     except UnicodeDecodeError:
-        raise HTTPException(status_code=400, detail="El archivo debe tener codificación UTF-8")
+        raise HTTPException(status_code=400, detail="err_codificacion_invalida")
         
     reader = csv.DictReader(io.StringIO(decoded))
     
     columnas_requeridas = {"razon_social_destinatario", "cuit_destinatario", "descripcion", "tipo_envio", "restriccion"}
     if not reader.fieldnames or not columnas_requeridas.issubset(set(reader.fieldnames)):
-        faltantes = columnas_requeridas - set(reader.fieldnames)
-        raise HTTPException(status_code=400, detail=f"Columnas faltantes: {', '.join(faltantes)}")
+        raise HTTPException(status_code=400, detail="err_columnas_faltantes")
     
     validos = []
     errores = []
     
     for i, row in enumerate(reader, start=2):
         fila_errores = []
-        # Validaciones de Enums
         if row.get("tipo_envio") not in [e.value for e in TipoEnvio]:
-            fila_errores.append(f"Tipo de envío '{row.get('tipo_envio')}' inválido")
+            fila_errores.append("err_tipo_envio_invalido")
         if row.get("restriccion") not in [e.value for e in RestriccionEnvio]:
-            fila_errores.append(f"Restricción '{row.get('restriccion')}' inválida")
+            fila_errores.append("err_restriccion_invalida")
             
         if not fila_errores:
             validos.append(row)
@@ -155,9 +153,15 @@ async def importar_validar(
             errores.append({"fila": i, "errores": fila_errores})
             
     if errores:
-        raise HTTPException(status_code=400, detail={"mensaje": "Errores de validación", "errores": errores})
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "mensaje": "err_validacion_filas_fallida",
+                "errores": errores
+            }
+        )
     
-    return {"mensaje": "CSV válido", "datos": validos}
+    return {"mensaje": "validacion_exitosa", "datos": validos}
 
 @router.post("/importar/confirmar", status_code=status.HTTP_201_CREATED, dependencies=[Depends(tiene_rol(["operador", "supervisor"]))])
 async def confirmar_importacion_csv(
@@ -167,10 +171,14 @@ async def confirmar_importacion_csv(
     envio_service: EnvioService = Depends(get_envio_service)
 ):
     if not file.filename.endswith(".csv"):
-        raise HTTPException(status_code=400, detail="El archivo debe ser un archivo CSV")
+        raise HTTPException(status_code=400, detail="err_extension_invalida")
         
     contents = await file.read()
-    decoded = contents.decode("utf-8")
+    try:
+        decoded = contents.decode("utf-8")
+    except UnicodeDecodeError:
+        raise HTTPException(status_code=400, detail="err_codificacion_invalida")
+        
     reader = csv.DictReader(io.StringIO(decoded))
     
     creados = []
@@ -181,14 +189,32 @@ async def confirmar_importacion_csv(
             envio_in = EnvioCrear(**row)
             envio = await envio_service.crear_envio(envio_in, usuario_actual.id, background_tasks)
             creados.append({"tracking_id": envio.tracking_id, "destinatario": row["razon_social_destinatario"]})
-        except Exception as e:
-            errores.append({"fila": i, "error": str(e)})
+        except HTTPException as he:
+            # Traducir los errores conocidos
+            error_code = "err_insercion_bd_fallida"
+            if he.detail == "La empresa destinataria no existe o no tiene perfil configurado":
+                error_code = "err_destinatario_no_encontrado"
+            elif he.detail == "La empresa destinataria no esta activa o no tiene un usuario asociado":
+                error_code = "err_destinatario_inactivo"
+            elif he.detail == "No hay sucursales disponibles para asignar este envío":
+                error_code = "err_sin_sucursal_disponible"
+            else:
+                error_code = he.detail
+            errores.append({"fila": i, "error": error_code})
+        except Exception:
+            errores.append({"fila": i, "error": "err_insercion_bd_fallida"})
             
     if errores and not creados:
-        raise HTTPException(status_code=400, detail={"mensaje": "No se pudo crear ningún envío", "errores": errores})
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "mensaje": "err_importacion_fallida_completamente",
+                "errores": errores
+            }
+        )
         
     return {
-        "mensaje": f"Proceso completado. Se crearon {len(creados)} envíos.",
+        "mensaje": "importacion_completada",
         "creados": creados,
         "errores": errores
     }

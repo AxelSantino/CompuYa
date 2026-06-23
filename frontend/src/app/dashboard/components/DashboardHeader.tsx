@@ -3,27 +3,35 @@ import { Button } from '@/components/ui/Button';
 import '@/i18n/i18n';
 import { useTranslation } from 'react-i18next';
 
+interface User {
+  rol: string;
+}
 
+interface DashboardHeaderProps {
+  user: User;
+}
 
-export const DashboardHeader = ({ user }: { user: any }) => {
+export const DashboardHeader: React.FC<DashboardHeaderProps> = ({ user }) => {
     const router = useRouter();
     const{t}=useTranslation();
-    let title = ''
-    let subtitle = ''
 
-    if ( user.rol === 'cliente') {
-        title = t('dashboard_header.mi_dashboard_cliente')
-        subtitle = t('dashboard_header.listado_seguimiento')
-    } else {
-        title = t('dashboard_header.gestion_de_envios')
-        subtitle = t('dashboard_header.listado_y_administracion')
-    }
 
+    const isClient = user.rol === 'cliente';
+
+    const title = isClient 
+        ? t('dashboard_header.mi_dashboard_cliente', 'Mi Dashboard') 
+        : t('dashboard_header.gestion_de_envios', 'Gestión de Envíos');
+        
+    const subtitle = isClient 
+        ? t('dashboard_header.listado_seguimiento', 'Seguimiento de mis envíos') 
+        : t('dashboard_header.listado_y_administracion', 'Listado y administración general');
 
     return (
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 text-orange-700">
+        <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
             <div>
-                <h2 className="text-2xl font-bold mb-1">{title}</h2>
+                <h1 className="text-2xl font-bold mb-1 text-orange-700">
+                    {title}
+                </h1>
                 <p className="text-gray-600">
                     {subtitle}
                 </p>
@@ -47,6 +55,6 @@ export const DashboardHeader = ({ user }: { user: any }) => {
                     </Button>
                 </div>
             )}
-        </div>
+        </header>
     );
 };
