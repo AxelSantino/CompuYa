@@ -19,30 +19,20 @@ class Prioridad(Enum):
 def asignar_prioridad_segun_reglas(envio: dict) -> str:
     if envio["antiguedad_dias"] > 5:
         return Prioridad.ALTA.value
-
-    if envio["tipo_envio"] == TipoEnvio.EXPRESS.value and envio["restriccion"] == RestriccionEnvio.VALIOSO.value:
-        return Prioridad.ALTA.value
-
-    if envio["tipo_envio"] == TipoEnvio.EXPRESS.value and envio["distancia"] > 50:
-        return Prioridad.ALTA.value
-
-    if envio["tipo_envio"] == TipoEnvio.NORMAL.value and envio["restriccion"] == RestriccionEnvio.VALIOSO.value:
+    if envio["antiguedad_dias"] >= 2.5:
+        if envio["tipo_envio"] == TipoEnvio.EXPRESS.value:
+            return Prioridad.ALTA.value
         return Prioridad.MEDIA.value
-
-    if envio["tipo_envio"] == TipoEnvio.EXPRESS.value and envio["restriccion"] == RestriccionEnvio.NINGUNA.value \
-       and envio["distancia"] < 15:
-        return Prioridad.MEDIA.value
-    
-    if envio["tipo_envio"] == TipoEnvio.EXPRESS.value and envio["restriccion"] == RestriccionEnvio.NINGUNA.value \
-       and envio["antiguedad_dias"] >= 3 and envio["antiguedad_dias"] <=5:
-        return Prioridad.MEDIA.value
-
-    if envio["tipo_envio"] == TipoEnvio.NORMAL.value and envio["restriccion"] == RestriccionEnvio.NINGUNA.value \
-       and envio["antiguedad_dias"] < 3:
-        return Prioridad.BAJA.value
-
-    if envio["tipo_envio"] == TipoEnvio.NORMAL.value and envio["distancia"] < 5:
-        return Prioridad.BAJA.value
+    if envio["tipo_envio"] == TipoEnvio.EXPRESS.value:
+        if envio["restriccion"] == RestriccionEnvio.VALIOSO.value:
+            return Prioridad.ALTA.value
+        if envio["restriccion"] == RestriccionEnvio.FRAGIL.value:
+            return Prioridad.ALTA.value if envio["distancia"] > 30 else Prioridad.MEDIA.value
+        return Prioridad.ALTA.value if envio["distancia"] > 40 else Prioridad.MEDIA.value
+    if envio["tipo_envio"] == TipoEnvio.NORMAL.value:
+        if envio["restriccion"] in [RestriccionEnvio.VALIOSO.value, RestriccionEnvio.FRAGIL.value]:
+            return Prioridad.MEDIA.value
+        return Prioridad.MEDIA.value if envio["distancia"] > 50 else Prioridad.BAJA.value
 
     return Prioridad.BAJA.value
 
