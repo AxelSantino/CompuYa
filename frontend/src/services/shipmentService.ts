@@ -85,7 +85,16 @@ const shipmentService = {
       },
     });
     return response.data;
-  }
+  },
+
+  getValidationPin: async (tracking_id: string): Promise<{ codigo_verificacion: string } | null> => {
+    try {
+      const response = await api.get(`/envios/${tracking_id}/pin`);
+      return response.data;
+    } catch (error) {
+      return null;
+    }
+  },
 };
 
 export default shipmentService;

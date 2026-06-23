@@ -34,14 +34,13 @@ function ShipmentDetailPage() {
   const {t} = useTranslation();
   
   const {
-    user, router, shipment, history, isLoading, isProcessing, error,
+    user, router, shipment, history, validationPin, isLoading, isProcessing, error,
     isEditing, isSaving, formData, canEdit, handleCancel, handleEditClick,
     handleCancelEdit, handleChange, handleSubmit, isCancelModalOpen, closeCancelModal, confirmCancellation
   } = useShipmentDetail();
 
   const isBusy = isLoading || isProcessing || isSaving;
   const loadingText = isProcessing ? t('shipments.cancelando_envio') : isSaving ? t('shipments.guardando_cambios') : t('shipments.cargando_envio');
-
   return (
     <DashboardLayout>
       <div className="relative p-4 md:p-6">
@@ -75,7 +74,9 @@ function ShipmentDetailPage() {
                   handleChange={handleChange}
                   isSaving={isSaving}
                   canEdit={canEdit}
+                  validationPin={validationPin}
                   onEditClick={handleEditClick}
+                  userRol={user?.rol}
                 />
 
                 <RecipientInfoCard

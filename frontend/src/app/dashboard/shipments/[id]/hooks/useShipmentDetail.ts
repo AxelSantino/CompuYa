@@ -24,6 +24,7 @@ export const useShipmentDetail = () => {
     // Estados de datos
     const [shipment, setShipment] = useState<Envio | null>(null);
     const [history, setHistory] = useState<HistorialEnvio[]>([]);
+    const [validationPin, setValidationPin] = useState<string | null>(null);
 
     // Estados de carga/procesamiento
     const [isLoading, setIsLoading] = useState(true);
@@ -49,17 +50,29 @@ export const useShipmentDetail = () => {
         if (!id) return;
         setIsLoading(true);
         try {
-            const promises: [Promise<Envio>, Promise<HistorialEnvio[]> | null] = [
+            const [shipmentData, historyData, pinData] = await Promise.all([
                 shipmentService.getShipmentById(id as string),
-                user?.rol === 'supervisor' ? shipmentService.getShipmentHistory(id as string) : null
-            ];
-
-            const [shipmentData, historyData] = await Promise.all(promises);
+                // Revertimos la lógica: SOLO el supervisor tiene permisos para pedir el historial en el backend
+                user?.rol === 'supervisor' 
+                    ? shipmentService.getShipmentHistory(id as string) 
+                    : Promise.resolve(null),
+                // SOLO el cliente tiene permisos (o necesidad) de pedir el pin
+                user?.rol === 'cliente' 
+                    ? shipmentService.getValidationPin(id as string) 
+                    : Promise.resolve(null)
+            ]);
             
             setShipment(shipmentData);
             if (historyData) {
                 setHistory(historyData);
             }
+
+            if (pinData && pinData.codigo_verificacion) {
+                setValidationPin(pinData.codigo_verificacion);
+            } else {
+                setValidationPin(null);
+            }
+
         } catch (err: unknown) {
             setError(translateError(err, 'shipmentDetail.error_cargar_info'));
         } finally {
@@ -151,6 +164,7 @@ export const useShipmentDetail = () => {
         router,
         shipment,
         history,
+        validationPin,
         isLoading,
         isProcessing,
         error,

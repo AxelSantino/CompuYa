@@ -76,6 +76,8 @@ export const es = {
                 lim_entrega: "Límite de Entrega",
                 no_especificado: "No especificado",
                 na: "N/A",
+                codigo_validacion: "Código de validación",
+                no_disponible: "No disponible",
 
                 error_cargar_info: "No se pudo cargar información del envío.",
                 cancelacion_exitosa: "El envío ha sido cancelado exitosamente.",
