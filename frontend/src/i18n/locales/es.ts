@@ -529,10 +529,18 @@ export const es = {
                 aria_ver_error: "Hacer clic para ver el detalle del error",
 
                 error_cargar_templates: "Error al cargar las templates de correo.",
-                success_historial_cargado: "History succesfully loaded.",
-                error_descargar_historial: "Error while downloading notifications history.",
-                success_plantilla_actualizada: "Template succesfully updated",
-                error_guardar_plantilla: "Error while attempting saving template changes."
+                success_historial_cargado: "Historial cargado exitosamente.",
+                error_descargar_historial: "Error al descargar el historial de notificaciones.",
+                success_plantilla_actualizada: "Plantilla actualizada correctamente.",
+                error_guardar_plantilla: "Error al intentar guardar los cambios de la plantilla.",
+
+                
+                mostrando: "Mostrando",
+                registros: "registros",
+                filtrar_por_resultado: "Filtrar por resultado:",
+                filtro_todos: "Todos",
+                filtro_exitoso: "Exitoso",
+                filtro_fallido: "Fallido",
             },
             importCsvPage: {
                 archivo_valido_para_importar: "Archivo válido y listo para importar",

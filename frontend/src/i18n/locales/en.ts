@@ -526,6 +526,19 @@ export const en = {
 
                 error_desconocido: "Unknown error",
                 aria_ver_error: "Click to see error detail",
+
+                error_cargar_templates: "Error al cargar las templates de correo.",
+                success_historial_cargado: "History succesfully loaded.",
+                error_descargar_historial: "Error while downloading notifications history.",
+                success_plantilla_actualizada: "Template succesfully updated",
+                error_guardar_plantilla: "Error while attempting saving template changes.",
+
+                mostrando: "Viewing",
+                registros: "records",
+                filtrar_por_resultado: "Filter by result:",
+                filtro_todos: "All",
+                filtro_exitoso: "Sucess",
+                filtro_fallido: "Faillure",
             },
 
             importCsvPage: {
