@@ -19,40 +19,52 @@ export const EmployeeDetailsSection = ({
   handleChange,
   isLoading = false
 }: EmployeeDetailsProps) => {
-  const{t}=useTranslation();
+  const { t } = useTranslation();
+  
   return (
     <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
       <h3 className="text-lg font-semibold text-gray-800 mb-6 flex items-center">
-        <span className="w-1.5 h-6 bg-orange-500 rounded-full mr-3"></span>
+        {/* a11y: Silenciamos la barra decorativa */}
+        <span aria-hidden="true" className="w-1.5 h-6 bg-orange-500 rounded-full mr-3"></span>
         {t('newEmployeesPage.datos_personales')}
       </h3>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            {t('newEmployeesPage.nombre')} <span className="text-red-500">*</span>
+          {/* a11y: Vinculamos el label con el input mediante htmlFor */}
+          <label htmlFor="nombre" className="block text-sm font-medium text-gray-700 mb-1">
+            {t('newEmployeesPage.nombre')} 
+            {/* a11y: Silenciamos el asterisco y mejoramos el contraste a red-600 */}
+            <span aria-hidden="true" className="text-red-600 ml-1">*</span>
           </label>
           <Input
+            id="nombre"
             type="text"
             name="nombre"
             value={formData.nombre}
             onChange={handleChange}
-            placeholder="Ej. Juan"
+            // i18n: Pasamos el placeholder por el traductor
+            placeholder={t('newEmployeesPage.placeholder_nombre', 'Ej. Juan')}
             required
             disabled={isLoading}
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            {t('newEmployeesPage.apellido')} <span className="text-red-500">*</span>
+          {/* a11y: Vinculamos el label con el input mediante htmlFor */}
+          <label htmlFor="apellido" className="block text-sm font-medium text-gray-700 mb-1">
+            {t('newEmployeesPage.apellido')} 
+            {/* a11y: Silenciamos el asterisco y mejoramos el contraste a red-600 */}
+            <span aria-hidden="true" className="text-red-600 ml-1">*</span>
           </label>
           <Input
+            id="apellido"
             type="text"
             name="apellido"
             value={formData.apellido}
             onChange={handleChange}
-            placeholder="Ej. Pérez"
+            // i18n: Pasamos el placeholder por el traductor
+            placeholder={t('newEmployeesPage.placeholder_apellido', 'Ej. Pérez')}
             required
             disabled={isLoading}
           />
@@ -60,10 +72,14 @@ export const EmployeeDetailsSection = ({
       </div>
 
       <div className="w-full md:w-1/2 pr-0 md:pr-2">
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          {t('newEmployeesPage.rol')} <span className="text-red-500">*</span>
+        {/* a11y: Vinculamos el label con el select mediante htmlFor */}
+        <label htmlFor="rol" className="block text-sm font-medium text-gray-700 mb-1">
+          {t('newEmployeesPage.rol')} 
+          {/* a11y: Silenciamos el asterisco y mejoramos el contraste a red-600 */}
+          <span aria-hidden="true" className="text-red-600 ml-1">*</span>
         </label>
         <Select
+          id="rol"
           name="rol"
           value={formData.rol}
           onChange={handleChange}

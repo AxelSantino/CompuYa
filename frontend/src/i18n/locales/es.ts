@@ -380,7 +380,9 @@ export const es = {
                 rol_admin: "Administrador",
                 rol_supervisor: "Supervisor",
                 rol_operador: "Operador",
-                rol_repartidor: "Repartidor"
+                rol_repartidor: "Repartidor",
+                placeholder_nombre: "Ej: Juan",
+                placeholder_apellido: "Ej: Perez"
             },
             clientsPage: {
                 cargando_lista_clientes: "Cargando lista de clientes...",

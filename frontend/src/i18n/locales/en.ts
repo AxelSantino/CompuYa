@@ -378,7 +378,9 @@ export const en = {
                 rol_admin: "Administrator",
                 rol_supervisor: "Supervisor",
                 rol_operador: "Operator",
-                rol_repartidor: "Delivery Driver"
+                rol_repartidor: "Delivery Driver",
+                placeholder_nombre: "E.g.: John",
+                placeholder_apellido: "E.g.: Phillips"
         },
         clientsPage: {
                 cargando_lista_clientes: "Loading clients list...",
