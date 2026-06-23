@@ -2,7 +2,8 @@ from fastapi import APIRouter, Depends, status, BackgroundTasks, UploadFile, Fil
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.session import obtener_db
 from app.services.servicios_envios import EnvioService
-from app.models.esquemas import EnvioCrear, EnvioRespuesta, HistorialRespuesta, EditarEnvio, CancelarEnvio
+from app.models.esquemas import EnvioCrear, EnvioRespuesta, HistorialRespuesta, EditarEnvio, CancelarEnvio, PinRespuesta
+from app.services.servicio_ruteo import ServicioRuteo
 from app.models.entidades import Usuario, EstadoEnvio,TipoEnvio, RestriccionEnvio
 from app.utils.auth import obtener_usuario_actual, tiene_rol
 from typing import List
@@ -218,3 +219,17 @@ async def confirmar_importacion_csv(
         "creados": creados,
         "errores": errores
     }
+@router.get("/{tracking_id}/pin", response_model=PinRespuesta, dependencies=[Depends(tiene_rol(["cliente", "supervisor", "operador"]))])
+async def obtener_pin_envio(
+    tracking_id: str,
+    usuario_actual: Usuario = Depends(obtener_usuario_actual),
+    envio_service: EnvioService = Depends(get_envio_service)
+):
+    try:
+        codigo = await envio_service.obtener_codigo_pin(tracking_id, usuario_actual)
+        return PinRespuesta(codigo_verificacion=codigo)
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=str(e)
+        )
