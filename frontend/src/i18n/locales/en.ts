@@ -466,6 +466,8 @@ export const en = {
                 verificacion_mapa: "Map Verification",
                 dir_fiscal: "Tax Address",
                 placeholder_email: "user@example.com",
+                error_ubicacion_requerida: "Por favor, busque y seleccione una ubicación geográfica válida en el mapa antes de continuar.",
+                error_registrar_cliente: "Ocurrió un error al intentar registrar la empresa. Verifica los datos e intenta nuevamente."
             },
         notificationsPage: {
                 fecha_envio: "Shipment Date",

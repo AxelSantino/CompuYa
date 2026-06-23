@@ -2,8 +2,15 @@ import { useState } from 'react';
 import userService from '@/services/userService';
 import { RegistroEmpresa, Usuario } from '@/types/usuario';
 import { DireccionNormalizada } from '@/services/usigService';
+// 1. Importamos nuestras herramientas globales
+import { useTranslation } from 'react-i18next';
+import { useErrorTranslator } from '@/hooks/useErrorTranslator';
 
 export const useClientForm = () => {
+  // 2. Instanciamos los hooks
+  const { t } = useTranslation();
+  const { translateError } = useErrorTranslator();
+
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [createdClient, setCreatedClient] = useState<Usuario | null>(null);
@@ -67,7 +74,8 @@ export const useClientForm = () => {
     setError(null);
 
     if (formData.latitud === 0 || formData.longitud === 0 || !formData.direccion_normalizada) {
-      setError('Por favor, busque y seleccione una ubicación geográfica válida en el mapa antes de continuar.');
+      // i18n: Pasamos la validación local por el traductor
+      setError(t('newClientPage.error_ubicacion_requerida', 'Por favor, busque y seleccione una ubicación geográfica válida en el mapa antes de continuar.'));
       setIsLoading(false);
       return;
     }
@@ -75,10 +83,10 @@ export const useClientForm = () => {
     try {
       const response = await userService.createClient(formData);
       setCreatedClient(response);
-    } catch (err: any) {
+    } catch (err) {
       console.error('Error al registrar cliente:', err);
-      const errorMessage = err.response?.data?.detail || 'Ocurrió un error al intentar registrar la empresa. Verifica los datos e intenta nuevamente.';
-      setError(errorMessage);
+      // Arquitectura: Centralizamos el manejo de errores
+      setError(translateError(err, 'newClientPage.error_registrar_cliente'));
     } finally {
       setIsLoading(false);
     }
