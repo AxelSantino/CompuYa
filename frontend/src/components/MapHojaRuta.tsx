@@ -22,11 +22,6 @@ interface LeafletWaypoint {
 
 const createWaypointMarker = (i: number, waypoint: LeafletWaypoint, puntos: Waypoint[]) => {
   const punto = puntos[i];
-
-  if (!punto) {
-    return L.marker(waypoint.latLng); 
-  }
-
   const isFirst = i === 0;
   
   const icon = L.icon({
@@ -39,6 +34,10 @@ const createWaypointMarker = (i: number, waypoint: LeafletWaypoint, puntos: Wayp
     popupAnchor: [1, -34],
     shadowSize: [41, 41]
   });
+
+  if (!punto) {
+    return L.marker(waypoint.latLng, { icon: icon }); 
+  }
   
   return L.marker(waypoint.latLng, {
     icon: icon,
@@ -65,6 +64,10 @@ export default function MapHojaRuta({ puntos }: MapHojaRutaProps) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
   const routingControlRef = useRef<RoutingControl | null>(null);
+  const puntosRef = useRef<Waypoint[]>(puntos);
+
+  // Mantener la referencia actualizada para evitar cierres obsoletos (stale closures)
+  puntosRef.current = puntos;
 
   useEffect(() => {
     if (mapContainerRef.current && !mapRef.current) {
@@ -105,7 +108,7 @@ export default function MapHojaRuta({ puntos }: MapHojaRutaProps) {
           extendToWaypoints: true,
           missingRouteTolerance: 10,
         },
-        createMarker: (i: number, wp: LeafletWaypoint) => createWaypointMarker(i, wp, puntos),
+        createMarker: (i: number, wp: LeafletWaypoint) => createWaypointMarker(i, wp, puntosRef.current),
       }).addTo(map);
       routingControlRef.current = routingControl as unknown as RoutingControl;
     }
