@@ -3,16 +3,22 @@ import JSZip from 'jszip';
 import metricsService from '@/services/metricsService';
 import { DateFilterParams } from '@/types/metrics';
 import toast from 'react-hot-toast';
+// 1. Importamos las herramientas de i18n y manejo de errores
+import { useTranslation } from 'react-i18next';
+import { useErrorTranslator } from '@/hooks/useErrorTranslator';
 
 export const useExportMetrics = (filters: DateFilterParams) => {
   const [isExporting, setIsExporting] = useState(false);
+  const { t } = useTranslation();
+  const { translateError } = useErrorTranslator();
 
   const exportToZip = useCallback(async () => {
     if (isExporting) return;
     setIsExporting(true);
 
     // Muestra un toast de carga que luego se actualiza a éxito o error
-    const toastId = toast.loading('Generando reportes, por favor espera...');
+    // i18n: Aplicado al estado de carga
+    const toastId = toast.loading(t('metricsPage.export_generando_reportes'));
 
     try {
       // Peticiones concurrentes: Ejecutamos las 3 llamadas al mismo tiempo
@@ -48,15 +54,20 @@ export const useExportMetrics = (filters: DateFilterParams) => {
       document.body.removeChild(link);
       URL.revokeObjectURL(downloadUrl);
 
-      toast.success('Reportes exportados correctamente.', { id: toastId });
+      // i18n: Aplicado al estado de éxito
+      toast.success(t('metricsPage.export_exito'), { id: toastId });
       
     } catch (error) {
       console.error('Error al generar el ZIP:', error);
-      toast.error('Ocurrió un error al descargar los reportes.', { id: toastId });
+      
+      // Arquitectura: Usamos el traductor de errores para capturar caídas
+      const errorMessage = translateError(error, 'metricsPage.export_error');
+      toast.error(errorMessage, { id: toastId });
     } finally {
       setIsExporting(false);
     }
-  }, [filters, isExporting]);
+  // Agregamos t y translateError a las dependencias por buenas prácticas
+  }, [filters, isExporting, t, translateError]);
 
   return {
     isExporting,
