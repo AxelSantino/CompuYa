@@ -8,14 +8,12 @@ export const useClientForm = () => {
   const [error, setError] = useState<string | null>(null);
   const [createdClient, setCreatedClient] = useState<Usuario | null>(null);
 
-  // Funcion para evitar el bug de las zonas horarias (cuando javascript te pone un dia para atras)
   const getLocalDateString = () => {
     const date = new Date();
     date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
     return date.toISOString().split('T')[0];
   };
 
-  // Inicializamos el estado con los valores por defecto requeridos por FastAPI
   const [formData, setFormData] = useState<RegistroEmpresa>({
     email: '',
     password: '',
@@ -24,8 +22,7 @@ export const useClientForm = () => {
     tipo: 'empresa', 
     rol: 'cliente', 
     fecha: getLocalDateString(),
-    
-    // Campos geográficos que se llenarán luego
+
     latitud: 0,
     longitud: 0,
     direccion_normalizada: '',
@@ -41,21 +38,16 @@ export const useClientForm = () => {
     if (error) setError(null);
   };
 
-  // Manejador específico que será llamado por el LocationManager
   const handleLocationComplete = (location: DireccionNormalizada) => {
     if (!location.coordenadas) return;
-
-    // Adaptador para deducir la provincia
-    const isCABA = location.direccion.toUpperCase().includes('CABA') || 
-                   location.nombre_partido?.toUpperCase() === 'CABA';
 
     setFormData((prev) => ({
       ...prev,
       direccion_normalizada: location.direccion,
       latitud: parseFloat(location.coordenadas!.y),
       longitud: parseFloat(location.coordenadas!.x),
-      municipio: location.nombre_partido || location.nombre_localidad || 'Ciudad Autónoma de Buenos Aires',
-      provincia: isCABA ? 'CABA' : 'Buenos Aires',
+      municipio: location.municipio || location.nombre_partido || location.nombre_localidad || 'No Especificado',
+      provincia: location.provincia || 'No Especificado',
     }));
     
     if (error) setError(null);
