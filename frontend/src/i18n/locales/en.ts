@@ -381,8 +381,8 @@ export const en = {
                 rol_repartidor: "Delivery Driver",
                 placeholder_nombre: "E.g.: John",
                 placeholder_apellido: "E.g.: Phillips",
-                error_seleccionar_rol: "Por favor, selecciona un rol para el empleado.",
-                error_registrar_empleado: "Ocurrió un error al intentar registrar el empleado. Verifica los datos e intenta nuevamente."
+                error_seleccionar_rol: "Please select a role for the employee.",
+                error_registrar_empleado: "An error occurred while trying to register the employee. Please verify the information and try again."
         },
         clientsPage: {
                 cargando_lista_clientes: "Loading clients list...",
@@ -408,8 +408,8 @@ export const en = {
                 btn_desactivar: "Deactivate",
                 btn_activar: "Activate",
                 btn_editar: "Edit Client",
-                cargando_ficha: "Cargando ficha del cliente...",
-                no_registrado: "No registrado",
+                cargando_ficha: "Loading company data...",
+                no_registrado: "Unregistered",
                 datos_empresa: "Company Data",
                 form: {
                     razon_social: "Company Name",
@@ -431,7 +431,7 @@ export const en = {
                     no_especificada: "Not especified"
                 },
                 mapa: {
-                    cargando: "Cargando mapa de ubicación...",
+                    cargando: "Loading location on the map...",
                     titulo: "Location on the map",
                     no_coordenadas: "This company does not have registered geolocation coordinates."
                 },
@@ -445,13 +445,13 @@ export const en = {
                     cancelar: "Cancel"
                 },
 
-                error_no_es_cliente: "El usuario solicitado no corresponde a un cliente.",
-                error_cargar_info: "No se pudo cargar la información del cliente.",
-                success_actualizado: "Información de la empresa actualizada.",
-                error_guardar_cambios: "Error al guardar los cambios del cliente.",
-                success_activado: "Cliente activado correctamente.",
-                success_desactivado: "Cliente desactivado correctamente.",
-                error_cambiar_estado: "Error al cambiar el estado del cliente.",
+                error_no_es_cliente: "The requested user does not correspond to a client.",
+                error_cargar_info: "Customer information could not be loaded.",
+                success_actualizado: "Updated company information.",
+                error_guardar_cambios: "Error while saving customer changes.",
+                success_activado: "Customer succesfully activated.",
+                success_desactivado: "Client successfully deactivated.",
+                error_cambiar_estado: "Error while saving customer state.",
     },
         newClientPage: {
                 no_tienes_permisos: "You do not have permission to register new clients/recipients.",
@@ -477,8 +477,8 @@ export const en = {
                 verificacion_mapa: "Map Verification",
                 dir_fiscal: "Tax Address",
                 placeholder_email: "user@example.com",
-                error_ubicacion_requerida: "Por favor, busque y seleccione una ubicación geográfica válida en el mapa antes de continuar.",
-                error_registrar_cliente: "Ocurrió un error al intentar registrar la empresa. Verifica los datos e intenta nuevamente.",
+                error_ubicacion_requerida: "Please search for and select a valid geographic location on the map before continuing.",
+                error_registrar_cliente: "An error occurred while trying to register the company. Please verify the information and try again.",
                 placeholder_razon_social: "Ej. Logística Sur S.A.",
                 placeholder_cuit: "Ej. 30-12345678-9",
                 cargando_visor: "Cargando visor...",
@@ -556,7 +556,7 @@ export const en = {
                 lista_errores_guardado: "List of issues while saving shipments",
 
                 acceso_denegado: "Denied Access",
-                no_contas_con_permisos_necesarios: "No contás con los permisos necesarios para importar envíos.",
+                no_contas_con_permisos_necesarios: "You do not have the necessary permits to import shipments.",
                 importar_envios_por_csv: "Import shipments with CSV file",
                 agrega_multiples_envios_al_sistema: "Add several shipments uploading a CSV file.",
                 ir_a_lista_de_envios: "Go to shipments dashboard",
@@ -631,6 +631,11 @@ export const en = {
             auditoria: {
                 titulo: "State Audit",
                 operador: "Operator: "
+            },
+
+            modal: {
+                confirmar: "Confirm",
+                cancelar: "Cancel",
             }
 
     }

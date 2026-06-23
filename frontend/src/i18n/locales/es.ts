@@ -631,6 +631,10 @@ export const es = {
             auditoria: {
                 titulo: "Auditoría de Estados",
                 operador: "Operador: "
+            },
+            modal: {
+                confirmar: "Confirmar",
+                cancelar: "Cancelar",
             }
         }
     };
