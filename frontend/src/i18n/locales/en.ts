@@ -470,6 +470,8 @@ export const en = {
                 error_registrar_cliente: "Ocurrió un error al intentar registrar la empresa. Verifica los datos e intenta nuevamente.",
                 placeholder_razon_social: "Ej. Logística Sur S.A.",
                 placeholder_cuit: "Ej. 30-12345678-9",
+                cargando_visor: "Cargando visor...",
+                placeholder_cod_postal: "Ej. 1615",
             },
         notificationsPage: {
                 fecha_envio: "Shipment Date",
