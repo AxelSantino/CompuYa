@@ -641,6 +641,19 @@ export const en = {
                 aria_no_leidas: "{{count}} unread notifications",
             },
 
+            notificaciones: {
+                PREPARANDO_TITULO: "We are preparing your order",
+                PREPARANDO_CUERPO: "Shipment {{tracking_id}} is being prepared.",
+                ENTREGADO_TITULO: "Shipment Delivered",
+                ENTREGADO_CUERPO: "Shipment {{tracking_id}} has been delivered.",
+                CANCELADO_TITULO: "Shipment Cancelled",
+                CANCELADO_CUERPO: "Shipment {{tracking_id}} was cancelled.",
+                ACTUALIZADO_TITULO: "Shipment Status Updated to {{estado}}",
+                ACTUALIZADO_CUERPO: "Shipment {{tracking_id}} status has been updated to {{estado}}.",
+                EN_TRANSITO_TITULO: "Shipment in Transit 🚚",
+                EN_TRANSITO_CUERPO: "Shipment {{tracking_id}} is on its way. Your delivery PIN is: {{pin}}"
+            },
+
             paginado: {
                 info: "Showing {{pageSize}} elements by page · Page {{currentPage}} of {{totalPages}}",
                 elementos: "Elements: ",
