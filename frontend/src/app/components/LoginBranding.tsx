@@ -1,11 +1,13 @@
+
 import Image from 'next/image';
+
 import '@/i18n/i18n';
 import { useTranslation } from 'react-i18next';
 import { FaBox } from 'react-icons/fa'; 
 
 export const LoginBranding = () => {
 
-    const { t } = useTranslation();
+    const {t} = useTranslation();
 
   return (
     <div className="hidden lg:flex flex-col w-[60%] xl:w-[65%] relative overflow-hidden z-10 bg-gradient-to-br from-[#25272B] via-[#1E1F24] to-[#18191D]">
@@ -18,7 +20,7 @@ export const LoginBranding = () => {
       <div className="absolute top-[-15%] right-[-10%] w-[75%] h-[130%] bg-white/[0.03] rounded-[50%]" />
       <div className="absolute bottom-[-300px] right-[-200px] w-[800px] h-[800px] rounded-full bg-white/[0.03]" />
 
-      <div className="relative z-20 flex flex-col h-full p-6 xl:p-8 2xl:p-12">
+      <div className="relative z-20 flex flex-col h-full p-8 xl:p-12">
         
         {/* Logo */}
         <div>
@@ -28,45 +30,46 @@ export const LoginBranding = () => {
             width={180}
             height={60}
             priority
-            className="w-[140px] 2xl:w-[180px] h-auto"
           />
         </div>
 
         {/* Textos y métricas */}
-        <div className="flex flex-col flex-grow mt-4 2xl:mt-8 w-full min-h-0">
+        <div className="flex flex-col flex-grow mt-8 w-full">
           <div className="w-full">
             <h1 className="flex flex-col">
-              <span className="text-[50px] xl:text-[58px] 2xl:text-[84px] font-bold leading-none tracking-[-2px]">
+              {/* 1. "Compu" en blanco y "Ya" en naranja */}
+              <span className="text-[56px] xl:text-[72px] 2xl:text-[92px] font-bold leading-none tracking-[-2px]">
                 <span className="text-white">Compu</span>
                 <span className="text-[#EB6534]">Ya</span>
               </span>
               
-              <span className="block text-gray-300 text-[26px] xl:text-[30px] 2xl:text-[40px] font-bold mt-1 tracking-tight">
+              {/* 2. Eslogan más chico y alineado */}
+              <span className="block text-gray-300 text-[28px] xl:text-[36px] 2xl:text-[44px] font-bold mt-1 tracking-tight">
                 {t('login.logistica_de_extremo_a_extremo')}
               </span>
             </h1>
             
-            <p className="text-gray-400 text-[16px] xl:text-[18px] 2xl:text-[20px] max-w-[550px] mt-3 2xl:mt-4 ml-1 2xl:ml-2 leading-relaxed">
+            <p className="text-gray-400 text-[18px] xl:text-[20px] max-w-[550px] mt-4 ml-2 leading-relaxed">
               {t('login.controla_cada_etapa_de_tus_envios')}
             </p>
 
-            <div className="mt-5 2xl:mt-8 ml-1 2xl:ml-2 w-[280px] 2xl:w-[320px] rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md p-3 2xl:p-4 shadow-2xl">
+            <div className="mt-8 ml-2 w-[320px] rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md p-4 shadow-2xl">
               <div className="flex gap-4 items-center">
-                <div className="h-10 w-10 2xl:h-12 2xl:w-12 rounded-full bg-[#EB6534] flex items-center justify-center text-white text-lg 2xl:text-xl shrink-0">
-                  <FaBox />
+                <div className="h-12 w-12 rounded-full bg-[#EB6534] flex items-center justify-center text-white text-xl">
+                  <FaBox className="text-lg" />
                 </div>
                 <div>
-                  <p className="text-white font-semibold tracking-wide text-sm 2xl:text-base">
+                  <p className="text-white font-semibold tracking-wide">
                     CY-2026-CTJ4
                   </p>
-                  <p className="text-[#EB6534] text-xs 2xl:text-sm font-medium mt-0.5">
+                  <p className="text-[#EB6534] text-sm font-medium mt-0.5">
                     {t('login.en_transito')}
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="mt-4 2xl:mt-6 ml-2 2xl:ml-4 flex items-center gap-6 text-[12px] 2xl:text-[13px] text-gray-400 font-medium tracking-wide">
+            <div className="mt-6 ml-4 flex items-center gap-6 text-[13px] text-gray-400 font-medium tracking-wide">
               <div className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-[#EB6534]/80"></div>
                 {t('login.envios_gestionados')}
@@ -78,18 +81,11 @@ export const LoginBranding = () => {
             </div>
           </div>
 
-          {/* Animación SVG ajustada */}
-          <div className="mt-auto pt-2 2xl:pt-6 w-full flex items-end justify-end pr-4 2xl:pr-16 flex-1 min-h-0">
-            <svg 
-              aria-hidden="true" 
-              // 1. Caja ajustada milimétricamente al camión
-              viewBox="-10 -25 380 145" 
-              // 2. Anclaje nativo SVG (Derecha - Abajo)
-              preserveAspectRatio="xMaxYMax meet"
-              // 3. Límites más amplios: max-w y max-h crecieron bastante
-              className="w-full h-full max-w-[500px] xl:max-w-[750px] 2xl:max-w-[1000px] max-h-[45vh] 2xl:max-h-[50vh]"
-            >
+          {/* Animación SVG */}
+          <div className="mt-auto pt-6 w-full flex justify-end pr-4 xl:pr-16">
+            <svg aria-hidden="true" viewBox="0 0 380 140" className="w-full max-w-[500px] xl:max-w-[700px] 2xl:max-w-[850px] overflow-visible">
               
+              {/* Filtro nativo SVG para el brillo, compatible con Safari/iOS */}
               <defs>
                 <filter id="orange-glow" x="-50%" y="-50%" width="200%" height="200%">
                   <feGaussianBlur stdDeviation="3" result="blur" />
@@ -100,6 +96,7 @@ export const LoginBranding = () => {
                 </filter>
               </defs>
 
+              {/* Línea de ruta base (gris) */}
               <path 
                 d="M30 70 C120 20, 200 110, 345 60" 
                 fill="none" 
@@ -108,6 +105,7 @@ export const LoginBranding = () => {
                 strokeLinecap="round" 
               />
               
+              {/* Línea de progreso animada (naranja) */}
               <path 
                 d="M30 70 C120 20, 200 110, 345 60" 
                 fill="none" 
@@ -127,6 +125,7 @@ export const LoginBranding = () => {
                 />
               </path>
 
+              {/* Nodos interactivos con animación SMIL nativa */}
               <circle cx="30" cy="70" r="6" fill="#EB6534" />
               
               <circle cx="194" cy="71" r="5" fill="#4A4B50">
@@ -137,6 +136,7 @@ export const LoginBranding = () => {
                 <animate attributeName="fill" values="#4A4B50;#4A4B50;#EB6534;#EB6534" keyTimes="0;0.97;0.98;1" dur="8s" repeatCount="indefinite" />
               </circle>
               
+              {/* Textos sincronizados con animación SMIL nativa */}
               <text x="30" y="105" textAnchor="middle" fontSize="15" fill="#EB6534" fontFamily="sans-serif" fontWeight="bold">
                 {t('login.en_sucursal')}
               </text>
@@ -151,6 +151,7 @@ export const LoginBranding = () => {
                 <animate attributeName="fill" values="#88898E;#88898E;#EB6534;#EB6534" keyTimes="0;0.97;0.98;1" dur="8s" repeatCount="indefinite" />
               </text>
               
+              {/* Grupo del camión en movimiento */}
               <g>
                 <animateMotion 
                   dur="8s" 
@@ -159,6 +160,11 @@ export const LoginBranding = () => {
                   path="M30 70 C120 20, 200 110, 345 60" 
                 />
                 
+                {/* Aura de luz con el filtro nativo aplicado 
+                <circle cx="0" cy="0" r="20" fill="#EB6534" opacity="0.25" filter="url(#orange-glow)" />
+                */}
+                
+                {/* Dibujo del camión */}
                 <g transform="translate(-32, -42) scale(0.85)">
                   <rect x="12" y="30" width="26" height="22" rx="2" fill="white"/>
                   <line x1="16" y1="41" x2="34" y2="41" stroke="#e0e0e0" strokeWidth="1"/>
