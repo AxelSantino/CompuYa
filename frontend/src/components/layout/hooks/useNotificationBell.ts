@@ -1,7 +1,8 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import alertasService from '@/services/alertasService';
 import toast from 'react-hot-toast';
+import { useNotificationTranslator } from './useNotificationTranslator';
 
 // Tipado recomendado para no usar "any"
 export interface Alerta {
@@ -16,6 +17,8 @@ export const useNotificationBell = () => {
     const { user } = useAuth();
     const [notificaciones, setNotificaciones] = useState<Alerta[]>([]);
     const [isOpen, setIsOpen] = useState(false);
+
+    const { translateNotification } = useNotificationTranslator();
 
     const cargarNotificaciones = useCallback(async () => {
         try {
@@ -49,7 +52,10 @@ export const useNotificationBell = () => {
 
         socket.onmessage = (event) => {
             const nuevaAlerta = JSON.parse(event.data);
-            toast.success(nuevaAlerta.titulo, { icon: '🔔', duration: 4000 });
+
+            //Traduccion
+            const alertaTraducida = translateNotification(nuevaAlerta);
+            toast.success(alertaTraducida.titulo, { icon: '🔔', duration: 4000 });
             setNotificaciones((prev) => [{ ...nuevaAlerta, leida: false }, ...prev]);
         };
 
@@ -58,7 +64,11 @@ export const useNotificationBell = () => {
         return () => {
             if (socket.readyState === WebSocket.OPEN) socket.close();
         };
-    }, [user]);
+    }, [user, translateNotification]);
+
+    const notificacionesTraducidas = useMemo(() => {
+        return notificaciones.map(translateNotification);
+    }, [notificaciones, translateNotification]);
 
     const unreadCount = notificaciones.filter(n => !n.leida).length;
     const toggleDropdown = () => setIsOpen(!isOpen);
@@ -75,7 +85,7 @@ export const useNotificationBell = () => {
 
     return {
         user,
-        notificaciones,
+        notificaciones: notificacionesTraducidas,
         isOpen,
         unreadCount,
         toggleDropdown,

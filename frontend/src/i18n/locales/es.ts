@@ -642,6 +642,19 @@ export const es = {
                 aria_no_leidas: "{{count}} notificaciones no leídas",
             },
 
+            notificaciones: {
+                PREPARANDO_TITULO: "Estamos preparando tu pedido",
+                PREPARANDO_CUERPO: "El envío {{tracking_id}} está siendo preparado.",
+                ENTREGADO_TITULO: "Envío Entregado",
+                ENTREGADO_CUERPO: "El envío {tracking_id} ha sido entregado.",
+                CANCELADO_TITULO: "Envío Cancelado",
+                CANCELADO_CUERPO: "El envío {{tracking_id}} fue cancelado.",
+                ACTUALIZADO_TITULO: "Estado del Envío Actualizado a {{estado}}",
+                ACTUALIZADO_CUERPO: "El estado del envío {{tracking_id}} ha sido actualizado a {{estado}}.",
+                EN_TRANSITO_TITULO: "Envío en Tránsito 🚚",
+                EN_TRANSITO_CUERPO: "El envío {{tracking_id}} está en camino. Tu PIN de entrega es: {{pin}}"
+            },
+
             paginado: {
                 info: "Mostrando {{pageSize}} elementos por página · Página {{currentPage}} de {{totalPages}}",
                 elementos: "Elementos: ",
