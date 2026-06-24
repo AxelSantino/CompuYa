@@ -213,6 +213,13 @@ class UsuarioService:
                     setattr(usuario.perfil_empresa, field, data[field])
                 
         await self.db.commit()
+        try:
+            from app.utils.auth import user_cache
+            if usuario.supabase_id in user_cache:
+                del user_cache[usuario.supabase_id]
+        except Exception:
+            pass
+            
         return usuario
         
     async def buscar_empresa_por_razon_social_o_cuit(self, razon_social: str | None = None, cuit: str | None = None) -> Usuario:
@@ -262,9 +269,18 @@ class UsuarioService:
                     status_code=status.HTTP_400_BAD_REQUEST,
                     detail="No se puede desactivar al cliente porque tiene envíos pendientes."
                 )
-
+ 
         usuario.activo = peticion 
         await self.db.commit()
+        
+        # Invalidar cache de autenticación del usuario activado/desactivado
+        try:
+            from app.utils.auth import user_cache
+            if usuario.supabase_id in user_cache:
+                del user_cache[usuario.supabase_id]
+        except Exception:
+            pass
+            
         return usuario 
     
     async def verificar_si_repartidor_tiene_envios(self, usuario_id: int) -> bool:
