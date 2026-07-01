@@ -65,6 +65,8 @@ Resultado esperado: El sistema registrará la marca de tiempo exacta, pasará el
 
 ## 🔑 Credenciales para probar la App en Vivo
 - **Link:** [[https://tu-app.onrender.com](https://compuyalogistica.onrender.com/)]
+
+
 - **Usuario:** admin2@compuya.com
 - **Contraseña:** 123456
 
